@@ -1,0 +1,158 @@
+<html>
+<head>
+<script type="text/javascript" src="/js/jquery.js"></script>
+<script language="javascript">
+//outao 2014-4-15
+function Prepare()
+{
+	//divObj.style.visibility = "hidden";
+	setInterval("timer()",60000);  
+	//setTimeout(play, 1000);
+
+}
+
+function timer()
+{
+    $(document).ready(function() {
+   $.getJSON("{$ajaxUrl}", function(result) {
+	   /*
+		if(null == result['success'])
+		{
+
+		}
+		if(null == result['error'])
+		{
+
+		}
+		*/
+	})
+});    
+}
+
+</script>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Web Player</title>
+<style type="text/css">
+<!--
+.clickButton
+{
+	cursor:pointer;
+}
+body {
+	background-color: #C6D2E2;
+}
+.ourlady {
+	background-repeat: no-repeat;
+	background-position: center bottom;
+	background-attachment: scroll;
+	background-image: url(../../images/ourlady_statue.png);
+	height: 270px;
+	width: 144px;
+	margin-left: auto;
+	margin-right: auto;
+}
+.webplayertext {
+	background-repeat: no-repeat;
+	background-position: center bottom;
+	background-attachment: scroll;
+	background-image: url(../../images/webplayer_text.png);
+	height: 62px;
+	width: 255px;
+	margin-left: auto;
+}
+.powerbytext {
+	background-repeat: no-repeat;
+	background-position: center bottom;
+	background-attachment: scroll;
+	background-image: url(../../images/powered_by_text.png);
+	height: 20px;
+	width: 189px;
+	margin-left: auto;
+	padding: 0px;
+}
+.maintext {
+	color: #FFFFFF;
+	font-family: Arial, Serif;
+	font-size: 14px;
+}
+-->
+</style>
+</head>                                                     
+<body onLoad="getServerIp();showVideo(0, serverip,'{$cam}'); Prepare();" marginheight="5" marginwidth="5">
+<table width="100" border="0" align="center" cellpadding="0" cellspacing="0">
+  <tr>
+	<td>&nbsp;</td>
+    <td><div class="powerbytext" id="powerby.text"><a href="http://www.advanced.com.cn/"><img src="/images/blank.gif" alt="Powered by Advanced Info-tech" width="189" height="20" border="0"></a></div></td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+	<td width="100" valign="top"><table width="152" height="441" border="0" align="center" cellpadding="0" cellspacing="0" background="/images/b5.gif" id="tbButton" style="background-repeat:no-repeat">
+      <tr>
+        <td height="41" class="clickButton" onClick="showVideo(0, serverip,'{$cam}');">&nbsp;</td>
+      </tr>
+      <tr>
+        <td height="41" class="clickButton" onClick="showVideo(1, serverip,'{$cam}');">&nbsp;</td>
+      </tr>
+      <tr>
+        <td height="41" class="clickButton" onClick="showVideo(2, serverip,'{$cam}');">&nbsp;</td>
+      </tr>
+      <tr>
+        <td height="41" class="clickButton" onClick="showVideo(3, serverip,'{$cam}');">&nbsp;</td>
+      </tr>
+      <tr>
+        <td height="41" class="clickButton" onClick="show4in1('{$cam4in1}');">&nbsp;</td>
+      </tr>
+	  <tr>
+	  	<td height="31" align="center"><a href="/player.msi" class="maintext">Install Plug-in</a></td>
+	  </tr>
+      <tr>
+      	<td height "200"><div class="ourlady" id="ourlady"></div></td>
+      </tr>
+    </table></td>
+    <td align="left" valign="top"><iframe name="iframeVideo" src="" height="520" width="674" vspace="0" frameborder="0" hspace="0" scrolling="no" ></iframe>							</td>
+    <td>&nbsp;</td>
+  </tr>
+  <tr>
+	<td>&nbsp;</td>
+    <td align="right"><div class="webplayertext" id="webplayer.text"></div></td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+<input id="hidUOLID" type="hidden" runat="server" />
+
+<script type="text/javascript">
+var serverip = "192.168.1.18";
+var domain = '{$domain}';
+var domainIp = '{$domainIp}';
+
+function getServerIp()
+{
+	var url = window.location.href;
+
+	if(0 < url.indexOf(domain))
+	{
+		serverip = domainIp;
+	}
+	else
+	{
+		var args = url.split("http://"); 
+		url = args[1];
+		args = url.split("/");
+		var ipPort = args[0].split(":");
+		serverip = ipPort[0];
+	}
+}
+function showVideo(num, ip, camUrl)
+{
+    var hidden = document.getElementById("hidUOLID");
+    //alert(camUrl);
+	iframeVideo.location.href = camUrl + "?num=" + num + "&ip=" + ip + "&hidUOLID=" + hidden.value;
+	document.all('tbButton').background = "/images/b" + num + ".gif";
+}
+function show4in1(cam4in1Url)
+{
+	iframeVideo.location.href = cam4in1Url + "?ip=" + serverip;
+	document.all('tbButton').background = "/images/b4.gif";
+}
+</script>
+</html>

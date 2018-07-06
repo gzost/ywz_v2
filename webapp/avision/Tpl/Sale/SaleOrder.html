@@ -1,0 +1,76 @@
+<!-- 在线用户  -->
+<extend name="common:AdminBase" />
+<block name="bl_menu">
+{$menuStr}
+</block> {//bl_menu}
+<block name="bl_main">
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />
+<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+<load href="__PUBLIC__/js/publicFunction.js" />
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#dg").datagrid('getPager').pagination({displayMsg:"正在显示 {from} 到 {to} 行，共 {total} 行"});
+});
+
+function feeFmt(value, row, index)
+{
+	return strMoneyFmt(value);
+}
+
+function moreFmt(value, row, index)
+{
+	var ret = '<a href="#">订单详细</a>&nbsp;&nbsp;&nbsp;&nbsp;';
+
+	if('已确认支付' == row['state'])
+	{
+		ret += '<a href="#">退款</a>';
+	}
+
+	return ret;
+}
+
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+	data-options="url:'__URL__/ListData?r={$rand}',rownumbers:true,singleSelect:true,
+		toolbar:'#tb',pagination:true,  pageSize:10 "
+>
+	<thead>
+		<tr>
+			<th data-options="field:'tradeno', width:220,align:'left', halign:'center'">订单号</th>
+			<th data-options="field:'account', width:220,align:'left', halign:'center' ">用户帐号</th>
+			<th data-options="field:'username', width:100,align:'left', halign:'center' ">用户昵称</th>
+			<th data-options="field:'paytype', width:100,align:'right', halign:'center'">支付方式</th>
+			<th data-options="field:'state', width:80,align:'right', halign:'center'">状态</th>
+			<th data-options="field:'totalfee', width:60,align:'right', halign:'center',formatter:feeFmt">金额</th>
+			<th data-options="field:'createstr', width:150,align:'left', halign:'center'">下单时间	<th data-options="field:'paytimestr', width:150,align:'left', halign:'center'">支付时间
+			</th>
+			<th data-options="field:'id',width:120,align:'center',halign:'center',formatter:moreFmt">操作</th>
+		</tr>
+	</thead>
+
+</table>
+
+<div id="tb" style="padding:2px 5px;">
+	<form action='__URL__/Search?r={$rand}' id='cond' method='post' style="display:inline">
+		查询条件：
+		订单号：<input class='easyui-textbox' name='tradeno' value='{$tradeno}'  style='width:180px' />
+		&nbsp;&nbsp;
+		用户帐号：<input class='easyui-textbox' name='useraccount' value='{$useraccount}'  style='width:180px' />
+		&nbsp;&nbsp;
+		用户昵称：<input class='easyui-textbox' name='usernick' value='{$usernick}'  style='width:180px' />
+		&nbsp;&nbsp;
+		下单时间：
+		从<input class="easyui-datebox" name="beginTime" value="{$beginTime}" style="width:120px"
+			data-options="formatter:cn_formatter,parser:cn_parser" >
+		至<input class="easyui-datebox" name="endTime" value="{$endTime}" style="width:120px"
+			data-options="formatter:cn_formatter,parser:cn_parser" >
+		<a href="javascript:$('#cond').submit();"class="easyui-linkbutton" iconcls="icon-search" plain="true">查询</a>
+	</form>
+
+</div>
+</block>

@@ -1,0 +1,74 @@
+<!-- 在线用户  -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />   
+<script type="text/javascript">
+	function blockUser(datagrid){
+		var row=$("#"+datagrid).datagrid('getSelected');
+		if(null==row){
+			alert('请先选中要踢走的观众。')
+		}else {
+			$.messager.confirm('请确认','确定踢吗？',function(r){
+				if(r){
+					$.post('__APP__/Monitor/blockOnlineUserAjax',{onlineid:row.id},function(data){
+						$.messager.alert('执行结果',data.msg);
+					},'json');
+				}
+			});
+		}
+		//alert('block');
+	}
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+	data-options="url:'__URL__/onlineUserGetList',rownumbers:true,singleSelect:true,
+		toolbar:'#tb',pagination:true,  pageSize:20 ">
+	<thead>
+		<tr>
+			<th data-options="field:'logintime', width:120,align:'center'">登录时间</th>
+			<th data-options="field:'objtype', width:60,align:'left', halign:'center' ">类型</th>
+			<th data-options="field:'name', width:200,align:'left', halign:'center' ">标题</th>
+			<th data-options="field:'account', width:200,align:'left', halign:'center'">用户名称</th>
+			<th data-options="field:'minutes', width:100,align:'right', halign:'center' ">观看时长(分)</th>
+			<th data-options="field:'clientip', width:120,align:'center', halign:'center' ">观众IP</th>
+			<th data-options="field:'location', width:120,align:'center', halign:'center' ">地区</th>
+		</tr>
+	</thead>
+
+</table>
+*播主仅能查看自己频道及VOD节目的观众<br>
+*标题是频道名称或VOD节目名称
+<div id="tb" style="padding:2px 5px;">
+	<form id='cond' method='post' style="display:inline">
+		查询条件：　
+		播主：<input class='easyui-textbox' name='objAccount' value='{$objAccount}'  style='width:80px' 
+				data-options="readonly:{$viewSelf} "/>
+		类型：<input class='easyui-combobox' name='objtype' value='{$objtype}' style='width:80px'
+				data-options="valueField:'val',textField:'txt', 
+					data:[{val:'0',txt:'全部'},{val:'live',txt:'live'},{val:'vod',txt:'vod'},{val:'web',txt:'web'}]
+				" />
+		标题：<input class='easyui-textbox' name='name' value='{$name}'  style='width:140px' />
+		用户名称：<input class='easyui-textbox' name='account' value='{$account}'  style='width:140px' />
+		<input name='work' value='{$work}' style="display:none" />
+		<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
+	</form>
+	
+	
+	<!-- 功能按钮 -->
+	<div style="width:200px; float:right">
+		<a  href="javascript:void(0)" class="easyui-linkbutton" 
+			data-options="iconCls:'icon-no',plain:false, disabled:false" 
+    		onclick="blockUser('dg');">强制离线</a>
+	</div>
+	<div style="margin:5px; font-size: 14px; color: #448;">{$msg}</div>
+</div>
+</block>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!-- 用户登录页面 -->
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<!-- <meta name="renderer" content="ie-stand" />        让360浏览器默认使用兼容模式 -->
+<title>Avsion后台管理</title>
+<link href="__PUBLIC__/jeasyui/themes/default/easyui.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/icon.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/color.css" rel="stylesheet" type="text/css">
+<link type="text/css" rel="stylesheet" href="__ROOT__/admin/{$theme|default='default'}/css/cover.css" />
+
+<load href="__PUBLIC__/js/jquery.min.js" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery.md5.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.easyui.min.js"></script>
+<script type="text/javascript"> 
+	function makeMD5(){
+		//$('#password').val($.md5($('#password').val()));
+		var psw=$('#password').textbox('getValue');
+		$('#password').textbox('setValue',$.md5(psw));
+		$('#form1').submit();
+	}
+</script> 
+</head>
+<body>
+<div id="logo"></div>
+
+<div id="avision" >
+
+	<H1 style="margin-top:20px; ">管理员登录</H1>
+	<form  id="form1" action="{$gotoURL}" method="post">
+		<div id="login_box">
+	 		<div style="margin-bottom:10px; margin-top:30px;">
+            	<input class="easyui-textbox" name = "username" style="width:100%;height:30px;padding:12px" 
+            		data-options="prompt:'用户名',iconCls:'icon-man',iconWidth:38" />
+			</div>
+        	<div style="margin-bottom:20px">
+           	 	<input class="easyui-textbox" type="password" name = "password" id = "password"
+            		style="width:100%;height:30px;padding:12px" 
+            		data-options="prompt:'密码',iconCls:'icon-lock',iconWidth:38" />
+        	</div>
+
+        	<div>
+				<input class="easyui-linkbutton" type="submit" data-options="iconCls:'icon-ok'" style="padding:5px 0px;width:80%;height:40px;" value="登录" onClick='makeMD5();'/>
+        	</div>
+		</div>
+	</form>
+	<div id="msgBox" class="errorMsg">{$errorMsg}</div>
+	<div class="message">{$Msg}</div>
+</div>
+</body>
+</html>

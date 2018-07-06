@@ -1,0 +1,63 @@
+<!-- 在线用户  -->
+<extend name="common:AdminBase" />
+<block name="bl_menu">
+{$menuStr}
+</block> {//bl_menu}
+
+<block name="bl_main">
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />
+<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#dg").datagrid('getPager').pagination({displayMsg:"正在显示 {from} 到 {to} 行，共 {total} 行"});
+});
+
+
+function moreFmt(value, row, index)
+{
+	var ret = '<a href="#">订单详细</a>&nbsp;&nbsp;&nbsp;&nbsp;';
+
+	return ret;
+}
+
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+	data-options="url:'__URL__/ListData?r={$rand}',rownumbers:true,singleSelect:true,
+		toolbar:'#tb',pagination:true,  pageSize:10 "
+>
+	<thead>
+		<tr>
+			<th data-options="field:'payid', width:220,align:'left', halign:'center'">支付平台流水</th>
+			<th data-options="field:'createstr', width:150,align:'left', halign:'center' ">发生时间</th>
+			<th data-options="field:'state', width:80,align:'right', halign:'center'">状态</th>
+			<th data-options="field:'payfee', width:100,align:'center'">发生金额</th>
+			<th data-options="field:'tradeno', width:150,align:'center'">销售订单号</th>
+			<th data-options="field:'paytype', width:100,align:'center'">支付方式</th>
+			<th data-options="field:'tradetype', width:100,align:'center'">支付途径</th>
+			<th data-options="field:'id',width:100,align:'center',halign:'center',formatter:moreFmt">操作</th>
+		</tr>
+	</thead>
+
+</table>
+
+<div id="tb" style="padding:2px 5px;">
+	<form action='__URL__/Search?r={$rand}' id='cond' method='post' style="display:inline">
+		查询条件：
+		销售订单号：<input class='easyui-textbox' name='tradeno' value='{$tradeno}'  style='width:180px' />
+		&nbsp;&nbsp;
+		支付平台流水：<input class='easyui-textbox' name='payid' value='{$payid}'  style='width:180px' />
+		&nbsp;&nbsp;
+		发生时间：
+		从<input class="easyui-datebox" name="beginTime" value="{$beginTime}" style="width:120px"
+			data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+		至<input class="easyui-datebox" name="endTime" value="{$endTime}" style="width:120px"
+			data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+		<a href="javascript:$('#cond').submit();"class="easyui-linkbutton" iconcls="icon-search" plain="true">查询</a>
+	</form>
+
+</div>
+</block>

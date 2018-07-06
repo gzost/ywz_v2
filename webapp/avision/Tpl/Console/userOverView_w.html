@@ -1,0 +1,57 @@
+<!-- 
+	直播控制台--总览
+	宽屏显示模板
+	outao 2016-12-19
+ -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__ROOT__/home/{$theme|default='default'}/css/login.css" />
+<script type="text/javascript">
+</script>
+
+<div class="centerdiv input-box" style="width:550px;margin-top:10px;">
+	<div class="title">修改密码</div>
+	<form  id="form1" action="__URL__/doEditPwd" method="post">
+		<table width="100%" align="center">
+			<tr>
+				<td>原密码：</td>
+				<td>
+					<input id="pw" class="easyui-textbox" type="password" name="pswd1" value="" style="width:200px;height:32px"
+					data-options="prompt:'请输入原密码',required:true,missingMessage:'请输入原密码',
+						validType:'minLength[6]' " >
+					密码应包括字母、数字、符号
+				</td>
+			</tr>
+			<tr>
+				<td>密码：</td>
+				<td>
+					<input id="pw" class="easyui-textbox" type="password" name="pswd2" value="" style="width:200px;height:32px"
+					data-options="prompt:'请输入不少于6个字符',required:true,missingMessage:'必须输入密码。',
+						validType:'minLength[6]' " >
+					密码应包括字母、数字、符号
+				</td>
+			</tr>
+			<tr>
+				<td>重复输入密码：</td>
+				<td>
+					<input class="easyui-textbox"  type="password" name="pswd3" value="" style="width:200px;height:32px"
+					data-options="prompt:'请输入不少于6个字符',required:true " >
+					两次密码输入必须相同
+				</td>
+			</tr>
+		</table>
+	</form>
+	<div style="text-align:center;margin:10px;">
+	<div id="msgBox" class="errorMsg">{$errorMsg}</div>
+	<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" 
+		style="width:100px;height:30px;" onClick="$('#form1').submit();" >
+		<span style="font-size:14px;">保存</span>
+	</a>
+	</div>
+</div>
+</block>

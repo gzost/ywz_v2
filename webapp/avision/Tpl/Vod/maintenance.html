@@ -1,0 +1,30 @@
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/css/OUI.css" />
+
+<script type="text/javascript">
+function maint(){
+	$("#progress").html('开始维护......');
+	var loop=setInterval("showProgress()",2000);
+	$.post("__ACTION__",{work:"maint"},function(data){
+		clearInterval(loop);
+		showProgress();
+	},'html');
+}
+function showProgress(){
+	$.post("{$path}",{},function(data){
+		$("#progress").html(data);
+	},'html');
+}
+</script>
+
+<div style="text-align:center;">
+	<a href="#" class="OUI-btn" style="padding:4px 40px" onclick="maint();" >开始</a>
+</div>
+<div id='progress'></div>
+</block>

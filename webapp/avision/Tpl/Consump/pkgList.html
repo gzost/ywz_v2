@@ -1,0 +1,112 @@
+<load href="__PUBLIC__/js/bill.js"/>
+<load href="__PUBLIC__/js/qrcode.js" />
+<load href="__PUBLIC__/js/jquery.qrcode.js" />
+<style type="text/css">
+.qrcodeArea{
+	position:absolute;
+	left:0px;
+	top:0px;
+}
+.flex-contBetween {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+.flex-between-item{
+    width: 25%;
+}
+
+</style>
+<div class="flex-contBetween">
+	<img id="wxlogo" src="/Public/images/wx64.png" style="display:none;"/>
+	<foreach name="sellingPkg" item="pkg">
+				<div class="flex-between-item" style="width:160px; height:240px; background-color:#fff; border:1px solid #aaa; margin: 0 5px 5px 0; vertical-align:top;position:relative;">
+					<div style="width:100%; height:150px; background-color:#888;
+						background-image: url(__ROOT__{$pkg.picture}); background-size:contain;	">
+					</div>
+					<div style="padding:5px; text-align:center; font-size:16px; font-weight:bold; word-break:break-all;color:#000;font-family:微软雅黑;padding-top:10px;">
+						{$pkg.name}
+					</div>
+					<div style="width:100%; text-align:center; position:absolute; bottom:2px;">
+						<if condition="$pkg.accept_c eq 'true' ">
+							<a href="javascript:void(0)" class="easyui-linkbutton c9" onclick="purchasePkg({
+								id:{$pkg.id},name:'{$pkg.name}',accept:'c',price:{$pkg.price_c},value:{$pkg.value},
+								expire:{$pkg.expire}, category:'{$pkg.category}' })">现金购买</a>
+						</if>
+						<span style="margin-left:3px;">&nbsp;</span>
+						<if condition="$pkg.accept_p eq 'true' ">
+							<a href="javascript:void(0)" class="easyui-linkbutton c10" onclick="purchasePkg({
+								id:{$pkg.id},name:'{$pkg.name}',accept:'p',price:{$pkg.price_p},value:{$pkg.value},
+								expire:{$pkg.expire}, category:'{$pkg.category}' })">点数购买</a>
+						</if>
+					</div>
+					<div id="qrcode{$pkg.id}" class="qrcodeArea" onclick="$(this).html('');">
+					</div>
+				</div>
+	</foreach>
+</div>
+<script type="text/javascript">
+var bill = new BillHelper();
+
+/**
+ * 购买充值包
+ * @param jsonObject args	充值包对象
+ */
+function purchasePkg(args){
+	var pkg={};
+	$.extend(pkg,args);
+	var pkgstr=JSON.stringify(pkg);
+
+	var msg="确定购买以下套餐：<br>"+args.name+'<br><br>';
+	var price=pkg.price;
+	if(pkg.accept=='c') {
+		//price /=100;
+		//price +='元';
+		getPayCode(pkg.id);
+		return;
+	}else
+		price +='网真点';
+	
+	msg += '销售价格：'+price+'<br>';
+	msg += '包含时长：'+pkg.value+'分钟<br>';
+	msg += '有效期：'+pkg.expire+'天';
+	$.messager.confirm('Confirm',msg,function(r){
+		if (r){  
+			$('#step').val('3');
+			$("input[name='note']").val(pkgstr);
+			$("#ff").submit(); 	//.form('submit')
+		}	
+	});
+}
+
+function onCodeRecv(data)
+{
+	//alert(data.payurl);
+	var codeW = 160;
+	var codeH = 160;
+	var imgW = 32;
+	var imgH = 32;
+
+	$('#qrcode'+data.pkId).qrcode({
+							text: data.payurl,
+							width: codeW,
+							height: codeH,
+							border:	0,
+							logoid:'wxlogo',
+							logoW:imgW,
+							logoH:imgH,
+						});
+}
+
+function getPayCode(pkgId)
+{
+	var p = location.href.indexOf('.php/');
+	var codeUrl = location.href.substr(0, p+5) + 'Package/getPayQrcode/p/'+pkgId;
+
+	$('#qrcode'+pkgId).html('');
+
+	bill.billCode3Recv = onCodeRecv;
+	bill.billCode3(codeUrl, '');
+}
+</script>

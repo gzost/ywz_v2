@@ -1,0 +1,46 @@
+/*
+折叠式菜单的样式文件，需要与menu-collapsed.js一起使用
+*/
+ul#menu_collapsed, ul#menu_collapsed ul {
+  list-style-type:none;
+  margin: 0;
+  padding: 0px;
+  #width: 15em;
+	font-family:微软雅黑,verdana,helvetica,arial,sans-serif;
+    font-size:14px;
+    font-weight:500;
+	letter-spacing:2px;
+}
+
+ul#menu_collapsed  a {
+  display: block;
+  text-decoration: none;
+	width:100%;
+}
+
+ul#menu_collapsed li {
+  margin-top: 1px;
+}
+
+ul#menu_collapsed li a {
+  background: #333;
+  color: #fff;	
+  padding: 5px;
+	padding-left: 1em;
+}
+
+ul#menu_collapsed li a:hover {
+  background: #000;
+}
+
+ul#menu_collapsed li ul li a {
+  background: #eee;
+  color: #000;
+  padding-left: 25px;
+}
+
+ul#menu_collapsed li ul li a:hover,ul#menu_collapsed li ul .current a {
+  background: #dfd;
+  border-left: 5px #000 solid;
+  padding-left: 20px;
+}

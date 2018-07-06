@@ -1,0 +1,150 @@
+@charset "utf-8";
+/* 基本的页面布局及基础字体定义 */
+body {
+	font-family:"微软雅黑","宋体",Courier, "Courier New", monospace ;
+	font-size: 14px; line-height:15px;
+	background-color: #d3c5a2; color: #000;
+	margin: 0; 	padding: 0;
+	
+}
+#container {
+	width: 100%;
+	/* max-width: 1260px; 可能需要最大宽度，以防止此布局在大型显示器上过宽。这将使行长度更便于阅读。 */
+	min-width: 600px; /* 可能需要最小宽度，以防止此布局过窄。这将使侧面列中的行长度更便于阅读。*/
+	
+	margin: 0 auto; /* 侧边的自动值与宽度结合使用，可以将布局居中对齐。如果将 .container 宽度设置为 100%，则不需要此设置。 */
+}
+
+#signPage{
+	width:100%;
+	min-width:300px;
+	max-width:600px;
+	margin: 0 auto;
+}
+
+.pageHead {
+	min-height:60px;
+	background-color: #fff; color: #000;
+	border-bottom: 2px ridge #ddd;
+	line-height:50px;
+}
+.logo{
+	padding-top:8px;
+	float:left;
+}
+.chnName{
+	max-width:60%;
+	font-size:32px;
+	float:left;
+	text-align:right;
+	min-width:300px;
+	color:#555555;
+	font-weight:bold;
+}
+.pageHeadInfo{
+	float:right;
+}
+#sysInfo{
+	padding: 2px 10px;
+}
+.userInfo{
+	float:right;
+	margin: 2px 10px;
+}
+#externalLink  {
+	float:right;
+	padding: 2px 10px;
+	clear: both;
+}
+.sidebarCtl{
+	float:right;
+	margin: 2px 10px;
+}
+#sidebar {
+	border-left: 2px ridge #ddd;
+	float: right;
+	width:350px;
+	background-color: #f2f2f2; color: #000;
+}
+
+.v-left-cut {
+	border-left: 3px ridge #CCFF99;
+}
+
+#videotitle
+{
+	width: 100%;
+	background-color: #fff;
+	height: 30px;
+	text-align:center;
+}
+
+#videocontent
+{
+	background-color: #33FFFF;
+	vertical-align: middle;
+	text-align:center;
+	margin-left:4px; margin-right:2px;
+}
+
+footer
+{
+	width: 100%;
+	height: 20px;
+	background-color: #fff;
+	text-align:center;
+	color: #aaa;
+}
+
+/* ~~ 元素/标签选择器 ~~ */
+ul, ol, dl { /* 由于浏览器之间的差异，最佳做法是在列表中将填充和边距都设置为零。为了保持一致，您可以在此处指定需要的数值，也可以在列表所包含的列表项（LI、DT 和 DD）中指定需要的数值。请注意，除非编写一个更为具体的选择器，否则您在此处进行的设置将会层叠到 .nav 列表。 */
+	padding: 0;
+	margin: 0;
+}
+h1, h2, h3, h4, h5, h6, p {
+	margin-top: 0;	 /* 删除上边距可以解决边距会超出其包含的 div 的问题。剩余的下边距可以使 div 与后面的任何元素保持一定距离。 */
+	padding-right: 15px;
+	padding-left: 15px; /* 向 div 内的元素侧边（而不是 div 自身）添加填充可避免使用任何方框模型数学。此外，也可将具有侧边填充的嵌套 div 用作替代方法。 */
+}
+a img { /* 此选择器将删除某些浏览器中显示在图像周围的默认蓝色边框（当该图像包含在链接中时） */
+	border: none;
+}
+
+/* ~~ 站点链接的样式必须保持此顺序，包括用于创建悬停效果的选择器组在内。 ~~ */
+a:link {
+	color:#414958;
+	text-decoration: underline; /* 除非将链接设置成极为独特的外观样式，否则最好提供下划线，以便可从视觉上快速识别 */
+}
+a:visited {
+	color: #4E5869;
+	text-decoration: underline;
+}
+a:hover, a:active, a:focus { /* 此组选择器将为键盘导航者提供与鼠标使用者相同的悬停体验。 */
+	text-decoration: none;
+}
+
+#showDiv{
+	width:100%;
+	min-height:180px;
+	margin:0px;
+}
+
+#copyDiv{
+position:absolute;
+}
+
+.btn {
+    display: inline-block;
+    width: 100px;
+    height: 34px;
+    background-color: #fced97;
+    vertical-align: top;
+    line-height: 34px;
+    color: #d20000;
+    font-size: 14px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 14px;
+    transition: .3s;
+}
+

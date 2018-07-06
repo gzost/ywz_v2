@@ -1,0 +1,40 @@
+<!-- 直播控制台左侧菜单
+/**
+ * @param action 当前模块名称，菜单项中同模块名称的选为当前值，若没有传入此变量取当前的action名
+*/
+ -->
+<load href="__PUBLIC__/css/menu-collapsed.css" />
+<load href="__PUBLIC__/js/menu-collapsed.js" />
+
+<notpresent name='action'><assign name="action" value="<?php echo ACTION_NAME; ?>" </notpresent>
+
+<div id="menu" style="width:100%; overflow-x:hidden;">
+   <ul id="menu_collapsed" >
+     
+     <li><a href="#">账号</a>
+		 <ul>
+		   <li <eq name='action' value='overView'>class="current"</eq>><a href="__APP__/Console/overView/">账号总览</a></li>
+		   <li <eq name='action' value='packageList'>class="current"</eq>><a href="__APP__/Console/packageList/">套餐情况</a></li>
+		   <li <eq name='action' value='consumeList'>class="current"</eq>><a href="__APP__/Console/consumeList/">消费明细</a></li>
+		 </ul>
+	 </li>
+     <li><a href="#">频道</a>
+		 <ul>
+		   <li <eq name='action' value='chnBase'>class="current"</eq>><a href="__APP__/Console/chnBase/">基本设置</a></li>
+		   <li <eq name='action' value='chnInfo'>class="current"</eq>><a href="__APP__/Console/chnInfo/">介绍设置</a></li>
+		   <li <eq name='action' value='chnAdv'>class="current"</eq>><a href="__APP__/Console/chnAdv/">高级设置</a></li>
+		   <li <eq name='action' value='viewerStat'>class="current"</eq>><a href="__APP__/Console/viewerStat/">观看统计</a></li>
+		   <li <eq name='action' value='memberMgr'>class="current"</eq>><a href="__APP__/Console/memberMgr/">会员管理</a></li>
+		 </ul>
+	 </li>
+	 <li><a href="#">推流源</a>
+		 <ul>
+		   <li <eq name='action' value='stream'>class="current"</eq>><a href="__APP__/Console/stream/">推流源管理</a></li>
+		   <li <eq name='action' value='record'>class="current"</eq>><a href="__APP__/Console/record/">录像管理</a></li>
+		 </ul>
+	 </li>
+   </ul>
+</div>
+
+<script type="text/javascript">
+</script>

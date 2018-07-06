@@ -1,0 +1,88 @@
+<!-- 权限管理页面
+	本页面支持$theme
+ -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__ROOT__/admin/{$theme|default='default'}/css/detailForm.css" />
+<script type="text/javascript">
+$(document).ready(function(){
+	var typeIcon,typeText;
+	$('#btType').linkbutton({
+		iconCls:typeIcon,
+		onClick:function(){
+			var objType=$('#objType').val();
+			if(objType=='user'){
+				$('#objType').val('role');
+			}else {
+				$('#objType').val('user');
+			}
+			setButton();
+		}
+	});	//#btType
+	setButton();
+	$('#objText').linkbutton({
+		plain:true
+	});
+	
+	var work=$('#work').val();
+	if(work=='save'){
+		$('#objName').textbox({readonly:true});
+		$('#btType').linkbutton({disabled:true});
+		$('#btSubmit').linkbutton({ iconCls:'icon-save',text:'保存新权限' });
+	} else {
+		$('#btSubmit').linkbutton({ iconCls:'icon-search',text:'查询权限' });
+	}
+});
+
+//根据$('#objType').val();设置相应的显示
+function setButton(){
+	var objType=$('#objType').val();
+	if(objType=='user'){
+		$('#btType').linkbutton({
+			iconCls:'icon-users',
+			text:'角色权限'
+		});
+		$('#objText').linkbutton({text:'用户账号'});
+	}else {
+		$('#btType').linkbutton({
+			iconCls:'icon-man',
+			text:'用户权限'
+		});
+		$('#objText').linkbutton({text:'角色名'});
+	}
+}
+
+</script>
+<style type="text/css"> 
+	
+</style>
+<div style="margin:10px 10px 10px 10px; min-width:600px;">
+	<form id='userRight' action='__ACTION__/' method='post'>
+	<div class="easyui-panel" title="权限列表 " style="width:100%;padding:0; font-size:14px;">
+ 		<div class='datagrid-header' style="font-size:14px;">
+ 			<a id="btType" href="javascript:void(0)"   data-options="iconCls:'icon-users'">用户权限</a>
+			<span id="objText">角色名</span><input id='objName' class="easyui-textbox" name='objName' value="{$objName}" />
+			
+			<a id="btSubmit" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true" 
+				onclick="$('#userRight').submit();">查询权限</a>
+			<input name='objId' value="{$objId}" style="display:none" />
+			<input id='objType' name='objType' value="{$objType}" style="display:none" />
+			<input id='work' name='work' value="{$work}" style="display:none" />
+			<div class='alertMsg'>{$msg}</div>
+		</div>
+		<table class="detail-form" width=100% cellpadding="0" cellspacing=0 border=0>
+		<thead>
+			<tr><th width=20%>功能</th><th width=90%>操作权限</th></tr>
+		</thead>
+		{$content}
+		</table>
+
+	</div>
+	</form>
+</div>
+</block>

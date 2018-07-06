@@ -1,0 +1,45 @@
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#dg").datagrid('getPager').pagination({displayMsg:"正在显示 {from} 到 {to} 行，共 {total} 行"});
+});
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+	data-options="url:'__URL__/UserData',rownumbers:true,singleSelect:true,
+		toolbar:'#tb',pagination:true,  pageSize:10 "
+>
+	<thead>
+		<tr>
+			<th data-options="field:'name', width:200,align:'left', halign:'center' ">频道名称</th>
+			<th data-options="field:'type', width:200,align:'left', halign:'center',formatter:fmtType">观看方式</th>
+			<th data-options="field:'status', width:200,align:'center',formatter:fmtStatus">是否启动</th>
+			<th data-options="field:'',width:100,align:'right', halign:'center' ">操作</th>
+		</tr>
+	</thead>
+
+</table>
+
+<div id="tb" style="padding:2px 5px;">
+	<form id='cond' method='post' style="display:inline">
+		查询条件：　
+
+		频道：<input class='easyui-combobox' name='chnId' value='{$chnId}'  style='width:180px'
+				data-options="valueField:'id',textField:'name', 
+					url:'__URL__/onlineUserGetChnPulldown' " />
+		<input name='work' value='{$work}' style="display:none" />
+		<a href="javascript:$('#cond').submit();"class="easyui-linkbutton" iconcls="icon-search" plain="true">查询</a>
+	</form>
+
+</div>
+</block>

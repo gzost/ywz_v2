@@ -1,0 +1,214 @@
+<!-- Ajax 输出 -->
+<style type="text/css">
+#detail .title{
+	font-size:16px; font-weight:bold;
+}
+#detail form{display:inline;}
+</style>
+
+<script type="text/javascript" src="/Public/js/jquery.form.js"></script>
+
+<script type="text/javascript">
+
+function detail_submit(){
+	var data=$("#fm-detail").serialize();
+	var url="__APP__/Vod/updateAjax";
+	$.post(url,data,function(data){
+		//$("#detail").html(data);
+		console.log(data);
+		if('true'==data.success){
+			alert('保存成功！');
+			$("#dg").datagrid("reload");
+		}else{
+			alert(data.msg+'保存失败！');
+		}
+	},'json');
+}
+
+$(function(){ 
+	//var videoUploader=fine_upload_obj("video-uploader","/admin.php/Vod/endpoint");
+	//var coverUploader=fine_upload_obj("cover-uploader","/admin.php/Vod/endpoint");
+	<eq name="permitCreate" value="true">
+		init_fine_upload();
+		console.log("ownerId={$owner}");
+	</eq>
+});
+function init_fine_upload(){
+	var endpointUrl="__APP__/Vod/endpoint";
+	//上传视频
+	var videoUploader=new qq.FineUploader({
+		element: document.getElementById("video-uploader"),
+        debug: true,
+        multiple:false,
+        request: { endpoint: endpointUrl +"?path={$path}&type=video" },
+        deleteFile: { enabled: false, endpoint: endpointUrl+"?path={$path}&type=video&" },
+        chunking: {
+            enabled: true,
+            concurrent: {  enabled: true },
+            success: {   endpoint: endpointUrl+"?done&path={$path}&type=video" }
+        },
+        resume: { enabled: true },
+        retry: { enableAuto: true, showButton: true  },
+        validation: {
+            //控制上传文件的后缀格式数组
+            allowedExtensions: ['mp4'],
+         	//控制上传文件大小
+            sizeLimit: 800 * (1024 * 1024) // 800 MB 
+         },
+         messages:{
+        	 sizeError:"{file}太大了，最大允许上传{sizeLimit}",
+        	 typeError:"只能上传 {extensions} 文件。"
+         },
+        callbacks:{
+        	onComplete:function(id,name,response,xhr){
+        		response.recordId="{$id}";
+        		response.path='{$path}';
+        		$.post('__APP__/Vod/postUploadVideoAjax',response,function(data){
+        			var timestamp=new Date().getTime();
+        			//$("#coverimg").attr('src',data.imgUrl+'?'+timestamp.toString());
+        			$("#video-uploader ul").html('');
+        			console.log(data);
+        		},'json');
+        	}
+        }
+ 	});	// var videoUploader
+
+ 	//上传封面
+	var videoUploader=new qq.FineUploader({
+		element: document.getElementById("cover-uploader"),
+        debug: false,
+        multiple:false,
+        request: { endpoint: endpointUrl+"?path={$path}&type=cover"  },
+        deleteFile: { enabled: false, endpoint: endpointUrl+"?path={$path}&type=cover&" },
+        chunking: {
+            enabled: true,
+            concurrent: {  enabled: true },
+            success: {   endpoint: endpointUrl+"?done&path={$path}&type=cover" }
+        },
+        resume: { enabled: true },
+        retry: { enableAuto: true, showButton: true  },
+        validation: {
+            //控制上传文件的后缀格式数组
+            allowedExtensions: ['jpg'],
+         	//控制上传文件大小
+            sizeLimit: 200 * 1000 // 200 kB 
+         },
+         messages:{
+        	 sizeError:"{file}太大了，最大允许上传{sizeLimit}",
+        	 typeError:"只能上传 {extensions} 文件。"
+         },
+        callbacks:{
+        	onComplete:function(id,name,response,xhr){
+        		response.name=name;
+        		response.recordId="{$id}";
+        		response.path='{$path}';
+        		//response.owner="{$owner}";
+        		//response.ownerAccount="{$account}";
+        		$.post('__APP__/Vod/postUploadCoverAjax',response,function(data){
+        			var timestamp=new Date().getTime();
+        			$("#coverimg").attr('src',data.imgUrl+'?'+timestamp.toString());
+        			$("#cover-uploader ul").html('');
+        			console.log(data);
+        		},'json');
+        		console.log(response);
+        	}
+        }
+ 	});	// var videoUploader
+}	//function init_fine_upload
+
+function previewRec()
+{
+	//console.log('preview');
+	try
+	{
+		//$('#divPreview').window('open');
+		$('#divPreview').window('open').window('refresh','__APP__/HDPlayer/recShowPage/str/{$id}/pre/1.html');		
+	}
+	catch (e)
+	{
+		console.log(e);
+	}
+}
+
+function EventTester(e, fun)
+{
+	document.getElementById("h5Player").addEventListener(e,fun);
+}
+
+function onPlayEven()
+{
+}
+
+function onStopEven()
+{
+}
+
+function onResizeEven()
+{
+}
+
+function onVideoClick()
+{
+}
+
+function onVideoError()
+{
+}
+
+$('#coverimg').ready(function(){
+	var x = $('#coverimg').width() / 2 - 15 ;
+	var y = $('#coverimg').height() /2 + 15;
+	console.log('x:'+x+',y:'+y);
+	$('#playicon').css("left", x + "px");
+	$('#playicon').css("top", "-" + y + "px");
+	$('#playicon').show();
+});
+
+
+</script>
+
+<div class="title">{$title}</div>
+<form id="fm-detail" >
+	<div style="display:inline-block; width:500px;vertical-align:top;">
+		{$detailFormData}
+		<input type="hidden" name="new" value="{$new}" />
+		<input type="hidden" name="owner" value="{$owner}" />
+		<input type="hidden" name="id" value="{$id}" />
+		<input type="hidden" name="path" value="{$path}" />
+		<div style="white-space:nowrap;margin:5px;" >
+			上传录像文件  <span class="OUI-warm" style="font-weight:bold;">*警告：上传新的录像文件将永久覆盖原有的录像！</span>
+			<div id="video-uploader" style="">您没上传录像的权限</div>
+		</div>
+	</div>
+	<div style="display:inline-block;vertical-align:top;margin-left:20px">
+		<div style="font-size:1.2em;">封面图片<!-- {$imageUrl}  --> </div>
+		<div>
+			<img id="coverimg" alt="封面图片" src="{$imageUrl}" style="display:block;width:200px;height:109px;"/>
+			<img id="playicon" src="__PUBLIC__/images/play.png" style="position:relative;display:none;cursor:point;opacity:0.7" onclick="previewRec();"/>
+			<div id="divPreview" class="easyui-window"
+			data-options="title:'录像预览',
+			width:600,
+			height:400,
+			modal:true,
+			minimizable:false,
+			maximizable:false,
+			draggable:false,
+			collapsible:false,
+			resizable:false,
+			closed:true,
+			onClose:function(){$('#h5Player').stop();$('#h5Player').attr('src', '');},"></div>
+
+		</div>
+		<div style="white-space:nowrap;margin:10px;" >
+			更换图片
+			<div id="cover-uploader" style="width:400px">您没更改图片的权限</div>
+		</div>
+	</div>
+</form>
+<div style="width:900px; text-align:center;margin-top:20px;">
+	<eq name="permitModify" value="true">
+		<a href="#" class="OUI-btn" style="padding:4px 40px" onclick="detail_submit();" >保存</a>
+	<else/>
+		您没有修改权限
+	</eq>
+</div>

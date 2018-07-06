@@ -1,0 +1,110 @@
+<!-- 
+	易网真客户服务“登录/注册”页
+	宽屏显示模板
+	outao 2016-12-05
+ -->
+<extend name="common:HomeBase_w" />
+<block name="bl_north">
+<include file="Home:loginReg_w" />
+</block>
+
+<block name="bl_main">
+<load href="__ROOT__/home/{$theme|default='default'}/css/login.css" />
+<style>
+.swimg{
+	position:absolute;
+	left:296px;
+	top:2px;
+	border-radius:15px;
+	cursor:pointer;
+	width:64px;
+	height:64px;
+}
+</style>
+
+<script type="text/javascript" src="__PUBLIC__/js/jquery.md5.js"></script>
+<load href="__PUBLIC__/js/publicFunction.js"/>
+<script type="text/javascript">
+//var swValue = 'pc';
+function makeMD5(){
+	var psw=$('#password').textbox('getValue');
+	$('#password').textbox('setValue',$.md5(psw));
+	$('#form1').submit();
+}
+/*
+function swClick(setto)
+{
+	if('pc' == setto)
+	{
+		$('#swWx').hide();
+		$('#panWx').hide();
+		$('#panWxContent').html('');
+		$('#swPc').show();
+		$('#panPc').show();
+	}
+	else if('wx' == setto)
+	{
+		$('#swPc').hide();
+		$('#panPc').hide();
+		$('#swWx').show();
+		$('#panWx').show();
+		DivLoadHtml('{$wxLoginCodeUrl}', 'panWxContent');
+	}
+}
+$(document).ready(function()
+{
+	swClick(swValue);
+});
+*/
+</script>
+<if condition="$wxLoginHelp eq false">
+<else/>
+	<div class="wxLoginHelp">{$wxLoginHelp}</div>
+</if>
+<div id="loginbox" class="centerdiv" style="position:absolute;width:1px;left:40%;">
+	<div class="input-box" style="width:300px;">
+	<!--
+		<img onclick="swClick('wx')" id="swPc" src="__PUBLIC__/images/loginsw.jpg" class="swimg"/>
+		<img onclick="swClick('pc')" id="swWx" src="__PUBLIC__/images/loginsw2.jpg" class="swimg"/>
+	-->
+		<div id="panPc" style="">
+			<div class="title" style="margin-bottom:20px;text-align:center;">
+				密码登录
+			</div>
+			<div class="wxLoginHelp">{$wxLoginHelp}</div>
+			<form  id="form1" action="__APP__/Home/authen" method="post">
+
+					<div style="margin:20px 30px;">
+						<input class="easyui-textbox" name = "account" value="{$account}" 
+							style="width:100%;height:30px;padding:12px" 
+							data-options="prompt:'输入手机号码或平台账号',iconCls:'icon-man',iconWidth:38" />
+					</div>
+					<div style="margin:20px 30px;">
+						<input class="easyui-textbox" type="password" name = "password" id="password"
+							style="width:100%;height:30px;padding:12px" 
+							data-options="prompt:'密码',iconCls:'icon-lock',iconWidth:38" />
+					</div>
+
+					<div style="margin:10px 10px;text-align:center;">
+						<input class="easyui-linkbutton" type="submit" data-options="iconCls:'icon-ok'" style="padding:5px 0px;width:50%;height:40px;" value="登录" onClick='makeMD5();'/>
+					</div>
+					<div id="msgBox" class="errorMsg">{$errorMsg}</div>
+					<div style="margin-top:30px;height:40px;">
+						<a href="{$wxLoginUrl}" style="float:left;"><img src="__PUBLIC__/images/wx64.png" style="margin-left:10px;width:36px;vertical-align:middle;"/>微信登录</a>
+						<a href="__APP__/Home/register" style="float:right;line-height:36px;margin-right:15px;">免费注册</a>
+					</div>
+					<input type='hidden' name='chnid' value='{$chnid}' />
+			</form>
+		</div>
+		<!--
+		<div id="panWx" style="height:230px;">
+			<div class="title" style="margin-left:20px;margin-bottom:30px;text-align:left;">
+				微信扫码登录
+			</div>
+			<div id="panWxContent">
+			</div>
+		</div>
+		-->
+	</div>
+</div>
+</block>

@@ -1,0 +1,57 @@
+<!-- 在线用户  -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+<link rel="stylesheet" type="text/css" href="/admin/default/css/channel.css">
+<script type="text/javascript">
+</script>
+
+<style type="text/css"> 
+</style>
+
+<div id="tb" style="padding:2px 5px;">
+	<form action="__URL__/Edit" id='cond' method='post' style="display:inline">
+		查询条件：　
+
+		频道：<input class='easyui-combobox' name='chnId' value='{$chnId}'  style='width:180px'
+				data-options="valueField:'id',textField:'name', 
+					url:'__URL__/GetChnComboxData'"/>
+		<a href="javascript:$('#cond').submit();" class="easyui-linkbutton" iconcls="icon-search" plain="true">查询</a>
+	</form>
+</div>
+
+<div class="easyui-tabs" style="width:100%;" fit="true">
+<div title="基本信息" class="panel-noscroll">
+	<iframe src="__URL__/EditBase/chnId/{$chnId}">
+	</iframe>
+</div>
+<!--  
+<div title="在线购物">
+	<iframe src="__URL__/EditBuy/chnId/{$chnId}">
+	</iframe>
+</div>
+-->
+
+<div title="会员报名" class="panel-noscroll">
+	<iframe src="__URL__/EditSign/chnId/{$chnId}">
+	</iframe>
+</div>
+<!--  
+<div title="宣传">
+	<iframe src="__URL__/EditAd/chnId/{$chnId}">
+	</iframe>
+</div>
+-->
+<if condition="$isAdminRole">
+	<div title="出厂信息" class="panel-noscroll">
+		<iframe src="__URL__/EditAdmin/chnId/{$chnId}">
+		</iframe>
+	</div>
+</if>
+</div>
+</block>

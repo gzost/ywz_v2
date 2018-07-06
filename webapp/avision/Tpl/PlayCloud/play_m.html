@@ -1,0 +1,59 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui" />
+<meta charset="utf-8">
+<title>易网真直播室</title>
+<meta name="keywords" content="易网真,易网真直播室" />
+<meta name="description" content="支持PC终端,Android安卓终端,iOS苹果终端,WindowsPhone终端,纯HLS(m3u8)跨平台技术(跨平台多终端测试)" />
+<link rel="stylesheet" type="text/css" href="images/common.css"/>
+</head>
+<body>
+<!--content/begin-->
+<div id="content" >
+<!--HLSPlayer代码开始-->
+<div class="video" id="HLSPlayer" >
+<SCRIPT LANGUAGE=JavaScript>
+<!--
+/*
+* HLSPlayer参数应用=========================<br>
+* @Contact QQ:261532593 
+* @param {Object} vID        ID
+* @param {Object} vWidth     播放器宽度设置
+* @param {Object} vHeight    播放器宽度设置
+* @param {Object} vPlayer    播放器文件
+* @param {Object} vHLSset    HLS配置
+* @param {Object} vPic       视频缩略图
+* @param {Object} vCssurl    移动端CSS应用文件
+* @param {Object} vHLSurl    HLS(m3u8)地址
+* ==========================================
+*/
+var vID        = ""; 
+var vWidth     = "100%";                //播放器宽度设置
+var vHeight    = 400;                   //播放器宽度设置
+var vPlayer    = "/HLSplayer.swf?v=1.5"; //播放器文件
+var vHLSset    = "/HLS.swf";             //HLS配置
+var vPic       = "/images/start.jpg";    //视频缩略图
+var vCssurl    = "/images/mini.css";     //移动端CSS应用文件
+//var vServer    = "rtmp://live1.evideocloud.net/live/forest__rVOXXYlAaP0B";
+var vServer    = "{$rtmpmrl}";
+//var vFile      = "/CuSunV2set.xml";
+
+//HLS(m3u8)地址,适配PC,安卓,iOS,WP
+//var vHLSurl    = "http://live.evideocloud.net/live/test__rM02w1zyy2jj/test__rM02w1zyy2jj.m3u8";
+var vHLSurl    = "{$hlsmrl}";
+
+//-->
+</SCRIPT> 
+<script type="text/javascript" src="js/hls.min.js?rand=20141217"></script>
+</div>
+<!--HLSPlayer代码结束-->
+<div style="text-align:center;width:100%;background:#000000;">
+<img src="./images/dg.jpg" border="0" width="100%"/>
+<img src="./images/time.jpg" border="0" width="100%"/>
+</div>
+</div>
+<!--content/end-->
+
+</body>
+</html>

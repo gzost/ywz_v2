@@ -1,0 +1,89 @@
+<!-- 
+	易网真客户服务入口页
+	宽屏显示模板
+	outao 2016-12-05
+ -->
+<extend name="common:HomeBase_w" />
+
+<block name="bl_north">
+<load href="__PUBLIC__/js/html5_3d_animation.js" />
+<script type="text/javascript">
+	
+	$(function() {
+		
+	    $("#html5_3d_animation").html5_3d_animation({
+	        window_width: '1330',
+	        window_height: '500',
+	        window_background: '#00113F',
+	        star_count: '100',
+	        star_color: '#FBFFAF',
+	        star_depth: '100'
+	    });
+	    
+	});
+	
+	$(function(){
+		doSearch('');
+	});
+	function doSearch(value,name){
+		
+		$("#channelList").prepend("<div>查找中......</div>");
+		$.post("__URL__/channelListAjax",{type:9,scrType:'w',searchStr:value},
+				function(data){
+					//$("#channelList").html(data);
+			//alert(data);
+				}
+		,'html'	);
+        //alert('You input: ' + value+'('+name+')');
+        
+    }
+</script>
+<style>
+		canvas#html5_3d_animation {
+   			display: block;
+    		position: absolute;
+    		top: 0px;
+    		z-index: 0;
+    		opacity: 0.3;
+		}
+</style>
+	<div id="north">
+		<div id="slogan">
+			<div> </div>
+			<div style="margin-top:130px;">
+				<!-- <a href="http:__APP__/Home/toBroadcast" class="btn btn-live">我要直播</a> -->
+			</div>
+		</div>
+	</div>
+	<canvas id="html5_3d_animation" >Internet Explorer 8 Not Supported</canvas>
+</block>
+
+<block name="bl_main">
+<load href="__ROOT__/home/{$theme|default='default_w'}/css/index.css" />
+<div class="title">
+	<div class="inner" style="text-align:left;">
+		<span>产品导航</span>
+		<div class="search">
+			<input class="easyui-searchbox" 
+				data-options="prompt:'输入名称',searcher:doSearch, height:28" style="width:100%">
+		</div>
+	</div>
+</div>
+<div class="inner">
+	<div id="channelList">
+		<img src="__ROOT__/product/1.png"  style="width:300px;" />
+		<img src="__ROOT__/product/2.jpg" style="width:300px;" />
+		<img src="__ROOT__/product/3.jpg" style="width:300px;" />
+		<img src="__ROOT__/product/4.jpg" style="width:300px;" />
+		<img src="__ROOT__/product/5.png" style="width:300px;" />
+		
+		<img src="__ROOT__/product/6.png" style="width:300px;" />
+		
+		<img src="__ROOT__/product/8.jpg" style="width:300px;" />
+		<p></p>
+	</div>
+</div>
+
+</div>
+
+</block>

@@ -1,0 +1,326 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<title>{$title}直播间</title>
+<meta name="keywords" content="易网真,易网真直播间,avision视频直播系统" />
+<link href="__PUBLIC__/jeasyui/themes/default/easyui.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/icon.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/color.css" rel="stylesheet" type="text/css">
+<load href="__ROOT__/player/{$theme|default='default'}/css/base.css" />
+<load href="__PUBLIC__/NivoSlider/nivo-slider.css" />
+<load href="__PUBLIC__/NivoSlider/themes/default/default.css" />
+<load href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" />
+
+<load href="__PUBLIC__/jeasyui/jquery.min.js" />
+<load href="__PUBLIC__/js/jquery.json.min.js" />
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/publicFunction.js"></script>
+<load href="__ROOT__/player/js/keepAlive.js" />
+<load href="__ROOT__/player/js/webChat.js" />
+<!--<script type="text/javascript" src="/Public/aody/play.js"></script>-->
+<script type="text/javascript" src="http://cdn.aodianyun.com/lss/aodianplay/player.js"></script>
+<load href="__PUBLIC__/NivoSlider/jquery.nivo.slider.pack.js" />
+
+<script type="text/javascript">
+var h5p = null;
+var isPlay = false;
+var isShow = false;
+var playType = {$playType};
+var chnId = {$chnId};
+
+////心跳设置的变量////
+var aliveTime={$aliveTime};	//心跳间隔秒数
+var onlineId={$onlineId};	//频道ID
+var keepAliveUrl="__APP__/HDPlayer/keepAlive";
+var logoutUrl="__APP__/Home/logout";
+/////////
+
+//创建交流实例，并设置基本参数
+var chat=new webChat();
+chat.objName='chat';
+chat.continer="sidebar";
+chat.channelId="{$chnId}";
+chat.userName="{$username}";
+chat.userId="{$userId}";
+chat.appUrl="__APP__";
+
+$(document).ready(function(){
+	$(window).resize(function(){
+		resize();
+	});
+	keepAlive(playType, chnId);
+});
+
+
+/////sidebar/////
+function hideSideBar(){
+	if(isShow){
+		chat.unload();
+		$('#playDiv').width('100%');
+		$("#sidebar").hide();
+		$('#h5Div').width('50%');
+		$('#infoDiv').show();
+		isShow = false;
+		resize();
+	}
+}
+function showSideBar(){
+console.log('showSideBar');	
+	if(!isShow){
+		$('#infoDiv').hide();
+		$('#h5Div').width('100%');
+		$("#sidebar").show();
+		chat.init();
+		isShow = true;
+		resize();
+	}
+}
+function resize()
+{	
+	setPlayHeight();
+	setPlayWidth();
+console.log('resize isShow:'+isShow);
+	if(isShow)
+	{
+		var top=$('.pageHead').outerHeight(true);//$('#sidebar').position().top;
+		var windowHeight=$(window).height();
+console.log('top='+top.toString());
+console.log('window height='+windowHeight.toString());
+		//$('#sidebar').height($(window).height() - $('.pageHead').outerHeight(true));
+		$('#sidebar').height(windowHeight-top);
+		chat.fit();
+	}
+	else
+	{
+	}
+}
+
+function showChat(){
+	
+	showSideBar();
+	
+	//resize();
+}
+
+//初始化显示插件
+function loadInit()
+{
+	switch(playType)
+	{
+		case 1:
+			playerInit();
+		case 3:
+			break;
+		case 4:
+			sliderInit();
+			break;
+		default:
+			break;
+	}
+
+	setTimeout('setPlayHeight();', 1000);
+}
+
+$(window).load(function()
+{
+	loadInit();
+});
+
+function setPlayHeight()
+{
+	switch(playType)
+	{
+		case 1:
+			$('#playDiv').height($(window).height() - $('.pageHead').outerHeight(true));
+			$('#vvMedia1').height($(window).height() - $('.pageHead').outerHeight(true));
+			break;
+		case 3:
+			$('#playDiv').height($(window).height() - $('.pageHead').outerHeight(true));
+			$('#h5Player').height($(window).height() - $('.pageHead').outerHeight(true));
+			$('#infoDiv').height($('#playDiv').height());
+			break;
+		case 4:
+			$('#playDiv').height($(window).height() - $('.pageHead').outerHeight(true));
+			$('#infoDiv').height($('#playDiv').height());
+			break;
+		default:
+			break;
+	}
+}
+
+function setPlayWidth()
+{
+	var docWidth=$(window).width();
+console.log('document.width='+docWidth.toString());	
+	switch(playType)
+	{
+		case 1:
+			if(isShow)
+			{
+				$('#playDiv').width($(document).width() - $("#sidebar").outerWidth(true)-3);
+			}
+			else
+			{
+				$('#playDiv').width($(document).width());
+			}
+			break;
+		case 3:
+			if(isShow)
+			{
+				$('#playDiv').width(docWidth - $("#sidebar").outerWidth(true)-3);
+			}
+			else
+			{
+				$('#playDiv').docWidth;
+			}
+			break;
+		case 4:
+			if(isShow)
+			{
+				$('#playDiv').width($(document).width() - $("#sidebar").outerWidth(true)-3);
+			}
+			else
+			{
+				$('#playDiv').width($(document).width());
+			}
+			break;
+		default:
+			break;
+	}
+}
+
+function playerInit()
+{
+	/*
+var objectPlayer=new aodianPlayer({
+    container:'flashContent',//播放器容器ID，必要参数
+    rtmpUrl: '{$rtmpmrl}',//控制台开通的APP rtmp地址，必要参数
+    hlsUrl: '{$hlsmrl}',//控制台开通的APP hls地址，必要参数
+    /* 以下为可选参数* /
+    width: '100%',//播放器宽度，可用数字、百分比等
+    height: '500',//播放器高度，可用数字、百分比等
+    //autostart: true,//是否自动播放，默认为false
+    bufferlength: '1',//视频缓冲时间，默认为3秒。hls不支持！手机端不支持
+    maxbufferlength: '2',//最大视频缓冲时间，默认为2秒。hls不支持！手机端不支持
+    stretching: '1',//设置全屏模式,1代表按比例撑满至全屏,2代表铺满全屏,3代表视频原始大小,默认值为1。hls初始设置不支持，手机端不支持
+    controlbardisplay: 'enable',//是否显示控制栏，值为：disable、enable默认为disable。
+    //adveDeAddr: '',//封面图片链接
+    //adveWidth: 320,//封面图宽度
+    //adveHeight: 240,//封面图高度
+    //adveReAddr: ''//封面图点击链接
+});*/
+	aodianPlayer({
+		container:'flashContent',
+		rtmpUrl: '{$rtmpmrl}',//控制台开通的APP rtmp地址，必要参数
+	    hlsUrl: '{$hlsmrl}',//控制台开通的APP hls地址，必要参数
+		//url:'{$rtmpmrl}',
+		//uin:123,
+		//userid:14298,
+		//player:{
+		name:'player',
+		width: '100%',
+		height: '500',
+		adveReAddr:'/home/{$theme|default='default'}/images/start.jpg',
+		controlbardisplay: 'enable',
+		autostart: true,//是否自动播放，默认为false
+		//streamInfo:'streamInfo',
+		//mediaInfo:'mediaInfo',
+		//divID:'flashContent'
+		//}
+	});
+	setTimeout('startPlay()', 1000);
+}
+
+function sliderInit()
+{
+	$('#slider').nivoSlider({controlNav: false}); 	
+}
+</script>
+
+
+</head>
+<body class="panel-noscroll22" style="background-color:#000;">
+<div id="container">
+<header class="pageHead">
+	<div class="logo">
+		<a href="/"><img src="/player/{$theme|default='default'}/images/logo.png" style="margin-top:8px;height:25px;"/></a>
+	</div>
+
+	<div class="chnName">
+		{$chnName}
+	</div>
+
+	<div class="pageHeadInfo">
+		<div class="sidebarCtl">
+		<if condition="$isChat eq 'normal'">
+			侧边栏：
+			<a href="#" class="easyui-linkbutton" data-options="toggle:true,group:'g1', selected:true,onClick:hideSideBar">关闭</a>
+			<a href="#" class="easyui-linkbutton" data-options="toggle:true,group:'g1', onClick:showChat">交流</a>
+			<!--
+			<a href="#" class="easyui-linkbutton" data-options="toggle:true,group:'g1'">介绍</a>
+			-->
+		</if>
+		</div>
+		<div class="userInfo">
+			<span id="labLogonInfo">欢迎 {$username} ！</span>
+			<a id="lbLogout_a" href="/" class="easyui-linkbutton"  >返回首页</a>
+		</div>
+	</div>
+</header>
+
+		<div id="playDiv" style="float:left;width:100%;background-color:black;">
+		<switch name="playType">
+			<case value="1">
+				  <div id="flashContent"></div>
+			</case>
+			<case value="3">
+				<div id="h5Div" style="width:50%;float:left;">
+				<video id="h5Player" style="width:100%;margin:0;vertical-align:top;" poster="/player/{$theme|default='default'}/images/start.jpg" controls="controls" loop="loop" autoplay="autoplay">
+				  <source src="{$mp4Rec}" type="video/mp4" />
+				</video>
+				</div>
+				<div id="infoDiv" style="width:50%;float:left;overflow-y:scroll;">
+				<img src="{$infoImg}" border="0" width="100%" style="vertical-align:top;margin:0;"/>
+				</div>
+			</case>
+			<case value="4">
+				<div id="h5Div" style="width:50%;float:left;">
+				<img border="0" style="width:100%;vertical-align:top;margin:0;" src="__ROOT__/player/{$theme|default='default'}/images/unstart.jpg" alt="直播未开始" />
+				</div>
+				<div id="infoDiv" style="width:50%;float:left;overflow-y:scroll;">
+				<img src="{$infoImg}" border="0" width="100%" style="vertical-align:top;margin:0;"/>
+				</div>
+			</case>
+			<case value="5">
+				<div id="adpicture">
+					<div class="slider-wrapper theme-default">
+						<div id="slider" class="nivoSlider">     
+							<img src="__ROOT__/home/{$theme|default='default'}/images/adimg11.jpg" alt="" />    
+							<a href="http://dev7studios.com"><img src="__ROOT__/home/{$theme|default='default'}/images/adimg12.jpg" alt="" title="#htmlcaption" /></a>     
+							<img src="__ROOT__/home/{$theme|default='default'}/images/adimg13.jpg" alt="" title="This is an example of a caption" />     
+							<img src="__ROOT__/home/{$theme|default='default'}/images/adimg14.jpg" alt="" /> 
+						</div> 
+						<div id="htmlcaption" class="nivo-html-caption">     
+							<strong>This</strong> is an example of a <em>HTML</em> caption with <a href="#">a link</a>. 
+						</div>
+					</div>
+				</div>
+			</case>
+			<default>
+				<video id="h5Player" style="width:100%;margin:0;" poster="/home/{$theme|default='default'}/images/start.jpg" controls="controls" loop="loop" autoplay="autoplay">
+				  <source src="{$mp4Rec}" type="video/mp4" />
+				</video>
+			</default>
+		</switch>
+		</div>
+		<div id="sidebar" style="display:none">
+		</div>
+
+
+</div>
+</body>
+</html>

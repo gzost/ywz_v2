@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Web Chat</title>
+
+<load href="__PUBLIC__/js/jquery.min.js" />
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.easyui.min.js"></script>
+<link href="__PUBLIC__/jeasyui/themes/default/easyui.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/icon.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/color.css" rel="stylesheet" type="text/css">
+
+
+<script type="text/javascript">
+//页面装载完成立即运行的代码
+
+function Init()
+{
+	wc_resize();
+	/*
+	$(window).resize(function(){
+		wc_resize();
+	});
+	wc_resize();
+	*/
+	updateChatMsg();
+	$('#chatMsg').scrollTop($("#chatMsg")[0].scrollHeight);	//滚动到底部
+	setInterval("updateChatMsg()",10000);	//10秒刷新一次
+}
+$(window).load(function(){
+	setTimeout("Init()", 3000);
+
+});
+
+function updateChatMsg(){
+	//alert('fff');
+	var state=$('#autoUpdate').linkbutton('options');	//未选中为false，选中为true
+	if(state.selected) return;
+	//alert("update");
+	$.post("__URL__/updateChatMsg",
+		function(data){
+			if('nodata'!=data){
+				$('#chatMsg').append(data);
+				$('#chatMsg').scrollTop($("#chatMsg")[0].scrollHeight);	//滚动到底部
+			}
+		}
+	,'html');
+
+	$('#chatMsg').height($(window).height() - $('#chatCtrl').height());
+}
+function wc_resize()
+{
+	//$('#southLay').height($('#chatCtrl').height());
+	$('#chatMsg').scrollTop($("#chatMsg")[0].scrollHeight);	//滚动到底部
+	/*
+	var parentHeight=$("#chatMsg").parent().height();
+	var reservedHeight= $('#chatFunction').height() + $('#newMsg').height();	//为聊天框里其它窗口预留的高度
+	$('#chatMsg').scrollTop($("#chatMsg")[0].scrollHeight);	//滚动到底部
+	$("#chatMsg").height(parentHeight-reservedHeight);
+	*/
+}
+function sendMsg()
+{
+	if($.trim($("#message").val()).length<1)
+	{
+		return false;
+	}
+	$("#newMsgFrm").form('submit',{
+		url:"__URL__/newMsg",
+		onSubmit: function(){
+			//检查发送内容为空则不提交
+			if($.trim($("#message").val()).length<1)
+			{
+				return false;
+			}
+		},
+		success:function(data){
+			if('nodata'!=data && ''!=data && null!=data)
+			{
+				$('#chatMsg').append(data);
+				$('#chatMsg').scrollTop($("#chatMsg")[0].scrollHeight);	//滚动到底部
+				$('#message').val('');
+			}
+		}
+	});
+}
+</script>
+</head>
+<body style="padding:0px;">
+
+</body>
+</html>

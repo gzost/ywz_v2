@@ -1,0 +1,67 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jeasyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jeasyui/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="/admin/default/css/base.css">
+<link rel="stylesheet" type="text/css" href="/admin/default/css/channel.css">
+
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.edatagrid.js"></script>
+
+<title>易网真视频直播系统</title>
+</head>
+<body class="panel-noscroll" style="padding:20px;">
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#dg").datagrid('getPager').pagination({displayMsg:"正在显示 {from} 到 {to} 行，共 {total} 行"});
+});
+
+function isdelete(url)
+{
+	if(confirm('真的要删除吗?'))
+	{
+		document.location.href = url;
+	}
+	return false;
+}
+
+function fmtAct(value, row, index)
+{
+	return '<a href="{$adUp}?chnId={$chnId}&id='+value+'" ><img src="/jeasyui/themes/icons/up.png"/></a>&nbsp;<a href="{$adDown}?chnId={$chnId}&id='+value+'" ><img src="/jeasyui/themes/icons/down.png"/></a>&nbsp;<a href="javascript:isdelete(\'{$adDel}?chnId={$chnId}&id='+value+'\')"; ><img src="/jeasyui/themes/icons/cancel.png"/></a>';
+}
+
+</script>
+
+<style type="text/css">
+</style>
+
+<form id="ff" action="__URL__/EditAdSubmit" method="post" enctype="multipart/form-data">
+<input type="hidden" name="chnId" value="{$chnId}"/>
+	<div class="itemRow">
+	<div class="itemName" style="width:70px;">宣传图片：</div>
+	<div class="itemContent"><input id="ffFile" class="easyui-filebox" name="importFile" data-options="prompt:'限制文件类型(*.jpg;*.png)建议宽1080 高250~720'" style="width:400px"></div>
+	<div class="easyui-linkbutton" style="margin-left:5px;" iconCls="icon-ok" onclick="$('#ff').submit();">上传</div>
+	</div>
+</form>
+
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+	data-options="url:'__URL__/EditAdList?r={$rand}',rownumbers:true,singleSelect:true,
+		pagination:true,  pageSize:10 "
+>
+	<thead>
+		<tr>
+			<th data-options="field:'name', width:200,align:'left', halign:'center' ">图片</th>
+			<th data-options="field:'id',width:100,align:'center',halign:'center', formatter:fmtAct">操作</th>
+		</tr>
+	</thead>
+
+</table>
+
+</body>
+</html>

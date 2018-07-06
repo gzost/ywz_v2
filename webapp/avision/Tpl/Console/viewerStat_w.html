@@ -1,0 +1,65 @@
+<!-- 
+	直播控制台--消费情况
+	宽屏显示模板
+	outao 2016-12-19
+ -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />     
+<script type="text/javascript">
+$(document).ready(function(){
+	cn_Pagination($("#dg").datagrid('getPager')); 
+});
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+	data-options="url:'__URL__/viewersGetList',rownumbers:true,singleSelect:true, showFooter: true,
+		toolbar:'#tb',pagination:true,  pageSize:10 "
+>
+	<thead>
+		<tr>
+			<th data-options="field:'happen', width:200,align:'left', halign:'center' ">统计时间</th>
+			<th data-options="field:'objtype', width:100,align:'left', halign:'center' ">分类</th>
+			<th data-options="field:'name', width:200,align:'left', halign:'center' ">标题</th>
+			<th data-options="field:'users', width:100,align:'right', halign:'center'">在线人数</th>
+			<th data-options="field:'newusers', width:100,align:'right', halign:'center'">新增在线</th>
+			<th data-options="field:'qty', width:100,align:'right', halign:'center' ">消费量</th>
+		</tr>
+	</thead>
+
+</table>
+
+<div id="tb" style="padding:2px 5px;">
+	<form id='cond' method='post' style="display:inline">
+		查询条件：　
+		类型：<input class='easyui-combobox' name='objtype' value='{$objtype}' style='width:100px'
+				data-options="valueField:'code',textField:'cname', 
+					url:'__URL__/consumpTypeListJson'
+				" />
+		标题：<input class='easyui-textbox' name='name' value='{$name}'  style='width:180px' />
+		时间范围：
+		从<input class="easyui-datebox" name="beginTime" value="{$beginTime}" style="width:120px"
+			data-options="required:false,formatter:cn_formatter,parser:cn_parser" >
+		至<input class="easyui-datebox" name="endTime" value="{$endTime}" style="width:120px"
+			data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+		<input name='work' value='{$work}' style="display:none" />
+		<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
+	</form>
+	
+	
+	<!-- 功能按钮 -->
+	<div style="width:200px; float:right">
+
+	</div>
+</div>
+
+</block>

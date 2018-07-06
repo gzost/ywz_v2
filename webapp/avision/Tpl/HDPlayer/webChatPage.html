@@ -1,0 +1,100 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<title>{$title}</title>
+<meta name="keywords" content="易网真,易网真直播间,avision视频直播系统" />
+<link href="__PUBLIC__/jeasyui/themes/default/easyui.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/icon.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/color.css" rel="stylesheet" type="text/css">
+<load href="__ROOT__/player/{$theme|default='default'}/css/base.css" />
+<load href="__PUBLIC__/NivoSlider/themes/default/default.css" />
+<load href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" />
+
+<load href="__PUBLIC__/jeasyui/jquery.min.js"/>
+<load href="__PUBLIC__/jeasyui/jquery.easyui.min.js"/>
+<load href="__PUBLIC__/js/jquery.json.min.js"/>
+<load href="__PUBLIC__/js/publicFunction.js"/>
+<load href="__ROOT__/player/js/webChat.js"/>
+
+<style type="text/css">
+.bodyChat{
+	width:100%;
+	font-size:1em;
+}
+.divName{
+	width:100%;
+	text-align:center;
+}
+.divCtrl{
+	float:left;
+	position:absolute;
+	left:0px;
+	top:0px;
+}
+body{
+	font-size:26px;
+	line-height:1.2em;
+	scroll-y:none;
+}
+.divFrame{
+	height:100%;
+}
+.divCtrl span{
+	padding-left:0.5em;
+	padding-right:0.5em;
+	cursor:pointer;
+}
+</style>
+
+<script type="text/javascript">
+var chnId = {$chnId};
+var lastSecId = '';
+var moreFit = false;
+
+//创建交流实例，并设置基本参数
+var chat=new webChat();
+chat.objName='chat';
+chat.continer="divChat";
+chat.channelId="{$chnId}";
+chat.userName="{$username}";
+chat.userId="{$userId}";
+chat.appUrl="__APP__";
+
+var limitHeight = 0;
+
+$(document).ready(function(){
+	limitHeight = $(document).height();
+	$('.divCtrl span').click(function(){
+		setFontSize($(this).attr('v'));
+	});
+	chat.init();
+	initHeight();
+});
+
+function setFontSize(p)
+{
+	$('.bodyChat').css('font-size', p+'em');
+	initHeight();
+	chat.init();
+}
+
+function initHeight()
+{
+	$('#divFrame').height(limitHeight);
+	$('#divChat').height($('#divFrame').height()-$('.divName').outerHeight(true));
+}
+
+</script>
+</head>
+<body>
+<div id="divFrame">
+	<div class="divCtrl">字体大小：<span id="x1" v="1">╳1</span><span id="x2" v="2">╳2</span><span id="x3" v="3">╳3</span><span id="x4" v="4">╳4</span><span id="x5" v="5">╳5</span>
+	</div>
+	<div class="divName">频道：{$chnName}</div>
+	<div id="divChat" class="bodyChat">
+	</div>
+</div>
+</body></html>

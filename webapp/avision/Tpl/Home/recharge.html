@@ -1,0 +1,234 @@
+<!-- 
+	竖屏购买套餐
+	Rocky 2017-6-07
+ -->
+<extend name="common:PhoneBase" />
+
+<block name="bl_main">
+<script type="text/javascript">
+function wxpay()
+{
+	var payUrl = '__APP__/Home/recharegeWxPay/amount/' + $('#fee').textbox('getValue');
+	console.log(payUrl);
+	location.href = payUrl;
+}
+</script>
+<style type="text/css">
+.textbox {
+  position: relative;
+  vertical-align: middle;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0;
+  padding: 0;
+  -moz-border-radius: 0 0 0 0;
+  -webkit-border-radius: 0 0 0 0;
+  border-radius: 0 0 0 0;
+  border:0;
+  background-color:#F4E7EC;
+  border-bottom-style:solid;
+  border-bottom-width:1px;
+  border-bottom-color:#F19EC2;
+  margin-bottom:5px;
+}
+.textbox .textbox-text {
+  #font-size: 12px;
+  margin: 0;
+  padding: 4px;
+  white-space: normal;
+  vertical-align: top;
+  outline-style: none;
+  resize: none;
+  text-align:center;
+  -moz-border-radius: 0 0 0 0;
+  -webkit-border-radius: 0 0 0 0;
+  border-radius: 0 0 0 0;
+  border:0;
+  background-color:#F4E7EC;
+  #border-bottom-style:solid;
+  #border-bottom-width:1px;
+  #border-bottom-color:#F19EC2;
+}
+.textbox .textbox-text::-ms-clear,
+.textbox .textbox-text::-ms-reveal {
+  display: none;
+}
+.textbox textarea.textbox-text {
+  white-space: pre-wrap;
+}
+.textbox .textbox-prompt {
+  #font-size: 12px;
+  font-size: 1em;
+  color: #aaa;
+}
+.textbox .textbox-bgicon {
+  background-position: 3px center;
+  padding-left: 21px;
+}
+.textbox .textbox-button,
+
+.textbox .textbox-button:hover {
+  position: absolute;
+  top: 0;
+  padding: 0;
+  vertical-align: top;
+  -moz-border-radius: 0 0 0 0;
+  -webkit-border-radius: 0 0 0 0;
+  border-radius: 0 0 0 0;
+}
+
+
+.textbox-button-right,
+.textbox-button-right:hover {
+  border-width: 0 0 0 1px;
+}
+.textbox-button-left,
+.textbox-button-left:hover {
+  border-width: 0 1px 0 0;
+}
+
+.textbox-addon {
+  position: absolute;
+  top: 0;
+}
+.textbox-icon {
+  display: inline-block;
+  #width: 18px;
+  #height: 20px;
+  overflow: hidden;
+  vertical-align: top;
+  background-position: center center;
+  cursor: pointer;
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+  text-decoration: none;
+  outline-style: none;
+}
+.textbox-icon-disabled,
+.textbox-icon-readonly {
+  cursor: default;
+}
+.textbox-icon:hover {
+  opacity: 1.0;
+  filter: alpha(opacity=100);
+}
+.textbox-icon-disabled:hover {
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+}
+
+.textbox-focused {
+  border-color: #F19EC2;
+  #-moz-box-shadow: 0 0 3px 0 #aaa;
+  #-webkit-box-shadow: 0 0 3px 0 #aaa;
+  #box-shadow: 0 0 3px 0 #aaa;
+}
+
+
+.textbox-invalid {
+  border-color: #ffa8a8;
+  background-color: #fff3f3;
+}
+
+</style>
+<style type="text/css">
+.cycleOut{
+	width:4em;
+	height:4em;
+	border-radius:50%;
+	left:-2em;
+	top:-1px;
+	position:relative;
+	float:left;
+}
+.cycleInner{
+	width:2em;
+	height:2em;
+	border-radius:50%;
+	position:relative;
+	left:1em;
+	top:1em;
+}
+.cycleInner div{
+	position:relative;
+	margin:auto;
+	width:100%;
+	text-align:center;
+	top:0.1em;
+	font-size:1.3em;
+	font-weight:bold;
+}
+.item{
+	margin:1em 1em 1em 1em;
+	padding-left:1em;
+}
+.itemTxt{
+	vertical-align:middle;
+	/*减去上下边框的宽度*/
+	height:calc(4em - 2px);
+    border-style: solid;
+    border-width: 1px;
+    border-left: 0;
+	left:2em;
+	#top:calc(-4em);
+	padding:0;
+	margin:0 0 0 2em;
+	width:calc(100% - 4em);
+    z-index: -1;
+	font-size:0.8em;
+}
+.itemTxtCont{
+	margin:auto;
+	line-height:1.7em;
+}
+.itemTxt span{
+	color:#F19EC2;
+	font-size:1.3em;
+	font-weight:bold;
+}
+
+.iptLog{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #fff;
+    background-color: #16599f;
+	width:8em;
+	height:2em;
+	font-size:1.2em;
+	#letter-spacing:1em;
+	text-align:center;
+	border-radius:3px;
+}
+
+.pink .cycleOut{
+	background: -webkit-radial-gradient(78% 50%, closest-corner, #F4E7EC, #F19EC2);
+}
+.pink .cycleInner{
+	background-color:#FFF;
+}
+.pink .itemTxt{
+	border-color:#F19EC2;
+    background-color: #F4E7EC;
+}
+
+</style>
+<div style="height:1em;"></div>
+<div class="item pink">
+	<div class="itemTxt">
+		<div class="cycleOut">
+			<div class="cycleInner">
+				<div>充</div>
+			</div>
+		</div>
+		<div class="itemTxtCont">
+			<span>充值金额：</span>
+			<input class="easyui-numberbox" name="fee" id="fee" value="10" data-options="min:10,max:3000,width:60">元，10元起充
+		</div>
+		<div>1元=100个网真点，用于平台各种消费</div>
+	</div>
+</div>
+<div style="height:3em;"></div>
+<input type="button" class="iptLog" value="购买" onclick="wxpay()"/>
+</block>

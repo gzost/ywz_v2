@@ -1,0 +1,404 @@
+<extend name="common:PhoneBase" />
+
+<block name="bl_main">
+<script type="text/javascript" src="__PUBLIC__/js/sms.js"></script>
+<script type="text/javascript">
+var sms = new SmsHelper();
+
+$(document).ready(function(){
+	sms.Init('{$smsUrl}', 'smsBtn');
+
+	var t = $('#regtype').val();
+	console.log(t);
+	if('bozhu' == t)
+	{
+		setBoZhu();
+	}
+	else
+	{
+		setNormal();
+	}
+});
+function setNormal()
+{
+	$('#menuNor').addClass('selBorder');
+	$('#menuNor').removeClass('unselBorder');
+	$('#menuBo').addClass('unselBorder');
+	$('#menuBo').removeClass('selBorder');
+	$('#divIdCard').hide();
+	$('#divRealName').hide();
+	$('#divRefUser').hide();
+	$('#form1').attr('action', '__URL__/doRegister');
+	$('#regtype').val('normal');
+
+}
+function setBoZhu()
+{
+	$('#menuBo').addClass('selBorder');
+	$('#menuBo').removeClass('unselBorder');
+	$('#menuNor').addClass('unselBorder');
+	$('#menuNor').removeClass('selBorder');
+	$('#divIdCard').show();
+	$('#divRealName').show();
+	$('#divRefUser').show();
+	$('#form1').attr('action', '__URL__/toBroadcastPostH');
+	$('#regtype').val('bozhu');
+}
+
+function preSubmit()
+{
+	var t = $('#regtype').val();
+
+	//把手机号码作为account
+	var ac = $('#phone').textbox('getValue');
+	$('#account').val(ac);
+
+	if(0 == $('#account').val().length)
+	{
+		$('#msgBox').text('请填写账号');
+		return;
+	}
+
+	if(0 == $('#code').textbox('getValue').length)
+	{
+		$('#msgBox').text('请填写短信验证码');
+		return;
+	}
+
+	if(0 == $('#username').textbox('getValue').length)
+	{
+		$('#msgBox').text('请填写昵称');
+		return;
+	}
+
+	if('bozhu' == t)
+	{
+		if(0 == $('#realname').textbox('getValue').length)
+		{
+			$('#msgBox').text('请填写真实姓名');
+			return;
+		}
+
+		if(0 == $('#idcard').textbox('getValue').length)
+		{
+			$('#msgBox').text('请填写身份证');
+			return;
+		}
+	}
+
+	if(0 == $('#pw').textbox('getValue').length || 0 == $('#pw2').textbox('getValue').length)
+	{
+		$('#msgBox').text('请填写密码');
+		return;
+	}
+	
+	$('#msgBox').text('');
+
+	IsVaildAccount();
+}
+
+function IsVaildAccount()
+{
+	//var regname = $('#account').textbox('getValue');
+	var regname = $('#account').val();
+	console.log(regname);
+	if(null != regname && 0 < regname.length)
+	{
+		$.ajax({
+				url: '{$chkVaildAccUrl}',
+				type: 'post',
+				data: 'username=' + regname,
+				cache: false,
+				//timeout:15000,	//超时设为15秒
+				dataType: 'json',
+				success:function(data){
+					try{
+						if( null==data || data.result !='true')
+						{
+							//不可以使用
+							$('#accountChk').attr('src', '/Public/jeasyui/themes/icons/no.png');
+							$('#accountChk').show();
+							$('#phone').textbox('textbox').focus();
+							$('#accountMemo').hide();
+							$('#accountAlert').show();
+						}
+						else
+						{
+							//可以使用
+							$('#accountChk').attr('src', '/Public/jeasyui/themes/icons/ok.png');
+							$('#accountChk').show();
+							$('#accountMemo').show();
+							$('#accountAlert').hide();
+							$('#form1').submit();
+						}
+					}
+					catch(e){
+						alert(e.message);	//
+						return;
+					}
+				},
+				complete:function(){	//无论是否成功都会调用
+				},
+				error:function(){
+					$('#msgBox').text('网络或服务中断！');
+				}
+			});
+	}
+	else
+	{
+		//不可以使用
+		$('#accountChk').attr('src', '/Public/jeasyui/themes/icons/no.png');
+		$('#accountChk').show();
+		//$('#account').textbox('textbox').focus();
+		$('#accountMemo').hide();
+		$('#accountAlert').show();
+	}
+}
+
+function btnSendSms()
+{
+	var phone = $('#phone').textbox('getValue');
+	if(0 == phone.length)
+	{
+		$('#msgBox').text('请填写手机号码！');
+		return;
+	}
+	if(11 != phone.length)
+	{
+		$('#msgBox').text('手机号码长度不正确！');
+		return;
+	}
+	$('#msgBox').text('');
+	sms.btnClick(phone);
+}
+
+</script>
+<style type="text/css">
+a{
+	color: black;
+	text-decoration:none;
+}
+.textbox {
+  position: relative;
+  border: 1px solid #FFF;
+  background-color: #fff;
+  vertical-align: middle;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0;
+  padding: 0;
+  top:-1px;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
+}
+.textbox .textbox-text {
+  #font-size: 12px;
+  border: 0;
+  margin: 0;
+  padding: 4px;
+  white-space: normal;
+  vertical-align: top;
+  outline-style: none;
+  resize: none;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
+}
+.textbox .textbox-text::-ms-clear,
+.textbox .textbox-text::-ms-reveal {
+  display: none;
+}
+.textbox textarea.textbox-text {
+  white-space: pre-wrap;
+}
+.textbox .textbox-prompt {
+  #font-size: 12px;
+  font-size: 1em;
+  color: #aaa;
+}
+.textbox .textbox-bgicon {
+  background-position: 3px center;
+  padding-left: 21px;
+}
+.textbox .textbox-button,
+.textbox .textbox-button:hover {
+  position: absolute;
+  top: 0;
+  padding: 0;
+  vertical-align: top;
+  -moz-border-radius: 0 0 0 0;
+  -webkit-border-radius: 0 0 0 0;
+  border-radius: 0 0 0 0;
+}
+.textbox-button-right,
+.textbox-button-right:hover {
+  border-width: 0 0 0 1px;
+}
+.textbox-button-left,
+.textbox-button-left:hover {
+  border-width: 0 1px 0 0;
+}
+.textbox-addon {
+  position: absolute;
+  top: 0;
+}
+.textbox-icon {
+  display: inline-block;
+  #width: 18px;
+  #height: 20px;
+  overflow: hidden;
+  vertical-align: top;
+  background-position: center center;
+  cursor: pointer;
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+  text-decoration: none;
+  outline-style: none;
+}
+.textbox-icon-disabled,
+.textbox-icon-readonly {
+  cursor: default;
+}
+.textbox-icon:hover {
+  opacity: 1.0;
+  filter: alpha(opacity=100);
+}
+.textbox-icon-disabled:hover {
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+}
+.textbox-focused {
+  #border-color: #16599f;
+  #-moz-box-shadow: 0 0 3px 0 #aaa;
+  #-webkit-box-shadow: 0 0 3px 0 #aaa;
+  #box-shadow: 0 0 3px 0 #aaa;
+}
+.textbox-invalid {
+  border-color: #ffa8a8;
+  background-color: #fff3f3;
+}
+.filebox .textbox-value {
+  vertical-align: top;
+  position: absolute;
+  top: 0;
+  left: -5000px;
+}
+.filebox-label {
+  display: inline-block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  background: url('images/blank.gif') no-repeat;
+}
+.rowItem{
+	width:85%;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-bottom-color:#ccc;
+	text-align:left;
+	margin:auto;
+	margin-top:0.8em;
+	padding-bottom:0em;
+	color:#333;
+}
+.rowItem span{
+	padding-right:0.5em;
+}
+.iptReg{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #16599f;
+    background-color: #fff;
+	width:8em;
+	height:2em;
+	font-size:1.5em;
+}
+.flex-contBetween {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+.flex-between-item{
+    width: 100%;
+	padding:3px;
+}
+.selBorder{
+	border-bottom-style: solid;
+    border-width: 2px;
+    border-color: #16599f;
+}
+.unselBorder{
+	border-bottom-style: solid;
+    border-width: 2px;
+    border-color: #e1e1e2;
+}
+.errorMsg{
+	display:inline;
+	text-align:center;
+	font-size:0.8em;
+	color:rgb(200, 0, 0);
+	position:relative;
+}
+
+</style>
+
+<div class="flex-contBetween" style="padding:2px;">
+	<eq name="bozhu" value="0">　
+	<div class="flex-between-item selBorder" id="menuNor" onclick="setNormal();">
+		<span>注册用户（观众）</span>
+	</div>
+	</eq>
+	<div class="flex-between-item selBorder" id="menuBo" onclick="setBoZhu();">
+		<span>注册播主</span>
+	</div>
+</div>
+<div style="padding-top:0.5em;">
+	<form  id="form1" action="" method="post">
+	<div class="rowItem">
+	<span>账号</span><input id="phone" name="phone" value="{$phone}" class="easyui-textbox" style="width:100px;" data-options="prompt:'国内手机号码'">
+	<img id="accountChk" style="display:none;"/>
+	<span id="accountMemo"></span>
+	<span id="accountAlert" style="color:red;display:none;">不可用</span>
+	<a href="javascript:void(0)" style="position:relative;bottom:0.3em;" class="easyui-linkbutton" id="smsBtn" onclick="btnSendSms();">获取验证码</a>
+	</div>
+	<div class="rowItem">
+	<span>短信验证码</span><input name="code" id="code" value="{$code}" class="easyui-textbox" style="width:100px;" data-options="prompt:'验证码'">
+	</div>
+	<div class="rowItem">
+	<span>昵称</span><input name="username" id="username" value="{$username}" class="easyui-textbox" style="width:150px;" data-options="prompt:'选个好听威猛的名字'">
+	</div>
+	<div class="rowItem" id="divRealName">
+	<span>真实姓名</span><input name="realname" id="realname" value="{$realname}" class="easyui-textbox" style="width:150px;" data-options="prompt:'真实姓名'">
+	</div>
+	<div class="rowItem" id="divIdCard">
+	<span>身份证号码</span><input name="idcard" id="idcard" value="{$idcard}" class="easyui-textbox" style="width:150px;" data-options="prompt:'中华人民共和国身份证号码'">
+	</div>
+	<div class="rowItem">
+	<span>密码</span><input id="pw" class="easyui-textbox" type="password" name="password" value="" class="easyui-textbox" style="width:150px;" data-options="prompt:'不少于6个字符',missingMessage:'必须输入密码。', validType:'minLength[6]'">
+	</div>
+	<div class="rowItem">
+	<span>重复密码</span><input id="pw2" type="password" name="password2" class="easyui-textbox" style="width:150px;" data-options="prompt:'不少于6个字符'">
+	</div>
+	<div class="rowItem" id="divRefUser">
+	<span>推荐码</span><input name="refCode" value="{$refCode}" class="easyui-textbox" style="width:150px;" data-options="prompt:'推荐码',required:false">
+	</div>
+	<div style="margin-top:1em;margin-bottom:1em;">
+		<div id="msgBox" class="errorMsg" style="display:block;margin-bottom:0.3em;">{$errorMsg}</div>
+		<input type="button" class="iptReg" value="注册" onclick="preSubmit();"/>
+	</div>
+	<input type="hidden" name="regtype" id="regtype" value="{$regtype}"/>
+	<input name="account" id="account" value="{$account}" type="hidden"/>
+	</form>
+</div>
+
+</block>
+
+

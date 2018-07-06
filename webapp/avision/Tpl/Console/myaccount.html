@@ -1,0 +1,293 @@
+<extend name="common:PhoneBase" />
+
+<block name="bl_main">
+
+<script type="text/javascript" src="__PUBLIC__/js/jquery.md5.js"></script>
+<link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/icon.css">
+<script type="text/javascript">
+var isbozhu = '{$bozhu}';
+var isHavePwd = '{$havePwd}';
+
+$(document).ready(function(){
+
+	if('yes' == isHavePwd)
+	{
+		$('#divPwdEdit').show();
+		$('#btnPwdEdit').show();
+	}
+
+	$('.iptLog').click(function(){
+		location.href = "__APP__/Home/logout?scrType=h";
+	});
+
+	$('#iptPay').click(function(){
+		<present name="refCodeId">
+			//已经有推荐码的
+			location.href = "__APP__/Home/toBroadcastPayCode";
+		<else/>
+			//没有推荐码
+			location.href = "__URL__/userToBozhu";
+		</present>
+	});
+
+	$('#iptCharge').click(function(){
+		location.href = "__APP__/Home/recharge";
+	});
+
+	$('#iptCashout').click(function(){
+		location.href = "__APP__/CashFlow/applyCashOut";
+	});
+
+	$('#iptPkt').click(function(){
+		location.href = "__APP__/Home/package";
+	});
+
+});
+
+function wxBind()
+{
+	location.href = '/home.php/Wx/mobBind';
+}
+
+function editpwd()
+{
+	var new0 = $('#pw1').textbox('getValue');
+	var new1 = $('#pw2').textbox('getValue');
+	var new2 = $('#pw3').textbox('getValue');
+
+	if('' == new0)
+	{
+		$('#msgBox').text('请输入原密码');
+		return;
+	}
+
+	if('' == new1 || '' == new2 || new1.length < 6 )
+	{
+		$('#msgBox').text('请输入两次6位或以上的新密码');
+		return;
+	}
+
+	if(new1 != new2)
+	{
+		$('#pw2').textbox('setValue', '');
+		$('#pw3').textbox('setValue', '');
+		$('#msgBox').text('两次输入的新密码不一致');
+		return;
+	}
+
+	//通过获取Ajax页面
+	$.ajax({
+		url: '__APP__/Home/doChangePswAjax',
+		type: 'post',
+		data: 'oldpwd=' + $.md5(new0) + '&pwd1=' + $.md5(new1),
+		cache: false,
+		timeout:60000,	//超时设为60秒
+		dataType: 'json',
+		success:function(data){
+			try{
+				if(null != data && data.result == 'true')
+				{
+					$('#msgBox').text('修改成功');
+					return;
+					
+				}
+				else if( null!=data || data.result !='true')
+				{
+					if(null != data.msg)
+					{
+						$('#msgBox').text(data.msg);
+					}
+					else
+					{
+						$('#msgBox').text('网络中断或处理异常！');
+					}
+				}
+			}
+			catch(e){
+				$('#msgBox').text(e.message);
+				return;
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			$('#msgBox').text('网络中断或处理异常！');
+		}
+	});
+}
+
+
+</script>
+<style type="text/css">
+.rowItem{
+	width:85%;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-bottom-color:#ccc;
+	text-align:left;
+	margin:auto;
+	margin-top:0.6em;
+	padding-bottom:0.2em;
+	color:#333;
+}
+.rowItem span{
+	padding-right:0.5em;
+}
+.iptReg{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #16599f;
+    background-color: #fff;
+	width:8em;
+	height:2em;
+	font-size:1.2em;
+}
+.iptLog{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #fff;
+    background-color: #16599f;
+	width:8em;
+	height:2em;
+	font-size:1.2em;
+}
+.ipt{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #fff;
+    background-color: #16599f;
+	border-radius:3px;
+	font-size:0.8em;
+}
+.flex-contBetween {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+.flex-between-item{
+    width: 100%;
+	padding:3px;
+}
+.unselBorder{
+	border-bottom-style: solid;
+    border-width: 1px;
+    border-color: #e1e1e2;
+}
+.errorMsg{
+	display:inline;
+	text-align:center;
+	font-size:0.8em;
+	color:rgb(200, 0, 0);
+	position:relative;
+}
+
+</style>
+
+<div class="flex-contBetween" style="padding:2px;">
+	<div class="flex-between-item unselBorder" id="menuNor">
+		<present name="phoneVerify">
+			<div>
+				<img alt="手机" src="__ROOT__/home/{$theme|default='default_w'}/images/phone_t.png" >
+			</div>
+			<div>手机已验证</div>
+		<else />
+			<a href="__APP__/Console/phoneVerify">
+			<div>
+				<img alt="手机" src="__ROOT__/home/{$theme|default='default_w'}/images/phone_f.png" >
+			</div>
+			<div>手机验证</div>
+			</a>
+		</present>
+	</div>
+	<div class="flex-between-item unselBorder" id="menuBo">
+				<present name="rnVerify">
+					<div>
+						<img alt="实名" src="__ROOT__/home/{$theme|default='default_w'}/images/realname_t.png" >
+					</div>
+					<div>实名认证</div>
+				<else />
+					<a href="__APP__/Console/realname">
+						<div>
+							<img alt="实名" src="__ROOT__/home/{$theme|default='default_w'}/images/realname_f.png" >
+						</div>
+						<div>实名认证</div>
+					</a>
+				</present>
+	</div>
+</div>
+<div style="padding-top:0.5em;">
+	<form  id="form1" action="" method="post">
+	<div class="rowItem">
+		<span>昵称：</span><span>{$username}</span>
+		<present name="wxopenid">
+		<else/>
+		<input type="button" class="ipt" id="iptWxBind" value="绑定微信账号" onclick="wxBind();"/>
+		</present>
+	</div>
+	<div class="rowItem">
+		<span>钱包：</span><span><a href="__APP__/CashFlow/userList">{$cash}</a></span>元
+		<if condition="$cash gt 0">
+			<input type="button" class="ipt" id="iptCashout" value="提现"/>
+		</if>
+	</div>
+	<if condition="$bozhu neq 'no'">
+	<div class="rowItem">
+		<span>网真点：</span><span>{$balance}</span>
+		<input type="button" class="ipt" id="iptCharge" value="充值"/>
+	</div>
+	<div class="rowItem">
+		<span>可用余额：</span><span>{$usable}</span>
+	</div>
+	<div class="rowItem">
+		<span>有效套餐：</span><span>{$packages}</span>
+		<input type="button" class="ipt" id="iptPkt" value="购买"/>
+	</div>
+	</if>
+	<div class="rowItem">
+		<span>频道：</span>
+		<if condition="$channels gt 0">
+			<span><a href="__APP__/Home/index?type=1">{$channels}</a></span>
+		<else/>
+			<span>{$channels}</span>
+		</if>
+		<if condition="$channels eq '0'">
+			<input type="button" class="ipt" id="iptPay" value="1元开频道"/>
+		</if>
+	</div>
+	<if condition="$bozhu neq 'no'">
+	<div class="rowItem">
+		<span>视频文件：</span><span>{$recordFiles}</span>
+	</div>
+	</if>
+	<div class="rowItem">
+		<span>我的推荐码：</span><span>{$refCode}</span>
+	</div>
+	<div class="rowItem">
+		<span>已推荐：</span><span>{$refNum}</span>人
+	</div>
+	<div id="divPwdEdit" style="display:none;">
+		<div class="rowItem">
+			<span>原密码：</span><input id="pw1" class="easyui-textbox" type="password" name="password" value="" class="easyui-textbox" style="width:150px;" data-options="validType:'minLength[6]'">
+		</div>
+		<div class="rowItem">
+			<span>新密码：</span><input id="pw2" type="password" name="password2" class="easyui-textbox" style="width:150px;" data-options="prompt:'不少于6个字符'">
+		</div>
+		<div class="rowItem">
+			<span>重复新密码：</span><input id="pw3" type="password" name="password3" class="easyui-textbox" style="width:150px;" data-options="prompt:'不少于6个字符'">
+		</div>
+	</div>
+	<div style="margin-top:1em;margin-bottom:1em;">
+		<div id="msgBox" class="errorMsg" style="display:block;margin-bottom:0.3em;">{$errorMsg}</div>
+		<input type="button" class="iptReg" style="display:none;" id="btnPwdEdit" value="修改密码" onclick="editpwd();"/>
+		<input type="button" class="iptLog" value="退出登录"/>
+	</div>
+	</form>
+</div>
+
+</block>
+

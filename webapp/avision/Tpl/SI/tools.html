@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>tools</title>
+</head>
+<body>
+<form method='post' >
+	<table>
+		<tr>
+			<td>commKey: </td><td><input type='text' name='commKey' value='{$commKey}' style="width:400px" ></td>
+		</tr>
+		<tr>
+			<td>uri: </td><td><input type='text' name='uri' value='{$uri}' style="width:400px" ></td>
+		</tr>
+		<tr>
+			<td>account: </td><td><input type='text' name='account' value='{$account}' style="width:400px" ></td>
+		</tr>
+		<tr>
+			<td>tm: </td><td><input type='text' name='tm' value='{$tm}' style="width:400px" ><br>Now is : {$now}</td>
+		</tr>
+	</table>
+	<input type="submit" value="更新">
+	
+</form>
+Call string: <input type='text' readonly value="{$callStr}" style="width:800px" ><br>
+
+</body>
+</html>

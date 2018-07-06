@@ -1,0 +1,51 @@
+<include file="common:template_header" />
+<script type="text/javascript" src="/js/common.js"></script>
+<h1>活动设置</h1>
+<div class="line_1"></div>
+<form id="editPlayPage" name="editPlayPage" method="post" action="{$formAction}">
+<div>
+<span>选择要上传的图片:</span>
+			<input id="ffFile" class="easyui-filebox" name="importFile" data-options="prompt:'可接收这类文件(*.xls;*.xlsx;*.zip;)...'" style="width:300px">
+</div>
+</form>
+
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+			data-options="url:'{$getImgList}',rownumbers:true,singleSelect:true">
+	<thead>
+		<tr>
+			<th data-options="field:'img', width:200,align:'center'" />图片名称</th>
+			<th data-options="field:'a', width:80,align:'center'">操作</th>
+		</tr>
+	</thead>
+	<tbody>
+	</tbody>	
+</table>
+
+<div style="text-align:left;margin:10px 5px;">
+<span style="margin:10px 5px">活动名称</span>
+		<input id="actName" class="easyui-textbox" style="margin:10px 5px;width:200px" type="text" name="actName" value="{$actName}" data-options="required:false"></input>
+</div>
+
+<div style="text-align:left;margin:10px 5px;">
+<span style="margin:10px 5px">rtmp接收地址：</span>
+		<input id="rtmpUrl" class="easyui-textbox" style="margin:10px 5px;width:200px" type="text" name="rtmpUrl" value="{$rtmpUrl}" data-options="required:false"></input>
+</div>
+
+<div style="text-align:left;margin:10px 5px;">
+<span style="margin:10px 5px">hls接收地址：</span>
+		<input id="hlsUrl" class="easyui-textbox" style="margin:10px 5px;width:200px" type="text" name="hlsUrl" value="{$hlsUrl}" data-options="required:false"></input>
+</div>
+
+<div style="text-align:left;margin:10px 5px;">
+<span style="margin:10px 5px">开始时间：</span>
+		<input class="easyui-datetimebox" value="10/11/2012 2:3:56" style="width:200px" id="startTime" name="startTime">
+</div>
+
+<div style="text-align:left;margin:10px 5px;">
+<span style="margin:10px 5px">结束时间：</span>
+		<input class="easyui-datetimebox" value="10/11/2012 2:3:56" style="width:200px" id="endTime" name="endTime">
+</div>
+
+<a id="btnTimeSet" href="javascript:;" class="easyui-linkbutton" style="width:50px;margin-left:10px;">保存</a>
+
+<include file="common:template_footer" />

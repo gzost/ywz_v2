@@ -1,0 +1,107 @@
+<!-- 
+	竖屏购买套餐
+	Rocky 2017-6-07
+ -->
+<extend name="common:PhoneBase" />
+<block name="bl_main">
+<script type="text/javascript">
+function wxpay(id)
+{
+	var payUrl = '__APP__/Package/wxPay/p/'+id;
+	location.href = payUrl;
+}
+</script>
+
+<style type="text/css">
+.cycleOut{
+	width:4em;
+	height:4em;
+	border-radius:50%;
+}
+.cycleInner{
+	width:2em;
+	height:2em;
+	border-radius:50%;
+	position:relative;
+	left:1em;
+	top:1em;
+}
+.cycleInner div{
+	position:relative;
+	margin:auto;
+	width:100%;
+	text-align:center;
+	top:0.1em;
+	font-size:1.3em;
+	font-weight:bold;
+}
+.item{
+	margin:-4em 1em 1em 1em;
+	padding-left:1em;
+}
+.itemTxt{
+	vertical-align:middle;
+	/*减去上下边框的宽度*/
+	height:calc(4em - 2px);
+    border-style: solid;
+    border-width: 1px;
+    border-left: 0;
+	left:2em;
+	top:calc(-4em);
+	position:relative;
+	padding:0;
+	margin:0;
+	width:calc(100% - 4em);
+    z-index: -1;
+}
+.itemTxt div{
+	padding-top:0.2em;
+	padding-left:2em;
+	margin:auto;
+	line-height:1.7em;
+}
+.itemTxt span{
+	color:#16599F;
+	font-size:1.4em;
+	font-weight:bold;
+	margin-right:0.1em;
+}
+
+.blue .cycleOut{
+	background: -webkit-radial-gradient(78% 50%, closest-corner, #E3EEFA, #93C2F2);
+}
+.blue .cycleInner{
+	background-color:#FFF;
+}
+.blue .itemTxt{
+	border-color:#93C2F2;
+    background-color: #E3EEFA;
+}
+
+.pink .cycleOut{
+	background: -webkit-radial-gradient(78% 50%, closest-corner, #F4E7EC, #F19EC2);
+}
+.pink .cycleInner{
+	background-color:#FFF;
+}
+.pink .itemTxt{
+	border-color:#F19EC2;
+    background-color: #F4E7EC;
+}
+
+</style>
+<div style="height:5em"></div>
+<foreach name="sellingPkg" item="pkg">
+<div class="item blue" onclick="wxpay({$pkg.id})">
+	<div class="cycleOut">
+		<div class="cycleInner">
+			<div>{$pkg.idname}</div>
+		</div>
+	</div>
+	<div class="itemTxt">
+		<div><span>{$pkg.ypm}</span>元/分钟</div>
+		<div>{$pkg.name}</div>
+	</div>
+</div>
+</foreach>
+</block>

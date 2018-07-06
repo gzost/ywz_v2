@@ -1,0 +1,113 @@
+<!-- photoListAjax 输出模板 -->
+<div style="background-color: #0fbad6; font-size: 1.2em; line-height: 2em;padding:0 10px;">
+   [{$chnId}] {$chnName}
+    <div style="float: right; margin-right:10px;">
+        <input type="button" value=" 删除 " onclick="deletePhoto('deletePhoto');"/>
+    </div>
+</div>
+<form id="deletePhoto" method="post" >
+    <div id="album" >
+        <foreach name="photos" item="pt">
+            <div style="background-image: url('{$pt.imgsrc}'); ">
+                <input type="checkbox" name="files[]" value="{$pt.imgName}" >
+            </div>
+        </foreach>
+    </div>
+    <input type="hidden" name="chnId" value="{$chnId}" />
+    <input type="hidden" name="chnName" value="{$chnName}" />
+</form>
+上传图片
+<div id="cover-uploader" style="width:400px">您没更改图片的权限</div>
+
+
+<style type="text/css">
+    #album{
+        border:1px solid #0fbad6; padding:8px; min-height: 200px; /*display: flex; flex-warp:wrap;*/
+    }
+    #album div{
+        width:240px; height:170px; border: 1px solid #aaa; background: #eee; border-radius: 5px; text-align: center;margin:5px;
+        background-size: contain; background-repeat:no-repeat;
+        background-position: center top 20px;
+        display: inline-block;
+    }
+    #album input{
+        display:block; clear: both; float: right;margin-right: 10px;
+    }
+
+</style>
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        init_fine_upload();
+    });
+
+    function init_fine_upload(){
+        var endpointUrl="__APP__/Channel/endpoint";
+        console.log("init_fine_upload path:"+"{$path}");
+        //上传图片
+        var videoUploader=new qq.FineUploader({
+            element: document.getElementById("cover-uploader"),
+            debug: false,
+            multiple:true,
+            request: { endpoint: endpointUrl+"?path={$path}&type=cover"  },
+            deleteFile: { enabled: false, endpoint: endpointUrl+"?path={$path}&type=cover&" },
+            chunking: {
+                enabled: true,
+                concurrent: {  enabled: true },
+                success: {   endpoint: endpointUrl+"?done&path={$path}&type=cover" }
+            },
+            resume: { enabled: true },
+            retry: { enableAuto: true, showButton: true  },
+            validation: {
+                //控制上传文件的后缀格式数组
+                allowedExtensions: ['jpg'],
+                //控制上传文件大小
+                sizeLimit: 3*1024*1024 // 2MB
+            },
+            messages:{
+                sizeError:"{file}太大了，最大允许上传{sizeLimit}",
+                typeError:"只能上传 {extensions} 文件。"
+            },
+            callbacks:{
+
+                onComplete:function(id,name,response){
+                    console.log('callback');
+
+                    response.name=name;
+                    response.chnId="{$chnId}";
+                    response.path='{$path}';
+                    //response.owner="{$owner}";
+                    //response.ownerAccount="{$account}";
+                    $("#cover-uploader ul").prepend('处理中...');
+                    console.log(response);
+                     $.post('__APP__/Channel/postUploadJson',response,function(data){
+                         var str  ="<div style=\"background-image: url('"+data.imgsrc+"'); \"> ";
+                             str +="<input type='checkbox' name='files[]' value='"+data.imgName+"' >";
+                             str +="</div>";
+                         console.log(str);
+                         $("#album").append(str);
+                         $("#cover-uploader ul").html('');
+                         console.log(data);
+                     },'json');
+
+
+                }
+            }
+        });	// var videoUploader
+    }	//function init_fine_upload
+
+    function deletePhoto(formid) {
+
+        $.post("__URL__/deletePhoto",$("#"+formid).serialize(),function (json) {
+            console.log(json);
+            if(json.deleteFiles>0) {
+                var row=new Object();
+                row.id=$("#"+formid+" input[name='chnId']").val();
+                row.name=$("#"+formid+" input[name='chnName']").val();
+                console.log(row);
+                onSelectChannel(row);
+            }
+        },'json');
+    }
+</script>

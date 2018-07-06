@@ -1,0 +1,17 @@
+<!-- 充值、购买套餐、购买服务的公共头部 -->
+<load href="__ROOT__/home/{$theme|default='default_w'}/css/purchase.css" />
+<load href="__PUBLIC__/jeasyui/themes/color.css" />
+<load href="__PUBLIC__/js/jquery.json.min.js" />
+<div id="north">
+	<div id="slogan">
+		<div>1分钱1分钟，直播好轻松！</div>
+	</div>
+	<div id="sub-menu">
+		<a href="http:__URL__/recharge" class="btn btn-step 
+			<eq name='step' value='recharge'>cur-step</eq>">账号充值</a>
+		<a href="http:__URL__/package" class="btn btn-step 
+			<eq name='step' value='package'>cur-step</eq>">优惠套餐</a>
+		<a href="http:__URL__/service" class="btn btn-step 
+			<eq name='step' value='service'>cur-step</eq>">专业护航</a>
+	</div>
+</div>

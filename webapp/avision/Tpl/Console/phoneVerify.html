@@ -1,0 +1,137 @@
+<extend name="common:PhoneBase" />
+
+<block name="bl_main">
+<script type="text/javascript" src="__PUBLIC__/js/sms.js"></script>
+<script type="text/javascript">
+var sms = new SmsHelper();
+
+$(document).ready(function(){
+	sms.Init('{$smsUrl}', 'smsBtn');
+});
+
+function preSubmit()
+{
+	var phone = $('#phone').textbox('getValue');
+	if(0 == phone.length)
+	{
+		$('#msgBox').text('请填写手机号码！');
+		return;
+	}
+
+
+	//通过获取Ajax页面
+	$.ajax({
+		url: '__URL__/phoneVerifyPost',
+		type: 'post',
+		data: $('#form1').serialize(),
+		cache: false,
+		timeout:60000,	//超时设为60秒
+		dataType: 'json',
+		success:function(data){
+			try{
+				if(null != data && data.result == 'true')
+				{
+					$('#msgBox').text('验证成功');
+					setTimeout('location.href = "__APP__/Console/myaccount";', 1000);
+					return;
+					
+				}
+				else if( null!=data || data.result !='true')
+				{
+					if(null != data.msg)
+					{
+						$('#msgBox').text(data.msg);
+					}
+					else
+					{
+						$('#msgBox').text('网络中断或处理异常！');
+					}
+				}
+			}
+			catch(e){
+				$('#msgBox').text(e.message);
+				return;
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			$('#msgBox').text('网络中断或处理异常！');
+		}
+	});
+}
+
+function btnSendSms()
+{
+	var phone = $('#phone').textbox('getValue');
+	if(0 == phone.length)
+	{
+		alert('请填写手机号码！');
+	}
+
+	if(11 != phone.length)
+	{
+		$('#msgBox').text('手机号码长度不正确！');
+		return;
+	}
+
+	sms.btnClick(phone);
+}
+
+</script>
+<style type="text/css">
+.rowItem{
+	width:85%;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-bottom-color:#ccc;
+	text-align:left;
+	margin:auto;
+	margin-top:0.6em;
+	padding-bottom:0.2em;
+	color:#333;
+}
+.rowItem span{
+	padding-right:0.5em;
+}
+.iptReg{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #16599f;
+    background-color: #fff;
+	width:8em;
+	height:2em;
+	font-size:1.2em;
+}
+.errorMsg{
+	display:inline;
+	text-align:center;
+	font-size:0.8em;
+	color:rgb(200, 0, 0);
+	position:relative;
+}
+
+</style>
+
+
+<div style="padding-top:0.5em;">
+	<form  id="form1" action="" method="post">
+		<div class="rowItem">
+		<span>手机号码</span><input id="phone" name="phone" value="{$phone}" class="easyui-textbox" style="width:100px;" data-options="prompt:'国内手机号码'">
+		<a href="javascript:void(0)" style="position:relative;bottom:0.3em;" class="easyui-linkbutton" id="smsBtn" onclick="btnSendSms();">获取验证码</a>
+		</div>
+		<div class="rowItem">
+		<span>短信验证码</span><input name="code" id="code" value="{$code}" class="easyui-textbox" style="width:100px;" data-options="prompt:'验证码'">
+		</div>
+		<div class="rowItem">
+		<span>推荐码</span><input name="refCode" value="{$refCode}" class="easyui-textbox" style="width:150px;" data-options="prompt:'推荐码'">
+		</div>
+	</form>
+	<div style="margin-top:1em;margin-bottom:1em;">
+		<div id="msgBox" class="errorMsg" style="display:blocsk;margin-bottom:0.3em;">{$errorMsg}</div>
+		<input type="button" class="iptReg" value="确认" onclick="preSubmit();"/>
+	</div>
+	</form>
+</div>
+</block>

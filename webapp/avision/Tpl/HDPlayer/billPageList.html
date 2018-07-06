@@ -1,0 +1,51 @@
+<link href="__PUBLIC__/jeasyui/themes/default/easyui.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/icon.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/color.css" rel="stylesheet" type="text/css">
+<load href="__PUBLIC__/jeasyui/jquery.min.js"/>
+<load href="__PUBLIC__/jeasyui/jquery.easyui.min.js"/>
+<load href="__PUBLIC__/js/bill.js"/>
+<script type="text/javascript">
+var bi = new BillHelper();
+bi.getInfoUrl = '{$billGetInfoUrl}';
+
+</script>
+<style type="text/css">
+.itemName{
+}
+
+.subTitle{
+}
+</style>
+
+
+<div>
+	<div class="subTitle">可以购买套餐</div>
+	<div>
+		<foreach name="billInfo" item="vo">
+			<div id="bill{$vo.t}">
+				<div class="itemName">{$vo.itemName}</div>
+				<div>
+					<span>数量：</span>
+					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" onclick="bi.reduce('{$vo.t}', {$chnId})">
+					</a>
+					<input class="easyui-numberbox" id="{$vo.t}num" style="width:38px;" value='1' data-options="min:1,max:99,onChange:function(newValue, oldValue){bi.numchange('{$vo.t}', '{$vo.t}', {$chnId}, newValue);}"/>
+					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" onclick="bi.add('{$vo.t}', {$chnId})">
+					</a>
+					&nbsp;
+					<span class="feetitle">合计：&yen;</span>
+					<span class="totalfee">{$vo.totalfee}</span>元
+					<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-device'" onclick="bi.bill('{$vo.t}')">购买</a>
+				</div>
+				<div>说明：<span class="itemmeno">{$vo.meno}</span></div>
+				<div>
+				</div>
+				<form action="{$billPostUrl}" id="form{$vo.t}" method="post">
+					<input type="hidden" name="chnId" value="{$chnId}"/>
+					<input type="hidden" name="t" value="{$vo.t}"/>
+					<input type="hidden" name="num" value="1"/>
+				</form>
+			</div>
+		</foreach>
+	</div>
+</div>
+

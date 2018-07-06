@@ -1,0 +1,130 @@
+<extend name="common:PhoneBase" />
+
+<block name="bl_main">
+<link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/default/easyui.css">
+<script type="text/javascript" src="__PUBLIC__/js/sms.js"></script>
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+});
+
+</script>
+<style type="text/css">
+a{
+	color: black;
+	text-decoration:none;
+}
+
+.rowItem{
+	width:85%;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-bottom-color:#ccc;
+	text-align:left;
+	margin:auto;
+	margin-top:0.8em;
+	padding-bottom:0em;
+	color:#333;
+}
+.rowItem span{
+	padding-right:0.5em;
+}
+.iptReg{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #16599f;
+    background-color: #fff;
+	width:8em;
+	height:2em;
+	font-size:1.5em;
+}
+.flex-contBetween {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+.flex-between-item{
+    width: 100%;
+	padding:3px;
+}
+.unselBorder{
+	border-bottom-style: solid;
+    border-width: 2px;
+    border-color: #e1e1e2;
+}
+.errorMsg{
+	display:inline;
+	text-align:center;
+	font-size:0.8em;
+	color:rgb(200, 0, 0);
+	position:relative;
+}
+
+</style>
+
+<div class="flex-contBetween" style="padding:2px;">
+	<div class="flex-between-item unselBorder" id="menuNor" onclick="setNormal();">
+		<div>
+			<present name="phoneVerify">
+				<img alt="手机" src="__ROOT__/home/{$theme|default='default_w'}/images/phone_t.png" >
+			<else />
+				<img alt="手机" src="__ROOT__/home/{$theme|default='default_w'}/images/phone_f.png" >
+			</present>
+		</div>
+		<div>手机验证</div>
+	</div>
+	<div class="flex-between-item unselBorder" id="menuBo" onclick="setBoZhu();">
+		<div>
+			<present name="rnVerify">
+				<img alt="实名" src="__ROOT__/home/{$theme|default='default_w'}/images/realname_t.png" >
+			<else />
+				<a href="__APP__/Console/realname" >
+					<img alt="实名" src="__ROOT__/home/{$theme|default='default_w'}/images/realname_f.png" >
+				</a>
+			</present>
+		</div>
+		<div>实名认证</div>
+	</div>
+</div>
+<div style="padding-top:0.5em;">
+	<form  id="form1" action="" method="post">
+	<div class="rowItem">
+		<span>昵称</span><span>{$username}</span>
+	</div>
+	<div class="rowItem">
+		<span>账户余额</span><span>{$balance}</span>
+	</div>
+	<div class="rowItem">
+		<span>可用余额</span><span>{$usable}</span>
+	</div>
+	<div class="rowItem">
+		<span>有效套餐</span><span>{$packages}</span>
+	</div>
+	<div class="rowItem">
+		<span>频道数</span><span>{$channels}</span>
+	</div>
+	<div class="rowItem">
+		<span>视频文件数</span><span>{$recordFiles}</span>
+	</div>
+	<div class="rowItem">
+		<span>我的推荐码</span><span>{$refCode}</span>
+	</div>
+	<div class="rowItem">
+		<span>原密码</span><input id="pw" class="easyui-textbox" type="password" name="password" value="" class="easyui-textbox" style="width:150px;" data-options="prompt:'不少于6个字符',required:true,missingMessage:'必须输入密码。', validType:'minLength[6]'">
+	</div>
+	<div class="rowItem">
+		<span>新密码</span><input id="pw2" type="password" name="password2" class="easyui-textbox" style="width:150px;" data-options="prompt:'不少于6个字符',required:true">
+	</div>
+	<div class="rowItem">
+		<span>重复新密码</span><input id="pw3" type="password" name="password3" class="easyui-textbox" style="width:150px;" data-options="prompt:'不少于6个字符',required:true">
+	</div>
+	<div style="margin-top:1em;margin-bottom:1em;">
+		<div id="msgBox" class="errorMsg" style="display:blocsk;margin-bottom:0.3em;">{$errorMsg}</div>
+		<input type="button" class="iptReg" value="修改密码" onclick="preSubmit();"/>
+	</div>
+	</form>
+</div>
+</block>

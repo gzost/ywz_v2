@@ -1,0 +1,16 @@
+www.av365.cn/
+zghj_ylh_live/
+素材/
+webapp/avision/Runtime/
+logs/
+webroot/vodfile/
+webroot/room/
+webroot/doc/
+sslkeys/
+webroot/chunks/
+webroot/Public/jeasyui/
+webroot/Public/jeasyui_old/
+*.bak
+*.log
+*.mp4
+*.scc

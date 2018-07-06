@@ -1,0 +1,118 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<title>{$title}</title>
+<meta name="keywords" content="易网真,易网真直播间,avision视频直播系统" />
+<link href="__PUBLIC__/jeasyui/themes/default/easyui.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/icon.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/color.css" rel="stylesheet" type="text/css">
+<load href="__ROOT__/player/{$theme|default='default'}/css/base.css" />
+<load href="__PUBLIC__/NivoSlider/nivo-slider.css" />
+<load href="__PUBLIC__/NivoSlider/themes/default/default.css" />
+<load href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" />
+<load href="__ROOT__/player/{$theme|default='default'}/css/info.css" />
+
+<load href="__PUBLIC__/jeasyui/jquery.min.js"/>
+<load href="__PUBLIC__/jeasyui/jquery.easyui.min.js"/>
+<load href="__PUBLIC__/js/jquery.json.min.js"/>
+<load href="__PUBLIC__/js/publicFunction.js"/>
+<script type="text/javascript" src="/player/js/keepAlive.js?t={$time}"></script>
+<script type="text/javascript" src="/player/js/webChat.js?t={$time}"></script>
+<load href="__PUBLIC__/NivoSlider/jquery.nivo.slider.pack.js"/>
+<load href="__PUBLIC__/js/qrcode.js" />
+<load href="__PUBLIC__/js/jquery.qrcode.js" />
+<load href="__ROOT__/player/js/video.js" />
+
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script type="text/javascript" src="/home.php/Test/getJs?t={$time}"></script>
+
+<script type="text/javascript">
+function pay(val)
+{
+	//先生成预付单，得到获取支付参数的地址
+	$.ajax({
+		url: '/home.php/Test/prepay/val/' + val,
+		type: 'post',
+		data: '',
+		cache: false,
+		timeout:5000,
+		dataType: 'json',
+		success:function(data){
+			try{
+				if(null != data.h5js)
+				{
+					getPara(data.h5js);
+				}
+			}
+			catch(e){
+				//alert(e);
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			//alert('网络或服务中断！');
+			setTimeout('pay('+val+')', 100);
+		}
+	});
+
+	//调用后台，生成预付单
+	//获取预付单信息
+	//调用支付接口
+}
+
+function getPara(url)
+{
+	console.log(url);
+	//获取支付参数
+	$.ajax({
+		url: url,
+		type: 'post',
+		data: '',
+		cache: false,
+		timeout:5000,
+		dataType: 'json',
+		success:function(data){
+			try{
+				callWxPay(data);
+			}
+			catch(e){
+				//alert(e);
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			//alert('网络或服务中断！');
+			setTimeout('getPara('+url+')', 100);
+		}
+	});
+}
+
+function callWxPay(p)
+{
+	//console.log(p.timeStamp);
+	//console.log(p);
+	wx.chooseWXPay({
+    timestamp: p.timeStamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
+    nonceStr: ''+p.nonceStr, // 支付签名随机串，不长于 32 位
+    package: ''+p.package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
+    signType: ''+p.signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
+    paySign: ''+p.paySign, // 支付签名
+    success: function (res) {
+        // 支付成功后的回调函数
+		//alert('suc');
+		//alert(res);
+    }
+});
+}
+
+</script>
+
+</head>
+<body>
+<input type="button" onclick="pay(1)" value="pay"></input>
+</body></html>

@@ -1,0 +1,109 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<title>{$title}直播间</title>
+<meta name="keywords" content="易网真,易网真直播间,avision视频直播系统" />
+<load href="__PUBLIC__/jeasyui/jquery.min.js" />
+<load href="__PUBLIC__/js/jquery.json.min.js" />
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/publicFunction.js"></script>
+<load href="__ROOT__/player/js/keepAlive.js" />
+<script type="text/javascript" src="__ROOT__/player/js/aodianplay.js"></script>
+
+<script type="text/javascript">
+var h5p = null;
+var isPlay = false;
+var isShow = false;
+var playType = {$playType};
+var chnId = {$chnId};
+
+////心跳设置的变量////
+var aliveTime={$aliveTime};	//心跳间隔秒数
+var onlineId={$onlineId};	//频道ID
+var keepAliveUrl="__APP__/HDPlayer/keepAlive";
+var logoutUrl="__APP__/Home/logout";
+/////////
+
+$(document).ready(function(){
+	$(window).resize(function(){
+		resize();
+	});
+	keepAlive(playType, chnId);
+});
+
+
+//初始化显示插件
+function loadInit()
+{
+	switch(playType)
+	{
+		case 1:
+			playerInit();
+		case 2:
+			playerInit();
+		case 3:
+			break;
+		case 4:
+			//sliderInit();
+			break;
+		default:
+			break;
+	}
+
+}
+
+$(window).load(function()
+{
+	loadInit();
+});
+
+
+function playerInit()
+{
+	var h = $(document).height();
+	var w = $(document).width();
+
+	aodianPlayer({
+		container:'flashContent',
+		rtmpUrl: '{$rtmpmrl}',//控制台开通的APP rtmp地址，必要参数
+	    hlsUrl: '{$hlsmrl}',//控制台开通的APP hls地址，必要参数
+		name:'player',
+		width: w,
+		height: h,
+		adveReAddr:'/home/{$theme|default='default'}/images/start.jpg',
+		controlbardisplay: 'enable',
+		autostart: true
+	});
+}
+
+</script>
+
+
+</head>
+<body style="background-color:#000;margin:0;">
+	<switch name="playType">
+		<case value="1">
+			  <div id="flashContent"></div>
+		</case>
+		<case value="2">
+			  <div id="flashContent"></div>
+		</case>
+		<case value="3">
+			<div id="h5Div" style="width:100%;float:left;">
+			<video id="h5Player" style="width:100%;margin:0;vertical-align:top;" poster="/player/{$theme|default='default'}/images/start.jpg" controls="controls" loop="loop" autoplay="autoplay">
+			  <source src="{$mp4Rec}" type="video/mp4" />
+			</video>
+			</div>
+		</case>
+		<case value="4">
+			<div id="h5Div" style="width:100%;float:left;">
+			<img border="0" style="width:100%;vertical-align:top;margin:0;" src="__ROOT__/player/{$theme|default='default'}/images/unstart.jpg" alt="直播未开始" />
+			</div>
+		</case>
+	</switch>
+</body>
+</html>

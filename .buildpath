@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<buildpath>
+	<buildpathentry kind="src" path="webapp/avision/Common"/>
+	<buildpathentry kind="src" path="webapp/avision/Conf"/>
+	<buildpathentry kind="src" path="webapp/avision/Lib/Action"/>
+	<buildpathentry kind="src" path="webapp/avision/Lib/Behavior"/>
+	<buildpathentry kind="src" path="webapp/avision/Lib/Model"/>
+	<buildpathentry kind="src" path="webapp/avision/Runtime/Cache"/>
+	<buildpathentry kind="src" path="webapp/home/Conf"/>
+	<buildpathentry kind="src" path="webapp/home/Lib/Action"/>
+	<buildpathentry kind="src" path="webapp/home/Runtime/Cache"/>
+	<buildpathentry kind="src" path="webapp/player/Conf"/>
+	<buildpathentry kind="src" path="webapp/player/Lib/Action"/>
+	<buildpathentry kind="src" path="webapp/public"/>
+	<buildpathentry kind="src" path="webroot"/>
+	<buildpathentry kind="con" path="org.eclipse.php.core.LANGUAGE"/>
+</buildpath>

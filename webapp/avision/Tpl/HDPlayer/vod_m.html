@@ -1,0 +1,514 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<title>{$title}</title>
+<meta name="keywords" content="易网真,易网真直播间,avision视频直播系统" />
+<link href="__PUBLIC__/jeasyui/themes/default/easyui.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/icon.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/color.css" rel="stylesheet" type="text/css">
+<load href="__ROOT__/player/{$theme|default='default'}/css/base.css" />
+<load href="__PUBLIC__/NivoSlider/nivo-slider.css" />
+<load href="__PUBLIC__/NivoSlider/themes/default/default.css" />
+<load href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" />
+<load href="__ROOT__/player/{$theme|default='default'}/css/info.css" />
+
+<load href="__PUBLIC__/jeasyui/jquery.min.js"/>
+<load href="__PUBLIC__/jeasyui/jquery.easyui.min.js"/>
+<load href="__PUBLIC__/js/jquery.json.min.js"/>
+<load href="__PUBLIC__/js/publicFunction.js"/>
+<script type="text/javascript" src="/player/js/webChat.js?t={$time}"></script>
+<load href="__PUBLIC__/NivoSlider/jquery.nivo.slider.pack.js"/>
+<load href="__PUBLIC__/js/qrcode.js" />
+<load href="__PUBLIC__/js/jquery.qrcode.js" />
+<load href="__ROOT__/player/js/video.js" />
+
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script type="text/javascript" src="__URL__/js?t={$time}"></script>
+
+<style type="text/css">
+#.flex-body {
+    display: -webkit-flex;
+    display: flex;
+}
+
+#.flex-row {
+	flex-flow: row;
+	-webkit-flex-flow: row;
+}
+
+.FlowBottom{
+	position:fixed;
+	margin:auto;
+	left:0;
+	right:0;
+	#top:0;
+	bottom:0;
+	z-index:99;
+	text-align:center;
+}
+
+.FlowBottom div{
+	#margin:1em;
+	display:inline;
+	color:#FFF;
+}
+
+.msgFlow{
+	display:none;
+	position:absolute;
+	margin:auto;
+	left:0;
+	right:0;
+	top:178px;
+	background-color:#000;
+	line-height:1.2em;
+	font-size:0.8em;
+	z-index:98;
+	color:#F00;
+	height:1.2em;
+	overflow:hidden;
+}
+
+.contRow{
+	color:#FFF;
+	display:block;
+	padding:0.3em 0.1em 0.3em 0.1em;
+}
+
+.contRow img{
+	margin:0.2em;
+}
+
+.statcell{
+	float:left;
+	width:32%;
+	text-align:center;	
+	font-size:0.8em;
+
+	overflow:hidden;
+	word-break:keep-all;/* 不换行 */
+    white-space:nowrap;/* 不换行 */
+    text-overflow:ellipsis;/* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/
+
+}
+
+.statcell span{
+	#padding-left:3px;
+	padding-right:3px;
+}
+
+.statcell img{
+	height:1em;
+	vertical-align:middle;
+}
+
+.chatCellCanChat{
+	float:left;
+	width:32%;
+	text-align:center;	
+	font-size:0.8em;
+}
+
+.chatCellCanChat span{
+	#padding-left:3px;
+	padding-right:3px;
+}
+
+.chatCellCanChat img{
+	height:1em;
+	vertical-align:middle;
+}
+
+.chatCell{
+	display:none;
+}
+
+
+.imgSp{
+	float:left;
+	width:1px;
+	border-left: 1px solid #666;
+	height:1em;
+}
+
+.divMore{
+	text-align:center;
+	background-color:#fff;
+}
+
+.tbBorder{
+	width:98%;
+	margin:auto;
+	#margin-top:0.3em;
+	padding:1px;
+	border: 1px solid #eee;
+	border-bottom:0px;
+	display:table;
+	background-color:#fff;
+	color:#fff;
+}
+
+.tbCellSp{
+	height: 1px;
+    border-top: 1px solid #666;
+    text-align: center;
+	width:100%;
+}
+
+.tbCell{
+    color: #000;
+	width:99%;
+	#display:table-row;
+}
+
+.tbCell img{
+	width:100%;
+	display:table-cell;
+	object-fit:cover;
+}
+
+.tbCell div{
+	padding:0.3em;
+	font-size:0.7em;
+	line-height:1em;
+	display:table-cell;
+	vertical-align:middle;
+}
+
+.tbCell table{
+    width: 100%;
+}
+
+.recDesc{
+	overflow:auto;
+	width:60%;
+}
+
+.recImg{
+	width:40%;
+}
+
+.divLayer{
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 900;
+	#padding-top:3px;
+	#padding-right:3px;
+	display:table;
+}
+
+.divFullBg{
+    width: 100%;
+    text-align: center;
+    display: table-cell;
+	background-color: #111;
+	opacity:0.8;
+}
+.divCenter{
+    width: 100%;
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+}
+.divBlock div{
+	display:block;
+	text-align:center;
+	margin:20px;
+}
+.divBlock{
+	background-color:#000;
+	color:#eee;
+	opacity:1;
+	padding:5px;
+}
+
+
+
+
+</style>
+
+<script type="text/javascript">
+var rId = '{$rId}';
+var lastSecId = '';
+var moreFit = false;
+var nowPlayType = '';
+var nowVodId = '';
+////心跳设置的变量////
+var aliveTime='{$aliveTime}';	//心跳间隔秒数
+var onlineId='{$onlineId}';	//在线ID
+//在线对象列表，列表属性：
+var onlineList='{$onlineList}';	//在线对象列表
+var keepAliveUrl="__APP__/HDPlayer/keepAlive";
+var startOnlineUrl="__APP__/HDPlayer/startOnline";
+var stopOnlineUrl="__APP__/HDPlayer/stopOnline";
+var logoutUrl="__APP__/Home/logout";
+/////////
+
+/*
+function heartMsg(msg)
+{
+	alert(msg);
+}
+*/
+
+//Demo用活动计费对象ID
+var viewId=0;
+function onlineSuccess(onlineId,data){
+	viewId = onlineId;
+}
+
+function onlineError(msg,data){
+	//alert(msg)
+	showMsgAni(msg);
+}
+
+function offlineCallback(result,data){
+	//alert("offline:"+result);
+}
+
+function selImgChange(idName)
+{
+	if(0 < lastSecId.length)
+	{
+		$('#'+lastSecId+' img').attr('src', $('#'+lastSecId+' img').attr('src-org'));
+	}
+	$('#'+idName+' img').attr('src', $('#'+idName+' img').attr('src-sel'));
+	lastSecId = idName;
+}
+
+function recPlayLoad(recId)
+{
+	location.href = "{$myurl}" + "&r=" + recId;
+}
+
+function recPlay(recId)
+{
+	if(0 < recId.length)
+	{
+			nowVodId = recId;
+			nowPlayType = 'vod';
+			DivLoadHtml('__APP__/HDPlayer/recShowPage/str/'+recId, 'divShow');
+			onStopEven();
+			//页面滚动条滚到顶
+			document.body.scrollTop = 0;
+	}
+}
+
+function livePlayerLoad()
+{
+	if('live' != nowPlayType)
+	{
+		nowPlayType = 'live';
+		DivLoadHtml('__APP__/HDPlayer/liveShowPage/chnId/{$chnId}', 'divShow');
+		onStopEven();
+	}
+}
+
+function tbInfoClick()
+{
+	DivMoreFit(false);
+	livePlayerLoad();
+	DivLoadHtml('__APP__/HDPlayer/infoPage/chnId/{$chnId}', 'divMore');
+	selImgChange('tbInfo');
+}
+
+function tbRePlayClick()
+{
+	DivMoreFit(true);
+	DivLoadHtml('__APP__/HDPlayer/recordPage/chnId/{$chnId}', 'divMore');
+	selImgChange('tbRePlay');
+	DivMoreFit(true);
+}
+
+
+function tbEntrytimesClick()
+{
+	DivLoadText('{$freshonlineurl}', 'entrytimes', 'num');
+}
+
+function tbShareClick()
+{
+	//判断是否在微信浏览器内
+	if(true)
+	{
+		genQrcode();
+		$('#h5Player').hide();
+		$('#divGuaidShare').show();
+	}
+	else
+	{
+		//TODO:其它处理方式
+	}
+}
+
+function divShowDisplay()
+{
+	$('#h5Player').show();
+}
+
+function graidShareHide()
+{
+	$('#divGuaidShare').hide();
+	divShowDisplay();
+}
+
+$(document).ready(function(){
+	
+	console.log(rId);
+	recPlay(rId);
+
+});
+
+function genQrcode()
+{
+	$('#qrcode').html('');
+	//分享二维码
+	$('#qrcode').qrcode(
+	{
+		text: location.href,
+		width: 200,
+		height: 200,
+		border:	2,
+		logoid:'logoimg',
+		logoW:48,
+		logoH:48,
+	}
+	);
+
+}
+
+function checkWH()
+{
+	//由于设备的不同，根由当前实际的横竖情况来显示
+
+	var width=window.screen.availWidth;	//屏幕可用宽度
+	var height=window.screen.availHeight;	//屏幕可用高度
+
+	if(width > height)
+	{
+		//横屏
+	}
+	else
+	{
+		//竖屏
+	}
+
+/*
+	if(window.orientation==180||window.orientation==0)
+	{
+		//alert("竖屏状态！")
+	}
+	if(window.orientation==90||window.orientation==-90)
+	{
+		//alert("横屏状态！")
+	}
+*/
+}
+
+window.addEventListener("onorientationchange" in window ? "orientationchange" : "resize", checkWH, false);
+
+
+function DivMoreFit(isFit)
+{
+	if(isFit)
+	{
+		var h = $(window).height();
+		var t = $('#divMore').position().top;
+		$('#divMore').height(Math.floor(h-t));
+		$('#divMore').css('overflow-y', 'auto');
+	}
+	else
+	{
+		$('#divMore').css('overflow-y', '');
+	}
+	moreFit = isFit;
+}
+
+function EventTester(e, fun)
+{
+	document.getElementById("h5Player").addEventListener(e,fun);
+}
+
+function onPlayEven()
+{
+	heart.startOnline($('#h5Player').attr('filetype')
+						,$('#h5Player').attr('innerId')
+						,onlineSuccess
+						,onlineError);
+}
+
+function onStopEven()
+{
+	if(0 < viewId)
+	{
+		heart.stopOnline(viewId,offlineCallback);
+		viewId = 0;
+	}
+}
+
+function onResizeEven()
+{
+	DivMoreFit(moreFit);
+}
+
+function hidenMsg()
+{
+	$('#msgShow').css('display', 'none');
+}
+
+function showMsgAni(msg)
+{
+	if(0 < msg.length)
+	{
+		$('#msgShow').text(msg);
+		$('#msgShow').css('display', 'block');
+		$('#msgShow').css('top', $('#divShow').css('height'));
+		$('#msgShow').css('left', $('#msgShow').css('width'));
+		$('#msgShow').animate({left:'0px'}, 5000);
+		$('#msgShow').animate({left:'15px'}, 1000);
+		$('#msgShow').animate({left:'15px'}, 4000);
+		$('#msgShow').fadeOut(5000);
+	}
+}
+
+</script>
+</head>
+<body class="flex-body" style="background-color:#FFF;font-size:24px;margin:0;padding:0;">
+<div id="divShow" class="flex-row" style="width:100%;background-color:#fff;">
+	<!--封面图片
+	<img src="/player/{$theme|default='default'}/images/unstart.jpg" style="width:100%"/>
+	-->
+</div>
+<div class="flex-row">
+	<div class="contRow" style="height:1em;background-color:#333333">
+		<div class="statcell" id="tbRePlay" style="width:100%;text-align:center;"><img src="/player/{$theme|default='default'}/images/pinglun.png" src-sel="/player/{$theme|default='default'}/images/pinglun_s.png" src-org="/player/{$theme|default='default'}/images/pinglun.png"/>内容介绍</div>x
+	</div>
+</div>
+	<!--下部可变内容，宣传介绍，-->
+	<div id="divMore" class="flex-row" style="min-height:200px;color:#fff;text-indent:2em;line-height:1.4em;padding:0.5em;color:#333;font-size:0.7em;">
+	{$divMoreMsg}
+	</div>
+
+	<!--分享指引-->
+	<div id="divGuaidShare" class="divLayer" style="display:none;">
+		<div class="divFullBg" style="" >
+		</div>
+		<div class="divLayer" style="" onclick="graidShareHide()">
+			<div class="divCenter" style="height:300px;width:100%;vertical-align:top;">
+				<div class="divBlock" style="display: inline-block;float: right;">
+					<div style="text-align:right;"><img src="/player/{$theme|default='default'}/images/shouzhi.png" style=""/></div>
+					<div style="text-align:right;line-height:1em;"><span>点击右上角菜单<br/>分享给朋友或朋友圈</span></div>
+					<div id="qrcode" style="padding:10px;background-color:#FFF;text-align:right;"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="divLayer" class="divLayer" style="display:none;">
+	</div>
+</body></html>

@@ -1,0 +1,30 @@
+<!-- 
+	直播控制台--套餐列表
+	宽屏显示模板
+	outao 2016-12-19
+ -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+	<table id="dg" class="easyui-datagrid"  style="width:98%"
+					data-options="url:'__APP__/Console/getPkgListAjax',rownumbers:true,singleSelect:true,
+						pagination:false,  pageSize:10 "	>
+					<thead>
+					<tr>
+						<th data-options="field:'purchase', width:150,align:'left', halign:'center' ">购买时间</th>
+						<th data-options="field:'expiry', width:150,align:'left', halign:'center' ">有效期</th>
+						<th data-options="field:'typename', width:120,align:'center', halign:'center' ">套餐类型</th>
+						<th data-options="field:'name', width:300,align:'left', halign:'center'">套餐名称</th>
+						<th data-options="field:'total', width:150,align:'right', halign:'center'">套餐总额</th>
+						<th data-options="field:'used', width:150,align:'right', halign:'center' ">已使用</th>
+					</tr>
+					</thead>
+				</table>
+
+
+
+</block>

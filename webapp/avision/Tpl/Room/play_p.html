@@ -1,0 +1,28 @@
+<!DOCTYPE html">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>易网真直播室</title>
+<meta name="keywords" content="易网真,易网真直播室" />
+<meta name="description" content="支持PC终端,Android安卓终端,iOS苹果终端,WindowsPhone终端,纯HLS(m3u8)跨平台技术(跨平台多终端测试)" />
+<link rel="stylesheet" type="text/css" href="/css/common.css"/>
+<script type="text/javascript" src="/jwplayer/jwplayer.js"></script>
+</head>
+<body style="width:980px; background-color:#000000;text-align:center">
+
+<div id="myElement" style="height:600px;width:800px">Loading the player...</div>
+
+<script type="text/javascript">
+jwplayer("myElement").setup({
+	file: "{$rtmpmrl}",
+    image: "/images/start.jpg",
+    rtmp: {
+        bufferlength: 2
+    },
+	autostart:true,
+});
+</script>
+<div style="text-align:center;width:100%;background:#000000;">
+</div>
+</body>
+</html>

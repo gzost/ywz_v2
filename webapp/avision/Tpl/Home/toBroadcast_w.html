@@ -1,0 +1,377 @@
+<!-- 
+	易网真客户服务“我要直播”页
+	宽屏显示模板
+	outao 2016-12-05
+ -->
+<extend name="common:HomeBase_w" />
+
+<block name="bl_north">
+<load href="__ROOT__/home/{$theme|default='default_w'}/css/broadcast.css" />
+
+<style>
+#payQr{
+	display:none;
+	position:absolute;
+	left:0;
+	right:0;
+	top:120px;
+}
+#qrcode{
+	padding:10px;
+	background-color: #FFF;
+}
+#payQr span{
+	display: block;
+    line-height: 1.2em;
+    font-size: 1.2em;
+    margin: -1px;
+    color: #F00;
+	background-color: #FFF;
+}
+</style>
+<div id="north">
+	<div id="slogan">
+		<div>一触即发，简单两步立即直播！</div>
+		<div class="step" style="margin-top:24px;">
+			<a href="http:__URL__/toBroadcast" class="btn btn-step <eq name='step' value='1'>cur-step</eq>">1</a>注册播主
+			<a href="http:__URL__/toBroadcast" class="btn btn-step <eq name='step' value='2'>cur-step</eq>">2</a>购买服务
+		</div>
+	</div>
+</div>
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/js/sms.js" /> 
+<load href="__PUBLIC__/js/bill.js"/>
+<load href="__PUBLIC__/js/qrcode.js" />
+<load href="__PUBLIC__/js/jquery.qrcode.js" />
+<script type="text/javascript">
+var codeUrl = '/home.php/Home/toBroadcastPayCode.html';
+var checkUrl = '/home.php/Home/rechargePayCheck.html';
+var payValue = '{$fee}';
+var bill = new BillHelper();
+var isShowCode = false;
+
+function submitForm(){
+	$.messager.confirm('确定提交','填写的资料提交后不能更改，继续吗?',function(r){
+		if (r)
+		{
+			//判断是否要求填写手机号码，若要，则要判断是否已填写
+			if(null != document.getElementById("phone"))
+			{
+				var ph = $('#phone').val();
+				if(11 != ph.length)
+				{
+					alert('请填写正确的手机号码');
+					return;
+				}
+			}
+
+			IsVaildAccount();
+		}	//.form('submit')
+	});
+}
+
+function IsVaildAccount()
+{
+	var phone = null;
+
+	if(1 == $("#phone").length)
+	{
+		phone = $('#phone').textbox('getValue');
+		$('#account').textbox('setValue', phone);
+	}
+	else
+	{
+		//直接提交
+		$('#ff').submit();
+		return;
+	}
+
+	var ret = false;
+	$.ajax({
+			url: '{$chkVaildAccUrl}',
+			type: 'post',
+			data: 'username=' + $("input[name='account']").val(),
+			cache: false,
+			//timeout:15000,	//超时设为15秒
+			dataType: 'json',
+			success:function(data){
+				try{
+					if( null==data || data.result !='true')
+					{
+						//不可以使用
+						$('#accountChk').attr('src', '/Public/jeasyui/themes/icons/no.png');
+						$('#accountChk').show();
+						//$('#account').textbox('textbox').focus();
+						$('#accountMemo').hide();
+						$('#accountAlert').show();
+						ret = false;
+					}
+					else
+					{
+						//可以使用
+						$('#accountChk').attr('src', '/Public/jeasyui/themes/icons/ok.png');
+						$('#accountChk').show();
+						$('#accountMemo').show();
+						$('#accountAlert').hide();
+						ret = true;
+						$('#ff').submit();
+					}
+				}
+				catch(e){
+					alert(e.message);	//
+					return;
+				}
+			},
+			complete:function(){	//无论是否成功都会调用
+			},
+			error:function(){
+				alert('网络或服务中断！');
+			}
+		});
+	return ret;
+}
+
+function onCodeRecv(data)
+{
+	var codeW = 250;
+	var codeH = 250;
+	var imgW = 48;
+	var imgH = 48;
+
+	$('#qrcode').html('');
+	$('#qrcode').qrcode({
+							text: data.payurl,
+							width: codeW,
+							height: codeH,
+							border:	2,
+							logoid:'wxlogo',
+							logoW:48,
+							logoH:48,
+						});
+	$('#payQr').show();
+
+	checkUrl += '?t=' + data.msgstr;
+	payValue = data.fee;
+
+	payCheck();
+}
+
+function payCheck()
+{
+
+	$.ajax({
+		url: checkUrl ,
+		type: 'post',
+		data: '',
+		cache: false,
+		timeout:1000,
+		dataType: 'json',
+		success:function(data){
+			try{
+				if('true' == data.has)
+				{
+					//充值成功
+					location.href = "/home.php/Home/help";
+				}
+			}
+			catch(e){
+				//alert(e);
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			//alert('网络或服务中断！');
+		}
+	});
+
+	setTimeout("payCheck()", 1000);
+}
+
+
+function showPayQr()
+{
+	//获取支付地址并检查
+	bill.billCode3Recv = onCodeRecv;
+	bill.billCode3(codeUrl, 'amount=' + payValue);
+
+	/*
+	$('#qrcode').qrcode(
+	{
+		text:"{$payQrUrl}",
+		width:250,
+		height:250,
+		logoid:'wxlogo',
+		logoW:48,
+		logoH:48,
+	}
+	);
+	$('#payQr').show();
+	*/
+}
+
+function hideQr()
+{
+	$('#payQr').hide();
+	$('#qrcode').html('');
+}
+
+var sms = new SmsHelper();
+sms.Init('{$smsUrl}', 'smsBtn');
+
+
+function btnSendSms()
+{
+	var phone = $('#phone').textbox('getValue');
+	if(0 == phone.length)
+	{
+		alert('请填写手机号码！');
+		return;
+	}
+	if(11 != phone.length)
+	{
+		alert('手机号码长度不正常！');
+		return;
+	}
+	sms.btnClick(phone);
+}
+
+</script>
+<div style="margin-top:10px;"></div>
+<form id="ff" method="post">
+<img id="wxlogo" src="/Public/images/wx64.png" style="display:none;"/>
+	<div class="input-box">
+		<eq name="step" value='1'>
+			<div class="title">注册主播</div>
+			<neq name='isLogin' value='true'>
+				<p class="note">请填写以下用户注册信息，若您已经是易网真用户，请先登录后再补充播主的资料。</p>
+				<table width=90% align="center">
+				<tr>
+					<td>手机号码：</td>
+					<td>
+						<input class="easyui-numberbox" id="phone" name="phone" value="{$phone}" 
+						data-options="prompt:'请输入中国移动电话号' " style="width:200px;height:32px">
+						<img id="accountChk" style="display:none;"/>
+						<span id="accountMemo"></span>
+						<span id="accountAlert" style="color:red;display:none;">该账号不可用</span>
+						机主与申请人必须是同一人
+					</td>
+				</tr>
+				<tr>
+					<td>短信验证码：</td>
+					<td>
+						<input class="easyui-textbox"  name="code" value="" 
+						data-options="prompt:'请输入验证码' " style="width:100px;height:32px">
+						<a href="javascript:void(0)" class="easyui-linkbutton" id="smsBtn" onclick="btnSendSms();">获取验证码</a>
+					</td>
+				</tr>
+				<tr style="display:none;">
+					<td>账号：</td>
+					<td>
+						<input class="easyui-textbox" id="account" name="account" value="{$account}" style="width:200px;height:32px"
+						data-options="prompt:'输入这是您登录系统的唯一标识', required:true, missingMessage:'请输入以英文字母开头不少于6个英文字母或数字或下划线',validType:'account' " >
+					</td>
+				</tr>
+				<tr>
+					<td>用户昵称：</td>
+					<td>
+						<input class="easyui-textbox"  name="username" value="{$username}" style="width:200px;height:32px"
+						data-options="prompt:'选个好听威猛的名字' " >
+					</td>
+				</tr>
+				<tr>
+					<td>密码：</td>
+					<td>
+						<input id="pw" class="easyui-textbox" type="password" name="password" value="" style="width:200px;height:32px"
+						data-options="prompt:'请输入不少于6个字符',missingMessage:'必须输入密码。',
+						 	validType:'minLength[6]' " >
+						密码应包括字母、数字、符号
+					</td>
+				</tr>
+				<tr>
+					<td>重复输入密码：</td>
+					<td>
+						<input class="easyui-textbox"  type="password" name="password2" value="" style="width:200px;height:32px"
+						data-options="prompt:'请输入不少于6个字符' " >
+						两次密码输入必须相同
+					</td>
+				</tr>
+				</table>
+			</neq>
+			<p class="note">请填写以下播主的真实信息，这些信息将按政策规定进行实名认证。</p>
+			<p class="note">机构账号在自然人代表实名认证后，可以上传相关机构信息，通过机构公函可更改自然人代表。</p>
+			<table width=90% align="center">
+				<tr>
+					<td>真实姓名：</td>
+					<td><input class="easyui-textbox"  name="realname" value="{$realname}" 
+						data-options="prompt:'请输入真实姓名' " style="width:200px;height:32px">
+						必须与身份证所载完全一致
+					</td>
+				</tr>
+				<tr>
+					<td>身份证号码：</td>
+					<td>
+						<input class="easyui-textbox"  name="idcard" value="{$idcard}" 
+						data-options="prompt:'请输入中国居民身份证号' " style="width:200px;height:32px">
+					</td>
+				</tr>
+				<eq name='isLogin' value='true'>
+				<tr>
+					<td>手机号码：</td>
+					<td>
+						<input class="easyui-textbox" id="phone" name="phone" value="{$phone}" 
+						data-options="prompt:'请输入中国大陆手机号码' " style="width:200px;height:32px">
+					</td>
+				</tr>
+				<tr>
+					<td>短信验证码：</td>
+					<td>
+						<input class="easyui-textbox"  name="code" value="" 
+						data-options="prompt:'请输入验证码' " style="width:200px;height:32px">
+						<a href="javascript:void(0)" style="position:relative;bottom:0.3em;" class="easyui-linkbutton" id="smsBtn" onclick="btnSendSms();">获取验证码</a>
+					</td>
+				</tr>
+				</eq>
+				<tr>
+					<td>推荐码：</td>
+					<td>
+						<input name="refCode" value="{$refCode}" class="easyui-textbox" style="width:150px;" data-options="prompt:'推荐码',required:false">
+					</td>
+				</tr>
+			</table>
+			<div style="width:100%; margin:10px; text-align:center;">
+				<div class='warn'>{$message}</div>
+				<a href="javascript:void(0)" class="btn btn-submit" onclick="submitForm()">注册并下一步</a>
+			</div>
+		</eq>
+		<eq name="step" value='2'>
+			<div class="title">请选择您需要的服务</div>
+			<p class="note">恭喜！您已经成功注册成为万众瞩目的播主！{$detail}</p>
+			<div style="width:100%; margin:10px; text-align:center;">
+				<a href="javascript:void(0)" class="btn btn-submit" onclick="showPayQr()">微信支付</a>
+			</div>
+			<p class="note">若您已经成功充值，请点击右上角按钮进入“直播控制台”设置您的频道。</p>
+		</eq>
+		<eq name="step" value='3'>
+			<div class="title">充值成功</div>
+			<p class="note">请点击右上角按钮进入“直播控制台”设置您的频道。若有疑问请到“帮助中心”看看。</p>
+			<p class='warn'>注意：您有一个月时间完成实名认证。在完成实名认证后您可以开设更多的频道，并取消观众数的限制。</p>
+		</eq>
+	</div>
+	<input type=hidden name='isSubmit' value='true' >
+	<input type=hidden name="step" value="{$step}" >
+	
+</form>
+<div id="payQr" onclick="hideQr()">
+<div id="qrcode"></div>
+	<!--指引-->
+	<div style="position:fixed;top:130px;right:31px;">
+		<div><img src="/player/{$theme|default='default'}/images/shouzhib.jpg" style=""/></div>
+		<div><span>完成支付后，点击右上角"直播控制台"<br/>管理您的专属频道。</span></div>
+		<div id="qrcode" style="padding:10px;background-color:#fff;"></div>
+	</div>
+<span>请用微信扫描上方的二维码进行支付</span>
+</div>
+</block>

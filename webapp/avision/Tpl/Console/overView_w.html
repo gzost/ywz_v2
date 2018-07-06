@@ -1,0 +1,280 @@
+<!-- 
+	直播控制台--总览
+	宽屏显示模板
+	outao 2016-12-19
+
+
+ -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+<block name="bl_main">
+<script type="text/javascript" src="__PUBLIC__/js/qrcode.js" ></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.qrcode.js" ></script>
+<script type="text/javascript" src="__PUBLIC__/js/publicFunction.js" ></script>
+
+<script type="text/javascript">
+function NewChn()
+{
+	//通过获取Ajax页面
+	$.ajax({
+		url: '/home.php/Console/AddChn',
+		type: 'post',
+		data: '',
+		cache: false,
+		timeout:60000,	//超时设为60秒
+		dataType: 'json',
+		success:function(data){
+			try{
+				if( null!=data || data.result !='true')
+				{
+					if(null != data.msg)
+					{
+						alert(data.msg);
+					}
+					if(null != data.jump)
+					{
+						location.replace(data.jump);
+					}
+				}
+				else
+				{
+					location.reload();
+					//发送成功
+					//alert('保存成功');					
+				}
+			}
+			catch(e){
+				alert(e.message);	//
+				return;
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			alert('网络或服务中断！');
+		}
+	});
+}
+
+function getWxBindCode()
+{
+	//通过获取Ajax页面
+	$.ajax({
+		url: '/home.php/Wx/getBindCode',
+		type: 'post',
+		data: '',
+		cache: false,
+		timeout:6000,	//超时设为6秒
+		dataType: 'json',
+		success:function(data){
+			try{
+				$('#bindqrcode').html('');
+				$('#bindqrcode').qrcode({
+					text:'http://{$Think.server.HTTP_HOST}/home.php/Wx/binding?t='+data.data,
+					width:200,
+					height:200,
+					border:2,
+					logoW:48,
+					logoH:48,
+				});
+				$('#wx').window('open');
+			}
+			catch(e){
+				return;
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			alert('网络或服务中断！');
+		}
+	});
+}
+
+function showPlayInfo(chn, imgid){
+	//console.log(chn);
+	var html="<div style='font-size:16px'>频道："+chn.name+"</div>";
+	html +="<div>播放地址：</div>";
+	var body=$('#w').panel('body');
+	$("#w-title").html(chn.name);
+	$("#Fcode").val("http://{$Think.server.HTTP_HOST}/r.php?i="+chn.id.toString()+"&u="+chn.owner.toString());
+	$('#qrcode').html('');
+	$('#qrcode').qrcode({
+		text: $('#Fcode').val(),
+		width:200,
+		height:200,
+		border:2,
+		logoid:imgid,
+		logoW:48,
+		logoH:48,
+	});
+	//console.log($('#Fcode').val());
+	$('#w').window('open');
+}
+
+</script>
+
+<div style="margin:10px;" id="rightCont">
+	<div id="base-info">
+		<div class="verify-info">
+			<div class="verify-text">手机验证</div>
+			<present name="phoneVerify">
+				<img alt="手机" src="__ROOT__/home/{$theme|default='default_w'}/images/phone_t.png" >
+			<else />
+				<img alt="手机" src="__ROOT__/home/{$theme|default='default_w'}/images/phone_f.png" >
+			</present>
+		</div>
+		<div class="verify-info">
+			<div class="verify-text">实名认证</div>
+			<present name="rnVerify">
+				<img alt="实名" src="__ROOT__/home/{$theme|default='default_w'}/images/realname_t.png" >
+			<else />
+				<a href="__APP__/Console/realname" >
+					<img alt="实名" src="__ROOT__/home/{$theme|default='default_w'}/images/realname_f.png" >
+				</a>
+			</present>
+		</div>
+		<div style="display:inline-block;width:10px"></div>
+		<table class='table-bd1' cellpadding=5 cellspacing=0>
+			<tr>
+				<td>账户余额</td><td>可用额</td><td>有效套餐</td><td>频道数</td><td>视频文件数</td>
+			</tr>
+			<tr>
+				<td>{$balance}</td><td>{$usable}</td><td>{$packages}</td><td>{$channels}</td><td>{$recordFiles}</td>
+				
+			</tr>
+		</table>
+		<div >
+			<a class="btn" style="cursor:pointer;" onclick="NewChn();">新增频道</a>
+			&nbsp;&nbsp;
+			<present name="wxopenid">
+			<else/>
+			<a class="btn" style="cursor:pointer;background-color:green;" onclick="getWxBindCode();">绑定微信账号</a>
+			</present>
+		</div>
+	</div>
+	<div style="margin-top:10px"></div>
+	<foreach name="chnList" item="chn">
+		<!-- ----工作模式------ -->
+		<switch name="chn.playtype">
+			<case value="record">
+				<assign name="playTitle" value="播放录像" />
+				<assign name="playImage" value="play_red.png" />
+			</case>
+			<case value="live">
+				<assign name="playTitle" value="直播" />
+				<assign name="playImage" value="tower3_16.png" />
+			</case>
+			<default />
+				<assign name="playTitle" value="自动识别" />
+				<assign name="playImage" value="auto_play.png" />
+		</switch>
+		
+		<!-- ----观看权限------ -->
+		<switch name="chn.type">
+			<case value="protect">
+				<assign name="typeTitle" value="登录用户" />
+				<assign name="typeImage" value="protect_16.png" />
+			</case>
+			<case value="private">
+				<assign name="typeTitle" value="白名单" />
+				<assign name="typeImage" value="private_16.png" />
+			</case>
+			<default />
+				<assign name="typeTitle" value="公开" />
+				<assign name="typeImage" value="public_16.png" />
+		</switch>
+		
+		<div class="pkg-block">
+			<div class="pkg-north">
+				<a title="观看权限：{$typeTitle}"><img src="__ROOT__/home/{$theme|default='default_w'}/images/{$typeImage}" alt="权限" /></a>
+				<a title="工作模式：{$playTitle}"><img src="__ROOT__/home/{$theme|default='default_w'}/images/{$playImage}" alt="模式" /></a>
+				
+				<!-- 频道状态 -->
+				<switch name="chn.status">
+					<case value="disable">
+						<a title="频道状态：禁播">
+							<img src="__ROOT__/home/{$theme|default='default_w'}/images/lock_16.png" alt="状态" /></a>
+					</case>
+					<case value="ban">
+						<a title="频道状态：停播">
+							<img src="__ROOT__/home/{$theme|default='default_w'}/images/signal_no_16.png" alt="状态" /></a>
+					</case>
+					<default />
+						<a title="频道状态：正常">
+							<img src="__ROOT__/home/{$theme|default='default_w'}/images/signal_full_16.png" alt="状态" /></a>
+				</switch>
+				
+			</div>
+			<div class="pkg-main">
+				<div style="position:relative; margin-top:5px; margin-left:5px;">
+					<img id="chnlogo{$chn.id}" src="{$chn.logourl}" alt="易网真" style="width:64px;height:64px;"/>
+					<div class="chn-title">{$chn.name}</div>
+					<div class="chn-descript">{$chn.descript}</div>
+				</div>
+				<div class="chn-info" >
+					<p>开播时间：{$chn.livetime}</p>
+					<p>观看人次：{$chn.entrytimes}
+					<span style="display:inline-block; position:absolute; white-space:nowrap;">源：{$chn.streamName}
+					
+						<eq name='chn.isactive' value='true'>
+						<img src="__ROOT__/home/{$theme|default='default_w'}/images/broadcast.gif" alt="播出" 
+							style="margin-left:3px;"/>
+						<!--  <img src="__ROOT__/home/{$theme|default='default_w'}/images/broadcast2.gif" alt="播出" 
+						style="position:absolute; top:14px;right:0px;"/>
+						-->
+						</eq>
+					</span>
+					</p>
+				</div>
+			</div>
+			<div class="pkg-south" >
+				<a class="separate" href="__APP__/Console/chnBase/chnId/{$chn.id}">频道管理
+				</a><a class="separate" href="__APP__/Monitor/viewers/name/{$chn.name|urlencode}">观众统计
+				</a><a class="separate" href="__APP__/Vod/fileList/chnId/{$chn.id}">录像管理
+				</a><a  href="#" onclick='showPlayInfo({$chn|json_encode}, "chnlogo{$chn.id}");'>观看地址</a>
+				
+			</div>
+		</div>
+	</foreach>
+</div>
+<div id="w" class="easyui-window" title="播放地址" style="width:500px;height:330px;padding:10px; display:none;"
+	data-options="closed:true,collapsible:false,minimizable:false,maximizable:false" 	>
+	<div  style="font-size:16px; margin-bottom:5px;">频道名：<span id="w-title"></span></div>
+	<div style="font-size:14px; line-height:20px;" >
+		<table width=100%>
+			<tr>
+				<td width=50% style="vertical-align:top; text-align:left;">
+					<div>电脑播放地址</div>
+					<input id="Fcode" type="text" value="" READONLY style="width:200px; margin:5px 0" />
+
+						<a href="javascript:copyToClipBoard('Fcode','');" class="easyui-linkbutton" 
+							iconcls="icon-menu" plain="true">复制观看地址</a>
+
+				</td>
+				<td width=50% style="vertical-align:top; text-align:center;">
+					<div>手机播放请用微信扫描</div>
+					<div id="qrcode"></div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div id="wx" class="easyui-window" title="绑定微信" style="width:380px;height:330px;padding:10px; display:none;"
+	data-options="closed:true,collapsible:false,minimizable:false,maximizable:false" 	>
+	<div  style="font-size:16px; margin-bottom:5px;">用户名：<span id="w-title">{$userName}</span></div>
+	<div style="font-size:14px; line-height:20px;" >
+		<table width=100%>
+			<tr>
+				<td width=100% style="vertical-align:top; text-align:center;">
+					<div>请用微信扫描</div>
+					<div id="bindqrcode"></div>
+				</td>
+			</tr>
+		</table>
+	</div>
+</div>
+</block>

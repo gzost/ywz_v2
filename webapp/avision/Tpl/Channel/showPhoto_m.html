@@ -1,0 +1,39 @@
+<div id="album" >
+    <foreach name="photos" item="pt">
+        <div >
+            <img src="{$pt.imgsrc}" >
+        </div>
+    </foreach>
+</div>
+
+<style type="text/css">
+    #album{
+        border:0px solid #0fbad6; padding:1px; min-height: 200px; text-align: center;/*display: flex; flex-warp:wrap;*/
+    }
+    #album div{
+        width:48%; border: 1px solid #aaa; background: #eee; border-radius: 2px; text-align: center;margin:2px;
+        background-size: contain; background-repeat:no-repeat;
+        background-position: center top;
+        padding:0px; overflow:hidden;
+        display: inline-block;
+    }
+    #album img{
+        width:100%;
+    }
+    #album input{
+        display:block; clear: both; float: right;margin-right: 10px;
+    }
+
+</style>
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+        setPicWidth();
+    });
+    function setPicWidth() {
+        var width=$("#album div").width();
+        console.log("setPicWidth:"+width);
+        $("#album div").height(width*4/7);
+    }
+</script>    

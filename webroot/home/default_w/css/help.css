@@ -1,0 +1,63 @@
+@CHARSET "UTF-8";
+#north {
+	position:relative;
+	display:block;
+	height:70px; 
+	background-color:#666;
+	background:url(../images/sky2.jpg) no-repeat;
+	background-size:cover; /* 100% ; */
+}
+
+.bothsides{
+	table-layout:fixed;
+	border-collapse:collapse;
+	
+}
+
+.bothsides td{
+	border:1px solid #dde;
+	text-align:top;
+}
+
+#qnaList .classify{
+	background-color:brown; color:#fff; 
+	padding:5px 20px;
+	height: 20px;
+    line-height: 20px;
+    font-size:14px;
+    font-weight:bold;
+    letter-spacing:2px;
+    overflow: hidden;
+}
+
+#qnaList ul{
+	padding:0;
+	margin:10px 20px;
+}
+#qnaList li{
+	display:block;
+	width:90%;
+	border-bottom:1px dotted #ddd;
+	color:#333;
+	font-size:14px;
+	line-height:20px;
+	margin-bottom:10px;
+	padding:0 0 10px 20px;
+	background:url(../images/line.png) no-repeat left 0px top 5px;
+}
+
+#qnaList li a{
+	text-decoration:none;
+	color:#333;
+}
+
+#qnaList li a:hover{
+	color:blue;
+}
+
+.classify a{
+	text-decoration:none; color:#FFF;
+}
+.classify a:hover{
+	color:blue;
+}

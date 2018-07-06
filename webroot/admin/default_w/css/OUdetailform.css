@@ -1,0 +1,48 @@
+@CHARSET "UTF-8";
+/* 与Ou.function中OUdetailform（）配合的样式 */
+
+/* 此样式用于table */
+.OUdetailform{
+	table-layout:fixed;
+	border-collapse:collapse;
+	width:100%;
+	
+}
+
+.OUdetailform td{
+	border: 1px solid #cce;
+	padding: 2px 0 2px 5px;
+}
+
+.OUdetailform td:nth-child(odd){
+	width:150px;
+}
+.OUdetailform td:nth-child(even){
+}
+
+.OUdetailform td input{
+	width: 96%;
+	border: 1px solid #cce;
+	border-width:0 0 1px 0;
+}
+
+.noboder{
+	border-width:0 !important;	/* 覆盖原来定义的边框属性 */
+}
+
+.OUdetailform td .warm{
+	color:red;
+}
+.OUdetailform td .warm::before, .warm::before{
+	content:url(../images/warm16.png);
+	vertical-align:middle;
+  	display:inline-block;
+}
+.OUdetailform td .info, .info{
+	color:blue;
+}
+.OUdetailform td .info::before, .info::before{
+	content:url(../images/tip.png);
+	vertical-align:middle;
+  	display:inline-block;
+}

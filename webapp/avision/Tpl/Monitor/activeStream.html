@@ -1,0 +1,62 @@
+<!-- 活跃频道  -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+
+<script type="text/javascript">
+	//刷新活跃推流
+	function reflashActiveStream(){
+		//调用刷新方法刷新数据库
+		$.post("__APP__/CheckAlive/updateStreamStat",function(){
+			//刷新显示
+			$('#dg').datagrid('load');
+		});
+	}
+	//强制断流
+	function cutActiveStream(){
+		var row=$("#dg").datagrid('getSelected');
+		if(null==row){
+			alert('请先选中要断流的记录。')
+		}else {
+			$.messager.confirm('请确认','确定断流吗？',function(r){
+				if(r){
+					$.post('__APP__/streamService/cutActiveStream',row,function(){
+						reflashActiveStream();
+					});
+				}
+			});
+		}
+	}
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+	data-options="url:'__URL__/activeStreamData?r={$rand}',rownumbers:true,singleSelect:true,
+		toolbar:'#tb',pagination:false,  pageSize:10 "
+>
+	<thead>
+		<tr>
+			<th data-options="field:'name', width:200,align:'left', halign:'center' ">流字串</th>
+			<th data-options="field:'begintime', width:150,align:'center', halign:'center' ">开始时间</th>
+			<th data-options="field:'activetime', width:150,align:'center', halign:'center' ">最后更新时间</th>
+			<th data-options="field:'sourceip', width:150,align:'center', halign:'center'">来源IP</th>
+			<th data-options="field:'serverip', width:150,align:'center', halign:'center'">收流点</th>
+			<th data-options="field:'isactive', width:60,align:'center', halign:'center'">正在推流</th>
+			<th data-options="field:'size', width:100,align:'center', halign:'center'">录像文件MB</th>
+		</tr>
+	</thead>
+</table>
+
+<div id='tb'>
+	<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-reload'" onclick="reflashActiveStream();">刷新</a>
+	<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cut'" onclick="cutActiveStream();">强制断流</a>
+</div>
+
+</block>

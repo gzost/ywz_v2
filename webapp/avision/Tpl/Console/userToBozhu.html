@@ -1,0 +1,106 @@
+<extend name="common:PhoneBase" />
+
+<block name="bl_main">
+
+<script type="text/javascript" src="__PUBLIC__/js/jquery.md5.js"></script>
+<link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/icon.css">
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+
+});
+
+function pay()
+{
+	location.href = "__APP__/Home/toBroadcastPayCode";
+}
+</script>
+<style type="text/css">
+.rowItem{
+	width:85%;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-bottom-color:#ccc;
+	text-align:left;
+	margin:auto;
+	margin-top:0.6em;
+	padding-bottom:0.2em;
+	color:#333;
+}
+.rowItem span{
+	padding-right:0.5em;
+}
+.iptReg{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #16599f;
+    background-color: #fff;
+	width:8em;
+	height:2em;
+	font-size:1.2em;
+}
+.iptLog{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #fff;
+    background-color: #16599f;
+	width:8em;
+	height:2em;
+	font-size:1.2em;
+}
+.ipt{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #fff;
+    background-color: #16599f;
+	border-radius:3px;
+	font-size:0.8em;
+}
+.flex-contBetween {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+.flex-between-item{
+    width: 100%;
+	padding:3px;
+}
+.unselBorder{
+	border-bottom-style: solid;
+    border-width: 1px;
+    border-color: #e1e1e2;
+}
+.errorMsg{
+	display:inline;
+	text-align:center;
+	font-size:0.8em;
+	color:rgb(200, 0, 0);
+	position:relative;
+}
+
+</style>
+
+<div style="padding-top:0.5em;">
+	<form  id="form1" action="__URL__/userToBozhu" method="post">
+	<div class="rowItem">
+			<span>推荐码：</span><input id="pw1" class="easyui-textbox" name="refCode" value="" class="easyui-textbox" style="width:150px;" data-options="">
+	</div>
+	<div style="margin-top:1em;margin-bottom:1em;">
+		<div id="msgBox" class="errorMsg" style="display:block;margin-bottom:0.3em;">{$errorMsg}</div>
+		<input type="button" class="iptReg" id="btnPwdEdit" value="提交推荐码" onclick="submit()"/>
+		<input type="button" class="iptLog" value="没码，直接支付" onclick="pay()"/>
+	</div>
+	<div class="rowItem" style="font-size:0.8em">
+	说明：若你提交了推荐码，会有意外惊喜哦！
+	</div>
+	</form>
+</div>
+
+</block>
+

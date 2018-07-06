@@ -1,0 +1,182 @@
+<!-- 平台管理员在其它渠道收到钱后直接向账号充值或设定套餐  -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/jeasyui/themes/color.css" />
+<load href="__PUBLIC__/js/jquery.json.min.js" />
+<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />
+<script type="text/javascript">
+function submitForm(step){
+	var val=$("input[name='recharge']").val();
+	var msg='不可识别的操作！';
+	switch(step){
+	case 2:
+		if(''==val || 0==val) {
+			alert('不能充值0元！');
+			return;
+		}
+		msg='确定充值吗?';
+		break;
+	case 3:
+		msg='确定购买套餐吗？';
+		break;
+	default:
+		alert(msg);
+		break;
+	}
+	
+	$.messager.confirm('Confirm',msg,function(r){
+		if (r){
+			$('#step').val(step);
+			$('#ff').submit(); 
+		}	//.form('submit')
+	});
+}
+
+function delpkg(id){
+	//alert(id);
+	$.messager.confirm('Confirm','确定删除套餐？',function(r){
+		if (r){
+			$.post("__APP__/Consump/deletePkgAjax",{id:id},
+				function(data){
+					if(data.success=='false') alert('删除失败！');
+					else {
+						$('#dg').datagrid('load');
+						alert('删除成功');
+					}
+				}
+				,'json'
+			);
+		}
+	});
+	
+}
+</script>
+
+<style type="text/css"> 
+.innerbox{
+	font-size:12px;
+ 	line-height:30px;
+}
+.innerbox .title{
+	font-size:16px;
+	color: #559;
+}
+.innerbox .inputbox span{
+	white-space:nowrap;
+	display: inline-block;
+	margin-right:10px;
+}
+</style>
+
+<div style="margin:15px">
+	<div class="errmsg">{$errmsg}</div>
+	<form id="ff"  method="post">
+		<eq name='step' value='0'>
+			<input class="easyui-textbox" name="account" value="{$account}" 
+				data-options="buttonText:'用户账号',prompt:'输入用户账号',buttonAlign:'left'
+				<neq name='step' value='0'>,editable:false </neq> " 
+				style="height:28px;">
+		
+			<a href="javascript:void(0)" class="easyui-linkbutton" onclick='$("#step").val("1");$("#ff").submit();'
+				style="height:32px;" >下一步</a>
+		</eq>
+		
+		<gt name='step' value='0'>
+			<div class="radiusbox header2">
+				<img src="__ROOT__/admin/{$theme|default='default'}/images/user.png" style="vertical-align:middle;"/>
+				账号：<span class="important">{$account}</span>昵称：<span class="important">{$username}</span>
+				网真点：<span class="important">{$point}</span>信用额：<span class="important">{$credit}</span>
+				<div>现有套餐</div>
+				<table id="dg" class="easyui-edatagrid"  style="width:98%;height:152px;"
+					data-options="url:'__URL__/getPkgListAjax',rownumbers:true,singleSelect:true,
+						pagination:false,  pageSize:10 "	>
+					<thead>
+					<tr>
+						<th data-options="field:'purchase', width:150,align:'left', halign:'center' ">购买时间</th>
+						<th data-options="field:'expiry', width:150,align:'left', halign:'center' ">有效期</th>
+						<th data-options="field:'name', width:200,align:'left', halign:'center'">套餐名称</th>
+						<th data-options="field:'total', width:150,align:'right', halign:'center'">套餐总额</th>
+						<th data-options="field:'used', width:150,align:'right', halign:'center' ">已使用</th>
+						<th data-options="field:'op', width:100,align:'center', halign:'center',
+							formatter:function(value,row,index){return '<a href=# onclick=delpkg('+row.id+'); >删除</a>';}
+						 ">操作</th>
+					</tr>
+					</thead>
+				</table>
+				<div>最近充值记录</div>
+				<table  class="easyui-datagrid"  style="width:98%;height:152px;"
+					data-options="url:'__URL__/getRechargeListAjax',rownumbers:true,singleSelect:true,
+						pagination:false,  pageSize:10 "	>
+					<thead>
+					<tr>
+						<th data-options="field:'happen', width:150,align:'left', halign:'center' ">充值时间</th>
+						<th data-options="field:'operator', width:150,align:'left', halign:'center' ">操作员</th>
+						<th data-options="field:'receipt', width:150,align:'right',halign:'center'">充值点数</th>
+						<th data-options="field:'balance', width:150,align:'right',halign:'center'">点数余额</th>
+						<th data-options="field:'qty', width:150,align:'right', halign:'center',
+							formatter:function(value){return value/100;} ">充值金额</th>
+						<th data-options="field:'note', width:200,align:'left', halign:'center' ">备注</th>
+					</tr>
+					</thead>
+				</table>
+			</div>
+			<div style="margin:5px"></div>
+			<div class="radiusbox innerbox">
+			
+				<div class="title" >购买套餐，请确认已收到款项才进行操作</div>
+				<div class="inputbox">
+					<span>套餐类型：
+						<input type="text" class="easyui-combobox" name="pkgType" value="{$pkgType}" 
+							data-options="editable:false,width:140,
+								valueField:'type',textField:'text',data:{$pkgTypeListJson} ">
+					</span>
+					<span>金额(元)：
+						<input type="text" class="easyui-numberbox" name="amount" value="{$amount}" 
+							data-options="min:0,precision:2,groupSeparator:','">
+					</span>
+					<span>时长(分钟)，存储(GB)：
+						<input type="text" class="easyui-numberbox" name="total" value="{$total}" 
+							data-options="min:60,precision:0,groupSeparator:','">
+					</span>
+					<span>有效期：
+						<input type="text" class="easyui-datebox" name="expiry" value="{$expiry}"
+							data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+					</span>
+					<span>备注：<input class="easyui-textbox" name="pkgnote" value="{$pkgnote}" style="width:300px">
+					</span>
+					
+				</div>
+				<div>
+				*若是无限时长需要将分钟数设为：2 123 456 789
+				</div>
+				<div style="padding:0px">
+					<a href="javascript:void(0)" class="easyui-linkbutton c7" onclick="submitForm(3)">购买套餐</a>
+				</div>
+
+			</div>
+			<div style="margin:5px;"></div>
+			<div class="radiusbox innerbox" >
+				<div class="title" >充值到账号钱包：1元=100网真点</div>
+				充值金额：
+				<input type="text" name="recharge" value='{$recharge}' class="easyui-numberbox" 
+					data-options="precision:0, width:80" >元
+				　备注：
+				<input name='note'  value='{$note}' class="easyui-textbox" style="width:200px">
+				<div style="padding:0px">
+					<a href="javascript:void(0)" class="easyui-linkbutton c7" onclick="submitForm(2)">充值</a>
+				</div>
+			</div>
+		</gt>
+		
+		<input id="step" type='hidden' name='step' value='{$step}' >
+
+	</form>	
+
+</div>
+</block>

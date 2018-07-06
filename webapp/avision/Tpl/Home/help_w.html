@@ -1,0 +1,54 @@
+<!-- 
+	易网真客户服务“帮助及下载”页
+	宽屏显示模板
+	outao 2016-12-05
+ -->
+<extend name="common:HomeBase_w" />
+
+<block name="bl_north">
+<load href="__ROOT__/home/{$theme|default='default'}_w/css/help.css" />
+<div id='north'></div>
+</block>
+
+<block name="bl_main">
+
+
+<script type="text/javascript">
+function fullHeight(objid){
+	var objtop=$(objid).offset().top;
+	var footertop=$('#footer').offset().top;
+	console.log(objtop);
+	console.log(footertop);
+	$(objid).height(footertop-objtop-0);
+}
+$(document).ready(function(){  
+	fullHeight('#bs'); 
+	$(window).resize(function(){
+		fullHeight('#bs'); 
+	});
+}); 
+</script>
+
+<div style="margin-top:1px;"></div>
+<table id="bs" class="bothsides" width=100% border=0  >
+	<tr>
+		<td width=400px valign="top" align="left" >
+			<div id="qnaList">
+				<div class="classify" >常见问题</div>
+				
+				<ul>
+					<foreach name='doc' item='rec'>
+						<li><a href="javascript:void(0);" onclick="$('#doc').attr('src','/doc/{$rec.doc}');">{$rec.txt}</a>
+					</foreach>
+				</ul>
+				<div class="classify" >
+					<a href="javascript:void(0);" onclick="$('#doc').attr('src','/doc/download.html');">软件下载</a>
+				</div>
+			</div>
+		</td>
+		<td>
+			<iframe id='doc' src="/doc/download.html" height=100% width=100% FRAMEBORDER=0></iframe>
+		</td>
+	</tr>
+</table>
+</block>

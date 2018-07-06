@@ -1,0 +1,86 @@
+<!-- 显示消费明细表以及查询项  
+	$isAdmin='true'显示账号，否则隐藏。
+-->
+
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />
+<script type="text/javascript">
+$(document).ready(function(){
+	cn_Pagination($("#dg").datagrid('getPager'));
+	var pager = $('#dg').datagrid('getPager');	// get the pager of datagrid
+	pager.pagination({
+		pageList:[10,20,50,100,200,500,99999999],
+		pageSize:10,
+		buttons:[]
+	});
+});
+
+function submitForm(form){
+	var cond=$("#"+form).serialize();
+	$.post("__APP__/Consump/detailGetListAjax",cond,
+		function(data){
+		//console.trace(data);
+			$("#dg").datagrid('loadData',data);
+			pager=$("#dg").datagrid('getPager');
+			pager.pagination('select', 1);
+		},"json");
+	//alert(cond);
+}
+$("#tb").ajaxError(function(){
+	alert('ajax error');
+});
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table id="dg" class="easyui-datagrid"  style="width:95%"
+	data-options="url:'__APP__/Consump/detailGetListAjax',rownumbers:true,singleSelect:true, showFooter: true,
+		toolbar:'#tb',pagination:true,  pageSize:10 "
+>
+	<thead>
+		<tr>
+			<th data-options="field:'happen', width:150,align:'left', halign:'center' ">结算时间</th>
+			<eq name="isAdmin" value="true">
+				<th data-options="field:'account', width:80,align:'left', halign:'center' ">账号</th>
+			</eq>
+			<th data-options="field:'objtype', width:80,align:'center', halign:'center' ">收支类型</th>
+			<th data-options="field:'name', width:200,align:'left', halign:'center' ">标题</th>
+			<th data-options="field:'qty', width:80,align:'right', halign:'center' ">消费数量</th>
+			<th data-options="field:'receipt', width:80,align:'right', halign:'center'">收入</th>
+			<th data-options="field:'payment', width:80,align:'right', halign:'center'">支出</th>
+			<th data-options="field:'balance', width:80,align:'right', halign:'center' ">余额</th>
+			<th data-options="field:'operator', width:80,align:'center', halign:'center' ">操作员</th>
+			<th data-options="field:'note', width:150,align:'left', halign:'center' ">备注</th>
+		</tr>
+	</thead>
+
+</table>
+
+<div id="tb" style="padding:2px 5px;">
+	<form id='cond' method='post' style="display:inline">
+		查询条件：
+		<eq name="isAdmin" value="true">　
+			账号：<input class='easyui-textbox' name='account' value='{$account}'  style='width:100px' />
+		<else/>
+			<input type="hidden" name='account' value='{$account}'  />
+		</eq>
+		收支类型：<input class='easyui-combobox' name='objtype' value='{$objtype}' style='width:100px'
+				data-options="valueField:'code',textField:'cname', 
+					url:'__APP__/Monitor/consumpTypeListJson'
+				" />
+		标题：<input class='easyui-textbox' name='name' value='{$name}'  style='width:120px' />
+		时间范围：
+		从<input class="easyui-datebox" name="beginTime" value="{$beginTime}" style="width:120px"
+			data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+		至<input class="easyui-datebox" name="endTime" value="{$endTime}" style="width:120px"
+			data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+		<input name='work' value='search' style="display:none" />
+	</form>
+	<div class="easyui-linkbutton" iconCls="icon-search" onclick="submitForm('cond');">查询</div>
+	
+	
+	<!-- 功能按钮 -->
+	<div style="width:200px; float:right">
+
+	</div>
+</div>

@@ -1,0 +1,80 @@
+<!-- 设置全局费率  -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/jeasyui/themes/color.css" />
+<load href="__PUBLIC__/jeasyui/jquery.json.min.js" />
+<script type="text/javascript">
+function submitForm(){
+	var val=$("input[name='recharge']").val();
+	if(''==val || 0==val) {
+		alert('不能充值0元！');
+		return;
+	}
+	$.messager.confirm('Confirm','确定充值吗?',function(r){
+		if (r){  $('#ff').submit(); }	//.form('submit')
+	});
+}
+
+/**
+ * 购买充值包
+ * @param jsonObject args	充值包对象
+ */
+function purchasePkg(args){
+	var pkg={};
+	$.extend(pkg,args);
+	var pkgstr=JSON.stringify(pkg);
+
+	var msg="确定购买以下套餐：<br>"+args.name+'<br><br>';
+	var price=pkg.price;
+	if(pkg.accept=='c') {
+		price /=100;
+		price +='元';
+	}else
+		price +='网真点';
+	
+	msg += '销售价格：'+price+'<br>';
+	msg += '包含时长：'+pkg.value+'分钟<br>';
+	msg += '有效期：'+pkg.expire+'天';
+	$.messager.confirm('Confirm',msg,function(r){
+		if (r){  
+			$('#step').val('3');
+			$("input[name='note']").val(pkgstr);
+			$('#ff').submit(); 	//.form('submit')
+		}	
+	});
+	
+	
+}
+</script>
+
+<style type="text/css"> 
+</style>
+
+<div style="margin:15px">
+	<foreach name="charge" item="rec">
+		<div style="width:200px; height:220px; background-color:#fff; display:inline-block; 
+			border:1px solid #aaa; border-radius:8px; margin: 0 5px 5px 0; vertical-align:top;position:relative;">
+			<div style="padding:15px 5px; text-align:center; font-size:1.2em; font-weight:bold; word-break:break-all;">
+						{$rec.dname}
+			</div>
+			<div style="padding:20px 5px; text-align:center;">
+				<form id="{$rec.ditem}" action="__URL__/ChargeSave" style="margin-bottom:10px;">
+					费率：<input type="text" class="easyui-numberbox" name="feerate" value="{$rec.feerate}" 
+						data-options="min:0,precision:0,width:80">
+					<input type='hidden' name='ditem' value='{$rec.ditem}' >
+				</form>
+				{$rec.dvalue}
+			</div>
+			<div style="text-align:center; position:absolute;width:100%; bottom:20px;">
+				<a href="javascript:void(0)" class="easyui-linkbutton c7" onclick="$('#{$rec.ditem}').submit();">保存</a>
+			</div>
+		</div>
+	</foreach>
+	<br>*费率单位：网真点
+</div>
+</block>

@@ -1,0 +1,92 @@
+<!-- 注册观众  -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+<load href="__PUBLIC__/jeasyui/datagrid-detailview.js" />
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />
+<load href="__PUBLIC__/js/jquery.json.min.js" />
+<script type="text/javascript">
+var classifyData=eval('{$classifyListJson}');
+
+$(document).ready(function(){
+	cn_Pagination($("#dg").datagrid('getPager'));
+ 
+});
+
+function resetTalk()
+{
+	var rows=$('#dg').datagrid('getSelections');
+	if(0==rows.length) $.messager.alert('提示','请先勾选要设置的行。');
+	else{
+		//取频道及用户ID，串行化为Json，Post到后台。
+		var submitRows=new Array();
+		rows.forEach(function(row){
+			var obj=new Object();
+			obj.chnid=row.chnid;
+			obj.uid=row.uid;
+			submitRows.push(obj);
+		});
+		var submitData=new Object();
+		submitData.rows=submitRows;
+		submitData.status='';
+		$.post("__URL__/noChatMgrAjax", { para: submitData}, function(data){
+			if('false'==data.success) $.messager.alert('错误','状态更新失败！','error');
+			else $('#dg').datagrid('load',{renew:'true'});
+		});
+	}
+}
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table id="dg" class="easyui-edatagrid"  style="width:99%"
+	data-options="url:'__URL__/nochatList',rownumbers:true,singleSelect:false,checkOnSelect:true,
+		toolbar:'#tb',pagination:true,  pageSize:10,
+		updateUrl:'__URL__/noChatMgrAjax' "
+>
+	<thead>
+		<tr>
+			<th data-options="field:'ck',checkbox:true"></th>
+			<th data-options="field:'chnname', width:200,align:'left', halign:'center' ">频道名称</th>
+			<th data-options="field:'account', width:150,align:'left', halign:'center'">用户帐号</th>
+			<th data-options="field:'username', width:150,align:'left', halign:'center'">用户名称</th>
+		</tr>
+	</thead>
+
+</table>
+
+<!-- 工具栏 -->
+<div id="tb" style="padding:2px 5px;">
+	<form id='cond' method='post' style="display:inline">
+		查询条件：　
+
+		频道：<input class='easyui-combobox' name='chnId' value='{$chnId}'  style='width:180px'
+				data-options="valueField:'id',textField:'name',
+					url:'__URL__/GetChnComboxData' " />
+		<input name='work' value='{$work}' style="display:none" />
+		<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
+	</form>
+	
+	
+	<!-- 功能按钮 -->
+	<div style="margin-left:50px; display:inline">
+		设置状态：
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-ok',plain:false" 
+    		onclick="resetTalk('normal')">恢复发言</a>
+	</div>
+</div>
+
+<!-- 帮助 -->
+<div>
+	<ul class="help_ul">
+		<li>双击可修改状态、分组及备注。
+		<li>要批量设置用户状态可勾选每行前面的复选框，之后使用“正常”或“禁用”按钮即可。
+	</ul>
+</div>
+</block>

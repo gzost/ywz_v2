@@ -1,0 +1,94 @@
+<style type="text/css">
+.rankBg{
+	margin:auto;
+	margin-top:2em;
+	width:90%;
+	height:auto;
+	background-color:#FFF;
+	border-style:solid;
+	border-width:2px;
+	border-color:#75048a;
+	padding-bottom:-5px;
+	overflow-y:hidden;
+}
+.rankRow{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+	width:90%;
+	margin:auto;
+}
+
+.rankTitleRow{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+	width:90%;
+	margin:auto;
+	background-color:#75048a;
+	color:#FFF;
+}
+
+.rankRow div{
+	line-height:1.5em;
+	font-size:0.7em;
+	width:33%;
+	text-align:center;
+	overflow:hidden;
+	word-break:keep-all;/* 不换行 */
+    white-space:nowrap;/* 不换行 */
+    text-overflow:ellipsis;/* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/
+}
+
+.rankTitleRow div{
+	line-height:1.5em;
+	width:33%;
+	text-align:center;
+	overflow:hidden;
+	font-size:0.8em;
+}
+
+.rankCtrl{
+	text-align:right;
+}
+.title{
+	text-align:center;
+	line-height:1.5em;
+	font-size:0.8em;
+}
+
+.desc{
+	font-size:0.6em;
+	line-height:1.3em;
+}
+</style>
+<script type="text/javascript">
+try
+{
+	setTimeout(function(){
+		_shareRank.close();
+	},15000);
+}
+catch (e)
+{
+}
+</script>
+
+<div class="rankBg">
+	<div class="rankCtrl"><a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-cancel'" onclick="_shareRank.close();"></a></div>
+	<div class="title">
+		<div>分享排行</div>
+	</div>
+	<div class="rankTitleRow">
+		<div>排名</div><div>昵称</div><div>成功传播</div>
+	</div>
+	<foreach name="data" item="p">
+	<div class="rankRow">
+		<div>{$p.index}</div><div>{$p.username}</div><div>{$p.times}</div>
+	</div>
+	</foreach>
+	<div style="height:0.5em;"></div>
+	<div style="text-align:center;"><a href="tel:13602881680"><img src="/room/rankbg.jpg" width="100%"/></a></div>
+</div>

@@ -1,0 +1,153 @@
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+<script type="text/javascript">
+$(document).ready(function(){
+
+	var t = new Date().getTime();
+
+	//定义角色数据窗口
+	$("#dgChn").edatagrid({
+		url:'__URL__/ListData?'+t,
+		toolbar:'#dgt',
+		destroyMsg:{
+				norecord:{title:'提示',msg:'请先选择要删除的记录'},
+				confirm:{title:'确认',msg:'真的要删除此记录吗？'}
+			},
+		updateUrl:'__URL__/CListUpdate?'+t,
+		destroyUrl:'__URL__/CListDelete?'+t,
+		onError:function(index,row){
+			alert(row.msg);
+			$('#dgChn').edatagrid('reload');
+		},
+	});
+	$("#dgChn").datagrid('getPager').pagination({displayMsg:"正在显示 {from} 到 {to} 行，共 {total} 行"});
+	
+});
+
+function fmtType(value, row, index)
+{
+	if('public' == value)
+	{
+		return '公开';
+	}
+	else if('private' == value)
+	{
+		return '会员';
+	}
+	else if('protect' == value)
+	{
+		return '认证';
+	}
+	else
+	{
+		return '异常:' + value;
+	}
+
+}
+
+function fmtStatus(value, row, index)
+{
+	if('normal' == value)
+	{
+		return '开启';
+	}
+	else
+	{
+		return '停用';
+	}
+}
+
+function fmtAct(value, row, index)
+{
+	return '<a href="/player.php/Console/chnBase/chnId/'+value+'" class="easyui-linkbutton" iconCls="icon-pencil" plain="true">属性</a>&nbsp;<a href="{$userRefUrl}?chnId='+value+'" class="easyui-linkbutton" iconCls="icon-pencil" plain="true">观众管理</a>';	
+}
+
+
+function NewChn()
+{
+	if('' == $('#keyanchor').val())
+	{
+		alert('请先填写播主帐号');
+		return;
+	}
+
+	var d = 'userAccount='+$('#keyanchor').val()+'&force=true';
+	//通过获取Ajax页面
+	$.ajax({
+		url: '/home.php/Console/AddChn',
+		type: 'post',
+		data: d,
+		cache: false,
+		timeout:60000,	//超时设为60秒
+		dataType: 'json',
+		success:function(data){
+			try{
+				if('true' == data.result)
+				{
+					$('#dgChn').edatagrid('reload');
+					alert('新增成功');
+				}
+				else
+				{
+					alert(data.msg);
+				}
+			}
+			catch(e){
+				alert(e.message);	//
+				return;
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			alert('网络或服务中断！');
+		}
+	});
+}
+
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table id="dgChn" title="频道列表" singleSelect="true" style="width:99%"
+	 rownumbers="true" pagination="true" >
+<thead>
+	<tr>
+		<th field="id" width="40px">ID</th>
+		<th field="name" width="200px">频道名称</th>
+		<th field="type" width="200px">观看方式</th>
+		<th field="status" width="200px">启/停</th>
+		<th field="ownername" width="200px">播主</th>
+		<th field="adpush" width="200px" editor="{type:'numberbox',options:{required:true,min:0,max:99,missingMessage:'此字段必须输入'}}">推荐力度</th>
+	</tr>
+</thead>
+</table>
+
+<div id="dgt" >
+<div id="tb" style="padding:2px 5px;">
+	<form action='__URL__/chnSearch?r={$rand}' id='cond' method='post' style="display:inline">
+		<div style="float:left;height:20px;">查询条件：
+		频道名称：<input class='easyui-textbox' name='keyname' value='{$keyname}'  style='width:180px' />
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		播主帐号：<input class='easyui-textbox' id="keyanchor" name='keyanchor' value='{$keyanchor}'  style='width:180px' />
+		</div>
+		<a href="javascript:$('#cond').submit();"class="easyui-linkbutton" iconcls="icon-search" plain="true">查询</a>
+	</form>
+
+</div>
+
+	<a onclick="NewChn();" class="easyui-linkbutton" iconcls="icon-add" plain="true">新增</a>
+    <a id="Remove" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" 
+    	onclick="$('#dgChn').edatagrid('destroyRow');">删除</a>
+    <a id="Save" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" 
+    	onclick="$('#dgChn').edatagrid('saveRow')">保存</a>
+</div>
+
+</block>

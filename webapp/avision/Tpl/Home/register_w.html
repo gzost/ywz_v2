@@ -1,0 +1,159 @@
+<extend name="common:HomeBase_w" />
+<block name="bl_north">
+<include file="Home:loginReg_w" />
+</block>
+<block name="bl_main">
+<load href="__ROOT__/home/{$theme|default='default'}/css/login.css" />
+<load href="__PUBLIC__/js/sms.js" /> 
+<load href="__PUBLIC__/js/qrcode.js" />
+<load href="__PUBLIC__/js/jquery.qrcode.js" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery.md5.js"></script>
+<script type="text/javascript">
+function makeMD5(){
+	//var psw=$('#password').textbox('getValue');
+	//$('#password').textbox('setValue',$.md5(psw));
+	$('#form1').submit();
+}
+
+var sms = new SmsHelper();
+sms.Init('{$smsUrl}', 'smsBtn');
+
+function btnSendSms()
+{
+	var phone = $('#phone').textbox('getValue');
+	if(0 == phone.length)
+	{
+		alert('请填写手机号码！');
+		return;
+	}
+	if(11 != phone.length)
+	{
+		alert('手机号码长度不正常！');
+		return;
+	}
+	sms.btnClick(phone);
+}
+
+function preSubmit()
+{
+	IsVaildAccount();
+}
+
+function IsVaildAccount()
+{
+	var phone = $('#phone').textbox('getValue');
+	$('#account').textbox('setValue', phone);
+
+	var ret = false;
+	$.ajax({
+			url: '{$chkVaildAccUrl}',
+			type: 'post',
+			data: 'username=' + $('#account').textbox('getValue'),
+			cache: false,
+			//timeout:15000,	//超时设为15秒
+			dataType: 'json',
+			success:function(data){
+				try{
+					if( null==data || data.result !='true')
+					{
+						//不可以使用
+						$('#accountChk').attr('src', '/Public/jeasyui/themes/icons/no.png');
+						$('#accountChk').show();
+						$('#account').textbox('textbox').focus();
+						$('#accountMemo').hide();
+						$('#accountAlert').show();
+						ret = false;
+					}
+					else
+					{
+						//可以使用
+						$('#accountChk').attr('src', '/Public/jeasyui/themes/icons/ok.png');
+						$('#accountChk').show();
+						$('#accountMemo').show();
+						$('#accountAlert').hide();
+						ret = true;
+						$('#form1').submit();
+					}
+				}
+				catch(e){
+					alert(e.message);	//
+					return;
+				}
+			},
+			complete:function(){	//无论是否成功都会调用
+			},
+			error:function(){
+				alert('网络或服务中断！');
+			}
+		});
+	return ret;
+}
+
+</script>
+<div id="loginbox" class="centerdiv" style="600px;">
+	<form  id="form1" action="__URL__/doRegister" method="post">
+		<div class="input-box">
+		<div class="title">用户注册</div>
+		<p class="note">请填写以下用户注册信息，若您已经是易网真用户，请 <a href="__APP__/Home/login">登录</a></p>
+		<table width="90%" align="center">
+			<tr>
+				<td>手机号码：</td>
+				<td>
+					<input class="easyui-numberbox" id="phone" name="phone" value="{$phone}" 
+					data-options="prompt:'请输入国内手机号码'" style="width:200px;height:32px">
+					<img id="accountChk" style="display:none;"/>
+					<span id="accountMemo"></span>
+					<span id="accountAlert" style="color:red;display:none;">该账号不可用</span>
+					机主与申请人必须是同一人
+				</td>
+			</tr>
+			<tr>
+				<td>短信验证码：</td>
+				<td>
+					<input class="easyui-textbox"  name="code" value="" 
+						data-options="prompt:'请输入验证码'" style="width:100px;height:32px">
+					<a href="javascript:void(0)" class="easyui-linkbutton" id="smsBtn" onclick="btnSendSms();">获取短信验证码</a>
+				</td>
+			</tr>
+			<tr style="display:none;">
+				<td>账号：</td>
+				<td>
+					<input class="easyui-textbox" id="account" name="account" value="{$account}" style="width:200px;height:32px"
+					data-options="prompt:'字母开头后面可以有数字或下划线', missingMessage:'请输入不少于6个英文字母或数字或下划线',
+						validType:'account' " >
+				</td>
+			</tr>
+			<tr>
+				<td>用户昵称：</td>
+				<td>
+					<input class="easyui-textbox"  name="username" value="{$username}" style="width:200px;height:32px"
+					data-options="prompt:'选个好听威猛的名字'" >
+				</td>
+			</tr>
+			<tr>
+				<td>密码：</td>
+				<td>
+					<input id="pw" class="easyui-textbox" type="password" name="password" value="" style="width:200px;height:32px"
+					data-options="prompt:'请输入不少于6个字符',missingMessage:'必须输入密码。',
+						validType:'minLength[6]' " >
+					密码应包括字母、数字、符号
+				</td>
+			</tr>
+			<tr>
+				<td>重复输入密码：</td>
+				<td>
+					<input class="easyui-textbox"  type="password" name="password2" value="" style="width:200px;height:32px"
+					data-options="prompt:'请输入不少于6个字符'" >
+					两次密码输入必须相同
+				</td>
+			</tr>
+		</table>
+		</div>
+	</form>
+	<div id="msgBox" class="errorMsg">{$errorMsg}</div>
+	<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-ok'" 
+		style="margin-top:5px;padding:5px 0px;width:100px;height:30px;" onClick="preSubmit();" >
+		<span style="font-size:14px;">注册</span>
+	</a>
+</div>
+</block>

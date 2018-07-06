@@ -1,0 +1,29 @@
+<div class="tbBorder">
+<if condition="$recList eq NULL">
+	<div class="tbRow">
+		<div class="tbCell" onclick="recPlayLoad('')">
+			<div class="recImg">
+				<img src="/player/default/images/unstart.jpg"/>
+			</div>
+			<div class="recDesc">
+				暂时没有录像。
+			</div>
+		</div>
+	</div>
+	<div class="tbCellSp"></div>
+<else/>
+	<foreach name="recList" item="it">
+		<div class="tbRow">
+			<div class="tbCell" onclick="recPlayLoad('{$it.id}')">
+				<div class="recImg">
+					<img src="{$it.imgpath}"/>
+				</div>
+				<div class="recDesc">
+					{$it.name}
+				</div>
+			</div>
+			<div class="tbCellSp"></div>
+		</div>
+	</foreach>
+</if>
+</div>

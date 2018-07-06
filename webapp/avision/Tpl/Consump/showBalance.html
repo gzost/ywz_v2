@@ -1,0 +1,53 @@
+<!-- 消费明细  -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />
+<script type="text/javascript">
+
+
+
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+	data-options="url:'__APP__/Consump/showBalanceGetList',rownumbers:true,singleSelect:true, remoteSort:false,
+		toolbar:'#tb',pagination:true,  pageSize:10 "
+>
+	<thead>
+		<tr>
+			<th data-options="field:'account', width:150,align:'left', halign:'center' ">账号</th>
+			<th data-options="field:'username', width:150,align:'left', halign:'center' ">账号名称</th>
+			<th data-options="field:'balance', width:100,align:'right', halign:'center' ">余额</th>
+			<th data-options="field:'credit', width:100,align:'right', halign:'center' ">信用额</th>
+			<th data-options="field:'available', width:100,align:'right', halign:'center',
+				formatter:function(value,row,index){ return Number(row.balance)+Number(row.credit) }
+			">可用额</th>
+		</tr>
+	</thead>
+
+</table>
+
+<div id="tb" style="padding:2px 5px;">
+	<form id='cond' method='post' style="display:inline">
+		查询条件：　
+
+		账号：<input class='easyui-textbox' name='account' value='{$account}'  style='width:180px' />
+
+		<input name='work' value='search' style="display:none" />
+		<div class="easyui-linkbutton" iconCls="icon-search" onclick="datagridQuery({form:'cond',dg:'dg',url:'__APP__/Consump/showBalanceGetList'});">查询</div>
+	</form>
+	
+	
+	<!-- 功能按钮 -->
+	<div style="width:200px; float:right">
+
+	</div>
+</div>
+</block>

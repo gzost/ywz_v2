@@ -1,0 +1,26 @@
+<!-- 
+	易网真客户服务“优惠套餐”页
+	宽屏显示模板
+	outao 2016-12-05
+ -->
+<extend name="common:HomeBase_w" />
+
+<block name="bl_north">
+<include file="Home:purchase_w" />
+</block>
+
+<block name="bl_main">
+
+
+<div style="margin-top:10px;"></div>
+<form id="ff" method="post">
+	<div class="input-box" style="width:800px">
+		<p class='warn'>{$message}</p>
+		<div class="title">优惠套餐</div>
+		<include file="Consump:pkgList" />
+	</div>
+	<input type=hidden name='isSubmit' value='true' >
+	<input type=hidden name='note' >
+	
+</form>
+</block>

@@ -1,0 +1,115 @@
+<!-- 角色管理页面 -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+
+<script type="text/javascript"> 
+var selectedRoleId=undefined;
+$(document).ready(function(){
+	//定义角色数据窗口
+	$("#cgroup").edatagrid({
+		url:'__APP__/Role/getRoleListAjax',
+		toolbar:'#group_titil',
+		destroyMsg:{
+				norecord:{title:'提示',msg:'请先选择要删除的记录'},
+				confirm:{title:'确认',msg:'真的要删除此记录吗？'}
+			},
+		saveUrl:'__URL__/saveRoleAjax',
+		updateUrl:'__URL__/updateRoleAjax',
+		destroyUrl:'__URL__/destroyRoleAjax',
+		onError:function(index,row){
+			alert(row.msg);
+			$('#cgroup').edatagrid('reload');
+		},
+		onSelect:cgroupOnSelect
+	});
+	$("#cgroup").datagrid('getPager').pagination({displayMsg:"正在显示 {from} 到 {to} 行，共 {total} 行"});
+	
+	
+	//定义角色成员数据窗口
+	$("#member").datagrid({
+		closed:true
+	});
+	//$("#member").datagrid('getPager').pagination({displayMsg:"正在显示 {from} 到 {to} 行，共 {total} 行"});
+});
+function cgroupOnSelect(index,row){
+	//alert("select"+row.id);
+	id=parseInt(row.id);
+	if(id>0) {
+		$("#member").datagrid({
+			url:'__URL__/getMemberAjax/roleid/'+id,
+			title:'['+row.rname+']角色成员',
+			closed:false
+		});
+		$("#member").datagrid('getPager').pagination({displayMsg:"正在显示 {from} 到 {to} 行，共 {total} 行"});
+		selectedRoleId=id;
+	}else {
+		//隐藏成员列表
+		$("#member").datagrid({
+			closed:true
+		});
+		selectedRoleId=undefined;
+	}
+}
+function gotoRight(){
+	if(undefined==selectedRoleId){
+		alert('先选定角色');
+		return false;
+	}
+	var url="__APP__/Right/rightList/work/search/objType/role/objId/"+selectedRoleId;
+	window.location.href=url;
+}
+</script>
+
+<style type="text/css"> 
+</style>
+<table width=100% style="padding:5px; vertical-align:top ">
+<tr>
+	<td width=20% style="vertical-align:top" >
+		<!-- 角色数据窗口 -->
+		<table id="cgroup" title="角色列表" singleSelect="true" style="width:500px"
+			 rownumbers="true" pagination="true" >
+		<thead>
+			<tr>
+				<th field="id" width="100px">角色编码</th>
+				<th field="rname" width="370px" 
+					editor="{type:'textbox',options:{required:true,missingMessage:'此字段必须输入'}}"
+					>角色名称</th>
+			</tr>
+		</thead>
+		</table>
+	</td>
+	<td style="vertical-align:top" >
+		<!--角色成员数据窗口 -->
+		<table id="member" title="角色成员" singleSelect="true" style="width:500px"
+				rownumbers="true" pagination="true"  >
+		<thead>
+			<tr>
+				<th field="account" width="100px">账号</th>
+				<th field="username" width="370px">用户名称</th>
+			</tr>
+		</thead>
+		</table>
+	</td>
+</tr>
+</table>
+
+<!-- 客户组表单工具定义 -->
+<div id="group_titil" >
+	<a id="Append" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" 
+		onclick="$('#cgroup').edatagrid('addRow')">增加</a>
+    <a id="Remove" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" 
+    	onclick="$('#cgroup').edatagrid('destroyRow');">删除</a>
+    <a id="Save" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" 
+    	onclick="$('#cgroup').edatagrid('saveRow')">保存</a>
+	<a  href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" 
+    	onclick="$('#cgroup').edatagrid('cancelRow')">取消</a>
+    <a  href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-key',plain:true" 
+    	onclick="gotoRight();">权限</a>
+</div>
+</block>

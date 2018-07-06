@@ -1,0 +1,643 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<title>{$title}</title>
+<meta name="keywords" content="易网真,易网真直播间,avision视频直播系统" />
+<link href="__PUBLIC__/jeasyui/themes/default/easyui.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/icon.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/color.css" rel="stylesheet" type="text/css">
+<link href="__ROOT__/player/{$theme|default='default'}/css/base.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/NivoSlider/nivo-slider.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/NivoSlider/themes/default/default.css" rel="stylesheet" type="text/css">
+<link href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" rel="stylesheet" type="text/css">
+<link href="__ROOT__/player/{$theme|default='default'}/css/info.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.json.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/qrcode.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.qrcode.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/publicFunction.js"></script>
+<script type="text/javascript" src="/player/js/webChat.js?t={$time}"></script>
+<script type="text/javascript" src="__ROOT__/player/js/video.js"></script>
+
+
+<style type="text/css">
+
+div{
+	position:relative;
+	margin:0 auto;
+	display:inline-block;
+	vertical-align:top;
+	text-align:left;
+	overflow:hidden;
+}
+
+.bodyContain{
+	width:1200px;
+}
+
+.bodyLeftCanChat{
+	width:865px;
+}
+
+.bodyLeft{
+	width:100%;
+}
+
+.bodyRightCanChat{
+	width:320px;
+	margin-left:4px;
+}
+
+.bodyRight{
+	display:none;
+}
+
+.bodyHead{
+	height:3em;
+	width:100%;
+	#background-color:hsla(0,0%,100%,.9);
+	padding:5px;
+	background-color:#FFF;
+}
+
+.bodyHead div{
+	float:left;
+}
+
+.bodyHead div{
+	margin-left:1em;
+}
+
+.bodyTitle{
+	width:730px;
+	line-height:31px;
+}
+
+.btnLink{
+	width:730px;
+	line-height:31px;
+	font-size:0.65em;
+}
+
+.btnLink img{
+	vertical-align:middle;
+	margin-left:1em;
+}
+
+.bodyDoc{
+	width:320px;
+	height:180px;
+	text-align:center;
+	background-color: #fff;
+}
+
+.bodyDoc img{
+	object-fit:contain;
+}
+
+.bodyChat{
+	width:320px;
+	#height:380px;
+	height:560px;
+	text-align:left;
+}
+
+#.FlowBottom{
+	position:fixed;
+	margin:auto;
+	left:0;
+	right:0;
+	#top:0;
+	bottom:0;
+	z-index:99;
+	text-align:center;
+}
+
+.FlowBottom div{
+	#margin:1em;
+	display:inline;
+	color:#FFF;
+}
+
+.msgFlow{
+	display:none;
+	position:absolute;
+	margin:auto;
+	left:0;
+	right:0;
+	top:178px;
+	background-color:#333;
+	line-height:1.2em;
+	font-size:1.2em;
+	z-index:98;
+	color:#F00;
+	height:1.2em;
+	overflow:hidden;
+}
+
+#divGuaidShare{
+	position:fixed;
+	display:none;
+	z-index:100;
+	margin-left:60px;
+	margin-top:-40px;
+	background-color:#FFF;
+	padding:10px;
+}
+
+
+.CopySucess span span::after{
+	content:"(已复制)";
+}
+
+.contRow{
+	color:#FFF;
+	display:block;
+	padding:0.3em 0.1em 0.3em 0.1em;
+}
+
+.contRow img{
+	margin:0.2em;
+}
+
+.statcell{
+	float:left;
+	width:32%;
+	text-align:center;	
+	font-size:0.8em;
+	cursor:pointer;
+}
+
+.statcell span{
+	#padding-left:3px;
+	padding-right:3px;
+}
+
+.statcell img{
+	height:1em;
+	vertical-align:middle;
+}
+
+.imgSp{
+	float:left;
+	width:1px;
+	border-left: 1px solid #666;
+	height:1em;
+}
+
+.divMore{
+	text-align:center;
+}
+
+.tbBorder{
+	width:1190px;
+	margin:auto;
+	margin-top:0.3em;
+	padding:1px;
+	border: 1px solid #666;
+	border-bottom:0px;
+    color: #FFF;
+	display:table;
+}
+
+.tbRow{
+	width:100%;
+	height:200px;
+	vertical-align: middle;
+}
+
+.tbCellSp{
+	height: 1px;
+    border-top: 1px solid #666;
+	width:100%;
+}
+
+.tbCell{
+    color:#000;
+	width:100%;
+	display:table-row;
+}
+
+.tbCell img{
+	width:320px;
+	display:table-cell;
+	object-fit:cover;
+}
+
+.tbCell div{
+	padding:0.3em;
+	font-size:0.7em;
+	line-height:1.3em;
+	display:table-cell;
+	vertical-align:middle;
+}
+
+.recDesc{
+	overflow:auto;
+	width:840px;
+}
+
+.recImg img{
+	width:320px;
+	height:180px;
+	object-fit:contain;
+}
+
+#h5Player{
+	background-color:#000;
+}
+
+.divLayer{
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 900;
+	padding-top:3px;
+	padding-right:3px;
+	display:table;
+}
+
+.divFullBg{
+    width: 100%;
+    text-align: center;
+    display: table-cell;
+	background-color: #111;
+	opacity:0.8;
+}
+.divCenter{
+    width: 100%;
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+}
+.divBlock div{
+	display:block;
+	text-align:center;
+	margin:20px;
+}
+.divBlock{
+	background-color:#000;
+	color:#eee;
+	opacity:1;
+	padding:5px;
+}
+
+
+</style>
+
+<script type="text/javascript">
+var chnId = {$chnId};
+var rId = '{$rId}';
+var lastSecId = '';
+var moreFit = false;
+var nowPlayType = '';
+var nowVodId = '';
+
+////心跳设置的变量////
+var aliveTime={$aliveTime};	//心跳间隔秒数
+var onlineId={$onlineId};	//在线ID
+//在线对象列表，列表属性：
+var onlineList={$onlineList};	//在线对象列表
+var keepAliveUrl="__APP__/HDPlayer/keepAlive";
+var startOnlineUrl="__APP__/HDPlayer/startOnline";
+var stopOnlineUrl="__APP__/HDPlayer/stopOnline";
+var logoutUrl="__APP__/Home/logout";
+/////////
+
+var jsCanChat = '{$CanChat}';
+
+
+//Demo用活动计费对象ID
+var viewId=0;
+function onlineSuccess(onlineId,data){
+	viewId = onlineId;
+}
+
+function onlineError(msg,data){
+	//alert(msg)
+}
+
+function offlineCallback(result,data){
+	//alert("offline:"+result);
+}
+
+function selImgChange(idName)
+{
+	if(0 < lastSecId.length)
+	{
+		$('#'+lastSecId+' img').attr('src', $('#'+lastSecId+' img').attr('src-org'));
+	}
+	$('#'+idName+' img').attr('src', $('#'+idName+' img').attr('src-sel'));
+	lastSecId = idName;
+}
+
+function recPlayLoad(recId)
+{
+	location.href = "{$myurl}" + "&r=" + recId;
+}
+
+function recPlay(recId)
+{
+	if(0 < recId.length)
+	{
+		if('vod' != nowPlayType || recId != nowVodId)
+		{
+			nowVodId = recId;
+			nowPlayType = 'vod';
+			DivLoadHtml('__APP__/HDPlayer/recShowPage/str/'+recId, 'divShow');
+			onStopEven();
+			//页面滚动条滚到顶
+			document.body.scrollTop = 0;
+		}
+	}
+}
+
+function livePlayerLoad()
+{
+	if('live' != nowPlayType)
+	{
+		nowPlayType = 'live';
+		DivLoadHtml('__APP__/HDPlayer/liveShowPage/chnId/{$chnId}', 'divShow');
+		onStopEven();
+	}
+}
+
+function tbInfoClick()
+{
+	//DivMoreFit(false);
+	livePlayerLoad();
+	DivLoadHtml('__APP__/HDPlayer/infoPage/chnId/{$chnId}', 'divMore');
+	selImgChange('tbInfo');
+}
+
+function tbInfoClickEx()
+{
+	if('live' != nowPlayType)
+	{
+		location.replace('__APP__/HDPlayer/play/chnId/{$chnId}');
+	}
+	else
+	{
+		DivLoadHtml('__APP__/HDPlayer/infoPage/chnId/{$chnId}', 'divMore');
+		selImgChange('tbInfo');
+	}
+}
+
+function tbRePlayClick()
+{
+	//DivMoreFit(true);
+	DivLoadHtml('__APP__/HDPlayer/recordPage/chnId/{$chnId}', 'divMore');
+	selImgChange('tbRePlay');
+	//DivMoreFit(true);
+}
+
+function tbVoteClick()
+{
+	DivLoadText('{$voteurl}', 'votetimes', 'num');
+}
+
+function tbEntrytimesClick()
+{
+	DivLoadText('{$freshonlineurl}', 'entrytimes', 'num');
+}
+
+function tbShareClick()
+{
+	/*
+	//判断是否在微信浏览器内
+	if(true)
+	{
+		$('#divGuaidShare').css('display', 'block');
+		$('#divGuaidShare').fadeOut(3000);
+	}
+	else
+	{
+		//TODO:其它处理方式
+	}
+	*/
+}
+
+function tbShareHover()
+{
+	$('#qrcode').html('');
+	//分享二维码
+	$('#qrcode').qrcode(
+	{
+		text: location.href,
+		width: 200,
+		height: 200,
+		logoid:'logoImg',
+		logoW:48,
+		logoH:48,
+	}
+	);
+
+	$('#divGuaidShare').css('display', 'block');
+
+}
+
+function tbShareHoverOut()
+{
+	$('#divGuaidShare').css('display', 'none');
+	$('#btnShareCopy').removeClass('CopySucess');
+}
+
+
+function onVideoClick()
+{
+	var v = document.getElementById("h5Player");
+	if(true == v.paused)
+	{
+		$('#h5Player').trigger('play');
+	}
+	else
+	{
+		$('#h5Player').trigger('pause');
+	}
+}
+
+var chat = null;
+$(document).ready(function(){
+
+	//创建交流实例，并设置基本参数
+	if('CanChat' == jsCanChat)
+	{
+		chat=new webChat();
+		chat.objName='chat';
+		chat.continer="divChat";
+		chat.channelId="{$chnId}";
+		chat.userName="{$username}";
+		chat.userId="{$userId}";
+		chat.appUrl="__APP__";
+		chat.init();
+	}
+	
+	if('' == rId || '0' == rId)
+	{
+		//直播模式
+		tbInfoClick();
+	}
+	else
+	{
+		//录像模式
+		tbRePlayClick();
+		recPlay(rId);
+	}
+
+	$('#tbInfo').click(tbInfoClickEx);
+
+	$('#tbRePlay').click(tbRePlayClick);
+
+	$('#tbVote').click(tbVoteClick);
+
+	$('#tbShare').click(tbShareClick);
+	$('#tbShare').hover(tbShareHover,tbShareHoverOut);
+
+	$('#tbEntrytimes').click(tbEntrytimesClick);
+
+	$('#msgShow').click(hidenMsg);
+
+});
+
+function hidenMsg()
+{
+	$('#msgShow').css('display', 'none');
+}
+
+function showMsgAni(msg)
+{
+	if(0 < msg.length)
+	{
+		$('#msgShow').text(msg);
+		//$('#msgShow').css('width', $('.contRow').css('width'));
+		$('#msgShow').css('width', '200px');
+		$('#msgShow').css('top', $('.contRow').offset().top);
+		$('#msgShow').css('left', $('#divChat').offset().left);
+		$('#msgShow').css('display', 'block');
+		$('#msgShow').animate({left: '0px', width: $('.contRow').css('width')}, 15000);
+		$('#msgShow').animate({left: '30px'}, 1000);
+		$('#msgShow').animate({left: '30px'}, 4000);
+		$('#msgShow').fadeOut(5000);
+	}
+}
+
+function DivMoreFit(isFit)
+{
+	if(isFit)
+	{
+		var h = $(window).height();
+		var t = $('#divMore').position().top;
+		$('#divMore').height(Math.floor(h-t));
+		$('#divMore').css('overflow-y', 'auto');
+	}
+	else
+	{
+		$('#divMore').css('overflow-y', '');
+	}
+	moreFit = isFit;
+}
+
+function EventTester(e, fun)
+{
+	document.getElementById("h5Player").addEventListener(e,fun);
+}
+
+function onPlayEven()
+{
+	heart.startOnline($('#h5Player').attr('filetype')
+						,$('#h5Player').attr('innerId')
+						,onlineSuccess
+						,onlineError);
+}
+
+function onStopEven()
+{
+	if(0 < viewId)
+	{
+		heart.stopOnline(viewId,offlineCallback);
+		viewId = 0;
+	}
+}
+
+function onResizeEven()
+{
+	//DivMoreFit(moreFit);
+}
+
+</script>
+</head>
+<body style="background-color:#FFF;font-size:24px;line-height:24px;text-align:center;padding:0;margin-top:1em;background-image: url(/player/{$theme|default='default'}/images/bg.jpg);background-repeat: no-repeat;">
+<div class="bodyContain">
+	<div class="bodyLeft{$CanChat}">
+		<div class="bodyHead">
+			<div>
+				<img id="logoImg" src="{$logoImg}" width="64" height="64"/>
+			</div>
+			<div class="bodyTitle">
+				{$title}
+			</div>
+			<div class="btnLink">
+				<div id="tbEntrytimes" style="cursor:pointer;">
+					<img src="/player/{$theme|default='default'}/images/bofan_s.png"/>
+					<span id="entrytimes">{$entrytimes}</span>次
+				</div>
+				<div id="tbVote" style="cursor:pointer;">
+				<img src="/player/{$theme|default='default'}/images/dianzhang_s.png"/><span id="votetimes">{$votetimes}</span>赞
+				</div>
+				<div id="tbShare" style="cursor:pointer;">
+					<div>
+						<img src="/player/{$theme|default='default'}/images/zhuanfa_s.png"/>分享
+					</div>
+					<!--分享指引-->
+					<div id="divGuaidShare">
+						<div style="text-align:center;">
+							<div id="qrcode"></div>
+							<br/>
+							<a id='btnShareCopy' href="#" class="easyui-linkbutton" onclick="copyToClipBoard('Fcode','');$(this).addClass('CopySucess');">
+								点击复制链接地址
+							</a>
+						</div>
+						<div>
+							<input style="position:fixed;top:-50px;width:1px;" id="Fcode" type="text" value="{$myurl}" />
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id="divShow" style="width:100%;height:486px;text-align:center;background-color:#000;">
+		</div>
+	</div>
+	<div class="bodyRight{$CanChat}">
+		<!--
+		<div class="bodyDoc">
+			<img src="/player/{$theme|default='default'}/images/chnlogo.png" width="100%" height="100%"/>
+		</div>
+		-->
+		<div id="divChat" class="bodyChat">
+		
+		</div>
+	</div>
+</div>
+
+	<div class="msgFlow" id="msgShow">
+	</div>
+
+	<div class="contRow" style="width:1200px;height:1em;background-color:#333333">
+		<div class="statcell" id="tbInfo"><img src="/player/{$theme|default='default'}/images/renxian.png" src-sel="/player/{$theme|default='default'}/images/renxian_s.png" src-org="/player/{$theme|default='default'}/images/renxian.png"/>直播</div>
+		<div class="imgSp"></div>
+		<div class="statcell" id="tbRePlay"><img src="/player/{$theme|default='default'}/images/huifan.png" src-sel="/player/{$theme|default='default'}/images/huifan_s.png" src-org="/player/{$theme|default='default'}/images/huifan.png"/>录像</div>
+	</div>
+
+	<!--下部可变内容，宣传介绍，-->
+	<div id="divMore" style="min-height:200px;width:1200px;">
+	</div>
+	<div id="divLayer" class="divLayer" style="display:none;">
+	</div>
+</body></html>

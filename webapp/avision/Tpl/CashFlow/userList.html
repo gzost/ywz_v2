@@ -1,0 +1,41 @@
+<extend name="common:PhoneBase" />
+
+<block name="bl_main">
+
+<script type="text/javascript" src="__PUBLIC__/js/jquery.md5.js"></script>
+<link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/icon.css">
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+});
+
+
+</script>
+<style type="text/css">
+
+
+</style>
+
+<div class="" style="padding:2px;font-size:1.2em;font-weight:bold;text-align:center;">
+30天内现金流水
+</div>
+<div style="padding-top:0.5em;">
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+	data-options="url:'__APP__/CashFlow/userListAjax',rownumbers:true,singleSelect:true, showFooter: false,
+		pagination:false, pageSize:10 ">
+	<thead>
+		<tr>
+			<th data-options="field:'happen', width:120,align:'center', halign:'center' ">时间</th>
+			<th data-options="field:'changetype', width:80,align:'center', halign:'center' ">类别</th>
+			<th data-options="field:'change', width:60,align:'center', halign:'center'">发生金额</th>
+			<th data-options="field:'balance', width:60,align:'center', halign:'center'">余额</th>
+		</tr>
+	</thead>
+</table>
+</div>
+<div style="padding-top:0.5em;">
+</div>
+</block>
+

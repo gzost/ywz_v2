@@ -1,0 +1,17 @@
+@CHARSET "UTF-8";
+.detail-form td{
+	border-right:1px solid #E0ECFF;
+	padding:5px 10px 5px 5px;
+ 	border-top:1px solid #E0ECFF;
+}
+
+.even{background:#Feeeee;  text-align:right} 
+.odd{background:#FFFFEE;  text-align:left } 
+.selected{background:#FF9900;} 
+.strong{
+	font-size: 14px; font-weight:bold;
+}
+.level1{
+	background-color:#aaf;
+	box-shadow:0 -3px 5px rgba(0, 0, 0, .6);
+}

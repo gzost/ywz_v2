@@ -1,0 +1,124 @@
+<HTML xmlns="http://www.w3.org/1999/xhtml"><HEAD><TITLE>Network Video Streaming Broadcast</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=UTF-8"><LINK 
+href="/images/mediaplayer/Room.css" type=text/css rel=stylesheet>
+<META content="MSHTML 6.00.5700.6" name=GENERATOR>
+<script src="/js/AC_ActiveX.js" type="text/javascript"></script>
+<script src="/js/AC_RunActiveContent.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="/js/jquery.js"></script>
+<script language="javascript">
+
+</script>
+
+
+</HEAD>
+<BODY  onLoad="Prepare();" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" bgcolor="#FFFFFF">
+<CENTER>
+<TABLE cellSpacing=0 cellPadding=0 width=30 border=0 align="center">
+  <TBODY>
+  <TR>
+    <TD width=10><IMG height=20 src="/images/mediaplayer/leftopconner.gif" 
+      width=17></TD>
+    <TD style="FONT-SIZE: 9pt" vAlign=center align=middle width="95%" 
+    background=/images/mediaplayer/top.gif height=20><font color="#FFFFFF"><!--网络视频直播播放器--></font></TD>
+    <TD width=10><IMG height=20 src="/images/mediaplayer/righttop.gif" 
+      width=17></TD>
+  </TR>
+  <TR>
+    <TD background=/images/mediaplayer/left.gif>&nbsp;</TD>
+    <TD background="/images/pleasewait.gif">
+	<div id="divObj" style="visibility:visible">
+      <script type="text/javascript">
+AC_AX_RunContent( 'classid','CLSID:25EE0B50-66BB-430C-A13E-11C736558E38','type','application/x-oleobject','width','640','height','480','id','MediaPlayer','viewastext','VIEWASTEXT' ); //end AC code
+</script><noscript><OBJECT 
+      classid=CLSID:25EE0B50-66BB-430C-A13E-11C736558E38 type=application/x-oleobject width="640" height="480" 
+      id=MediaPlayer VIEWASTEXT >
+      </OBJECT></noscript>
+	  </div>
+	  </TD>
+    <TD background=/images/mediaplayer/right.gif>&nbsp;</TD>
+  </TR>
+  <TR>
+    <TD width=10><IMG height=20 src="/images/mediaplayer/lefbottomconner.gif" 
+      width=17></TD>
+    <TD vAlign=center align=middle width="95%" 
+    background=/images/mediaplayer/bottom.gif height=20></TD>
+    <TD width=10><IMG height=20 src="/images/mediaplayer/rightbottom.gif" 
+      width=17></TD>
+  </TR>
+  <tr>
+  <td colspan="3" height="80">&nbsp;  </td>
+  </tr>
+  </TBODY></TABLE>
+    <input id="hidUOLID" type="hidden" runat="server" />
+  </CENTER>
+<script type="text/javascript">
+var movieUrl = '{$movieUrl}';
+function GetArgsFromHref(sArgName) 
+{ 
+	var sHref = window.location.href;
+　　var args = sHref.split("?"); 
+　　var retval = ""; 
+　　if(args[0] == sHref) /*参数为空*/ 
+　　{ 
+	　　return retval; /*无需做任何处理*/ 
+　　} 
+　　var str = args[1]; 
+　　args = str.split("&"); 
+　　for(var i = 0; i < args.length; i ++) 
+　　{ 
+　　	str = args[i]; 
+	　　var arg = str.split("="); 
+　　	if(arg.length <= 1) continue; 
+	　　if(arg[0] == sArgName) retval = arg[1]; 
+　　} 
+　　return retval; 
+}
+function Prepare()
+{
+	divObj.style.visibility = "hidden";
+	//setInterval("timer()",60000);  取消心跳outao 2014-4-15
+	setTimeout(play, 1000);
+
+}
+function play()
+{
+	try
+	{
+		var channelNum = GetArgsFromHref("num");
+		var serverIp = GetArgsFromHref("ip");
+
+		if ( channelNum == "")
+			channelNum = 0;
+			
+		if ( serverIp == "" )
+			serverIp = "127.0.0.1";
+
+		MediaPlayer.setUrl(movieUrl);
+		MediaPlayer.serverIp = serverIp;
+		MediaPlayer.SetCanFullScreen(true);
+		MediaPlayer.audioSwitch = true;
+		divObj.style.visibility = "visible";
+		MediaPlayer.play();
+	}
+	catch(e)
+	{
+		if ( confirm("Player plug-in not found. Please press OK to install the plug-in. Refresh this page after installing plug-in.") )
+		{
+			window.location.href = "/player.msi";
+		}
+	}
+}
+var xmlHttp ;
+function createXMLHttpRequest() {
+      if (window.ActiveXObject) {
+
+              xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+          }
+      else if (window.XMLHttpRequest) {
+                  xmlHttp = new XMLHttpRequest();
+      }
+}
+
+</script>
+</BODY></HTML>

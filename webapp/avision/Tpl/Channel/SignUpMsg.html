@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no,minimal-ui" />
+<meta charset="utf-8">
+<title>易网真直播室</title>
+<meta name="keywords" content="易网真,易网真直播室" />
+<meta name="description" content="支持PC终端,Android安卓终端,iOS苹果终端,WindowsPhone终端,纯HLS(m3u8)跨平台技术(跨平台多终端测试)" />
+<load href="__PUBLIC__/jeasyui/themes/default/easyui.css" />
+<load href="__PUBLIC__/jeasyui/themes/icon.css" />
+<load href="__ROOT__/player/{$theme|default='default'}/css/base.css" />
+<load href="__PUBLIC__/jeasyui/jquery.min.js" />
+<load href="__PUBLIC__/jeasyui/jquery.easyui.min.js" />
+<load href="__ROOT__/player/{$theme|default='default'}/css/signup.css" />
+</head>
+<body>
+<div id="signPage">
+	<div id="descript">
+	{$message}
+	</div>
+	<div style="text-align:center;width:100%;background:#000000;">
+		<if condition="$isShowInfoImg">
+			<img src="{$infoImg}" border="0" width="100%"/>
+		<else/>
+			<img src="/images/start.jpg" border="0" width="100%"/>
+		</if>
+	</div>
+</div>
+</body>
+</html>

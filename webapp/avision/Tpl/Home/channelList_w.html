@@ -1,0 +1,10 @@
+<!-- 欢迎页频道列表输出界面(宽屏) -->
+<foreach name="chnList" item="chn">
+	<div class="chnPannel">
+		<div class="cover" style="background-image:url('{$chn.img}');">
+			<div class="chnTitleBg"></div>
+			<a href="__ROOT__/player.php/HDPlayer/play/chnId/{$chn.id}"><div class="chnTitle">{$chn.name}</div></a>
+		</div>
+		<div class="introduce">{$chn.descript}</div>
+	</div>
+</foreach>

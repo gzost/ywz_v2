@@ -1,0 +1,192 @@
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/> 
+	<load href="{$host}__ROOT__/wxpay/{$theme|default='default'}/css/wxpay.css" />
+	<load href="{$host}__ROOT__/Public/jeasyui/jquery.min.js" />
+	<load href="{$host}__PUBLIC__/js/publicFunction.js" />
+    <title>微信安全快捷支付</title>
+    <script type="text/javascript">
+	//调用微信JS api 支付
+	function jsApiCall()
+	{
+		WeixinJSBridge.invoke(
+			'getBrandWCPayRequest',
+			{$jsApiParameters},
+			function(res){
+				if('get_brand_wcpay_request:ok' == res.err_msg)
+				{
+					//支付成功
+					//TODO:传回成功信息
+					//跳转到相关页面。
+					//successReport();
+					var r = '{$jsNfy}';
+					if(0 < r.length)
+					{
+						location.replace('{$jsNfy}');
+					}
+					else
+					{
+						//alert('支付成功');
+						try
+						{
+							$('#wxpay_paybtn').hide();
+							$('#wxpay_suc').show();
+							//history.back(1);
+							//window.close();
+						}
+						catch (e)
+						{
+							//alert(e);
+						}
+					}
+				}
+				else if('get_brand_wcpay_request:cancel' == res.err_msg)
+				{
+					//支付取消
+					//alert('支付取消');
+				}
+				else if('get_brand_wcpay_request:fail' == res.err_msg)
+				{
+					//支付失败
+					alert('支付失败');
+				}
+				//alert(res.err_msg);
+				WeixinJSBridge.log(res.err_msg);
+				//alert('jsApiCall:' + res.err_code+res.err_desc+res.err_msg);
+			}
+		);
+	}
+
+	function successReport()
+	{
+		$.ajax({
+			type: 'post',
+			//url: '/wxpay.php/Jsapi/locatNotify',
+			url: '{$jsNfy}',
+			data: {$sucReportParam},
+			dataType: 'json',
+			success: function(data){
+			},
+			error: function(){
+				//error.apply(this, arguments);
+			}
+		});
+	}
+
+	function callpay()
+	{
+		if (typeof WeixinJSBridge == "undefined")
+		{
+		    if( document.addEventListener )
+			{
+		        document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+		    }
+			else if (document.attachEvent)
+			{
+				//alert('3');
+		        document.attachEvent('WeixinJSBridgeReady', jsApiCall); 
+		        document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+		    }
+		}else{
+		    jsApiCall();
+		}
+	}
+
+	//获取共享地址
+	function editAddress()
+	{
+		WeixinJSBridge.invoke(
+			'editAddress',
+			{$editAddress},
+			function(res){
+				if('edit_address:ok' == res.err_msg)
+				{
+					//编辑地址成功
+					//alert('编辑地址成功');
+					var value1 = res.proviceFirstStageName;
+					var value2 = res.addressCitySecondStageName;
+					var value3 = res.addressCountiesThirdStageName;
+					var value4 = res.addressDetailInfo;
+					var tel = res.telNumber;
+					//alert('editAddress:' + value1 + value2 + value3 + value4 + ":" + tel);
+				}
+				else if('edit_address:fail' == res.err_msg)
+				{
+					//编辑地址失败
+					//alert('编辑地址失败');
+				}
+			}
+		);
+	}
+	
+	window.onload = function(){
+		//不需要地址
+		/*
+		if (typeof WeixinJSBridge == "undefined"){
+		    if( document.addEventListener ){
+		        document.addEventListener('WeixinJSBridgeReady', editAddress, false);
+		    }else if (document.attachEvent){
+		        document.attachEvent('WeixinJSBridgeReady', editAddress); 
+		        document.attachEvent('onWeixinJSBridgeReady', editAddress);
+		    }
+		}else{
+			editAddress();
+		}
+		*/
+	};
+
+	$('.wxpay_fee').ready(function(){
+		var v = $('.wxpay_fee').html();
+		var f = strMoneyFmt(v);
+		$('.wxpay_fee').html('&yen;' + f);
+	});
+
+	$('.wxpay_sin_fee').ready(function(){
+		var v = $('.wxpay_sin_fee').html();
+		var f = strMoneyFmt(v);
+		$('.wxpay_sin_fee').html('&yen;' + f);
+	});
+
+	
+	</script>
+</head>
+<body>
+	<div class="wxpay_block">
+		<div class="wxpay_title">支付清单</div>
+		<div class="wxpay_sp"></div>
+	</div>
+	<div class="wxpay_block">
+	<foreach name="proList" item="itm">
+		<div class="wxpay_item">
+			<if condition="$itm.img eq NULL">
+				<div class="wxpay_img"><img src="{$host}__ROOT__/wxpay/{$theme|default='default'}/images/gift.png"/></div>
+			<else/>
+				<div class="wxpay_img"><img style="max-width:64px;max-height:64px;" src="{$itm.img}"/></div>
+			</if>
+			<div class="wxpay_cont">{$itm.detail}</div>
+			<div class="wxpay_sin_fee">{$itm.fee}</div>
+		</div>
+		<div class="wxpay_sp"></div>
+	</foreach>
+	</div>
+	<div class="wxpay_block" id="wxpay_paybtn">
+		<div class="wxpay_btn" style="text-align:center;">
+			<span>支付总金额：</span>
+			<span class="wxpay_fee">{$total_fee}</span>
+			<button style="width:150px; height:50px; border-radius: 15px;background-color:#FE6714; border:0px #FE6714 solid; cursor: pointer;  color:white;  font-size:16px;" type="button" onclick="callpay()" >立即支付</button>
+		</div>
+	</div>
+	<div class="wxpay_block" id="wxpay_suc" style="display:none;">
+		<div class="wxpay_btn" style="text-align:center;">
+			<span>支付总金额：</span>
+			<span class="wxpay_fee">{$total_fee}</span>
+			<button style="width:150px; height:50px; border-radius: 15px;background-color:#FE6714; border:0px #FE6714 solid; cursor: pointer;  color:white;  font-size:16px;" type="button">已完成支付</button>
+		</div>
+	</div>
+    <br/>
+</b></font><br/><br/>
+	<div align="center">
+	</div>
+</body>
+</html>

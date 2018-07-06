@@ -1,0 +1,44 @@
+@CHARSET "UTF-8";
+
+.OUI-warm{
+	color:red;
+	font-size:1.2em;
+}
+.OUI-warm::before{
+	content:url(../images/warm16.png);
+	vertical-align:middle;
+  	display:inline-block;
+}
+.OUI-info{
+	color:blue;
+}
+.OUI-info::before{
+	content:url(../images/tip.png);
+	vertical-align:middle;
+  	display:inline-block;
+}
+
+.OUI-btn{
+	display:inline-block;
+	padding:3px 15px;
+	text-decoration:none;
+	/* 以下是默认的文字与背景样式，可以通过OUI-fontx与OUI-colorx覆盖 */
+	font-size:16px;
+	border-radius:5px;
+	color:#FFF;
+	background-color:#004040;
+}
+.OUI-btn:hover{
+	color:yellow;
+	background-color:#304040;
+}
+
+.OUI-font16{
+	font-size:16px;
+	border-radius:5px;
+}
+
+.OUI-color1{
+	color:#fff;
+	background-color:#333;
+}

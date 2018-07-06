@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="http://ywz.av365.cn/Public/js/jquery.min.js"></script>
+
+<script type="text/javascript">
+function tt(){
+	//alert($("#inner").height());
+	alert($("#inner").outerHeight());
+	alert($("#inner").outerHeight(true));
+	//alert($("#inner").innerHeight());
+	var position=$("#inner").position();
+	alert("bottom: " + position.bottom + ", top: " + position.top );
+}
+</script>
+<style type="text/css"> 
+#outer{
+	border: 1px solid #333;
+ 	background-color: #8ee;
+ 	height:400px; width: 500px;
+}
+#inner{
+	border: 2px solid #333;
+ 	background-color: #7aa;
+ 	height:300px; width: 400px;
+	padding: 5px;
+	margin:3px;
+}
+</style>
+</head>
+<body>
+<div id="outer">
+T33333333333333
+	<div id="inner">
+		11111<br>
+		2222
+	</div>
+bbbb
+</div>
+<a  href="#" onClick="tt()">ss</a>
+</body>
+</html>

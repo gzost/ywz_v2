@@ -1,0 +1,341 @@
+<!-- 
+	直播控制台--总览
+	宽屏显示模板
+	outao 2016-12-19
+ -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/adv-ajaxedit.css" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery.form.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/adv-uploadprogress.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/adv-ajaxedit.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/qrcode.js" ></script>
+<script type="text/javascript" src="__PUBLIC__/js/jquery.qrcode.js" ></script>
+<script type="text/javascript" src="__PUBLIC__/js/publicFunction.js" ></script>
+<script type="text/javascript" src="__PUBLIC__/jeasyui/locale/easyui-lang-zh_CN.js" ></script>
+<script type="text/javascript">
+var chnId = '{$chnId}';
+//logo图片上传成功
+function logoSuccess(url)
+{
+	$('#logoimg').attr('src', url+'?'+Math.random());
+	setTimeout("genQrcode()", 1000);
+}
+
+//海报图片上传成功
+function posterSuccess(url)
+{
+	$('#posterimg').attr('src', url+'?'+Math.random());
+}
+
+function genQrcode()
+{
+	$('#qrcode').html('');
+	$('#qrcode').qrcode(
+	{
+		text: $('#Fcode').attr('value'),
+		width:200,
+		height:200,
+		logoid:'logoimg',
+		logoW:48,
+		logoH:48,
+	}
+	);
+}
+
+function isClearDis(chnId)
+{
+	if(confirm('真的要清空讨论内容吗?'))
+	{
+		$.ajax({
+			url: "{$EditBaseClearDis}?chnId=" + chnId,
+			type: 'post',
+			data: $('#ff').serialize(),
+			cache: false,
+			timeout:60000,	//超时设为60秒
+			dataType: 'json',
+			success:function(data){
+				try{
+					if( null==data || data.result !='true')
+					{
+						alert(data.msg);
+					}
+					else
+					{
+						//发送成功
+						alert('已清空');					
+					}
+				}
+				catch(e){
+					console.log(e.message);	//
+					return;
+				}
+			},
+			complete:function(){	//无论是否成功都会调用
+			},
+			error:function(){
+				alert('网络或服务中断！');
+			}
+		});
+	}
+}
+
+
+//生成二维码
+$(document).ready(function(){
+
+	try
+	{
+
+		setTimeout("genQrcode()", 100);
+
+		if(0 < chnId)
+		{
+			$('#divCont').show();
+		}
+	}
+	catch (e)
+	{
+		//alert(e);
+	}
+
+});
+
+
+function editSubmit()
+{
+	$.ajax({
+		url: '{$editurl}',
+		type: 'post',
+		data: $('#ff').serialize(),
+		cache: false,
+		timeout:60000,	//超时设为60秒
+		dataType: 'json',
+		success:function(data){
+			var command='';
+			var isReject='false';
+			var isFresh='false';
+			try{
+				if( null==data || data.result !='true')
+				{
+					alert(data.msg);
+				}
+				else
+				{
+					//发送成功
+					alert('保存成功');					
+				}
+			}
+			catch(e){
+				alert(e.message);	//
+				return;
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			alert('网络或服务中断！');
+		}
+	});
+}
+
+function SearchSubmit()
+{
+	$('#divCont').hide();
+	DivLoadHtml('__URL__/chnListSel'+'?t='+Math.random(), 'divChnList', $('#cond').serialize())
+}
+
+function jumpChn(chnId)
+{
+	location.href = "__URL__/chnBase/chnId/" + chnId;
+}
+
+</script>
+<style type="text/css">
+.flex-contBetween {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+.flex-contStart {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: flex-start;
+    justify-content: flex-start;
+}
+.itemName{
+	width:100px;
+	text-align:right;
+	padding-right:10px;
+	vertical-align:middle;
+}
+.itemCont{
+	margin-bottom:5px;
+	text-align:left;
+}
+.flowleft{
+	float:left;
+}
+.sheetBtn{
+	text-align:center;
+	min-width:50px;
+	cursor:pointer;
+	background-color:#57F3CF;
+	margin:3px;
+	margin-left:10px;
+	padding:3px;
+}
+.hidden{
+	display:none;
+}
+.txtIndent{
+	text-indent:2em;
+}
+.hoverSelect :hover{
+	padding:2px;
+	background-color:#AAA;
+}
+.flex-between-item{
+    width: 650px;
+    border-width: thin;
+    border-color: blue;
+    margin: 3px;
+    padding: 10px;
+    border-style: dashed;
+}
+</style>
+<div style="padding:2px 5px;">
+	<form action="__URL__/chnListSel" id='cond' method='post' style="display:inline">
+		查询条件：　
+		频道：<input class='easyui-textbox' id="key" name='key' value='{$chnName}' style='width:180px'/>
+		<a href="javascript:SearchSubmit();" class="easyui-linkbutton" iconcls="icon-search" plain="true">查询</a>
+	</form>
+</div>
+<div class="flex-contBetween" id="divChnList">
+</div>
+<div class="flex-contBetween" id="divCont" style="display:none;">
+	<div class="flex-between-item">
+	<div style="float:right;">
+		<div id="qrcode">
+		</div>
+		<div style="text-align:center;">
+		<a href="javascript:copyToClipBoard('Fcode','');" class="easyui-linkbutton" iconcls="icon-menu" plain="true">复制观看地址</a>
+		<br/>
+		<input id="Fcode" type="text" value="{$viewurl}" readonly/>
+		</div>
+	</div>
+		<form id="ff" action="" method="post">
+			<div class="flex-contStart">
+				<div class="itemName">频道名称：</div>
+				<div class="itemCont">
+					<input class="easyui-textbox" type="text" name="name" value="{$name}" style="width:200px"/>
+				</div>
+			</div>
+			<div class="flex-contStart">
+				<div class="itemName">频道描述：</div>
+				<div class="itemCont">
+					<input class="easyui-textbox" type="text" name="descript" value="{$descript}" style="width:250px;height:50px;" data-options="multiline:true"/>
+				</div>
+			</div>
+			<div class="flex-contStart">
+				<div class="itemName">模板：</div>
+				<div class="itemCont">
+					<input class="easyui-combobox" name="tplname" style="width:100px;" value='{$tplname}' data-options="valueField:'value',textField:'name',url:'__APP__/Channel/TplComboxData'"/>
+				</div>
+			</div>
+			<div class="flex-contStart">
+				<div class="itemName">启/停：</div>
+				<div class="itemCont">
+					<input class="easyui-combobox" name="status" style="width:100px;" value='{$status}' data-options="valueField:'value',textField:'name',url:'__URL__/StatusComboxData'"/>
+				</div>
+			</div>
+			<div class="flex-contStart">
+				<div class="itemName">讨论区：</div>
+				<div class="itemCont">
+					<input class="easyui-combobox" name="discuss" style="width:100px;" value='{$discuss}' data-options="valueField:'value',textField:'name',url:'__URL__/StatusComboxData'"/><div class="easyui-linkbutton itemContent" iconCls="icon-cancel" onclick="isClearDis({$chnId})" style="float:left;">清空</div>
+				</div>
+			</div>
+			<div class="flex-contStart">
+				<div class="itemName">
+				Logo:<br/>
+				<span style="color:#999">
+				(不大于20KB<br/>
+				jpg或png)
+				</span>
+				</div>
+				<div class="itemCont flex-contStart">
+					<img id="logoimg" class="flowleft" src="{$logoUrl}" style="width:60px;height:60px;"/>
+					<input id="logo" class="adv-uploadprogress" type="file" name="logo" data-options='"url":"__URL__/uploadimg/c/{$chnId}","pgWidth":"200","success":"logoSuccess"'/>
+				</div>
+			</div>
+			<div class="flex-contStart">
+				<div class="itemName">
+				海报:<br/>
+				<span style="color:#999">
+				(不大于200KB<br/>
+				jpg或png)
+				</span>
+				</div>
+				<div class="itemCont flex-contStart">
+					<img id="posterimg" class="flowleft" src="{$coverUrl}" style="width:160px;height:90px;"/>
+					<input id="poster" class="adv-uploadprogress" type="file" name="cover" data-options='"url":"__URL__/uploadimg/c/{$chnId}","pgWidth":"200","success":"posterSuccess"'/>
+				</div>
+			</div>
+			<div class="flex-contStart">
+				<div class="itemName">开播时间：</div>
+				<div class="itemCont">
+				<input class="easyui-datetimebox" name="livetime" data-options="showSeconds:true" value="{$livetime}" style="width:150px">
+				</div>
+			</div>
+			<div class="flex-contStart">
+				<div class="itemName">直播时长：</div>
+				<div class="itemCont">
+				<input class="easyui-combobox" style="width:150px;" name='livekeep' value='{$livekeep}' data-options="
+						valueField: 'value',
+						textField: 'label',
+						data: [{
+							label: '不限',
+							value: ''
+						},{
+							label: '30分钟',
+							value: '30'
+						},{
+							label: '45分钟',
+							value: '45'
+						},{
+							label: '1小时',
+							value: '60'
+						},{
+							label: '1.5小时',
+							value: '90'
+						},{
+							label: '2小时',
+							value: '120'
+						},{
+							label: '2.5小时',
+							value: '150'
+						},{
+							label: '3小时',
+							value: '180'
+						},{
+							label: '6小时',
+							value: '360'
+						},{
+							label: '12小时',
+							value: '720'
+						}]" />
+				</div>
+			</div>
+			<div class="flex-contStart">
+				<div class="easyui-linkbutton" iconCls="icon-ok" style="margin:auto;" onclick="editSubmit();">保存</div>
+			</div>
+		</form>
+	</div>
+</div>
+</block>

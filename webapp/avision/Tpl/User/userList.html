@@ -1,0 +1,219 @@
+<!-- 用户列表管理页面 -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+<load href="__ROOT__/admin/{$theme|default='default'}_w/css/OUdetailform.css" />
+<script type="text/javascript">
+var selectedUserId=undefined;
+$(document).ready(function(){
+	//用户列表初始化
+	$("#user").edatagrid({
+		url:'__APP__/User/getUserListAjax',
+		toolbar:'#user_titil',
+		destroyMsg:{
+				norecord:{title:'提示',msg:'请先选择要删除的记录'},
+				confirm:{title:'确认',msg:'真的要删除此记录吗？'}
+			},
+		saveUrl:'__URL__/saveAjax',
+		updateUrl:'__URL__/updateAjax',
+		destroyUrl:'__URL__/destroyAjax',
+		onAdd:function(index,row){
+			//为新增记录设置默认值
+			var ed=$('#user').edatagrid('getEditor', {index:index,field:'status'});
+			$(ed.target).combobox('setValue','正常');
+		},
+		onEdit:function(index,row){
+			var ed=$('#user').edatagrid('getEditor', {index:index,field:'account'});
+			$(ed.target).textbox({disabled:true});	//禁止修改
+		},
+		onError:function(index,row){
+			alert(row.msg);
+			$('#user').edatagrid('reload');
+		},
+		onSelect:userOnSelect
+	});
+	$("#user").datagrid('getPager').pagination({displayMsg:"正在显示 {from} 到 {to} 行，共 {total} 行"});
+	
+	//用户角色列表初始化
+	$('#userRole').edatagrid({
+		toolbar:'#userRole_titil',
+		saveUrl:'__URL__/saveRoleAjax',
+		destroyUrl:'__URL__/destroyRoleAjax',
+		onAdd:function(index,row){
+			//为新增记录设置默认值
+			var ed=$('#userRole').edatagrid('getEditor', {index:index,field:'userid'});
+			$(ed.target).textbox('setValue',selectedUserId);
+		},
+		onEdit:function(index,row){
+			$("#userRole").edatagrid('endEdit',index); return;	//禁止编辑
+			//var ed=$('#userRole').edatagrid('getEditor', {index:index,field:'roleid'});
+			//$(ed.target).textbox({disabled:true});	//禁止修改
+		}
+	});
+});
+
+function userOnSelect(index,row){
+	id=parseInt(row.id);
+	if(id>0) {
+		$("#userRole").datagrid({
+			url:'__URL__/getUserRoleAjax/userid/'+id,
+			title:'['+row.username+']当前角色',
+			closed:false
+		});
+		$("#userExtend").panel({
+			href:'__URL__/userExtendAttr/userid/'+id,
+			title:'['+row.username+']扩展属性',
+			closed:false
+		});
+		selectedUserId=id;
+		//alert('ff');
+		//$.parser.parse($('#userExtend'));
+	}else {
+		//隐藏成员列表
+		$("#userRole").datagrid({
+			closed:true
+		});
+		$("#userExtend").panel({
+			closed:true
+		});
+		selectedUserId=undefined;
+	}
+		
+}
+
+function gotoRight(){
+	if(undefined==selectedUserId){
+		alert('先选定用户');
+		return false;
+	}
+	var url="__APP__/Right/rightList/work/search/objType/user/objId/"+selectedUserId;
+	window.location.href=url;
+}
+
+function saveAttr(){
+	var url='__APP__/User/userExtendAttr';
+	var data=$('#userExtAttr').serialize();
+	$.post(url,data,function(html){
+		//$('#userExtend').panel({content:html});
+		$('#extAttrContent').html(html);
+		$.parser.parse($('#extAttrContent'));
+		$.messager.show({
+			title:'提示', msg:'保存成功', showType:'show', timeout:3000			
+		});
+	},'html');
+	return;
+}
+
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table width=100% style="padding:5px; vertical-align:top ">
+<tr>
+	<td width=20% style="vertical-align:top" >
+		<!-- 用户列表数据窗口 -->
+		<table id="user" title="用户列表" singleSelect="true" style="width:680px; height:400px"
+			 rownumbers="true" pagination="true" >
+		<thead>
+			<tr>
+				<th field="account" width="100px"
+					editor="{type:'textbox',options:{required:true,missingMessage:'此字段必须输入'}}" >账号</th>
+				<th field="username" width="150px" 
+					editor="{type:'textbox',options:{required:true,missingMessage:'此字段必须输入'}}"
+					>用户名称</th>
+				<th field="password" width="220px" 
+					editor="{type:'textbox',options:{required:true,missingMessage:'此字段必须输入'}}"
+					>密码</th>
+				<th data-options="field:'status', width:'80px',
+						editor: {
+							type:'combobox',
+							options:{
+								valueField:'id',
+                                textField:'text',
+                                data:[{id:'正常',text:'正常',selected:true},{id:'锁定',text:'锁定'}]
+							}
+						}"
+					>状态</th>
+				<th field="credit" width="80px" 
+					editor="{type:'numberbox' }" >信用额</th>
+			</tr>
+		</thead>
+		</table>
+		*播主等级：no-不是播主，junior-初级播主，normal-普通播主，senior-资深播主
+	</td>
+	<td style="vertical-align:top" >
+		
+		<!-- 用户角色窗口 -->
+		<table id="userRole" title="用户角色" singleSelect="true" style="width:400px" closed=true
+			 rownumbers="true" pagination="false" >
+		<thead>
+			<th data-options="field:'roleid', width:300, align:'center',readonly:true,
+					formatter:function(value,row){
+						return row.rname;
+					},
+					editor:{
+						type:'combobox',
+						options:{
+							valueField:'id', textField:'rname', method:'post',
+							url:'__APP__/User/getSelectRoleAjax',
+							required:true
+						}
+					}">	角色名称</th>
+			<th  data-options="field:'userid', width:20, hidden:true,
+					editor:{ type:'textbox'} ">用户ID</th>
+			<th  data-options="field:'rname', width:20, hidden:true,
+					editor:{ type:'textbox'} ">角色名称</th>
+		</thead>
+		</table>
+		
+		<!-- 用户扩展属性窗口 -->
+		<div style="margin-top:10px"></div>
+		<div id='userExtend' class="easyui-panel" title="用户扩展属性" closed=true style="width:400px;padding:0; " >
+		oooooo
+			<div id='extend_box'></div>
+		</div>
+		
+		
+	</td>
+</tr>
+</table>
+<div id="user_titil" >
+	<form action='__SELF__' id='cond' method='post' style="display:inline">
+		<div style="float:left;height:20px;">查询条件：
+		账号：<input class='easyui-textbox' name='account' value='{$account}'  style='width:120px' />
+		用户名称：<input class='easyui-textbox' name='username' value='{$username}'  style='width:120px' />
+		播主等级：<input class='easyui-textbox' name='bozhu' value='{$bozhu}'  style='width:80px' />
+		</div>
+		<a href="javascript:$('#cond').submit();"class="easyui-linkbutton" iconcls="icon-search" plain="true">查询</a>
+	</form>
+	<a id="Append" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" 
+		onclick="$('#user').edatagrid('addRow')">增加</a>
+    <a id="Remove" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true, disabled:{$noDelete}" 
+    	onclick="$('#user').edatagrid('destroyRow');">删除</a>
+    <a id="Save" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" 
+    	onclick="$('#user').edatagrid('saveRow')">保存</a>
+	<a  href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" 
+    	onclick="$('#user').edatagrid('cancelRow')">取消</a>
+    <a  href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-key',plain:true" 
+    	onclick="gotoRight();">权限</a>	
+</div>
+<div id="userRole_titil" >
+
+	<a id="urAppend" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" 
+		onclick="$('#userRole').edatagrid('addRow')">增加</a>
+    <a id="urRemove" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true " 
+    	onclick="$('#userRole').edatagrid('destroyRow');">删除</a>
+    <a id="urSave" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" 
+    	onclick="$('#userRole').edatagrid('saveRow')">保存</a>
+	<a  href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" 
+    	onclick="$('#userRole').edatagrid('cancelRow')">取消</a>
+</div>
+
+
+</block>

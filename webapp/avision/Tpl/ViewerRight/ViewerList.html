@@ -1,0 +1,100 @@
+<!-- 观看权限管理页面 -->
+<extend name="common:AdminBase" />
+<block name="bl_menu">
+{$menuStr}
+</block> {//bl_menu}
+
+<block name="bl_main">
+<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#user").edatagrid({
+		url:'__URL__/getUserRightJson/chnId/{$chnId}',
+		updateUrl:'__URL__/updateUserRightAjax',
+		autoSave:true
+	});
+	$("#user").datagrid('getPager').pagination({displayMsg:"正在显示 {from} 到 {to} 行，共 {total} 行"});
+	
+	$("#role").edatagrid({
+		url:'__URL__/getRoleRightJson/chnId/{$chnId}',
+		updateUrl:'__URL__/updateRoleRightAjax',
+		autoSave:true
+	});
+	$("#role").datagrid('getPager').pagination({displayMsg:"正在显示 {from} 到 {to} 行，共 {total} 行"});
+});
+</script>
+
+<style type="text/css"> 
+</style>
+<div style="padding-top:10px; padding-left:10px">
+	<form id="ff" method="post">
+		<input type="hidden" name="chnId" value="{$chnId}" />
+		<input type="hidden" name="work" value="{$work}" />
+		全局权限
+		<input class="easyui-combobox" name="globalRight" value="{$globalRight}" editable="false" style="width:150px;"
+			data-options="valueField:'value', textField:'text',
+				data:[{value:'public',text:'任何人可观看'},{value:'protect',text:'登录用户都看观看'},
+					{value:'private',text:'指定用户可观看'}]" />
+		最大观看人数<input type="text" class="easyui-numberbox" name="viewerlimit" value="{$viewerlimit}" data-options="min:0,width:50">
+		允许重复登录数<input type="text" class="easyui-numberbox" name="multiplelogin" value="{$multiplelogin}" data-options="min:0,width:50">
+		<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save'" 
+			onclick="javascript:$('#ff').submit();">保存</a>
+	</form>
+</div>
+<table width=100% style="padding:5px; vertical-align:top ">
+<tr>
+	<td width=50% style="vertical-align:top" >
+		<!-- 用户列表数据窗口 -->
+		<table id="user"  title="用户权限列表" singleSelect="true" style="width:420px; height:450px"
+			 rownumbers="true" pagination="true" >
+		<thead>
+			<th field="account" halign="center" width="100px">账号</th>
+			<th field="username" halign="center" width="140px">用户名</th>
+			<th field="view" align="center" width="50px"
+				data-options="editor:{type:'checkbox',options:{on:'V',off:''}}" >观看</th>
+			<th field="chat" align="center" width="50px"
+				data-options="editor:{type:'checkbox',options:{on:'V',off:''}}" >聊天</th>
+			<th field="director" align="center" width="50px"
+				data-options="editor:{type:'checkbox',options:{on:'V',off:''}}" >导播</th>
+		</thead>
+		</table>
+	</td>
+	<td width=50% style="vertical-align:top" >
+		<!-- 用户组列表数据窗口 -->
+		<table id="role" title="角色权限列表" singleSelect="true" style="width:420px; height:450px"
+			 rownumbers="true" pagination="true" >
+		<thead>
+			<th field="rname" halign="center" width="150px">角色名称</th>
+			<th field="view" align="center" width="50px"
+				data-options="editor:{type:'checkbox',options:{on:'V',off:''}}" >观看</th>
+			<th field="chat" align="center" width="50px"
+				data-options="editor:{type:'checkbox',options:{on:'V',off:''}}" >聊天</th>
+			<th field="director" align="center" width="50px"
+				data-options="editor:{type:'checkbox',options:{on:'V',off:''}}" >导播</th>
+		</thead>
+		</table>
+	</td>
+</tr>
+</table>
+</block>
+
+<block name="bl_help">
+<ul class="help_ul">
+	<li><b>全局权限</b> 对频道权限的全局设置，可以简化频道的控制
+		<ul><li><b>任何人可观看</b> 任何播放器连接到服务器都可观看无需登录。
+			<li><b>登录用户都可观看</b> 只要本机用户登录后都可观看无需再设置观看权限。
+			<li><b>指定用户可观看</b> 只有设置了观看权的用户可观看观看。
+		</ul>
+	<li><b>权限分配</b> (注意：不同型号产品功能会有所不同)
+		<ul>
+			<li><b>观看</b> 可观看节目，也可看到字幕和聊天。
+			<li><b>聊天</b> 可以通过网页聊天或发送弹幕，通过微信发送信息等。
+			<li><b>导播</b> 发送节目字幕，切换信号源，切换显示模板等操作。
+		</ul>
+	<li>鼠标双击修改权限。最后需要“保存”才能生效。
+	<li>新设置的权限不会影响已经登录的用户。
+	<li><b>最大观看人数</b> 同时观看节目的最大人数，0是没限制。此数值不能超过直播机本身的最大并发数。
+	<li><b>允许重复登录数</b> 同一账号可重复登录的次数，0是没限制。
+</ul>
+</block>{//bl_help}

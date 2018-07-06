@@ -1,0 +1,84 @@
+@CHARSET "UTF-8";
+body{
+    background-color: #888;
+	margin: 0px auto; height: 100%;
+	text-align: center;vertical-align:middle;
+    #padding : 20px 10px;
+	font-family: "微软雅黑","宋体",verdana,helvetica,arial,sans-serif;
+    font-size:12px;
+}
+#container {
+
+	background: rgb(255,255,255) ;
+	margin: 0px auto;
+	-height:600px;
+    font-size:12px;
+    width:100%;
+	max-width:400px; min-height:200px;
+
+}
+#header{
+	height:40px;
+	width:100%;
+	background:#eef url("../images/ywz.png");
+	background-repeat: no-repeat;
+	background-position: 5px 50%;
+}
+.Split_line{
+	border-bottom:1px solid #95B8E7;
+}
+.footer{
+    line-height: 20px;
+    text-align: center;
+    background: #ddf ;
+}
+#mainbox{
+	padding: 1px 5px;
+	background-color: #eef;
+}
+#adpicture{
+	-height:120px; 
+	width: 95%;
+	border: 1px solid #999;
+	margin: 1px auto;
+	clear:both;
+	/*overflow:hidden;*/
+}
+
+div.item{
+	display:table;
+	text-decoration: none;
+	width:96%; height:4em;
+	border-bottom:1px solid #ddd;
+	padding: 5px;
+	overflow:hidden;
+	
+}
+div.item div.text{
+	display:table-cell;
+	vertical-align:middle;
+	height:4em;
+	white-space:pre-line;
+	color:#000;
+}
+div.item div.pic{
+	overflow:hidden;
+	margin-left:5px;
+	width:50px;height:50px;border:1px solid #eee;float:right;
+	overflow-wrap:break-word;
+}
+.pic img{
+	max-width:100%;height:auto;
+}
+a:link {
+	text-decoration: none;
+}
+a:visited {
+text-decoration: none;
+}
+a:hover {
+text-decoration: none;
+}
+a:active {
+text-decoration: none;
+}

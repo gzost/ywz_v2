@@ -1,0 +1,292 @@
+<HTML xmlns="http://www.w3.org/1999/xhtml"><HEAD><TITLE>Network Video Streaming Broadcast</TITLE>
+<META http-equiv=Content-Type content="text/html; charset=UTF-8"><LINK 
+href="/images/mediaplayer/Room.css" type=text/css rel=stylesheet>
+<META content="MSHTML 6.00.5700.6" name=GENERATOR>
+<script src="/js/AC_ActiveX.js" type="text/javascript"></script>
+<script src="/js/AC_RunActiveContent.js" type="text/javascript"></script>
+
+<script type="text/javascript" src="/js/jquery.js"></script>
+<script language="javascript">
+function timer()
+{
+    $(document).ready(function() {
+   $.getJSON("{$ajaxUrl}", function(result) {
+	   /*
+		if(null == result['success'])
+		{
+
+		}
+		if(null == result['error'])
+		{
+
+		}
+		*/
+	})
+});    
+}
+
+</script>
+
+<style type="text/css">
+<!--
+.speakCtrl {
+	float:left;
+	overflow: visible;
+}
+-->
+</style>
+<script type="text/javascript" language="javascript">
+var index = 0;
+var total = 4;
+var speakerIndex = -1;
+var bolShow = false;
+var movieUrl = new Array({$movieUrlList});
+function SpeakerShowSwitch()
+{
+	return ;
+	var ctrl = document.getElementById('divSpeakerCtrl');
+	if(bolShow)
+	{
+		ctrl.style.visibility = 'hidden';
+		bolShow = false;
+	}
+	else
+	{
+		ctrl.style.visibility = 'visible';
+		bolShow = true;
+	}
+}
+function SpeakerSwitch(index)
+{
+	switch(speakerIndex)
+	{
+	case -1:
+	break;
+	case 0:
+		MediaPlayer1.audioSwitch = false;
+	break;
+	case 1:
+		MediaPlayer2.audioSwitch = false;
+	break;
+	case 2:
+		MediaPlayer3.audioSwitch = false;
+	break;
+	case 3:
+		MediaPlayer4.audioSwitch = false;
+	break;
+	}
+	switch(index)
+	{
+	case -1:
+		document.getElementById('rdo').checked = 'checked';
+	break;
+	case 0:
+		document.getElementById('rdo0').checked = 'checked';
+		MediaPlayer1.audioSwitch = true;
+	break;
+	case 1:
+		document.getElementById('rdo1').checked = 'checked';
+		MediaPlayer2.audioSwitch = true;
+	break;
+	case 2:
+		document.getElementById('rdo2').checked = 'checked';
+		MediaPlayer3.audioSwitch = true;
+	break;
+	case 3:
+		document.getElementById('rdo3').checked = 'checked';
+		MediaPlayer4.audioSwitch = true;
+	break;
+	}
+	speakerIndex = index;
+	SpeakerShowSwitch();
+}
+function GetArgsFromHref(sArgName) 
+{ 
+	var sHref = window.location.href;
+　　var args = sHref.split("?"); 
+　　var retval = ""; 
+　　if(args[0] == sHref) /*参数为空*/ 
+　　{ 
+	　　return retval; /*无需做任何处理*/ 
+　　} 
+　　var str = args[1]; 
+　　args = str.split("&"); 
+　　for(var i = 0; i < args.length; i ++) 
+　　{ 
+　　	str = args[i]; 
+	　　var arg = str.split("="); 
+　　	if(arg.length <= 1) continue; 
+	　　if(arg[0] == sArgName) retval = arg[1]; 
+　　} 
+　　return retval; 
+}
+function Prepare()
+{
+	divObj1.style.visibility = "hidden";
+	divObj2.style.visibility = "hidden";
+	divObj3.style.visibility = "hidden";
+	divObj4.style.visibility = "hidden";
+	//setInterval("timer()",60000);  取消心跳outao 2014-4-15
+	setTimeout(play, 1000);
+}
+function play()
+{
+	var ipAddres = GetArgsFromHref("ip");
+	try
+	{
+		switch(index)
+		{
+		case 0:
+		MediaPlayer1.setUrl(movieUrl[0]);
+		MediaPlayer1.serverIp = ipAddres;
+		MediaPlayer1.SetCanFullScreen(true);
+		MediaPlayer1.audioSwitch = true;
+		speakerIndex = 0;
+		MediaPlayer1.style.visibility = "visible";
+		MediaPlayer1.play();
+		break;
+		case 1:
+		MediaPlayer2.setUrl(movieUrl[1]);
+		MediaPlayer2.serverIp = ipAddres;
+		MediaPlayer2.SetCanFullScreen(true);
+		MediaPlayer2.audioSwitch = false;
+		MediaPlayer2.style.visibility = "visible";
+		MediaPlayer2.play();
+		break;
+		case 2:
+		MediaPlayer3.setUrl(movieUrl[2]);
+		MediaPlayer3.serverIp = ipAddres;
+		MediaPlayer3.audioSwitch = false;
+		MediaPlayer3.SetCanFullScreen(true);
+		MediaPlayer3.style.visibility = "visible";
+		MediaPlayer3.play();
+		break;
+		case 3:
+		MediaPlayer4.setUrl(movieUrl[3]);
+		MediaPlayer4.serverIp = ipAddres;
+		MediaPlayer4.audioSwitch = false;
+		MediaPlayer4.SetCanFullScreen(true);
+		MediaPlayer4.style.visibility = "visible";
+		MediaPlayer4.play();
+		break;
+		}
+		
+		index++;
+
+		if ( total > index )
+		{
+			setTimeout(play, 1000);
+		}
+	
+	}
+	catch(e)
+	{
+		if ( confirm("Player plug-in not found. Please press OK to install the plug-in. Refresh this page after installing plug-in.") )
+		{
+			window.location.href = "/player.msi";
+		}
+	}
+}
+
+</script>
+</HEAD>
+<BODY onLoad="Prepare();" marginheight="0" marginwidth="0" topmargin="0" leftmargin="0" rightmargin="0" bottommargin="0" bgcolor="#FFFFFF">
+<CENTER>
+<TABLE cellSpacing=0 cellPadding=0 width=30 border=0 align="center">
+  <TBODY>
+  <TR>
+    <TD width=10><IMG height=20 src="/images/mediaplayer/leftopconner.gif" 
+      width=17></TD>
+    <TD style="FONT-SIZE: 9pt" vAlign=center align=middle width="47%" colspan="2"
+    background=/images/mediaplayer/top.gif height=20><font color="#FFFFFF"><!--网络视频直播播放器--></font></TD>
+    <TD width=10><IMG height=20 src="/images/mediaplayer/righttop.gif" 
+      width=17></TD>
+  </TR>
+  <TR>
+    <TD background=/images/mediaplayer/left.gif>&nbsp;</TD>
+    <TD background="/images/pleasewait2.gif">
+	<div id="divObj1" style="visibility:visible">
+      <script type="text/javascript">
+AC_AX_RunContent( 'classid','CLSID:25EE0B50-66BB-430C-A13E-11C736558E38','type','application/x-oleobject','width','320','height','240','id','MediaPlayer1','viewastext','VIEWASTEXT' ); //end AC code
+</script><noscript><OBJECT 
+      classid=CLSID:25EE0B50-66BB-430C-A13E-11C736558E38 type=application/x-oleobject width="320" height="240" 
+      id=MediaPlayer1 VIEWASTEXT>
+      </OBJECT></noscript>
+	  </div>	  </TD>
+	  <td background="/images/pleasewait2.gif">
+	<div id="divObj2" style="visibility:visible">
+		<script type="text/javascript">
+AC_AX_RunContent( 'classid','CLSID:25EE0B50-66BB-430C-A13E-11C736558E38','type','application/x-oleobject','width','320','height','240','id','MediaPlayer2','viewastext','VIEWASTEXT' ); //end AC code
+</script><noscript><OBJECT 
+      classid=CLSID:25EE0B50-66BB-430C-A13E-11C736558E38 type=application/x-oleobject width="320" height="240" 
+      id=MediaPlayer2 VIEWASTEXT>
+      </OBJECT></noscript></div>	  </td>
+    <TD background=/images/mediaplayer/right.gif>&nbsp;</TD>
+  </TR>
+  <TR>
+    <TD background=/images/mediaplayer/left.gif>&nbsp;</TD>
+    <TD background="/images/pleasewait2.gif">
+	<div id="divObj3" style="visibility:visible">
+      <script type="text/javascript">
+AC_AX_RunContent( 'classid','CLSID:25EE0B50-66BB-430C-A13E-11C736558E38','type','application/x-oleobject','width','320','height','240','id','MediaPlayer3','viewastext','VIEWASTEXT' ); //end AC code
+</script><noscript><OBJECT 
+      classid=CLSID:25EE0B50-66BB-430C-A13E-11C736558E38 type=application/x-oleobject width="320" height="240" 
+      id=MediaPlayer3 VIEWASTEXT>
+      </OBJECT></noscript></div>	  </TD>
+	  <td background="/images/pleasewait2.gif">
+	<div id="divObj4" style="visibility:visible">
+		<script type="text/javascript">
+AC_AX_RunContent( 'classid','CLSID:25EE0B50-66BB-430C-A13E-11C736558E38','type','application/x-oleobject','width','320','height','240','id','MediaPlayer4','viewastext','VIEWASTEXT' ); //end AC code
+</script><noscript><OBJECT 
+      classid=CLSID:25EE0B50-66BB-430C-A13E-11C736558E38 type=application/x-oleobject width="320" height="240" 
+      id=MediaPlayer4 VIEWASTEXT>
+      </OBJECT></noscript></div>	  </td>
+    <TD background=/images/mediaplayer/right.gif>&nbsp;</TD>
+  </TR>
+  <TR>
+    <TD width=10><IMG height=20 src="/images/mediaplayer/lefbottomconner.gif" 
+      width=17></TD>
+    <TD vAlign=middle align=left width="95%" 
+    background=/images/mediaplayer/bottom.gif height=20 colspan="2"><img src="/images/speak.png" width="16" height="16" onClick="SpeakerShowSwitch()" style="cursor:pointer" align="left">
+      <div id="divSpeakerCtrl" class="speakCtrl">
+        <table border="0" width="100%" cellpadding="0" cellspacing="0" bordercolor="#CCCCCC" style="cursor:pointer; font-size:15px">
+      <tr>
+        <td bgcolor="#66CC99" onClick="SpeakerSwitch(0)"><label>
+          <input name="radiobutton" type="radio" value="radiobutton" id="rdo0" checked="checked">
+          Audio 1 </label></td>
+        <td bgcolor="#66CC99" onClick="SpeakerSwitch(1)"><input type="radio" name="radiobutton" value="radiobutton" id="rdo1">
+          Audio 2 </td>
+        <td bgcolor="#66CC99" onClick="SpeakerSwitch(2)"><input type="radio" name="radiobutton" value="radiobutton" id="rdo2">
+          Audio 3 </td>
+        <td bgcolor="#66CC99" onClick="SpeakerSwitch(3)"><input type="radio" name="radiobutton" value="radiobutton" id="rdo3">
+          Audio 4 </td>
+        <td colspan="2" bgcolor="#CCCC00" onClick="SpeakerSwitch(-1)"><input type="radio" name="radiobutton" value="radiobutton" id="rdo">
+          No any one</td>
+      </tr>
+    </table>
+	</div>
+	</TD>
+    <TD width=10><IMG height=20 src="/images/mediaplayer/rightbottom.gif" 
+      width=17></TD>
+  </TR>
+  <tr>
+  <td colspan="3" height="80">&nbsp;</td>
+  </tr>
+  </TBODY></TABLE>
+  <input id="hidUOLID" type="hidden" runat="server" />
+</CENTER>
+</BODY>
+<script type="text/javascript" language="javascript">
+var xmlHttp ;
+function createXMLHttpRequest() {
+      if (window.ActiveXObject) {
+
+              xmlHttp = new ActiveXObject("Microsoft.XMLHTTP");
+          }
+      else if (window.XMLHttpRequest) {
+                  xmlHttp = new XMLHttpRequest();
+      }
+}
+
+</script>
+</HTML>

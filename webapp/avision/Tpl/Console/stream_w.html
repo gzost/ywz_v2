@@ -1,0 +1,217 @@
+<!-- 
+	直播控制台--推流管理
+	宽屏显示模板
+	outao 2016-12-19
+ -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />
+<script type="text/javascript">
+$(document).ready(function(){
+	cn_Pagination($("#dg").datagrid('getPager'));
+});
+function submitForm(form){
+	$('#msg').html('');
+	var cond=$("#"+form).serialize();
+	$.post("__APP__/Console/streamListAjax",cond,
+		function(data){
+		//console.trace(data);
+			$("#dg").edatagrid('loadData',data);
+			pager=$("#dg").datagrid('getPager');
+			pager.pagination('select', 1);
+		},"json");
+	//alert(cond);
+	$("#dgbutton").show();
+}
+
+function addStream(){
+	if(!confirm('警告:增加推流记录后不能删除，确定增加吗？')) return;
+
+	var account=$("#ownerAccount").val();
+	if(''==account) account='nobody';
+	var url='__APP__/Console/saveStreamAjax';
+	$.post(url,{account:account},function(data){
+		console.log(data);
+	},'json');
+}
+//账号+随机数生成默认识别字串
+function makeIdStream(account){
+	var idstr=account.slice(0,6);	//取前面6个字符
+	var len=idstr.length;
+	while(len++ <6) idstr +='_';	//不足6个字符补下划线
+	var timestamp=new Date().getTime();
+	//var low=(timestamp%100)*100000000;
+	//timestamp=parseInt(timestamp/100)+low;
+//console.log(timestamp);	
+	var key='ABCEDFGHIJKLMNOPQRSTUVWXYZ_0123456789';
+	var keyLen=key.length;
+	while(0!=timestamp){
+		idstr +=key[timestamp%keyLen];
+		timestamp=parseInt(timestamp/keyLen);
+//console.log(idstr+'='+timestamp);	
+	}
+	return idstr;
+}
+</script>
+<table id="dg" class="easyui-edatagrid"  style="width:98%"
+	data-options="url:'__APP__/Console/streamListAjax',rownumbers:true,singleSelect:true,
+		toolbar:'#tb',pagination:true,  pageSize:10,
+		destroyMsg:{
+				norecord:{title:'提示',msg:'请先选择要删除的记录'},
+				confirm:{title:'确认',msg:'真的要删除此记录吗？'}
+			},
+		saveUrl:'__APP__/Console/saveStreamAjax',
+		updateUrl:'__APP__/Console/updateStreamAjax',
+		destroyUrl:'__APP__/Console/destroyStreamAjax',
+		onSelect:function(index,row){
+		console.log(row);
+			if(row.isNewRecord){
+				$('#msg').html('');
+				return;
+			}
+			var data=row;
+			$.post('__APP__/Console/getPushUrlAjax',data,function(data){
+				console.log(data);
+				$('#msg').html(data);
+			},'html');
+		},
+		onError:function(index,row){
+			alert(row.msg);
+			$('#dg').edatagrid('load');
+		},
+		onAdd:function(index,row){
+			//alert('add');
+			//console.log({$isAdmin});
+			//生成默认流识别字串
+			var idstr=new Date().getTime().toString(16);	//13位时间戳
+			var account=$('#ownerAccount').val();
+			//if(account.length>0) idstr =account+'_'+idstr;
+			if(account.length<1){
+				alert('请先指定推流源的属主！');
+				$(this).edatagrid('cancelEdit',index);
+			}
+			idstr=makeIdStream(account);
+			var ed=$(this).edatagrid('getEditor',{ index:index,field:'idstring'});
+			$(ed.target).textbox('setValue',idstr);
+			if('true'!={$isAdmin}){
+				$(ed.target).textbox({editable:false});	//禁止修改
+			}
+			//生成默认流名称
+			var ed=$(this).edatagrid('getEditor',{ index:index,field:'name'});
+			$(ed.target).textbox('setValue',idstr);
+			//生成默认推流密码
+			var power=1000000000;
+			var key=Math.ceil(Math.random()*power+power)+new Date().getMilliseconds();
+			var ed=$(this).edatagrid('getEditor',{ index:index,field:'pushkey'});
+			$(ed.target).textbox('setValue',key.toString(16));
+			//默认录像状态
+			var ed=$(this).edatagrid('getEditor',{ index:index,field:'record'});
+			$(ed.target).combobox('setValue','yes');
+			//默认可用状态
+			var ed=$(this).edatagrid('getEditor',{ index:index,field:'status'});
+			$(ed.target).combobox('setValue','normal');
+			//默认属主账号
+			var ed=$(this).edatagrid('getEditor',{ index:index,field:'account'});
+			if(null!=ed) $(ed.target).textbox('setValue',account);
+		},
+		onEdit:function(index,row){
+			if('true'!={$isAdmin} ){
+				var ed=$(this).edatagrid('getEditor',{ index:index,field:'idstring'});
+				$(ed.target).textbox({editable:false});	//禁止修改
+				
+				if('ban'==row.status){
+					var ed=$(this).edatagrid('getEditor',{ index:index,field:'status'});
+					$(ed.target).textbox({readonly:true});
+				}
+			}
+		},
+		onBeforeSave:function(index){
+		//$(this).edatagrid('updateRow',{index:index,row:{account:'test2'}});
+		//console.log(index);
+		//row.account='test2';
+			var rt=confirm('要保存更改吗？');
+			return rt;
+		}
+	"	>
+	<thead>
+	<tr>
+		<eq name="isAdmin" value="true"> 
+			<th data-options="field:'account', width:150,align:'left', halign:'center',
+			editor:'textbox' ">属主</th>
+		</eq>
+		<th data-options="field:'idstring', width:150,align:'left', halign:'center',
+				editor:{type:'textbox'}
+			">识别字串</th>
+		<th data-options="field:'name', width:200,align:'left', halign:'center',
+			editor:'textbox' ">名称</th>
+		<th data-options="field:'pushkey', width:150,align:'left', halign:'center',
+			editor:'textbox' ">推流密码</th>
+		<th data-options="field:'record', width:80,align:'center', halign:'center',
+			editor:{ type:'combobox', options:{valueField:'val',textField:'txt',
+				data:[{val:'yes',txt:'yes','selected':'true'},{val:'no',txt:'no'}]}}
+		 ">录像状态</th>
+		<th data-options="field:'status', width:80,align:'center', halign:'center',
+			formatter:function(value,row){
+				var str='未知';
+				switch(value){
+					case 'normal': str='正常'; break;
+					case 'locked': str='暂停'; break;
+					case 'ban': str='禁播'; break;
+				}
+				return str;
+			},
+			editor:{ type:'combobox', options:{valueField:'val',textField:'txt',editable:false,
+				data:[{val:'normal',txt:'正常',selected:true},{val:'locked',txt:'暂停'}
+				<eq name="isAdmin" value="true">
+					,{val:'ban',txt:'禁播'}
+				</eq>
+				]}}
+			 ">可用状态</th>
+		<th data-options="field:'isactive', width:80,align:'center', halign:'center',
+			formatter:function(value,row){ 
+				if('true'==value) return '推流中';
+				else return '断流';
+			} ">推流状态</th>
+		<eq name="isAdmin" value="true"> 
+			<th data-options="field:'platform', width:80,align:'center', halign:'center',
+			editor:'textbox' ">平台</th>
+		</eq>
+	</tr>
+	</thead>
+</table>
+<div id="tb" style="padding:2px 5px;">
+	<form id='cond' method='post' style="display:inline">
+		查询条件：
+		属主：
+		<input id="ownerAccount" class='easyui-textbox' 	name='ownerAccount' value='{$ownerAccount}'  style='width:100px'
+			data-options="readonly:{$viewSelf} "  />
+
+		 标识字串：<input class='easyui-textbox' name="idstring" value="{$idstring}" 
+		 	data-options="prompt:'留空或输入完整字串'" />
+		
+		<input name='work' value='search' style="display:none" />
+	</form>
+	<div class="easyui-linkbutton" iconCls="icon-search" onclick="submitForm('cond');">查询</div>
+	
+	
+	<!-- 功能按钮 -->
+	<div id="dgbutton" style="width:250px; float:right; ">
+	<a id="Append" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" 
+		onclick="$('#dg').edatagrid('addRow');">增加</a>
+    <a id="Remove" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" 
+    	onclick="$('#dg').edatagrid('destroyRow');">删除</a>
+    <a id="Save" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" 
+    	onclick="$('#dg').edatagrid('saveRow')">保存</a>
+	<a  href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" 
+    	onclick="$('#dg').edatagrid('cancelRow')">取消</a>
+	</div>
+	<div id="msg" class="note" ></div>
+</div>
+
+</block>

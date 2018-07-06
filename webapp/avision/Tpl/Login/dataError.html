@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<link type="text/css" rel="stylesheet" href="/css/core.css" />
+<script type="text/javascript" src="/js/jquery.min.js"></script>
+<script type="text/javascript">
+function reflash(){
+	$("#progress").html('<img src=/images/loading.gif>');
+	$.post("{$reflashURL}",function(result){
+		$("#progress").html(result);
+		$("#return").css('display','block');
+	},'html');
+
+	//window.location.href="{$reflashURL}";
+}
+</script>
+
+<title>System Error</title>
+</head>
+<body>
+<h1>！系统数据发生严重错误！</h1>
+<ul>
+<li>您可以选择“恢复出厂数据”，系统数据将恢复到出厂状态，您增加的用户账号，频道等信息将永久性地丢失。
+<li>如果您有做数据备份，恢复出厂数据数据后，您可以尝试使用“备份恢复”功能，恢复数据。
+<li>恢复出厂数据可能需要数分钟时间，如果长时间没有响应请重新启动直播机。
+<li>如果无法执行“恢复出厂数据”或执行后依然出现此页面，请联系专业人员维修。
+</ul>
+<div id="progress"><a href="#" OnClick="reflash();">恢复出厂数据</a></div>
+<div id="return" style="display:none"><a href={$returnURL}>返回</a></div>
+</body>
+</html>

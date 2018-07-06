@@ -1,0 +1,19 @@
+<!-- 欢迎页频道列表输出界面 -->
+<foreach name="chnList" item="chn">
+	<if condition="$i % 3 eq 0">
+	<div class="flex-contBetween chnRow">
+	</if>
+
+		<div class="flex-between-item chnItem">
+			<a href="__ROOT__/player.php/HDPlayer/play/chnId/{$chn.id}" >
+				<div><img src="{$chn.img}" /></div>
+				<div class="chnName">{$chn.name}</div>
+			</a>
+		</div>
+	<if condition="$i++ % 3 eq 2">
+
+	</div>
+	</if>
+</foreach>
+
+	</div>

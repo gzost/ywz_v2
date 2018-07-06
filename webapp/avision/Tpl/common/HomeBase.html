@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<!-- 直播机系统管理界面基础模板，其它页面继承此模板扩充具体内容
+	模板分：	North--页头，South--页尾，West--左侧菜单，Center--中部主要内容，East--对本页的提示与帮助
+ -->
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+<load href="__PUBLIC__/jeasyui/themes/default/easyui.css" />
+<load href="__PUBLIC__/jeasyui/themes/icon.css" />
+<load href="__PUBLIC__/NivoSlider/nivo-slider.css" />
+<load href="__PUBLIC__/NivoSlider/themes/default/default.css" />
+<load href="__ROOT__/home/{$theme|default='default'}/css/cover.css" />
+
+<load href="__PUBLIC__/jeasyui/jquery.min.js" />
+<load href="__PUBLIC__/jeasyui/jquery.easyui.min.js" />
+<load href="__PUBLIC__/NivoSlider/jquery.nivo.slider.pack.js" />
+
+<title>Avision视频直播系统</title>
+<script type="text/javascript">
+
+//页面装载完成立即运行的代码
+
+$(document).ready(function(){
+	$(window).resize(function(){
+		coverResize();
+	});
+	coverResize();
+
+});
+
+function coverResize()
+{
+	//设置视频窗口高度
+	var height = $(window).height();   // 浏览器的高度
+	var top=$("#container").offset().top;
+
+	$("#container").height(height);
+	
+	$('#mainLayout').layout('resize', {
+		width:'100%',
+		height:height
+	});
+}
+
+function reSetHeight()
+{
+	var h=$('#adpicture').height();
+	if(100 > h)
+	{
+		setTimeout('reSetHeight()', 100);
+		return;
+	}
+	h +=45;
+	var p=$('#mainLayout').layout('panel','north');
+	p.panel('resize',{height:h});
+	$('#mainLayout').layout({fit:true});
+	//alert(h); 
+}
+
+$(document).ready(function(){
+	$('#slider').nivoSlider({controlNav: false,pauseTime:8000,
+		beforeChange: reSetHeight,
+		afterLoad:function(){
+			setTimeout('reSetHeight()', 100);
+		}
+	});
+});
+</script>
+
+
+</head>
+<body >
+<div id="container">
+<div id="mainLayout" class="easyui-layout"  fit="true">
+	<div data-options="region:'north' ,border:false " style="height: 225px;" class="Split_line panel-noscroll" >
+		<div id="header">
+			<a href="__URL__/index"><div style="float:left; width:180px; height:40px; "></div></a>
+			<div style="float:right; margin-right:5px;margin-top:5px;">
+				<eq name="isLogin" value='true'>
+					<a href="__URL__/changePassword" class="easyui-linkbutton" data-options="plain:true">
+						{$userName}
+					</a>
+					<a href="__URL__/logout" class="easyui-linkbutton" data-options="iconCls:'icon-logout'">登出</a>
+				<else/>
+					<a href="__URL__/login" class="easyui-linkbutton" data-options="iconCls:'icon-lock'">登录</a>
+					<a href="__URL__/register" class="easyui-linkbutton" data-options="iconCls:'icon-lock'">注册</a>
+				</eq>
+			</div>
+		</div>
+		<div id="adpicture">
+		<div class="slider-wrapper theme-default">
+			<div id="slider" class="nivoSlider">
+    			<img src="__ROOT__/home/{$theme|default='default'}/images/adimg110.jpg" alt="" title=""/>
+    			<img src="__ROOT__/home/{$theme|default='default'}/images/adimg111.jpg" alt="" title=""/>
+    			<img src="__ROOT__/home/{$theme|default='default'}/images/adimg150.jpg" alt="" title=""/>
+    			<a href="/r.php?i=65"><img src="__ROOT__/home/{$theme|default='default'}/images/adimg120.jpg" alt="" title=""/></a>
+				<a href="/r.php?i=68">
+    			<img src="__ROOT__/home/{$theme|default='default'}/images/adimg130.jpg" alt="" title="大觀 #不同的世界#（回放片段）"/></a>
+			</div>
+			<div id="htmlcaption" class="nivo-html-caption">     
+
+			</div>
+		</div>
+		</div>
+	</div>
+
+	<div data-options="region:'south',split:false,border:false " style="height: 20px;" >
+		<div class="footer"><a href="http://www.miitbeian.gov.cn/" target="_blank">粤ICP备09222162号-6</a>&nbsp;&nbsp;&nbsp;&nbsp;技术支持：<a href="http://www.advanced.com.cn" target="_blank">至高恒进科技有限公司</a></div>
+	</div>
+
+	<div data-options="region:'center',border:false " class="Split_line" id="mainbox">
+
+		<block name="bl_main">主窗口</block>
+
+	</div>
+</div>
+
+	</div>
+</body>
+</html>
+

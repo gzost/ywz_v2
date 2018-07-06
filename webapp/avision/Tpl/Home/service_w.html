@@ -1,0 +1,35 @@
+<!-- 
+	易网真客户服务“我要直播”页
+	宽屏显示模板
+	outao 2016-12-05
+ -->
+<extend name="common:HomeBase_w" />
+
+<block name="bl_north">
+<include file="Home:purchase_w" />
+</block>
+
+<block name="bl_main">
+
+<script type="text/javascript">
+function submitForm(){
+	$.messager.confirm('','确定充值吗?',function(r){
+		if (r){  $('#ff').submit(); }	//.form('submit')
+	});
+}
+
+</script>
+
+<div style="margin-top:10px;"></div>
+<form id="ff" method="post">
+	<div class="input-box">
+		<p class='warn'>{$message}</p>
+		<div class="title">专业护航</div>
+		<p class="note">提供计次的现场直播服务。</p>
+		
+	</div>
+	<input type=hidden name='isSubmit' value='true' >
+
+	
+</form>
+</block>

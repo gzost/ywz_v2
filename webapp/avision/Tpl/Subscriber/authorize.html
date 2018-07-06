@@ -1,0 +1,166 @@
+<!-- 注册观众  -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+<load href="__PUBLIC__/jeasyui/datagrid-detailview.js" />
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />
+<load href="__PUBLIC__/js/jquery.json.min.js" />
+<script type="text/javascript">
+var classifyData=eval('{$classifyListJson}');
+//alert(classifyData);
+
+$(document).ready(function(){
+	//$("#dg").edatagrid('getPager').pagination({displayMsg:"正在显示 {from} 到 {to} 行，共 {total} 行"});
+	
+	
+	 $('#dg').datagrid({
+         view: detailview,
+         detailFormatter: function(index, row){
+				return '<div style="padding:2px"><table class="ddv"></table></div>';
+			},
+		onExpandRow: function(index,row){
+			var ddv = $(this).datagrid('getRowDetail',index).find('table.ddv');
+			ddv.datagrid({
+				fitColumns:true,
+				singleSelect:true,
+				rownumbers:false,
+				showHeader:false,
+				loadMsg:'',
+				height:'auto',
+				onResize:function(){
+                    $('#dg').datagrid('fixDetailRowHeight',index);
+                },
+                onLoadSuccess:function(){
+                    setTimeout(function(){
+                        $('#dg').datagrid('fixDetailRowHeight',index);
+                    },0);
+                },
+				columns:[[
+					{field:'quest',title:'问题',width:'40%'},
+                    {field:'answer',title:'回答',width:'60%'}
+				]]
+			});
+			$('#dg').datagrid('fixDetailRowHeight',index);
+
+			ddv.datagrid('loadData',eval(row.note));
+		}
+	});
+	 
+	cn_Pagination($("#dg").edatagrid('getPager'));		 
+});
+
+function setUserStatus(status){
+	var rows=$('#dg').datagrid('getSelections');
+	if(0==rows.length) $.messager.alert('提示','请先勾选要设置的行。');
+	else{
+		//取频道及用户ID，串行化为Json，Post到后台。
+		if('删除'==status){
+			if(!confirm('确定删除吗？')) return;
+		}
+		var submitRows=new Array();
+		rows.forEach(function(row){
+			var obj=new Object();
+			obj.chnid=row.chnid;
+			obj.uid=row.uid;
+			submitRows.push(obj);
+		});
+		var submitData=new Object();
+		submitData.rows=submitRows;
+		submitData.status=status;
+		$.post("__URL__/setUserStatusAjax", { para: submitData}, function(data){
+			if('false'==data.success) $.messager.alert('错误','状态更新失败！','error');
+			else $('#dg').datagrid('load',{renew:'true'});
+		});
+	}
+	//alert($.toJSON(submitData));
+}
+
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table id="dg" class="easyui-edatagrid"  style="width:99%"
+	data-options="url:'__URL__/authorizeGetList',rownumbers:true,singleSelect:false,checkOnSelect:true,
+		toolbar:'#tb',pagination:true,  pageSize:10,
+		updateUrl:'__URL__/authorizeUpdateAjax' "
+>
+	<thead>
+		<tr>
+			<th data-options="field:'ck',checkbox:true"></th>
+			<th data-options="field:'chnname', width:200,align:'left', halign:'center' ">频道名称</th>
+			<th data-options="field:'username', width:150,align:'left', halign:'center'">用户名称</th>
+			<th data-options="field:'status', width:80,align:'center',
+				editor: {
+							type:'checkbox',
+							options:{ on:'正常',off:'禁用'}
+						}
+			">状态</th>
+<!--  
+					type:'combobox',
+					options:{
+						valueField:'id',textField:'name', editable:true,
+						data: classifyData
+					}
+-->
+			<th data-options="field:'classify', width:100,align:'center', halign:'center' ,
+				editor:{ 
+					type:'textbox'
+				
+				}
+			">分组</th>
+			<th data-options="field:'note2', width:160,align:'left', halign:'center',
+				editor:{type:'textbox'}
+			">备注</th>			
+		</tr>
+	</thead>
+
+</table>
+
+<!-- 工具栏 -->
+<div id="tb" style="padding:2px 5px;">
+	<form id='cond' method='post' style="display:inline">
+		查询条件：　
+
+		频道：<input class='easyui-combobox' name='chnId' value='{$chnId}'  style='width:180px'
+				data-options="valueField:'id',textField:'name', editable:false,
+					url:'__URL__/onlineUserGetChnPulldown' " />
+		分组：<input class='easyui-combobox' name='classify' value='{$classify}'  style='width:100px'
+				data-options="valueField:'id',textField:'name', editable:false,
+					data: classifyData " />
+		<input name='work' value='{$work}' style="display:none" />
+		<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
+	</form>
+	
+	
+	<!-- 功能按钮 -->
+	<div style="margin-left:50px; display:inline">
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true" 
+    		onclick="$('#dg').edatagrid('saveRow')">保存</a>
+    	<a  href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" 
+    		onclick="$('#dg').edatagrid('cancelRow')">取消</a>
+	</div>
+	<div style="margin-left:50px; display:inline">
+		设置状态：
+		<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-ok',plain:false" 
+    		onclick="setUserStatus('正常')">正常</a>
+    	<a  href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-no',plain:false" 
+    		onclick="setUserStatus('禁用')">禁用</a>
+    	<a  href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:false" 
+    		onclick="setUserStatus('删除')">删除</a>
+	</div>
+</div>
+
+<!-- 帮助 -->
+<div>
+	<ul class="help_ul">
+		<li>双击可修改状态、分组及备注。
+		<li>要批量设置用户状态可勾选每行前面的复选框，之后使用“正常”或“禁用”按钮即可。
+	</ul>
+</div>
+</block>

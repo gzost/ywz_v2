@@ -1,0 +1,15 @@
+<!--
+<div style="position:absolute;margin:auto;z-index:100;left:400px;top:200px;" onclick="onVideoClick()">
+<img src="/player/default/images/bofan.png" width="64" height="64"/>
+</div>
+-->
+<video id="h5Player" controls="controls" poster="{$poster}" webkit-playsinline="true" style="width:100%;height:100%;" filetype="{$filetype}" innerId="{$innerId}">
+<source type="video/mp4" src="{$srclink}"/>
+</video>
+<script type="text/javascript">
+EventTester("play", onPlayEven);
+EventTester("pause", onStopEven);
+EventTester("resize", onResizeEven);
+EventTester("click", onVideoClick);
+EventTester("error", onVideoError);
+</script>

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<!-- 直播控制台界面基础模板，其它页面继承此模板扩充具体内容
+	模板分：	North--页头，South--页尾，West--左侧菜单，Center--中部主要内容，East--对本页的提示与帮助
+ -->
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+<load href="__PUBLIC__/jeasyui/themes/default/easyui.css" />
+<load href="__PUBLIC__/jeasyui/themes/icon.css" />
+<load href="__ROOT__/home/{$theme|default='default_w'}/css/base.css" />
+
+<load href="__PUBLIC__/jeasyui/jquery.min.js" />
+<load href="__PUBLIC__/jeasyui/jquery.easyui.min.js" />
+
+<style type="text/css">
+	.layout-panel{overflow:visible;}
+</style>
+
+<title>易网真云直播,直播控制台</title>
+</head>
+<body>
+<div class="easyui-layout" style="margin-left:1px; padding-right:2px; " fit="true">
+<div data-options="region:'north' " style="height: 60px;" border="false">
+	<include file="Home:header_w" />
+	<block name="bl_north"></block>
+</div>
+<div data-options="region:'south',split:false" style="height: 20px;" border="false">
+	<div class="footer">广州市至高恒进科技有限公司 <a href="http://www.advanced.com.cn" target="_blank">www.advanced.com.cn</a></div>
+</div>
+
+<div data-options="region:'west',split:true,iconCls:'icon-menu'" title="功能菜单" style="width: 200px;">
+	<include file="Console:menu_w" />
+</div>
+<div data-options="region:'center',iconCls:'icon-device',title:'{$mainTitle}'" style="padding:10px;">
+	<block name="bl_main">主窗口</block>
+</div>
+</div>
+
+</body>
+</html>
+

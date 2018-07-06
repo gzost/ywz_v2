@@ -1,0 +1,270 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<title>高考志愿填报公益直播讲座-2017广东站</title>
+<meta name="keywords" content="易网真,易网真直播间,avision视频直播系统">
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/publicFunction.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/sms.js"></script>
+<link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="/player/default/css/base.css">
+<link rel="stylesheet" type="text/css" href="/player/default/css/info.css">
+<script type="text/javascript" src="http://res.wx.qq.com/open/js/jweixin-1.2.0.js"></script>
+<script type="text/javascript" src="__URL__/js?t={$time}"></script>
+<script type="text/javascript" src="__PUBLIC__/js/wxApi.js?t={$time}"></script>
+
+<script type="text/javascript">
+var sms = new SmsHelper();
+var isPhoneVerify = '{$phoneVerify}';
+
+$(document).ready(function(){
+	DivLoadHtml('__APP__/HDPlayer/infoPage/chnId/{$chnId}', 'info');
+	//alert(isPhoneVerify);
+	sms.Init('{$smsUrl}', 'smsBtn');
+	if(0 < isPhoneVerify.length)
+	{
+		switchTicker();
+	}
+	else
+	{
+		switchPhoneVerify();
+	}
+});
+
+function shareTimeLine()
+{
+	wx.ShareTimeline();
+}
+
+function switchPhoneVerify()
+{
+	$('#verify').show();
+	$('#ticker').hide();
+}
+
+function switchTicker()
+{
+	$('#verify').hide();
+	$('#ticker').show();
+}
+
+function onFocus()
+{
+	location.href="https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIyMTM0Njc4MA==#wechat_redirect";
+}
+
+function entryPlay()
+{
+	location.href="http://www.av365.cn/r.php?i={$chnId}";
+}
+
+function preSubmit()
+{
+	var phone = $('#phone').textbox('getValue');
+	if(0 == phone.length)
+	{
+		$('#msgBox').text('请填写手机号码！');
+		return;
+	}
+
+	if(11 != phone.length)
+	{
+		$('#msgBox').text('手机号码长度不正确！');
+		return;
+	}
+
+	var code = $('#code').textbox('getValue');
+	if(0 == code.length)
+	{
+		$('#msgBox').text('请填写手机号码！');
+		return;
+	}
+
+	//通过获取Ajax页面
+	$.ajax({
+		url: '__APP__/Console/phoneVerifyPost',
+		type: 'post',
+		data: $('#form1').serialize(),
+		cache: false,
+		timeout:60000,	//超时设为60秒
+		dataType: 'json',
+		success:function(data){
+			try{
+				if(null != data && data.result == 'true')
+				{
+					$('#msgBox').text('验证成功');
+					setTimeout('location.reload();', 1500);
+					return;
+					
+				}
+				else if( null!=data || data.result !='true')
+				{
+					if(null != data.msg)
+					{
+						//$('#msgBox').text(data.msg);
+						$('#msgBox').text('短信发送失败！');
+					}
+					else
+					{
+						$('#msgBox').text('网络中断或处理异常！');
+					}
+				}
+			}
+			catch(e){
+				$('#msgBox').text(e.message);
+				return;
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			$('#msgBox').text('网络中断或处理异常！');
+		}
+	});
+}
+
+function btnSendSms()
+{
+	var phone = $('#phone').textbox('getValue');
+	if(0 == phone.length)
+	{
+		alert('请填写手机号码！');
+	}
+	sms.btnClick(phone);
+}
+
+</script>
+<link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/default/easyui.css">
+<style type="text/css">
+a{
+	color: black;
+	text-decoration:none;
+}
+.footer {
+    line-height: 20px;
+    text-align: center;
+    font-size: 0.8em;
+    background-color: #FFF;
+}
+.rowItem{
+	width:90%;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-bottom-color:#ccc;
+	text-align:left;
+	margin:auto;
+	margin-top:0.6em;
+	padding-bottom:0.2em;
+	color:#333;
+}
+.rowItem span{
+	padding-right:0.5em;
+}
+.rowItemNoLine{
+	width:95%;
+	text-align:left;
+	margin:auto;
+	margin-top:0.6em;
+	padding-bottom:0.2em;
+}
+.iptReg{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #16599f;
+    background-color: #fff;
+	width:8em;
+	height:2em;
+	font-size:1.2em;
+}
+.iptLog{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #fff;
+    background-color: #16599f;
+	width:8em;
+	height:2em;
+	font-size:1.2em;
+}
+.errorMsg{
+	display:inline;
+	text-align:center;
+	font-size:0.8em;
+	color:rgb(200, 0, 0);
+	position:relative;
+}
+.rowItemCont{
+	width:90%;
+	margin-top:1em;
+	margin-left:2em;
+	line-height:2em;
+}
+.iptUnlive{
+	border-color: #BBB;
+    border-style: solid;
+    border-width: thin;
+    color: #BBB;
+    background-color: #eee;
+	width:8em;
+	height:2em;
+	font-size:1.2em;
+}
+</style>
+</head>
+<html>
+<body style="text-align:left;margin:0;font-size:14px;">
+<div style="width:100%;">
+<div style="width:100%;" id="info">
+</div>
+<div id="divMore" style="background-color:#FFF;">
+	<div style="padding-top:0.5em;display:none;" id="verify">
+		<span>观看前需要绑定手机号码认证身份</span>
+		<form  id="form1" action="" method="post">
+			<div class="rowItem">
+			<span>手机号码:</span><input id="phone" name="phone" value="{$phone}" class="easyui-numberbox" style="width:100px;" data-options="prompt:'国内手机号码'">
+			<a href="javascript:void(0)" style="position:relative;bottom:0.3em;" class="easyui-linkbutton" id="smsBtn" onclick="btnSendSms();">获取验证码</a>
+			</div>
+			<div class="rowItem">
+			<span>短信验证码:</span><input name="code" id="code" value="{$code}" class="easyui-numberbox" style="width:100px;" data-options="prompt:'验证码'">
+			</div>
+		</form>
+		<div style="margin-top:1em;margin-bottom:1em;text-align:center;">
+			<div id="msgBox" class="errorMsg" style="display:block;margin-bottom:0.3em;">{$errorMsg}</div>
+			<input type="button" class="iptReg" value="提交认证" onclick="preSubmit();"/>
+		</div>
+		</form>
+	</div>
+	<div style="padding-top:0.5em;display:none;" id="ticker">
+		<div style="margin-top:1em;margin-bottom:1em;text-align:center;">
+			<a href="http://www.av365.cn/r.php?i={$payChnId}"><input type="button" class="iptReg" value="购票观看"/></a>
+			<if condition="$shareTimes neq 0">
+				<input type="button" class="iptLog" value="免费观看" onclick="entryPlay()"/>
+			<else/>
+				<input type="button" class="iptUnlive" value="免费观看"/>
+			</if>
+		</div>
+		<div class="rowItem">
+		</div>
+		<div class="rowItemNoLine">
+			<div>如何免费观看？</div>
+			<div class="rowItemCont">
+				<div>第一步：把本内容分享到朋友圈。当前成功分享次数：{$shareTimes}
+				</div>
+				<div>第二步：关注我们的公众号。长按下方的二维码，识别后关注我们。进入公众号后点击“活动”菜单。
+				<br>
+					<img src="/Public/images/ywz_qrcode.jpg" width="200"/>					
+				</div>
+			</div>
+		</div>
+		</form>
+	</div>
+</div>
+</div>
+</body>
+</html>

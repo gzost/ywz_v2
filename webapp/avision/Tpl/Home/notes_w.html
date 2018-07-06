@@ -1,0 +1,40 @@
+<extend name="common:HomeBase_w" />
+<block name="bl_north">
+<include file="Home:loginReg_w" />
+</block>
+<block name="bl_main">
+<load href="__ROOT__/home/{$theme|default='default'}/css/login.css" />
+<load href="__PUBLIC__/js/sms.js" /> 
+<load href="__PUBLIC__/js/qrcode.js" />
+<load href="__PUBLIC__/js/jquery.qrcode.js" />
+<script type="text/javascript" src="__PUBLIC__/js/jquery.md5.js"></script>
+<script type="text/javascript">
+</script>
+<style>
+.notes_txt{
+	font-size:16px; line-height:24px;
+	text-indent:2em;
+	color:#336;
+}
+.es_btn14{
+	display:inline-block;
+	border:1px solid #999;
+	border-radius: 12px;
+	font-size:14px; line-height:24px; font-weight:bold;
+	text-decoration:none;
+	background-color:#ff0;
+}
+.es_btn14:hover{ opacity:0.8;}
+
+</style>
+<div class="input-box" style="width:300px; margin-top:40px;">
+	<div class="title" style="margin-bottom:20px;text-align:center;">
+				{$title}
+	</div>
+	<div class="notes_txt">
+	{$message}
+	</div>
+	<div style="text-align:center; margin:20px 5px"><a href="{$nexturl}" class="es_btn14" style="width:100px;">{$btntxt}</a></div>
+</div>
+
+</block>

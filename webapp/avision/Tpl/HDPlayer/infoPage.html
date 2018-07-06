@@ -1,0 +1,59 @@
+<script type="text/javascript">
+
+//介绍内容添加图片
+function infoAddImg(url, link)
+{
+	if(0 < link.length && "undefined" != link)
+		$('#infoShow').append('<div><a target="_blank" href="' + link + '"><img src="' + url + '" style="width:100%;margin-bottom:-2px;"/></a></div>');
+	else
+		$('#infoShow').append('<div><img src="' + url + '" style="width:100%;margin-bottom:-2px; "/></div>');
+}
+
+//介绍内容添加文字
+function infoAddTxt(txt, link)
+{
+	if(0 < txt.length)
+	{
+		txt = htmlencode(txt);
+		if(0 < link.length && "undefined" != link)
+			$('#infoShow').append('<div><p class="txtIndent"><a  target="_blank" href="' + link + '">'+txt+'</a></p></div>');
+		else
+			$('#infoShow').append('<div><p class="txtIndent">'+txt+'</p></div>');
+	}
+}
+
+function Init(json)
+{
+	try
+	{
+		//json = {["img":"/room/001/01/info/1486348846.jpg"]};
+		//alert(json.length);
+		//alert(json[0]["img"]);
+		for(var o in json)
+		{
+			//alert(o);
+			if(null != json[o]["img"])
+			{
+				//alert(json[o]["img"]);
+				infoAddImg(json[o]["img"], json[o]["link"]);
+			}
+			if(null != json[o]["text"])
+			{
+				//alert(json[o]["text"]);
+				infoAddTxt(json[o]["text"], json[o]["link"]);
+			}
+			//alert(o["img"]);
+			//alert(o["text"]);
+		}
+	}
+	catch (e)
+	{
+	}
+}
+
+Init({$infojson});
+
+
+</script>
+<div style="width:100%;background-color:#fff;" id="infoShow">
+</div>

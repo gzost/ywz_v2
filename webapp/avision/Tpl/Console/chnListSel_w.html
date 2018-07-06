@@ -1,0 +1,31 @@
+<style type="text/css">
+.selItem{
+	padding:3px;
+}
+.selItem :hover{
+	background-color:#dfd;
+	cursor:pointer;
+	width:100%;
+}
+.selTitle{
+	font-size:1.2em;
+	font-weight:bold;
+}
+</style>
+<script language="javascript" type="text/javascript">
+$('.selTitle').ready(function(){
+		var c = $('.selItem').size();
+		if(1 == c)
+		{
+			$('.selItem')[0].click();
+		}
+	});
+</script>
+<div style="margin-left:100px;width:300px;" class="flex-between-item">
+<div class="selTitle">请选择以下您需要的频道：</div>
+<foreach name="chnList" item="vo">
+	<div onclick="jumpChn('{$vo.id}')" style="" class="selItem">
+		<div style="width:100%;">{$vo.name}</div>
+	</div>
+</foreach>
+</div>

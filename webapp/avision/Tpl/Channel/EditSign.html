@@ -1,0 +1,92 @@
+<html class="panel-fit"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jeasyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jeasyui/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="/admin/default/css/base.css">
+<link rel="stylesheet" type="text/css" href="/admin/default/css/channel.css">
+
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.easyui.min.js"></script>
+
+<title>易网真视频直播系统</title>
+
+</head>
+<body style="padding:20px;">
+<script type="text/javascript">
+var signpass = '{$signpass}';
+$(document).ready(function(){
+	$('#signpass').click(function(){
+		if($(this).prop('checked'))
+		{
+			$('.reserved').show();
+		}
+		else
+		{
+			$('.reserved').hide();
+		}
+	});
+
+	if('true' == signpass)
+	{
+		$('.reserved').show();
+	}
+	else
+	{
+		$('.reserved').hide();
+	}
+});
+</script>
+
+<style type="text/css">
+</style>
+
+
+<form id="ff" action="__URL__/EditSignSubmit" method="post" enctype="multipart/form-data">
+<input type="hidden" name="chnId" value="{$chnId}"/>
+	<div class="itemRow">
+	<div class="itemName">提问问题1:</div>
+	<div class="itemContent"><input class="easyui-textbox" type="text" name="quest[]" value="{$signQuest.0}" style="width:150px"/></div>
+	<div class="reserved">
+		<div class="itemName" style="text-align:right;">预留答案:</div>
+		<div class="itemContent"><input class="easyui-textbox" type="text" name="questAns[]" value="{$signQuestAns.0}" style="width:150px"/></div>
+	</div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">提问问题2:</div>
+	<div class="itemContent"><input class="easyui-textbox" type="text" name="quest[]" value="{$signQuest.1}" style="width:150px"/></div>
+	<div class="reserved">
+		<div class="itemName" style="text-align:right;">预留答案:</div>
+		<div class="itemContent"><input class="easyui-textbox" type="text" name="questAns[]" value="{$signQuestAns.1}" style="width:150px"/></div>
+	</div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">提问问题3:</div>
+	<div class="itemContent"><input class="easyui-textbox" type="text" name="quest[]" value="{$signQuest.2}" style="width:150px"/></div>
+	<div class="reserved">
+		<div class="itemName" style="text-align:right;">预留答案:</div>
+		<div class="itemContent"><input class="easyui-textbox" type="text" name="questAns[]" value="{$signQuestAns.2}" style="width:150px"/></div>
+	</div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">&nbsp;</div>
+	<div class="itemContent"><input type="checkbox" name="signpass" id="signpass" value="true"
+	<if condition="$signpass">
+		checked="checked"
+	</if>
+	/>自动审核通过
+	</div>
+	</div>
+	<div style="text-align:center">
+	<div class="easyui-linkbutton" iconCls="icon-ok" onclick="$('#ff').submit();">保存</div>
+	</div>
+	<div id="useage" class="easyui-panel" style="width:90%;height:150px;margin-top:10px;padding:10px;background-color:beige;">
+	说明：
+	1、自动审核通过：观众提交报名后，系统会根据提交的回答内容进行匹配。提交的回答内容与预留答案一致表示通过；如果预留答案为空，表示不进行匹配直接通过。
+	</div>
+</form>
+</body>
+</html>

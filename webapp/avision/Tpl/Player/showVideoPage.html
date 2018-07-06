@@ -1,0 +1,213 @@
+<if condition="$preview neq '1'">
+<script type="text/javascript" src="/player/js/keepAlive.js?t={$time}"></script>
+
+<script type="text/javascript">
+//创建心跳管理对象
+var heart = new HeartBeat();
+//heart.onShowMsg = heartMsg;
+//heart.onShowMsg = showMsgAni;
+heart.onMsgExit = heartMsgExit;
+
+//定时发送心跳
+heart.keepAlive();
+
+function heartMsgExit(msg)
+{
+	try
+	{
+		//停止播放
+		StopVideo();
+	}
+	catch (e)
+	{
+	}
+	var url = '/';
+	//显示消息，确认后跳转
+	try
+	{
+		$('#divLayer').show();
+		DivLoadHtml('/home.php/Console/fullMsg', 'divLayer', 'msg='+msg+'&jump='+url);
+	}
+	catch (e)
+	{
+	}
+}
+
+</script>
+
+</if>
+
+<if condition="$useH5 eq 'false'">
+
+<script type="text/javascript" src="__ROOT__/player/js/aodianplay.js"></script>
+<script type="text/javascript">
+
+function playerInit(liveurl)
+{
+	aodianPlayer({
+		container:'h5Player',
+		//rtmpUrl: '{$rtmpmrl}',//控制台开通的APP rtmp地址，必要参数
+	    hlsUrl: liveurl,//控制台开通的APP hls地址，必要参数
+		name:'flashPlayer',
+		width: '865',
+		height: '486',
+		<if condition="$poster">
+			adveReAddr:'{$poster}',
+		<else/>
+		adveReAddr:'',
+		</if>
+		controlbardisplay: 'enable',
+		autostart: true,//是否自动播放，默认为false
+	});
+
+	onPlayEven();
+}
+
+function StopVideo()
+{
+	$('#h5Player').html('');
+	onStopEven();
+}
+
+$("#h5Player").ready(function(){
+	getmrl();
+
+});
+
+function getmrl()
+{
+	$.ajax({
+		url: '{$srclink}',
+		type: 'post',
+		data: 't=show',
+		cache: false,
+		timeout:5000,
+		dataType: 'text',
+		success:function(text){
+			try{
+				text = text.replace(' ', '');
+				playerInit(text);
+			}
+			catch(e){
+				alert(e);
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			alert('网络或服务中断！');
+		}
+	});
+}
+</script>
+<div id="h5Player" filetype="{$filetype}" innerId="{$innerId}" style="
+    width: 865px;
+    height: 486px;
+	<if condition="$poster">
+    background-image: url({$poster});
+	</if>
+    background-size: 100% 100%;
+">
+</div>
+
+<else/>
+<!--o-player-fullscreen="false"-->
+<video id="h5Player" controls="controls" poster="{$poster}" x5-vide playsinline="playsinline" webkit-playsinline="true" x-webkit-airplay="false" style="position:relative;width:100%;margin:0;max-height:100%" filetype="{$filetype}" innerId="{$innerId}" src="" type="video/mp4">
+</video>
+	<if condition="$preview eq '1'">
+		下载地址:<input type="text" id="h5Src" value="" style="width:450px;"/>
+	</if>
+<script type="text/javascript">
+var preview = '{$preview}';
+var autoPlay = '{$autoplay}';
+var isMobile = '{$isMobile}';
+
+function StopVideo()
+{
+	$('#h5Player').attr('src','');
+	if(0 == preview)
+	{
+		onStopEven();
+	}
+}
+
+$("#h5Player").ready(function(){
+	try
+	{
+		//设置微信分享信息
+		document.title = '{$recTitle}';
+		_wxLineTitle = '{$recTitle}';
+		_wxLineDesc = '{$recDesc}';
+		_wxLineImgUrl = '{$recImgUrl}';
+
+		_wxAppTitle = '{$recTitle}';
+		_wxAppDesc = '{$recDesc}';
+		_wxAppImgUrl = '{$recImgUrl}';
+
+		EventTester("play", onPlayEven);
+		EventTester("pause", onStopEven);
+		EventTester("resize", onResizeEven);
+		EventTester("click", onVideoClick);
+		EventTester("error", onVideoError);
+
+		$('.bodyTitle').text('{$recTitle}');
+
+	}
+	catch (e)
+	{
+	}
+
+	$("#h5Player").bind('contextmenu',function() { return false; }); 
+	getmrl();
+});
+
+function getmrl()
+{
+	if('true' == isMobile)
+	{
+		$.ajax({
+			url: '{$srclink}',
+			type: 'post',
+			data: 't=show',
+			cache: false,
+			timeout:5000,
+			dataType: 'text',
+			success:function(text){
+				try{
+					text = text.replace(' ', '');
+					$('#h5Player').attr('src', text);
+
+					if('' != autoPlay)
+					{
+						if('1' == preview)
+						{
+							$('#h5Player').play();
+						}
+					}
+				}
+				catch(e){
+					console.log(e);
+				}
+			},
+			complete:function(){	//无论是否成功都会调用
+			},
+			error:function(){
+				alert('网络或服务中断！');
+			}
+		});
+	}
+	else
+	{
+		$('#h5Player').attr('src', '{$srclink}');
+	}
+
+	if('1' == preview)
+	{
+		console.log($('#h5Player').attr('src'));
+		$('#h5Src').attr("value", "http://www.av365.cn/" + $('#h5Player').attr('src'));
+	}
+
+}
+</script>
+
+</if>

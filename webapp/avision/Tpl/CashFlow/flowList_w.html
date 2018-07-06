@@ -1,0 +1,72 @@
+<!-- 现金流水列表  -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />   
+<script type="text/javascript">
+</script>
+
+<style type="text/css"> 
+</style>
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+	data-options="url:'__APP__/CashFlow/flowListDataAjax',rownumbers:true,singleSelect:true,
+		toolbar:'#tb',showFooter:true,pagination:true,  pageSize:20 ">
+	<thead>
+		<tr>
+			<th data-options="field:'happen', width:120,align:'center',
+				formatter:function(value){return value.slice(0,10);}">发生时间</th>
+			<th data-options="field:'deposit', width:80,align:'right', halign:'center'">收入</th>
+			<th data-options="field:'withdrawal', width:80,align:'right', halign:'center'">支出</th>
+			<th data-options="field:'balance', width:80,align:'right', halign:'center'">余额</th>
+			<th data-options="field:'payername', width:120,align:'left', halign:'center'">对方</th>
+			<th data-options="field:'transtype', width:80,align:'center', halign:'center',
+				formatter:function(value){ 
+					var type={$transtypeList}; 
+					//console.log(type);
+					for(var key in type){
+						//console.log(type[key]);
+						if(type[key].val==value) return type[key].txt;
+					}
+					return value;
+				} ">交易类型</th>
+			<th data-options="field:'transqty', width:80,align:'right', halign:'center' ">交易数量</th>
+			<th data-options="field:'note', width:200,align:'left', halign:'center' ">摘要</th>
+		</tr>
+	</thead>
+
+</table>
+*播主仅能查看自己的收支记录<br>
+
+<div id="tb" style="padding:3px 5px;line-height:26px;font-size:14px">
+	<form id='cond' method='post' style="display:inline">
+		查询条件：
+		<input class="easyui-textbox" name='account' value='{$account}' style="width:160px;height:26px"
+			data-options="buttonText:'播主账号',buttonAlign:'left',prompt:'输入完整的账号',readonly:{$viewSelf}" >
+		
+		<input class="easyui-datebox" name="beginTime" value="{$beginTime}" style="width:150px;height:26px"
+			data-options="buttonText:'时间从',buttonAlign:'left',required:true,formatter:cn_formatter,parser:cn_parser" >
+		
+		<input class="easyui-datebox" name="endTime" value="{$endTime}" style="width:120px;height:26px"
+			data-options="buttonText:'至',buttonAlign:'left',required:true,formatter:cn_formatter,parser:cn_parser" >
+		
+		<input class="easyui-textbox" name='payername' value='{$payername}' style="width:150px;height:26px"
+			data-options="buttonText:'对方名称',buttonAlign:'left',prompt:'交易对方名称'" >
+			
+		<input class='easyui-combobox' name='transtype' value='{$transtype}' style='width:130px;height:26px'
+				data-options="buttonText:'交易类型',buttonAlign:'left',valueField:'val',textField:'txt', 
+					data:{$transtypeList},panelWidth:'80px',panelAlign:'right'
+				" />
+		
+		<input class="easyui-textbox" name='note' value='{$note}' style="width:150px;height:26px"
+			data-options="buttonText:'摘要',buttonAlign:'left'" >
+		
+		<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
+	</form>
+	<div style="margin:5px; font-size: 14px; color: #448;">{$msg}</div>
+</div>
+</block>

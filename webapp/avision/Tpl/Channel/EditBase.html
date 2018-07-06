@@ -1,0 +1,186 @@
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jeasyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jeasyui/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="/admin/default/css/base.css">
+<link rel="stylesheet" type="text/css" href="/admin/default/css/channel.css">
+
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.easyui.min.js"></script>
+
+<title>易网真视频直播系统</title>
+
+</head>
+<body style="padding:20px;">
+<script type="text/javascript">
+function isDelRec(chnId)
+{
+	if(confirm('真的要删除吗?'))
+	{
+		location.href = "{$EditBaseDelRec}?chnId=" + chnId;
+	}	
+}
+
+function isClearDis(chnId)
+{
+	if(confirm('真的要清空讨论内容吗?'))
+	{
+		location.href = "{$EditBaseClearDis}?chnId=" + chnId;
+	}
+}
+
+$('#document').ready(function(){
+	$('#wRecMp4').panel({
+		onBeforeClose: function(){
+			document.getElementById('h5Player').pause();
+		}
+	});
+});
+
+function OnSubmitLoad()
+{
+	$('#loadDiv').show();
+}
+
+</script>
+
+<style type="text/css">
+</style>
+
+
+<form id="ff" action="__SELF__" method="post" enctype="multipart/form-data">
+<input type="hidden" name="chnId" value="{$chnId}"/>
+<input type="hidden" name="act" value="submit"/>
+	<div class="itemRow">
+	<div class="itemName">频道名称：</div>
+	<div class="itemContent"><input class="easyui-textbox" type="text" name="name" value="{$name}" data-options="required:true" style="width:250px"/>&nbsp;访问地址:&nbsp;<a href="{$accUrl}" target="_blank">{$accUrl}</a></div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">频道描述：</div>
+	<div class="itemContent"><input class="easyui-textbox" type="text" name="descript" value="{$descript}" data-options="required:true" style="width:350px"/></div>
+	</div>
+	<div class="itemRow">
+		<div class="itemName">频道Stream：</div>
+		<div class="itemContent">
+			<span>{$stream}</span>
+		</div>
+	</div>
+	<div class="itemRow">
+		<div class="itemName">推流认证码：</div>
+		<div class="itemContent">
+			<input class="easyui-textbox" type="text" name="streamkey" value="{$streamkey}" data-options="required:true" style="width:100px"/>
+		</div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">频道类型：</div>
+	<div class="itemContent">
+	<input class="easyui-combobox" name="type" style="width:100px;" value='{$type}' data-options="valueField:'value',textField:'name', 					url:'__URL__/TypeComboxData'"/>
+	<if condition="$isAdminRole">
+	&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="wxonly" id="wxonly" value="true"
+	<if condition="$wxonly">
+		checked="checked"
+	</if>
+	/>仅限微信授权登录
+	</if>
+	</div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">启停：</div>
+	<div class="itemContent">
+	<input class="easyui-combobox" name="status" style="width:60px;" value='{$status}' data-options="valueField:'value',textField:'name', 					url:'__URL__/StatusComboxData'"/>
+	</div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">播放模式：</div>
+	<div class="itemContent">
+	<input class="easyui-combobox" name="playtype" style="width:100px;" value='{$playtype}' data-options="valueField:'value',textField:'name', 					url:'__URL__/PlayTypeComboxData'"/>
+	<if condition="$isAdminRole">
+	&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="avright" id="avright" value="true"
+	<if condition="$avright">
+		checked="checked"
+	</if>
+	/>显示页面底部版权声明图片
+	&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="showposter" id="showposter" value="true"
+	<if condition="$showposter">
+		checked="checked"
+	</if>
+	/>显示播放器封面图
+	</if>
+
+	</div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">讨论区：</div>
+	<div class="itemContent">
+	<div style="float:left;"><input class="easyui-combobox" name="discuss" style="width:60px;" value='{$discuss}' data-options="valueField:'value',textField:'name', 					url:'__URL__/StatusComboxData'"/></div><div class="easyui-linkbutton itemContent" iconCls="icon-cancel" onclick="isClearDis({$chnId})" style="float:left;">清空</div>
+	</div>
+	</div>
+	<if condition="$isAdminRole">
+		<div class="itemRow">
+		<div class="itemName">推荐度：</div>
+		<div class="itemContent">
+		<input class="easyui-numberbox" name="adpush" style="width:60px;" value='{$adpush}' data-options="min:0,max:99"/>(0~99)
+		</div>
+		</div>
+	</if>
+	<div class="itemRow">
+	<div class="itemName">封面图片：</div>
+	<div class="easyui-linkbutton itemContent" iconCls="icon-large-picture" onclick="$('#wInfoJpg').window('open')">查看</div>
+	<div class="itemContent"><input id="ffFile" class="easyui-filebox" name="importFile" data-options="prompt:'限制文件类型(*.jpg;*.png)建议宽1080 高250~720 不大于300K'" style="width:450px"></div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">Logo图片：</div>
+	<div class="itemContent"><img src="{$infoImg48}" border="0" width="48" style="vertical-align:bottom;"/><input id="ffFile" class="easyui-filebox" name="infoImg48" data-options="prompt:'限制文件类型(*.jpg;*.png)建议宽50 高50 不大于50K'" style="width:450px"></div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">直播前录像：</div>
+	<div class="easyui-linkbutton itemContent" iconCls="icon-communication" onclick="$('#wRecMp4').window('open')">观看</div><div class="easyui-linkbutton itemContent" iconCls="icon-cancel" onclick="isDelRec({$chnId})">删除</div><div class="itemContent"><input id="ffFile" class="easyui-filebox" name="importMp4" data-options="prompt:'限制文件类型(*.mp4;);文件不得大于500M'" style="width:400px"></div>
+	<div style="clear:both">
+	</div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">&nbsp;</div>
+	或者填写录像文件地址（二选一）：
+	<input class="easyui-textbox" type="text" name="mp4RecLink" value="{$mp4RecLink}" style="width:500px"/></div>
+	<div class="itemRow">
+	<div class="itemName">第三方登录：</div>
+	密匙：
+	<input class="easyui-textbox" type="text" name="openApiKey" value="{$openApiKey}" style="width:200px"/>
+	通讯令牌：
+	<span>{$openApiToken}</span></div>
+	</div>
+	<if condition="$isAdminRole">
+	<div class="itemRow">
+	<div class="itemName">代理用户帐号：</div>
+	<span>{$openAgentName}</span><input class="easyui-textbox" type="text" name="openAgentUser" value="{$openAgentUser}" style="width:100px"/>(若要变更请填写本系统中的用户帐号)</div>
+	</div>
+	</if>
+
+
+	<div style="text-align:center">
+	<div class="errMsg">{$errMsg}</div>
+	<div id="loadDiv" style="display:none;"><img src="/admin/default/images/loading.gif" border="0" width="20"/>正在提交，请等待</div>
+	<div class="easyui-linkbutton" iconCls="icon-ok" onclick="OnSubmitLoad();$('#ff').submit();">保存</div>
+		<div>
+				<div id="wInfoJpg" class="easyui-window" title="封面图片" data-options="modal:true,closed:true,minimizable:false,collapsible:false,maximizable:false,iconCls:'icon-large-picture'" style="width:520px;height:480px;padding:0px;">
+						<img src="{$infoImg}" border="0" width="100%"/>
+				</div>
+
+				<div id="wRecMp4" class="easyui-window" title="录像" data-options="modal:true,closed:true,minimizable:false,collapsible:false,maximizable:false,iconCls:'icon-communication'" style="padding:0px;">
+						<video id="h5Player" width="640" height="360" controls="controls" loop="loop">
+						  <source src="{$mp4Rec}" type="video/mp4" />
+						</video>
+
+				</div>
+		</div>
+	</div>
+<div><img src="{$qrUrl}" border="0"/></div>
+</form>
+</body>
+</html>

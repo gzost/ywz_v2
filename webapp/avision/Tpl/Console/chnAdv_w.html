@@ -1,0 +1,324 @@
+<!-- 
+	直播控制台--总览
+	宽屏显示模板
+	outao 2016-12-19
+ -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/adv-ajaxedit.css" />
+<script type="text/javascript" src="/Public/js/jquery.form.js"></script>
+<script type="text/javascript" src="/Public/js/adv-uploadprogress.js"></script>
+<script type="text/javascript" src="/Public/js/adv-ajaxedit.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/publicFunction.js" ></script>
+<load href="__PUBLIC__/js/qrcode.js" />
+<load href="__PUBLIC__/js/jquery.qrcode.js" />
+<script type="text/javascript">
+var chnId = '{$chnId}';
+function billchange(bill)
+{
+	if('charge' == bill)
+	{
+		$('#userbill').val('true');
+		$('#billex').show();
+		//$('#memberApp').hide();
+	}
+	/*
+	else if('private' == bill)
+	{
+		$('#memberApp').show();
+		$('#billex').hide();
+	}
+	*/
+	else
+	{
+		$('#userbill').val('false');
+		$('#billex').hide();
+		//$('#memberApp').hide();
+	}
+}
+
+//logo图片上传成功
+function logoSuccess(url)
+{
+	$('#logoimg').attr('src', url + "?"+Math.random());
+}
+
+//海报图片上传成功
+function posterSuccess(url)
+{
+	$('#posterimg').attr('src', url + "?"+Math.random());
+}
+
+function editSubmit()
+{
+	$.ajax({
+		url: '{$editurl}',
+		type: 'post',
+		data: $('#ff').serialize(),
+		cache: false,
+		timeout:60000,	//超时设为60秒
+		dataType: 'json',
+		success:function(data){
+			var command='';
+			var isReject='false';
+			var isFresh='false';
+			try{
+				if( null==data || data.result !='true')
+				{
+					alert(data.msg);
+				}
+				else
+				{
+					//发送成功
+					alert('保存成功');					
+				}
+			}
+			catch(e){
+				alert(e.message);	//
+				return;
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			alert('网络或服务中断！');
+		}
+	});
+}
+
+$(document).ready(function(){
+	getPushUrl({$streamid});
+	var a = $('#type').combobox('getValue');
+	billchange(a);
+	if(0 < chnId)
+	{
+		$('#divCont').show();
+	}
+});
+
+function getPushUrl(id)
+{
+	$('#pushUrl').text('');
+	$.ajax({
+		url:'{$getPushUrl}',
+		type: 'post',
+		data: 'streamid=' + id,
+		cache: false,
+		timeout: 60000,
+		dataType: 'json',
+		success:function(data){
+			try{
+				if(data.pushUrl)
+				{
+					$('#pushUrl').text(data.pushUrl);
+					genQrcode(data.pushUrl);
+				}
+			}
+			catch(e)
+			{
+			}
+		},
+		complete:function(){
+		},
+		error:function(){
+		}
+	});
+}
+
+function SearchSubmit()
+{
+	$('#divCont').hide();
+	DivLoadHtml('__URL__/chnListSel'+'?t='+Math.random(), 'divChnList', $('#cond').serialize())
+}
+
+function jumpChn(chnId)
+{
+	location.href = "__URL__/chnAdv/chnId/" + chnId;
+}
+
+function genQrcode(pushurl)
+{
+	$('#qrcode').html('');
+	//分享二维码
+	$('#qrcode').qrcode(
+	{
+		text: pushurl,
+		width: 100,
+		height: 100,
+		border:	2,
+		logoid:'',
+		logoW:48,
+		logoH:48,
+	}
+	);
+}
+</script>
+<style type="text/css">
+.flex-contBetween {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+.flex-contStart {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: flex-start;
+    justify-content: flex-start;
+}
+.itemName{
+	width:100px;
+	text-align:right;
+	padding-right:10px;
+	vertical-align:middle;
+}
+.itemCont{
+	margin-bottom:5px;
+	text-align:left;
+}
+.flowleft{
+	float:left;
+}
+.sheetBtn{
+	text-align:center;
+	min-width:50px;
+	cursor:pointer;
+	background-color:#57F3CF;
+	margin:3px;
+	margin-left:10px;
+	padding:3px;
+}
+.hidden{
+	display:none;
+}
+
+.flex-between-item{
+    width: 50%;
+    border-width: thin;
+    border-color: blue;
+    margin: 3px;
+    padding: 10px;
+    border-style: dashed;
+}
+</style>
+<div style="padding:2px 5px;">
+	<form action="__URL__/chnListSel" id='cond' method='post' style="display:inline">
+		查询条件：　
+		频道：<input class='easyui-textbox' id="key" name='key' value='{$chnName}' style='width:180px'/>
+		<a href="javascript:SearchSubmit();" class="easyui-linkbutton" iconcls="icon-search" plain="true">查询</a>
+	</form>
+</div>
+<div class="flex-contBetween" id="divChnList">
+</div>
+<div class="flex-contBetween" id="divCont" style="display:none;">
+	<div class="flex-between-item" style="height:700px;">
+		<form id="ff" action="" method="post">
+			<div class="flex-contStart">
+				<div class="itemName">频道类型：</div>
+				<div class="itemCont">
+					<input class="easyui-combobox" id="type" name="type" style="width:100px;" value='{$type}' data-options="valueField:'value',textField:'name', url:'__URL__/TypeComboxData', onChange:function(newValue, oldValue){billchange(newValue);}"/>
+					&nbsp;&nbsp;&nbsp;&nbsp;<input type="checkbox" name="wxonly" id="wxonly" value="true"
+					<if condition="$wxonly">
+						checked="checked"
+					</if>
+					/>默认微信授权登录
+				</div>
+			</div>
+			<div class="flex-contStart">
+				<div class="itemName">推流：</div>
+				<div class="itemCont">
+					<input class="easyui-combobox" name="stream" style="width:200px;" value='{$streamid}' data-options="valueField:'value',textField:'name', 					url:'__URL__/StremComboxData/chnId/{$chnId}',onChange:function(newValue, oldValue){getPushUrl(newValue);}"/>
+				</div>
+			</div>
+			<div class="flex-contStart">
+				<div class="itemName">&nbsp;</div>
+				<div class="itemCont">
+					<div><span>推流地址：</span>
+					<span id="pushUrl">&nbsp;</span></div>
+					<div><span>推流地址二维码：</span>
+					<div id="qrcode"></div></div>
+				</div>
+			</div>
+			<div class="flex-contStart">
+				<div class="itemName">最大并发数：</div>
+				<div class="itemCont">
+					<if condition="$isFOpt">
+						<input class='easyui-numberbox' name='maxvlimit' value='{$maxvlimit}' style='width:80px' data-options="min:0"/>
+					<else/>
+						<input class='easyui-numberbox' name='vlimit' value='{$vlimit}' style='width:80px' data-options="min:0,max:{$maxvlimit}"/>/<span>{$maxvlimit2}</span>
+					</if>
+				</div>
+			</div>
+			<if condition="$isFOpt">
+			<div class="flex-contStart">
+				<div class="itemName">帐号登录：</div>
+				<div class="itemCont">
+						<input type="checkbox" name="multiplelogin" {$multiplelogin}/>可重复
+				</div>
+			</div>
+			</if>
+			<if condition="$canViewCount eq 'true'">
+			<div class="flex-contStart">
+				<div class="itemName">点击增长系数：</div>
+				<div class="itemCont">
+						<input class="easyui-textbox" name="viewIncRand" value="{$viewIncRand}" style="width:100px;"/>（观看次数在100内，总以1计数）
+				</div>
+			</div>
+			</if>
+			<div class="flex-contStart">
+				<div class="itemName">当前观看次数：</div>
+				<div class="itemCont">
+				<if condition="$canViewCount eq 'true'">
+					<input class="easyui-textbox" name="entrytimes" value="{$entrytimes}" style="width:100px;"/>
+				<else/>
+					{$entrytimes}
+				</if>
+				</div>
+			</div>
+<!--
+			<div class="flex-contStart" id="memberApp" style="display:none;">
+				<div class="itemName">
+					会员报名：<br/>
+					<span style="color:#F00">(至少填写一项)</span>
+				</div>
+				<div class="itemCont">
+					<foreach name="billInfo" item="vo">
+						<div style="margin-top:10px;">
+						<span>提问问题:</span>
+						<span><input class="easyui-numberbox" type="text" name="" value="" style="width:80px" data-options="min:0,precision:2"/></span>
+						<span>预留答案:</span>
+						<span><input class="easyui-numberbox" type="text" name="" value="" style="width:80px" data-options="min:0,precision:2"/></span>
+						</div>
+					</foreach>
+				</div>
+			</div>
+-->
+			<div class="flex-contStart" id="billex" style="display:none;">
+				<div class="itemName">
+					收费方式：<br/>
+					<span style="color:#F00">(至少填写一项)</span>
+				</div>
+				<div class="itemCont">
+					<input type='hidden' id="userbill" name='userbill' value='{$userbill}' >
+					<foreach name="billInfo" item="vo">
+						<div style="margin-top:10px;">
+						<span>{$vo.name}：</span>
+						<span><input class="easyui-numberbox" type="text" name="bill{$vo.type}" value="{$vo.valueset}" style="width:80px" data-options="min:0,precision:2"/>元/人</span>
+						<br/>
+						<span>说明：{$vo.memo}</span>
+						</div>
+					</foreach>
+				</div>
+			</div>
+			<div class="flex-contStart">
+				<div class="easyui-linkbutton" iconCls="icon-ok" style="margin:auto;" onclick="editSubmit();">保存</div>
+			</div>
+		</form>
+	</div>
+</div>
+</block>

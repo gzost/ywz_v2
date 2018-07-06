@@ -1,0 +1,412 @@
+<!-- 
+	直播控制台--总览
+	宽屏显示模板
+	outao 2016-12-19
+ -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/adv-ajaxedit.css" />
+<script type="text/javascript" src="/Public/js/jquery.form.js"></script>
+<script type="text/javascript" src="/Public/js/adv-uploadprogress.js"></script>
+<script type="text/javascript" src="/Public/js/adv-ajaxedit.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/publicFunction.js" ></script>
+<script type="text/javascript">
+var chnId = '{$chnId}';
+var selObj = null;
+//我要往介绍添加图片
+function onInfoImgClick()
+{
+	$('#divInfoImg').show();
+	$('#divInfoTxt').hide();
+}
+
+//我要往介绍添加文字
+function onInfoTxtClick()
+{
+	$('#divInfoImg').hide();
+	$('#divInfoTxt').show();
+}
+
+//我要保存介绍内容
+function onInfoPubClick()
+{
+	var content = '';
+
+	if(null != selObj)
+	{
+		selCls();
+	}
+
+	$('#infoPreViewer > .hoverSelect').each(function(index, ele){
+		if('' != content)
+		{
+			content += ',';
+		}
+		//console.log($(this).attr('link'));
+		var name = $(this).children()[0].tagName;
+		if('IMG' == name)
+		{
+			var l = $(this).attr('link');
+			var u = $(this).children().attr('src');
+			if(undefined == typeof l)
+			{
+				l = '';
+			}
+			content += '"' + index + '":{"img":"' + u + '","link":"' + encodeURIComponent(l) + '"}';
+		}
+		else if('P' == name)
+		{
+			var l = $(this).attr('link');
+			var t = $(this).children().text();
+			if(undefined == typeof l)
+			{
+				l = '';
+			}
+			content += '"' + index + '":{"text":"' + t + '","link":"' + encodeURIComponent(l) + '"}';
+		}
+		//alert($(this).children()[0].text());
+		//console.log(content);
+	});
+	content = 'data={' + content + '}';
+	//$('#infoPreViewer').text(content);
+	console.log(content);
+	editSubmit(content);
+}
+
+function bindHoverSelClk()
+{
+	/*
+	$('.hoverSelect').bind("click", function(){
+		if(confirm('要删除这一项吗？'))
+		{
+			$(this).remove();
+		}
+	});
+	*/
+	$('.hoverSelect:last').on("click", function(){
+		//if(confirm('要删除这一项吗？'))
+		{
+			if(selObj == this)
+			{
+				selCls();
+				return;
+			}
+
+			if(null != selObj)
+			{
+				$(selObj).attr('class', 'hoverSelect');
+			}
+
+			selObj = this;
+			$(selObj).attr('class', 'hoverSelected');
+			infoExPlanShow();
+
+			var l = $(selObj).attr('link');
+			if(undefined == typeof l)
+			{
+				$('#infoLink').textbox('setValue', '');
+			}
+			else
+			{
+				$('#infoLink').textbox('setValue', l);
+			}
+
+			/*
+			$(this).remove();
+			var c = $('#infoPreViewer > .hoverSelect').size();
+			if(1 > c)
+			{
+				$('#infoPreViewer').attr('class', 'divParent');
+			}
+			*/
+		}
+	});
+}
+
+$(document).ready(function(){
+	infoExPlanHide();
+	initInfo({$info});
+	if(0 < chnId)
+	{
+		$('#divCont').show();
+	}
+});
+
+/*
+$('.hoverSelect').ready(function(){
+	$('.hoverSelect').click(function(){
+		if(confirm('要删除这一项吗？'))
+		{
+			$(this).remove();
+		}
+	});
+});
+*/
+
+function initInfo(json)
+{
+	try
+	{
+		//json = {["img":"/room/001/01/info/1486348846.jpg"]};
+		//alert(json.length);
+		//alert(json[0]["img"]);
+		for(var o in json)
+		{
+			//alert(o);
+			if(null != json[o]["img"])
+			{
+				//alert(json[o]["img"]);
+				infoAddImg(json[o]["img"], json[o]["link"]);
+			}
+			if(null != json[o]["text"])
+			{
+				//alert(json[o]["text"]);
+				infoAddTxt(json[o]["text"], json[o]["link"]);
+			}
+			//alert(o["img"]);
+			//alert(o["text"]);
+		}
+		
+	}
+	catch (e)
+	{
+	}
+}
+
+
+//介绍图片上传成功
+function infoimgSuccess(url)
+{
+	infoAddImg(url);
+}
+
+//介绍内容添加图片
+function infoAddImg(url, link)
+{
+	$('#infoPreViewer').attr('class', '');
+	$('#infoPreViewer').append('<div class="hoverSelect" link="' + link + '"><img src="' + url + '" style="width:100%;"/></div>');
+	bindHoverSelClk();
+	setTimeout("ViewerScrollBtm()", 1000);
+}
+
+function ViewerScrollBtm()
+{
+	$('#infoPreViewer').scrollTop($('#infoPreViewer')[0].scrollHeight);
+}
+
+//介绍内容添加文字
+function infoAddTxt(txt, link)
+{
+	if(0 < txt.length)
+	{
+		txt = htmlencode(txt);
+		$('#infoPreViewer').attr('class', '');
+		$('#infoPreViewer').append('<div class="hoverSelect" link="' + link + '"><p class="txtIndent">'+txt+'</p></div>');
+		ViewerScrollBtm();
+		bindHoverSelClk();
+	}
+}
+
+//介绍内容初始化
+function infoLoad(j)
+{
+}
+
+function editSubmitSuccess()
+{
+}
+
+function editSubmit(content)
+{
+	//alert(content);
+	$.ajax({
+		url: '{$editurl}'+'?'+Math.random(),
+		type: 'post',
+		data: content,
+		cache: false,
+		timeout:60000,	//超时设为60秒
+		dataType: 'json',
+		success:function(data){
+			var command='';
+			var isReject='false';
+			var isFresh='false';
+			try{
+				if( null==data || data.result !='true')
+				{
+					alert(data.msg);
+				}
+				else
+				{
+					//发送成功
+					alert('保存成功');					
+				}
+			}
+			catch(e){
+				alert(e.message);	//
+				return;
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			alert('网络或服务中断！');
+		}
+	});
+}
+
+function infoExPlanShow()
+{
+	$('#infoExPlan').show();
+}
+
+function infoExPlanHide()
+{
+	$('#infoExPlan').hide();
+}
+
+function selCls()
+{
+	$(selObj).attr('class', 'hoverSelect');
+	infoExPlanHide();
+	selObj = null;
+}
+
+function selDel()
+{
+	$(selObj).remove();
+}
+
+function selLink()
+{
+	//console.log(($('#infoLink').textbox("getValue")));
+	$(selObj).attr('link', $('#infoLink').textbox("getValue"));
+}
+
+function SearchSubmit()
+{
+	$('#divCont').hide();
+	DivLoadHtml('__URL__/chnListSel'+'?t='+Math.random(), 'divChnList', $('#cond').serialize())
+}
+
+function jumpChn(chnId)
+{
+	location.href = "__URL__/chnInfo/chnId/" + chnId;
+}
+
+</script>
+<style type="text/css">
+.flex-contBetween {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+.flex-contStart {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: flex-start;
+    justify-content: flex-start;
+}
+.itemName{
+	width:100px;
+	text-align:right;
+	padding-right:10px;
+	vertical-align:middle;
+}
+.itemCont{
+	margin-bottom:5px;
+	text-align:left;
+}
+.flowleft{
+	float:left;
+}
+.sheetBtn{
+	text-align:center;
+	min-width:50px;
+	cursor:pointer;
+	background-color:#57F3CF;
+	margin:3px;
+	margin-left:10px;
+	padding:3px;
+}
+.hidden{
+	display:none;
+}
+.txtIndent{
+	text-indent:2em;
+}
+.hoverSelect :hover{
+	padding:3px;
+	background-color:#AAA;
+}
+.hoverSelected{
+	padding:3px;
+	background-color:wheat;
+}
+.flex-between-item{
+    width: 90%;
+    border-width: thin;
+    border-color: blue;
+    margin: 3px;
+    padding: 10px;
+    border-style: dashed;
+}
+.divParent{
+	background-image:url(/Public/images/bgparent.png);
+}
+</style>
+<div style="padding:2px 5px;">
+	<form action="__URL__/chnListSel" id='cond' method='post' style="display:inline">
+		查询条件：　
+		频道：<input class='easyui-textbox' id="key" name='key' value='{$chnName}' style='width:180px'/>
+		<a href="javascript:SearchSubmit();" class="easyui-linkbutton" iconcls="icon-search" plain="true">查询</a>
+	</form>
+</div>
+<div class="flex-contBetween" id="divChnList">
+</div>
+<div class="flex-contBetween" id="divCont" style="display:none;">
+	<div class="flex-between-item" style="height:700px;">
+		<div class="flex-contStart" style="">
+			<div class="itemName">介绍:</div>
+			<div class="itemCont">
+				<div>预览:</div>
+				<div id="infoPreViewer" class="divParent" style="width:240px;height:350px;overflow-y:scroll;overflow-wrap:break-word;display:inline-block;">
+				</div>
+				<div style="display:inline-block;vertical-align:top;" id="infoExPlan">
+					<ul>
+						<li>
+							<span>是否删除?</span>
+							<a href="javascript:selDel();" class="easyui-linkbutton" iconcls="icon-cancel" plain="true">删除</a>
+						</li>
+						<li>
+							<span>附加链接：</span><br/>
+							<input id="infoLink" class="easyui-textbox" type="text" value="" style="width:200px;" data-options="multiline:false"/>
+							<a href="javascript:selLink();" class="easyui-linkbutton" iconcls="icon-ok" plain="true">确认</a>
+						</li>
+					</ul>
+				</div>
+				<div style="width:320px;height:80px;padding:3px;background-color:#ddd;">
+					<div class="flex-contStart" style="padding:3px;background-color:#aaa;">
+						<div class="sheetBtn" style="" onclick="onInfoImgClick()">追加图片</div>
+						<div class="sheetBtn" onclick="onInfoTxtClick()">追加文字</div>
+						<div class="sheetBtn" onclick="onInfoPubClick()">保存介绍内容</div>
+					</div>
+					<div id="divInfoImg" class="">
+						<span style="color:#333">(不大于300KB jpg或png)</span>
+						<input id="infoimg" class="adv-uploadprogress" type="file" name="infoimg" data-options='"url":"__URL__/uploadimg/c/{$chnId}","pgWidth":"200","success":"infoimgSuccess"'/>
+					</div>
+					<div id="divInfoTxt" class="hidden">
+						<input id="infotxt" class="easyui-textbox" type="text" name="infotxt" value="" style="width:250px;height:50px;" data-options="multiline:true"/>
+						<a href="javascript:infoAddTxt(($('#infotxt').textbox('getValue')));" class="easyui-linkbutton">追加文本</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</block>

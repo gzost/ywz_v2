@@ -1,0 +1,65 @@
+<!-- 观众统计  -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />     
+<script type="text/javascript">
+$(document).ready(function(){
+	cn_Pagination($("#dg").datagrid('getPager')); 
+});
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+	data-options="url:'__APP__/Monitor/viewersGetList',rownumbers:true,singleSelect:true, showFooter: true,
+		toolbar:'#tb',pagination:true,  pageSize:10 "
+>
+	<thead>
+		<tr>
+			<th data-options="field:'happen', width:200,align:'left', halign:'center' ">统计时间</th>
+			<th data-options="field:'objtype', width:100,align:'left', halign:'center' ">分类</th>
+			<th data-options="field:'name', width:200,align:'left', halign:'center' ">标题</th>
+			<th data-options="field:'users', width:100,align:'right', halign:'center'">观看人次</th>
+			<!-- <th data-options="field:'newusers', width:100,align:'right', halign:'center'">新增在线</th> -->
+			<th data-options="field:'qty', width:100,align:'right', halign:'center' ">消费量</th>
+		</tr>
+	</thead>
+
+</table>
+
+<div id="tb" style="padding:2px 5px;">
+	<form id='cond' method='post' style="display:inline">
+		查询条件：
+		播主：<input class='easyui-textbox' name='account' value='{$account}'  style='width:80px' 
+				data-options="readonly:{$viewSelf}"/>　
+		类型：<input class='easyui-combobox' name='objtype' value='{$objtype}' style='width:100px'
+				data-options="valueField:'code',textField:'cname', 
+					data:[{code:0,cname:'全部'},{code:110,cname:'直播拉流'},{code:111,cname:'点播拉流'}]
+				" />
+		标题：<input class='easyui-textbox' name='name' value='{$name}'  style='width:180px' />
+		时间范围：
+		从<input class="easyui-datebox" name="beginTime" value="{$beginTime}" style="width:120px"
+			data-options="required:false,formatter:cn_formatter,parser:cn_parser" >
+		至<input class="easyui-datebox" name="endTime" value="{$endTime}" style="width:120px"
+			data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+
+		<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
+	</form>
+	
+	
+	<!-- 功能按钮 -->
+	<div style="width:200px; float:right">
+
+	</div>
+</div>
+</block>
+
+<block name="bl_help">
+并发数，是指同一分钟能最高的同时在线用户数。
+</block>

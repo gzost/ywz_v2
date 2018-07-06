@@ -1,0 +1,74 @@
+<html><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jeasyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jeasyui/themes/icon.css">
+<link rel="stylesheet" type="text/css" href="/admin/default/css/base.css">
+<link rel="stylesheet" type="text/css" href="/admin/default/css/channel.css">
+
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.easyui.min.js"></script>
+
+<title>易网真视频直播系统</title>
+
+</head>
+<body style="padding:20px;">
+<style type="text/css">
+</style>
+
+<if condition="$isAdminRole">
+<!--以下是管理员权限-->
+<form id="ff" action="__URL__/EditAdminSubmit" method="post">
+<input type="hidden" name="chnId" value="{$chnId}"/>
+	<div class="itemRow">
+		<div class="itemName">设备序列号：</div>
+		<div class="itemContent">
+			<input class="easyui-textbox" name="serno" value="{$serno}" 
+			data-options="required:true" style="width:150px" >
+		</div>
+	</div>
+	<div class="itemRow">
+		<div class="itemName">频道Stream：</div>
+		<div class="itemContent">
+			<span>{$stream}</span>
+		</div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">发布地址：</div>
+	<div class="itemContent"><input class="easyui-textbox" type="text" name="push" value="{$push}" data-options="required:true" style="width:500px"/>
+	演示：rtmp://pa.av365.cn/advtest/{MAC}
+	</div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">rtmp访问地址：</div>
+	<div class="itemContent"><input class="easyui-textbox" type="text" name="rtmp" value="{$rtmp}" style="width:500px" data-options="required:true"></input>
+	演示：rtmp://va.av365.cn/advtest/{MAC}
+	</div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">hls访问地址：</div>
+	<div class="itemContent"><input class="easyui-textbox" type="text" name="hls"  value="{$hls}"  style="width:500px"data-options="required:true"></input>
+	演示：http://ha.av365.cn/advtest/{MAC}.m3u8
+	</div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">消费信用额度：</div>
+	<div class="itemContent"><input class="easyui-numberbox" name="credit" style="width:120px;" value='{$credit}' data-options="min:0,max:99999999"/>(0~99999999)</div>
+	</div>
+	<div class="itemRow">
+	<div class="itemName">主播：</div>
+	<div class="itemContent">{$anchorInfo}<input class="easyui-textbox" type="text" name="anchorAccount"  value=""  style="width:100px;"></input>(若要变更请填写本系统中的用户帐号)</div>
+	</div>
+	<div style="text-align:center">
+	<div class="errMsg">{$errMsg}</div>
+	<div class="easyui-linkbutton" iconCls="icon-ok" onclick="$('#ff').submit();">保存</div>
+	</div>
+</form>
+</if>
+
+</body>
+</html>

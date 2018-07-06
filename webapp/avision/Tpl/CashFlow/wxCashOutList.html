@@ -1,0 +1,165 @@
+<!-- 现金流水列表  -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />   
+<script type="text/javascript">
+function formAjax()
+{
+	$.ajax({
+		url: '__APP__/CashFlow/wxoutajax',
+		type: 'post',
+		data: $('#cond').serialize(),
+		cache: false,
+		timeout:6000,	//超时设为6秒
+		dataType: 'json',
+		success:function(data){
+			try{
+				if('false' == data.result)
+				{
+					alert(data.msg);
+				}
+				else
+				{
+					$("#dg").datagrid('loadData',data);
+				}
+			}
+			catch(e){
+				alert(e.message);	//
+				return;
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			alert('网络或服务中断！');
+		}
+	});
+}
+
+function pass(id){
+	$.messager.confirm('请确认','确认要发款吗？',function(r){
+			if(r){
+				cashoutact('pass', id);
+			}
+	});
+}
+
+function refuse(id){
+	$.messager.confirm('请确认','确认不放款吗？',function(r){
+			if(r){
+				cashoutact('refuse', id);
+			}
+	});
+}
+
+function cashoutact(act, id)
+{
+	$.ajax({
+		url: '__APP__/CashFlow/wxoutact',
+		type: 'post',
+		data: '&act='+act+'&id='+id,
+		cache: false,
+		timeout:6000,	//超时设为6秒
+		dataType: 'json',
+		success:function(data){
+			try{
+				if('false' == data.result)
+				{
+					alert(data.msg);
+				}
+				else
+				{
+					alert(data.msg);
+				}
+			}
+			catch(e){
+				alert(e.message);	//
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+			console.log('complete');
+		},
+		error:function(){
+			alert('网络或服务中断！');
+		}
+	});
+	//console.log(act + ' ' + id);
+}
+
+
+
+function actFmt(value, row){
+	if(101 == row.status)
+		return '<a href="javascript:;" onclick="pass('+value+');">确认放款</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<a href="javascript:;" onclick="refuse('+value+');">不放款</a>';
+	return '';
+}
+</script>
+
+<style type="text/css"> 
+</style>
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+	data-options="url:'',rownumbers:true,singleSelect:true,
+		toolbar:'#tb',showFooter:true,pagination:false,">
+	<thead>
+		<tr>
+			<th data-options="field:'submittime', width:120,align:'center',
+				formatter:function(value){return value.slice(0,10);}">申请时间</th>
+			<th data-options="field:'amount', width:80,align:'right', halign:'center'">金额</th>
+			<th data-options="field:'username', width:160,align:'left', halign:'center',
+				formatter:function(value, row){
+					return row.username + '(' + row.account + ')';
+				}
+				">昵称(帐号)</th>
+			<th data-options="field:'status', width:80,align:'center', halign:'center',
+				formatter:function(value){ 
+					var type=
+					<present name="statusList">
+						{$statusList}
+					<else/>
+						'{}'
+					</present>
+					; 
+					//console.log(type);
+					for(var key in type){
+						//console.log(type[key]);
+						if(type[key].val==value) return type[key].txt;
+					}
+					return value;
+				} ">状态</th>
+			<th data-options="field:'id', width:120,align:'center',formatter:actFmt">操作</th>
+		</tr>
+	</thead>
+
+</table>
+
+<div id="tb" style="padding:3px 5px;line-height:26px;font-size:14px">
+	<form id='cond' method='post' style="display:inline">
+		查询条件：
+		<input class="easyui-textbox" name='account' value='{$account}' style="width:160px;height:26px"
+			data-options="buttonText:'播主账号',buttonAlign:'left',prompt:'输入完整的账号',readonly:
+			<present name="viewSelf">
+			{$viewSelf}
+			<else/>
+			false
+			</present>
+			" >
+		
+		<input class="easyui-datebox" name="beginTime" value="{$beginTime}" style="width:150px;height:26px"
+			data-options="buttonText:'时间从',buttonAlign:'left',required:true,formatter:cn_formatter,parser:cn_parser" >
+		
+		<input class="easyui-datebox" name="endTime" value="{$endTime}" style="width:120px;height:26px"
+			data-options="buttonText:'至',buttonAlign:'left',required:true,formatter:cn_formatter,parser:cn_parser" >
+		<input class='easyui-combobox' name='transtype' value='{$transtype}' style='width:130px;height:26px'
+				data-options="buttonText:'状态',buttonAlign:'left',valueField:'val',textField:'txt', 
+					data:{$statusList},panelWidth:'80px',panelAlign:'right'" />	
+		<div class="easyui-linkbutton" iconCls="icon-search" onclick="formAjax();">查询</div>
+	</form>
+	<div style="margin:5px; font-size: 14px; color: #448;">{$msg}</div>
+</div>
+</block>

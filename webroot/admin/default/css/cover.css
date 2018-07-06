@@ -1,0 +1,70 @@
+html {
+	margin: 0px auto; height: 100%;
+}
+
+body{
+    background-color: rgb(255,255,255) ;
+	margin: 0px auto; height: 100%;
+	text-align: center;vertical-align:middle;
+    #padding : 20px 10px;
+	font-family: "微软雅黑","宋体",verdana,helvetica,arial,sans-serif;
+    font-size:12px;
+}
+#logo{
+	background: url("../images/logo.png") no-repeat; 
+	width: 425px; height: 44px; margin-left: 20px; float: left; display: inline;
+}
+#avision{
+  	background: url("../images/jiaopian3_s.jpg") no-repeat; 
+	- background: #4f6; 
+	position:absolute;
+	border: 1px solid #ccc;
+	border-radius: 13px;
+	box-shadow:5px 5px 20px 0px #ccc;
+	height:300px; width:420px; 
+	left:50%;     top:50%;     margin:-150px 0 0 -210px ;
+	overflow:hidden;
+}
+#topLeft{
+	position:absolute;
+	//background: url("../images/film.png") no-repeat;
+	height:64px; width:64px;
+	margin-top:-20px; margin-left:-20px;
+	color: #f00;
+}
+
+#avision h1 {  }
+#login_box{
+	float:right; clear:both;
+	margin-right:20px;
+	margin-top:20px;
+    - margin:0 auto;width:200px;
+}
+
+
+.errorMsg{
+	margin-top: 20px;
+	text-align:center;
+	font: bolder 15px/normal "幼圆","宋体",Verdana, Arial; color: rgb(0, 0, 0);
+}
+.message{
+	text-align:center;
+	font: 15px/normal "幼圆","宋体",Verdana, Arial; color: rgb(255, 255, 0);
+}
+
+#msgBox {
+	position:relative;	top: 200px; background-color:#F00;
+	white-space: pre;
+	padding: 2px 10px;
+
+}
+
+.copyright {
+    line-height: 20px;
+    margin: 40px auto;
+    text-align: center;
+    width: 950px;
+}
+
+
+

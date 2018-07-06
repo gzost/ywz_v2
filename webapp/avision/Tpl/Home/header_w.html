@@ -1,0 +1,48 @@
+<div id="header">
+    <div class="nav">
+        <div class="logo">
+            <a href="/">
+                <img src="__ROOT__/home/{$theme|default='default_w'}/images/ywz.png" alt="易网真">
+            </a>
+        </div>
+        <div class="action">
+        	<eq name='isLogin' value='true'>
+			<div class="nav-inner" style="display:inline-block;">
+				<ul class="nav-list" >
+					<li class="dropdown">
+						<a href="#" >
+							<img src="__ROOT__/home/{$theme|default='default_w'}/images/user16.png" alt="用户" style="vertical-align:middle;">
+						 	{$userName}
+						</a>
+						<ul class="dropdown-menu">
+							<li><a href="__APP__/Console/userOverView">个人中心</a></li>
+							<li><a href="__APP__/Home/logout">退出</a></li>
+						</ul>
+					</li>	
+				</ul>
+				<eq name='isBoZhu' value='true'>
+					<a href="__APP__/Console/overView" class="btn btn-control">直播控制台</a>
+				</eq>
+			</div>	
+        	<else/>
+				<a href="__APP__/Home/login" class="btn">注册/登录</a>
+			</eq>
+			
+		</div>
+		
+		<div class="nav-inner">
+			<ul class="nav-list">
+				<li><a href="__APP__/Home/index" <eq name='action' value='index'>class="cur"</eq> >首页</a></li>
+				<li><a href="__APP__/Home/recharge/" <eq name='action' value='recharge'>class="cur"</eq> >服务购买 </a>
+					<ul class="dropdown-menu">
+							<li><a href="__APP__/Home/purchase/step/recharge">账号充值</a></li>
+							<li><a href="__APP__/Home/purchase/step/pkg">优惠套餐</a></li>
+							<li><a href="__APP__/Home/purchase/step/service">专业护航</a></li>
+					</ul>
+				</li>
+				<li><a href="http://www.advanced.com.cn/product.html" >产品体验</a> </li>
+				<li><a href="__APP__/Home/help" <eq name='action' value='help'>class="cur"</eq> >帮助及下载</a></li>
+			</ul>
+		</div>
+	</div>
+</div>

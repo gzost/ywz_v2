@@ -1,0 +1,58 @@
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+<script type="text/javascript">
+$(document).ready(function(){
+	$("#dg").datagrid('getPager').pagination({displayMsg:"正在显示 {from} 到 {to} 行，共 {total} 行"});
+});
+
+
+function recUrl(value, row, index)
+{
+	return '<a href="' + row['recordurl'] + '" target="_blank">点播</a>';
+}
+
+function nameFmt(value, row, index)
+{
+	if(null == value || '' == value)
+	{
+		return '未知（'+row['stream']+'）';
+	}
+	return value;
+}
+
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+	data-options="url:'__URL__/RecordListData?r={$rand}',rownumbers:true,singleSelect:true,
+		toolbar:'#tb',pagination:true,  pageSize:10 "
+>
+	<thead>
+		<tr>
+			<th data-options="field:'stream', width:200,align:'left', halign:'center' ">流字串</th>
+			<th data-options="field:'name', width:200,align:'left', halign:'center', formatter:nameFmt ">频道名称</th>
+			<th data-options="field:'endtimestr', width:200,align:'left', halign:'center' ">录像生成时间</th>
+			<th data-options="field:'recordurl', width:200,align:'left', halign:'center', formatter:recUrl ">录像点播地址</th>
+		</tr>
+	</thead>
+
+</table>
+
+<div id="tb" style="padding:2px 5px;">
+	<form action='__URL__/RecordSearch?r={$rand}' id='cond' method='post' style="display:inline">
+		<div style="float:left;height:20px;">查询条件：
+		流字串：<input class='easyui-textbox' name='keyname' value='{$keyname}'  style='width:180px' />
+		</div>
+		<a href="javascript:$('#cond').submit();"class="easyui-linkbutton" iconcls="icon-search" plain="true">查询</a>
+	</form>
+
+</div>
+</block>

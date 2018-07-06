@@ -1,0 +1,216 @@
+<!-- 
+	易网真客户服务入口页
+	宽屏显示模板
+	outao 2016-12-05
+ -->
+<extend name="common:HomeBase_w" />
+
+<block name="bl_north">
+<load href="__PUBLIC__/js/html5_3d_animation.js" />
+<script type="text/javascript">
+	
+	$(function() {
+		/*
+	    $("#html5_3d_animation").html5_3d_animation({
+	        window_width: '1330',
+	        window_height: '500',
+	        window_background: '#00113F',
+	        star_count: '100',
+	        star_color: '#FBFFAF',
+	        star_depth: '100'
+	    });
+	    */
+	});
+	
+	$(function(){
+		doSearch('');
+	});
+	function doSearch(value,name){
+		$("#channelList").prepend("<div>查找中......</div>");
+		$.post("__URL__/channelListAjax",{type:9,scrType:'w',searchStr:value},
+				function(data){
+					$("#channelList").html(data);
+			//alert(data);
+				}
+		,'html'	);
+        //alert('You input: ' + value+'('+name+')');
+        
+    }
+</script>
+<style>
+		canvas#html5_3d_animation {
+   			display: block;
+    		position: absolute;
+    		top: 0px;
+    		z-index: 0;
+    		opacity: 0.3;
+		}
+</style>
+	<div id="north">
+		<div id="slogan">
+			<div> </div>
+			<div style="margin-top:130px;">
+				<a href="http:__APP__/Home/toBroadcast" class="btn btn-live">我要直播</a>
+			</div>
+		</div>
+	</div>
+	<!-- <canvas id="html5_3d_animation" >Internet Explorer 8 Not Supported</canvas> -->
+</block>
+
+<block name="bl_main">
+<load href="__ROOT__/home/{$theme|default='default_w'}/css/index.css" />
+<div class="title">
+	<div class="inner" style="text-align:left;">
+		<span>频道导航</span>
+		<div class="search">
+			<input class="easyui-searchbox" 
+				data-options="prompt:'输入频道名称',searcher:doSearch, height:28" style="width:100%">
+		</div>
+	</div>
+</div>
+<div class="inner">
+	<div id="channelList">
+		Loding。。。
+	</div>
+</div>
+<div class="title">
+	<div class="inner" style="text-align:left">
+		<span>如何开始直播？</span>
+	</div>
+</div>
+<div class="inner">
+	<p class="summary">
+		通过易网真平台，您可用手机、直播机、编码器或电脑等设备，把现场的图像、声音实时发送到世界各地，让世界聆听您的声音、惊艳您的风采。成为万众瞩目的播主，只需三分钟！
+	</p>
+	<p class="summary">您可以通过微信公众号、朋友圈等把频道链接告诉您的观众，点击链接或扫描二维码就可观看直播，频道完全是您的私有界面尽显格调。</p>
+	<div class="steps">
+		<div class="step step-1">
+			<i class="ico ico-step-reg"></i> 
+			<div class="sub-title">
+				<span>第一步</span> <span>注册播主</span> 
+			</div>
+			<ul>
+				<li>注册播主账号<a href="http:__APP__/Home/toBroadcast">Go!</a></li>
+				<li>充值基本使用费</li>
+				<li>获得第一个推流点和直播频道</li>
+			</ul>
+		</div>
+		<div class="step step-2">
+			<i class="ico ico-step-publish"></i> 
+			<div class="sub-title">
+				<span>第二步</span> <span>发布视频</span> 
+			</div>
+			<ul>
+				<li>
+					用手机推流软件发布视频  <a href="#">下载</a>
+				</li>
+				<li>
+					易网真直播机通电即用 <a href="#">详情</a>
+				</li>
+				<li>
+					电脑推流软件发布视频 <a href="#">下载</a>
+				</li>
+			</ul>
+		</div>
+		<div class="step step-3">
+			<i class="ico ico-step-watch"></i> 
+			<div class="sub-title">
+				<span>第三步</span> <span>观看直播</span> 
+			</div>
+			<ul>
+				<li>手机扫二维码观看	</li>
+				<li>手机点击微信链接观看</li>
+				<li>浏览器输入频道网址观看</li>
+			</ul>
+		</div>
+	</div>
+	<div id="tedian">
+		<table>
+			<tr>
+				<th>特点</th>	<th>易网真云直播机</th>	<th>推流编码器</th>	<th>电脑软件推流</th>	<th>手机软件推流</th>
+			</tr>
+			<tr>
+				<td>可靠性</td>
+				<td>高，纯硬件</td>
+				<td>高，纯硬件</td>
+				<td>低，运行环境复杂</td>
+				<td>中</td>
+			</tr>
+			<tr>
+				<td>易用性</td>
+				<td>优，通电即播</td>
+				<td>中，配置较复杂</td>
+				<td>差，软件操作复杂</td>
+				<td>优，无需连接外设</td>
+			</tr>
+			<tr>
+				<td>直播质量</td>
+				<td>高</td>
+				<td>中</td>
+				<td>高</td>
+				<td>低</td>
+			</tr>
+			<tr>
+				<td>便携性</td>
+				<td>中</td>
+				<td>中</td>
+				<td>差</td>
+				<td>优</td>
+			</tr>
+		</table>
+	</div>
+</div>
+<div class="title">
+	<div class="inner" style="text-align:left">
+		<span>极致体验</span>
+	</div>
+</div>
+<div class="inner">
+	<p class="summary">
+		易网真云视频平台支持百万级并发观众，不限并发峰值，不限清晰度，实现高质量的视频传播服务。串流功能可以把推送到平台的信号转发到其它主流直播平台，轻松进行多平台同步直播，极大的扩宽了直播的覆盖面。	
+	</p>
+	<div class="items">
+		<div class="item item-1">
+			<div class="icon">
+				<i class="ico ico-spec-platform"></i>
+			</div>
+			<div class="desc">
+				手机、电脑，无需APP无需插件，看直播舒心、放心。
+			</div>
+		</div>
+		<div class="item item-2">
+			<div class="icon">
+				<i class="ico ico-sepc-tpl"></i>
+			</div>
+			<div class="desc">
+				多种专业UI模板，注册账号就能进行专业级的直播。
+			</div>
+		</div>
+		<div class="item item-3">
+			<div class="icon">
+				<i class="ico ico-spec-doc"></i>
+			</div>
+			<div class="desc">
+				讨论区，频道文档，答题区，提升直播效果
+			</div>
+		</div>
+		<div class="item item-4">
+			<div class="icon">
+				<i class="ico ico-spec-busi"></i>
+			</div>
+			<div class="desc">
+				观众管理，付费观看，定向礼物，在线销售为您打开财富之门。
+			</div>
+		</div>
+		<div class="item item-5">
+			<div class="icon">
+				<i class="ico ico-spec-open"></i>
+			</div>
+			<div class="desc">
+				开放平台，直播功能可嵌入到第三方界面中。
+			</div>
+		</div>
+	</div>
+</div>
+
+</block>

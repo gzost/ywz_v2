@@ -1,0 +1,254 @@
+@CHARSET "UTF-8";
+#container{
+	text-align:left;
+}
+#header {
+
+	height:60px; 
+	background-color:#666;
+	background:url(../images/sky2.jpg) no-repeat;
+	background-size:cover; /* 100% ; */
+}
+#bl_west {
+	border: 1px solid #ddd;
+	vertical-align:top;
+	width:180px;
+}
+#bl_main{
+	vertical-align:top;
+	
+}
+#slogan {
+	position:absolute;
+	top:80px;
+	width:100%;
+	vertical-align:middle;
+	text-align:center;
+	color:#fff;
+	font-size:2em;
+}
+
+#sub-menu {
+	position:absolute;
+	bottom:10px;
+	width:100%;
+	vertical-align:middle;
+	text-align:center;
+	color:#fff;
+	line-height: 28px;
+	font-size:1rem;
+}
+
+.btn-step {
+	background-color: #269fde;
+	width: 136px;
+	font-size:1rem;
+	color:#fff;
+	margin-left:1em;
+}
+
+.btn-step:hover,.btn-submit:hover	{
+	background-color: #46bfee; /*#0cb781*/
+}
+.cur-step{
+	background-color: #ff8c00;
+}
+
+.btn-submit{
+	background-color: #269fde;
+}
+
+.chn-info p{
+	text-indent: 2em;
+	margin:5px 0;
+}
+.note{
+	color:#339;
+}
+.warn{
+	color:red;
+	font-weight: bold;
+}
+.important{
+	font-weight: bold;
+}
+.input-box{
+	margin: 0 auto;
+	padding:10px;
+	border:1px solid #aaf;
+	border-radius: 15px;
+	width: 560px;
+	text-align:left;
+	font-size:14px;
+}
+
+.input-box .title{
+	font-weight: bold;
+	font-size:1.2rem;
+	text-align:center;
+	margin-bottom:10px;
+}
+
+.input-box td:nth-of-type(odd){
+	text-align:right;
+}
+.input-box td:nth-of-type(even){
+	text-align:left;
+}
+
+#base-info{
+	font-size:16px; line-height:32px;
+	background-color: #f9f9ff;
+	padding:0 5px
+}
+#base-info>div{
+	display:inline-block;
+}
+img{
+	vertical-align:middle;
+}
+.table-bd1,.table-bd1 td{
+	border-style:solid;
+	border-color:#aaf;
+}
+.table-bd1{
+	display:inline-block;
+	vertical-align:middle;
+	border-width:1px 1px 0 0;
+	font-size:14px;
+	line-height:20px;
+	text-align:center;
+}
+.table-bd1 td{
+	border-width:0 0 1px 1px;
+	width:80px;
+}
+.verify-info{
+	display:inline-block;
+	vertical-align:top;
+	text-align:center;
+	width:65px;
+	height:70px;
+	
+}
+.verify-text{
+	font-size:12px;
+	line-height:14px;
+	margin:2px 5px 2px 0px;
+}
+.pkg-block,.pkg-north,.pkg-main,.pkg-south{
+	width:350px;
+}
+.pkg-block{
+	display:inline-block; vertical-align:top; position:relative;
+	overflow:hidden;
+	border:1px solid #aaa;	border-radius:5px;
+	margin: 0 10px 10px 0; 
+	height:200px; background-color:#fff; 
+	box-shadow:5px 5px 10px #555;		 
+}
+.pkg-main{
+	position:absolute;
+	top:24px; 
+}
+.pkg-block .pkg-north{
+	position:absolute;
+	height:24px; line-height:24px;
+	text-align:right;
+	top:0px;
+	background-color: #19f9ff;
+}
+.pkg-south{
+	position:absolute;
+	white-space:nowrap;
+	bottom:0px;
+	line-height:24px; 
+	background-color: #ddf;
+}
+.pkg-north a{
+	display:inline-block;
+	
+	width: 31px;
+	text-align:center;
+	background-color:#2de;
+}
+.pkg-north img{
+	vertical-align:middle;
+}
+.pkg-main .chn-title,.pkg-main .chn-descript{
+	margin-left:5px;
+	position:absolute;
+	left:68px; width:280px;
+
+}
+.pkg-main .chn-title{
+	top:5px;
+	font-size:16px; font-weight:blod; overflow:hidden;
+	white-space:nowrap; text-overflow:ellipsis;
+}
+.pkg-main .chn-descript{
+	margin-left:5px;
+	top:30px;
+	color:#555;
+}
+.pkg-main .chn-info{
+	position:relative; top:5px;
+	margin:0 10px;
+	background-color: #3f4;
+	
+}
+.chn-info{
+	padding:3px 0;
+}
+.chn-action, .chn-action td{
+	border-style:solid;
+	border-color:#aaf;
+}
+.chn-action{
+	vertical-align:middle;
+	border-width:1px 1px 0 0;
+	font-size:12px;
+	line-height:16px;
+	text-align:center;
+}
+.chn-action td{
+	border-width:0 0 1px 1px;
+	--width:80px;
+}
+.pkg-south a{
+	display:inline-block;
+	width:25%;
+	text-align:center;
+	text-decoration:none
+}
+.pkg-south a:hover{
+	background-color:#99e;
+	font-size:1.1em;
+}
+.pkg-south .separate{
+	border-right:1px solid #88f;
+}
+
+.summary{
+	position: relative;
+    padding: 0 30px 0 20px;
+    font-size: 14px;
+    line-height: 20px;
+    text-align:left;
+    color: #333;
+}
+.summary p, .summary pre {
+    margin: 0 0 1em;
+    text-indent: 0em;
+	display:block;
+}
+.summary:before {
+    content: '';
+    position: absolute;
+    top: 6px;
+    left: 4px;
+    width: 0;
+    height: 0;
+    border: 5px solid #fff;
+    border-left: 10px solid #269fde;
+}

@@ -1,0 +1,52 @@
+<script type="text/javascript">
+
+//介绍内容添加图片
+function infoAddImg(url)
+{
+	$('#infoShow').append('<div><img src="' + url + '" style="width:100%;"/></div>');
+}
+
+//介绍内容添加文字
+function infoAddTxt(txt)
+{
+	if(0 < txt.length)
+	{
+		$('#infoShow').append('<div><p class="txtIndent">'+txt+'</p></div>');
+	}
+}
+
+function Init(json)
+{
+	try
+	{
+		//json = {["img":"/room/001/01/info/1486348846.jpg"]};
+		//alert(json.length);
+		//alert(json[0]["img"]);
+		for(var o in json)
+		{
+			//alert(o);
+			if(null != json[o]["img"])
+			{
+				//alert(json[o]["img"]);
+				infoAddImg(json[o]["img"]);
+			}
+			if(null != json[o]["text"])
+			{
+				//alert(json[o]["text"]);
+				infoAddTxt(json[o]["text"]);
+			}
+			//alert(o["img"]);
+			//alert(o["text"]);
+		}
+	}
+	catch (e)
+	{
+	}
+}
+
+Init({$infojson});
+
+
+</script>
+<div style="width:100%;background-color:#fff;" id="infoShow">
+</div>

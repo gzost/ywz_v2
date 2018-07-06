@@ -1,0 +1,66 @@
+<!-- 观众统计  -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />     
+<script type="text/javascript">
+$(document).ready(function(){
+	cn_Pagination($("#dg").datagrid('getPager')); 
+});
+</script>
+
+<style type="text/css"> 
+</style>
+
+<table id="dg" class="easyui-datagrid"  style="width:99%"
+	data-options="url:'__URL__/getViewerList',rownumbers:true,singleSelect:true, showFooter: true,
+		toolbar:'#tb',pagination:true,  pageSize:10 "
+>
+	<thead>
+		<tr>
+			<th data-options="field:'chnname', width:200,align:'left', halign:'center' ">节目名称</th>
+			<th data-options="field:'objtype', width:100,align:'left', halign:'center' ">节目类型</th>
+			<th data-options="field:'username', width:200,align:'left', halign:'center' ">观众名称</th>
+			
+			<th data-options="field:'viewtimes', width:100,align:'right', halign:'center'">观看次数</th>
+			<th data-options="field:'duration', width:100,align:'right', halign:'center' ">观看时长(分)</th>
+		</tr>
+	</thead>
+
+</table>
+
+<div id="tb" style="padding:2px 5px;">
+	<form id='cond' method='post' style="display:inline">
+		查询条件：　
+
+		频道：<input class='easyui-combobox' name='chnId' value='{$chnId}'  style='width:180px'
+				data-options="valueField:'id',textField:'name', editable:{$editable|default='false'}, 
+					url:'__URL__/onlineUserGetChnPulldown' " />
+		时间范围：
+		从<input class="easyui-datebox" name="beginTime" value="{$beginTime}" style="width:120px"
+			data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+		至<input class="easyui-datebox" name="endTime" value="{$endTime}" style="width:120px"
+			data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+		<input name='work' value='{$work}' style="display:none" />
+		<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
+	</form>
+	
+	
+	<!-- 功能按钮 -->
+	<div style="width:200px; float:right">
+
+	</div>
+</div>
+<ul class='help_ul'>
+<li>查询条件中主播只能从“频道”下拉框选择可管理的频道。
+<li>平台管理员可直接在“频道”中输入希望查看的频道ID或频道名称。
+</ul>
+</block>
+
+<block name="bl_help">
+并发数，是指同一分钟能最高的同时在线用户数。
+</block>

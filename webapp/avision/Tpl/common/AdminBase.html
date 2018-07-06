@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<!-- 直播机系统管理界面基础模板，其它页面继承此模板扩充具体内容
+	模板分：	North--页头，South--页尾，West--左侧菜单，Center--中部主要内容，East--对本页的提示与帮助
+ -->
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="pragma" content="no-cache">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+<load href="__PUBLIC__/jeasyui/themes/default/easyui.css" />
+<load href="__PUBLIC__/jeasyui/themes/icon.css" />
+<load href="__ROOT__/admin/{$theme|default='default'}/css/base.css" />
+
+<load href="__PUBLIC__/jeasyui/jquery.min.js" />
+<load href="__PUBLIC__/jeasyui/jquery.easyui.min.js" />
+<load href="__PUBLIC__/js/publicFunction.js" />
+
+<title>Avision视频直播系统</title>
+</head>
+<body >
+
+<div id="mainLayout" class="easyui-layout" style="margin-left:1px; padding-right:2px;" fit="true">
+<div data-options="region:'north'" style="height: 60px;" border="false">
+	
+    <block name="bl_north">
+
+	<span class="header1">	<img src="__ROOT__/admin/{$theme|default='default'}/images/logo.png" /></span>
+	<div style="float:right; padding:10px;">
+		欢迎：{$userName}
+		<a href="__APP__/Login/Logout" class="easyui-linkbutton" data-options="iconCls:'icon-logout'">退出</a>
+	</div>
+	</block>
+</div>
+<div data-options="region:'south',split:false" style="height: 20px;" border="false">
+	<div class="footer1">广州市至高恒进科技有限公司 <a href="http://www.advanced.com.cn" target="_blank">www.advanced.com.cn</a></div>
+</div>
+{/*	为手机看得方便取消右侧栏 outao 2016-06-12
+<div data-options="region:'east',split:true, iconCls:'icon-tip'" title="帮助信息" style="width: 300px;">
+	<div style="margin:5px"><block name="bl_help">帮助</block></div>
+</div>
+*/}
+<div data-options="region:'west',split:true,iconCls:'icon-menu'" title="功能菜单" style="width: 200px;">
+	<script src="__ROOT__/admin/js/menu-collapsed.js" type="text/javascript"></script>
+	<link rel="stylesheet" type="text/css" href="__ROOT__/admin/default/css/menu-collapsed.css" />
+	<div style="overflow-x:hidden;"><block name="bl_menu">{$menuStr}</block></div>
+</div>
+<div data-options="region:'center',iconCls:'icon-device',title:'{$mainTitle}'">
+	<div style="margin:5px"><block name="bl_main">主窗口</block></div>
+</div>
+</div>
+
+</body>
+</html>
+

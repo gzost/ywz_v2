@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>易网真云直播</title>
+
+<script type="text/javascript">
+
+	function checkWide(){
+		//alert('{$callback}');
+		var width=window.screen.availWidth;	//屏幕可用宽度
+		var height=window.screen.availHeight;	//屏幕可用高度
+		var type=(width>height)?'w':'h';
+		//alert(type);
+		var url = "{$callback}";
+		if(0 < url.indexOf('?'))
+		{
+			url += "&scrType="+type;
+		}
+		else
+		{
+			url += "?scrType="+type;
+		}
+		window.location.replace(url); 
+	}
+</script>
+</head>
+<body onLoad="checkWide();">
+</body>
+</html>

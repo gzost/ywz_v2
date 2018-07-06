@@ -1,0 +1,111 @@
+<extend name="common:PhoneBase" />
+
+<block name="bl_main">
+
+<script type="text/javascript" src="__PUBLIC__/js/jquery.md5.js"></script>
+<link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/default/easyui.css">
+<link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/icon.css">
+<script type="text/javascript">
+
+$(document).ready(function(){
+
+});
+
+function wxpay(){
+	var max = 0;
+	var inpValue = $('#myfee').numberbox('getValue');
+	try{
+		max = {$cash};
+	}
+	catch(e)
+	{
+	}
+	if(0 > inpValue)
+	{
+		$('#myfee').numberbox('setValue', 0);
+		inpValue = 0;
+	}
+	if(max < inpValue)
+	{
+		$('#myfee').numberbox('setValue', max);
+		inpValue = max;
+	}
+	$.ajax({
+		url:'__URL__/applyCashOutSubmit',
+		data:{"fee":inpValue},
+		type:'POST',
+		cache:false,
+		success:function(data,status){
+			console.log(data.msg);
+			if('true' == data.result)
+			{
+				$.messager.alert('', data.msg,'info');
+				console.log($('.cash').html());
+				$('.cash').html($('.cash').html() - inpValue);
+			}
+			else
+			{
+				$.messager.alert('', data.msg,'warning');
+			}
+		},
+		error:function(data,status){
+			$.messager.alert('网络异常，请检查网络','error');
+		},
+		complete:function(){
+		},
+		dataType:"json"
+	});
+}
+
+function outAll(fee){
+	$('#myfee').numberbox('setValue', $('.cash').html());
+}
+
+</script>
+<style type="text/css">
+.iptLog{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #fff;
+    background-color: #16599f;
+	width:8em;
+	height:2em;
+	font-size:1.2em;
+}
+	
+.iptItem{
+	margin:1em 1em 0.5em 1em;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-bottom-color:#16599f;
+	text-align:left;
+}
+.iptyan{
+    background-color: aliceblue;
+    border: none;
+    width: calc(100% - 2em);
+}
+
+</style>
+
+<div class="" style="padding:2px;font-size:1.2em;font-weight:bold;text-align:center;min-height:1em;">
+</div>
+<div style="padding:0.5em 1em;background-color:aliceblue;text-align:left;color:#333;">
+<p>提取金额</p>
+		<div class="iptItem">
+			&yen;
+			<input name='account' id="myfee" class="easyui-numberbox iptyan" value="" data-options="{prompt:'0.00',min:0.00,precision:2,width:'80%'}">
+		</div>
+
+<p>当前余额<span class="cash">{$cash}</span>元，<span style="color:#00F;font-weight:bold;" onclick="outAll()">全部提现</span></p>
+</div>
+<div style="padding-top:0.5em;text-align:center;font-size:0.7em;color:#555;">
+3个工作日内到帐微信钱包
+</div>
+<div style="height:1em;"></div>
+<input type="button" class="iptLog" value="提现" onclick="wxpay()"/>
+<div style="padding-top:0.5em;">
+</div>
+</block>
+

@@ -1,0 +1,226 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<title>{$title}直播间</title>
+<meta name="keywords" content="易网真,易网真直播间,avision视频直播系统" />
+<link href="__PUBLIC__/jeasyui/themes/default/easyui.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/icon.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/color.css" rel="stylesheet" type="text/css">
+<load href="__ROOT__/player/{$theme|default='default'}/css/base.css" />
+<load href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" />
+
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.min.js"></script>
+<load href="__PUBLIC__/js/jquery.json.min.js" />
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/publicFunction.js"></script>
+<load href="__ROOT__/player/js/keepAlive.js" />
+<load href="__ROOT__/player/js/webChat.js" />
+
+<style type="text/css">
+@media only screen
+and (min-device-width : 320px)
+and (max-device-width : 1024px) {
+	select:focus,
+	textarea:focus,
+	input:focus {
+		font-size: 16px !important;
+	}
+}
+
+</style>
+
+<script type="text/javascript">
+var h5p = null;
+var isInit = true;
+var isChar = '{$isChat}';
+var playType = '{$playType}';
+var chnId = '{$chnId}';
+
+console.log('isChar='+isChar)
+////心跳设置的变量////
+var aliveTime={$aliveTime};	//心跳间隔秒数
+var onlineId={$onlineId};	//频道ID
+var keepAliveUrl="__APP__/HDPlayer/keepAlive";
+var logoutUrl="__APP__/Home/logout";
+/////////
+
+
+
+//创建交流实例，并设置基本参数
+var chat=new webChat();
+chat.objName='chat';
+chat.continer="webchatDiv";
+chat.channelId="{$chnId}";
+chat.userName="{$username}";
+chat.userId="{$userId}";
+chat.appUrl="__APP__";
+
+
+
+function playerInit()
+{
+	if(1 == playType || 3 == playType)
+	{
+		EventTester("play", onPlayEven);
+	}
+}
+
+function onPlayEven()
+{
+	//alert('onPlay');
+	setTimeout('onResizeEven();', 1500);
+}
+
+function onResizeEven()
+{
+	//alert('onPlayEven');
+	//console.log('onPlayEven');
+	TabsSetHeight();
+	ChatInitHeight();
+	//alert('onResizeEven end');
+}
+
+function EventTester(e, fun)
+{
+	//document.getElementById("h5Player");
+	document.getElementById("h5Player").addEventListener(e,fun);
+	
+}
+
+$(window).resize(function(){
+	//setTimeout('onResizeEven();', 1500);
+
+});
+
+$(document).ready(function(){
+	keepAlive(playType, chnId);
+});
+
+$(window).load(function()
+{
+	try
+	{
+		if('normal' == isChar)
+		{
+			isChar = true;
+		}
+	}
+	catch (e)
+	{
+		isChar = false;
+	}
+
+	//playerInit();
+	$('#tabsDiv').tabs({
+	  onSelect: function(title, index){
+		  if(1 == index)
+		  {
+			  //TabsSetHeight();
+			  //alert($('#chatArea').height());
+			  ChatInitHeight();
+			  //alert($('#chatArea').height());
+		  }
+	  },
+	  //height: $('#p').outerHeight() - $('#showDiv').outerHeight(),
+	});
+
+	playerInit();
+	TabsSetHeight();
+	if(isChar)
+	{
+		chat.init();
+		//ChatInitHeight();
+	}
+});
+
+function TabsSetHeight()
+{
+	var top=$('#tabsC').position().top;	//这是div连margin占用空间的最左坐标
+	var height=$(window).height()-top;
+	$('#tabsC').height(height);
+	$('#tabsDiv').tabs('resize');
+	$('#intrTxtDiv').height(height - $('#copyDiv').outerHeight(true) - $('.tabs-header').outerHeight(true)-2)
+	//$('#tabsDiv').tabs({fit:true});
+//console.log('intrDiv.top:'+top+'  height:'+height);	
+	return;
+}
+
+function ChatInitHeight()
+{
+	if(!isChar) return false;
+	chat.fit();	
+}
+
+</script>
+
+
+</head>
+<body>
+<!--content/begin-->
+<div id="showDiv" style="background-color:#000;">
+		<switch name="playType">
+			<case value="1">
+				<video id="h5Player" controls="controls" autoplay="autoplay" poster="__ROOT__/player/{$theme|default='default'}/images/start.jpg" webkit-playsinline="true" webkit-playsinline style="width:100%;height:230px;margin:0;">
+				<source id="s1" type="application/x-mpegurl" src="{$hlsmrl}">
+				</video>
+			</case>
+			<case value="3">
+				<video id="h5Player" controls="controls" autoplay="autoplay" poster="__ROOT__/player/{$theme|default='default'}/images/start.jpg" webkit-playsinline="true" webkit-playsinline style="width:100%;margin:0;" loop="loop" >
+				  <source id="s1" src="{$mp4Rec}" type="video/mp4" />
+				</video>
+			</case>
+			<case value="4">
+				<img src="__ROOT__/player/{$theme|default='default'}/images/start.jpg" style="max-width:100%;height:auto;margin:0;padding:0;" />
+			</case>
+			<default>
+				<img src="__ROOT__/player/{$theme|default='default'}/images/start.jpg" style="max-width:100%;height:auto;" />
+			</default>
+		</switch>
+</div>
+
+<div id='tabsC'>
+		<!--选项卡 Begin-->
+		<div class="easyui-tabs" id="tabsDiv" style="margin:0px;" data-options="fit:true" >
+			<div title="介绍" id='intrDiv' >
+				<div id="intrTxtDiv" style="overflow-y:scroll;height:500px;">
+				<if condition="$isShowInfoImg">
+					<img src="{$infoImg}" border="0" width="100%"/>
+				</if>
+				</div>
+				<div id="copyDiv">
+				<a href="https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=MzIyMTM0Njc4MA==&scene=110#wechat_redirect">
+				<img src="/room/copyright.jpg" border="0" width="100%"/>
+				</a>
+				</div>
+			</div>
+			<if condition="$isChat eq 'normal'">
+			<div title="交流讨论" id="webchatDiv"  >
+
+			</div>
+			<!-- </div>  -->
+			</if>
+			<switch name="chnId">
+				<case value="1">
+				</case>
+				<case value="66">
+					<div title="精彩回放" style="font-size:14px;" class="">
+						<div style="height:20px;margin:5px;"><a href="/01.html">1、贡儿珍主席致辞</a></div>
+						<div style="height:20px;margin:5px;"><a href="/02.html">2、邓兆萍老师致辞</a></div>
+						<div style="height:20px;margin:5px;"><a href="/03.html">3、倪惠英老师致辞</a></div>
+						<div style="height:20px;margin:5px;"><a href="/04.html">4、赠送礼品</a></div>
+						<div style="height:20px;margin:5px;"><a href="/05.html">5、寓艺于乐·粤韵操</a></div>
+						<div style="height:20px;margin:5px;"><a href="/06.html">6、游园惊艳·折子戏</a></div>
+						<div style="height:20px;margin:5px;"><a href="/07.html">7、唱广州好</a></div>
+					</div>
+				</case>
+			</switch>
+		</div>
+		<!--选项卡 End-->
+</div>		
+<!--content/end-->
+</body>
+</html>

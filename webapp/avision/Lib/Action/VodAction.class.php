@@ -10,18 +10,9 @@ require_once APP_PATH.'../public/uploadhandler.php';
 class VodAction extends AdminBaseAction {
 
 	public function  t(){
-		$str='{"multiplelogin":1,"discuss":"normal","wxonly":"true","viewIncRand":"20",
-			"livetime":"2017-04-30 08:00:00","livekeep":"","logo":"logo.jpg","cover":"cover.jpg",
-			"info":"{\"0\":{\"img\":\"\/room\/010\/84\/info\/1493549774.jpg\",\"link\":\"tel:18819036429\"},\"1\":{\"text\":\"\u4eca\u665a\u4e1c\u65b9\u9ed1\u6c60\u9891\u9053\u540c\u65f6\u76f4\u64ad\u91d1\u534e\u7684\u665a\u4f1a,\u6b22\u8fce\u70b9\u51fb\u6536\u770b\"},\"2\":{\"img\":\"\/room\/010\/84\/info\/1493550053.jpg\",\"link\":\"https:\/\/open.weixin.qq.com\/connect\/qrconnect?appid=wx046e7448f1c40755\"}}",
-			"userbill":{"isbill":"false","billday24":"","billmonth":"","billday7":"","billday30":""},
-			"viewerlimit":"999999"}';
-		$j=json_decode($str,TRUE);
-		dump($j);
-		
-		$s='hmc128GT3S0L-1492747136all.flv';
-		$arr=explode('-',$s,2);
-		echo substr($arr[1],0,10);
-		dump($arr);
+		$db=D('Recordfile');
+		$str=$db->getVodMrl(10197);
+		dump($str);
 	}
 	/**
 	 * 

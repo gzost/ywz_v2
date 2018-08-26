@@ -16,7 +16,7 @@ class LoginAction extends Action {
 		session_unset();	//清除所有Session变量
 		$this->redirect('login');
 	}
-	//登录页面
+	//登录页面，已废弃
 	public function login(){
 		$this->assign('gotoURL',U('author'));
 		//$errorMsg=md5('123456');

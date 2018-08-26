@@ -19,7 +19,6 @@ require_once(LIB_PATH.'Model/CashFlowModel.php');
 require_once(LIB_PATH.'Model/UserPassModel.php');
 require_once(LIB_PATH.'Model/UserModel.php');
 
-
 class HDPlayerAction extends SafeAction {
 
 	const ONLINEID='onlineId';		//在线ID变量名

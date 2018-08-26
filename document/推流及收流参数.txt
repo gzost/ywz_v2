@@ -1,0 +1,36 @@
+天翼直播
+==================
+推流地址，源地址可rtmp播放
+rtmp://source.live01.zb.tv189.com:1935/live/live1115_tzwj_5000k
+
+hls播放
+http://source.live01.zb.tv189.com:1935/live/live1115/5000k/tzwj_video.m3u8
+
+频道观看界面
+http://zb.tv189.com/phone/live.html?roomId=1115
+
+防盗链hls播放
+http://livehls01.zb.tv189.com/live/live1115/5000k/tzwj_video.m3u8?ut=5b3c4670&us=96514237&sign=48a6b0d49807975b89a64fb4522ae44d
+
+
+旧天翼CDN
+===============================================
+VOD
+{"mrl":"http://c13.video-box.cn/vodfile%%filepath%%?wsSecret=%%secret%%&wsKeepTime=%%keeptime%%&wsTime=%%tm%%","cdnkey":"taoli357"}
+
+{"push":"rtmp://tel.av365.cn/live/%%stream%%?key=%%key%%", "rtmp":"rtmp://cdn.video-box.cn/live/%%stream%%?wsSecret=%%secret%%&wsKeepTime=%%keeptime%%&wsTime=%%tm%%", "hls":"http://cdn.video-box.cn/live/%%stream%%/playlist.m3u8?wsSecret=%%secret%%&wsKeepTime=%%keeptime%%&wsTime=%%tm%%","cdnkey":"taoli357","videodir":"/video54","drop":"http://tel.av365.cn:8011/control/drop/publisher?app=live&name=%%stream%%"}
+
+阿里云
+==================================
+播放地址拼接示例：
+
+RTMP 格式:rtmp://+直播域名+/AppName/+/StreamName+_转码模板ID
+
+示例：rtmp://直播域名/AppName/StreamName_sd
+
+FLV 格式:http://+直播域名+/AppName/+/StreamName+_转码模板ID.flv
+
+示例：http://直播域名/AppName/StreamName_sd.flv
+
+M3U8 格式:http://+ 直播域名+/AppName/ + /StreamName.m3u8
+

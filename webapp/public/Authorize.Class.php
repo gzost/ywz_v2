@@ -84,8 +84,8 @@ class authorize {
 			//echo $dbOnline->getLastSql();			
 //var_dump($_SESSION['onlineId']);  die();
 			//set autologin cookie
-			setcookie('user', $record['account'], time()+604800,'/');
-
+			//setcookie('user', $record['account'], time()+604800,'/');
+            $this->setAccountToCookie($record['account']);
 			return true;
 		}
 		else {
@@ -95,6 +95,79 @@ class authorize {
 		return false;
 	}
 
+    /**
+     * 取本应用的appID，此ID用于区分不同的应用，在配置文件中配置
+     *
+     * @return string 若配置了APP_ID返回此值，否则返回默认的名称
+     */
+	public function getAppId(){
+        $appid= C('APP_ID');
+        if(null==$appid) return 'advapp';
+        else return $appid;
+    }
+
+    /**
+     * 生成cookie值的的MD5校验字串
+     * @param $ac
+     * @param $appid
+     *
+     * @return string md5校验字串
+     */
+    private function mkCookieSecr($ac,$appid){
+	    return md5($ac.$appid.'outao1122');
+    }
+
+    /**
+     * 将用户Account写入cookie中，不同应用采用不同的cookie名，可避免同一IP多网站时的混乱
+     * 基于安全原因，同时写入一MD5(account+appid)的校验字串，避免通过修改cookie以其它身份登录
+     * 写入2个cookie值：
+     * user_$appid: 用户account扩充串，此串为8个16进制time()值字符后续用户account
+     * secr_$appid: md5校验值
+     */
+	private function setAccountToCookie($account){
+	    $appid= $this->getAppId();
+	    $accountName='user_'.$appid;
+	    $secrName='secr_'.$appid;
+	    $accountExt=sprintf("%08x%s",time(),$account);
+	    $secr=$this->mkCookieSecr($accountExt,$appid);
+	    $expire=time()+604800;
+        setcookie($accountName, $accountExt, $expire,'/');
+        setcookie($secrName, $secr, $expire,'/');
+    }
+
+    /**
+     * 从cookie中读取account并校验，成功返回用户account，失败返回null
+     */
+    private function getAccountFromCookie(){
+        $appid= $this->getAppId();
+        $accountName='user_'.$appid;
+        $secrName='secr_'.$appid;
+        $accountExt=cookie($accountName);
+        $secr=cookie($secrName);
+        $verify=$this->mkCookieSecr($accountExt,$appid);
+        try{
+            if(null==$accountExt || null==$secr) throw new Exception('cookies not fount!');
+            if(strlen($accountName)<9) throw new Exception('account error!');
+            if($secr != $verify) throw new Exception('cookie verify failure!');
+
+        }catch (Exception $ex){
+            return null;
+        }
+        $account=substr($accountExt,8);
+        return $account;
+    }
+
+    /**
+     * 清除与用户账号相关的cookie
+     */
+    private function clearAccountCookies(){
+        $appid= $this->getAppId();
+        $accountName='user_'.$appid;
+        $secrName='secr_'.$appid;
+        $expire=time()-3600;
+        setcookie($accountName, $accountExt, $expire,'/');
+        setcookie($secrName, $secr, $expire,'/');
+    }
 	/**
 	 * 
 	 * 使用微信登录
@@ -160,10 +233,11 @@ class authorize {
 */
 		if($this->isLogin( C('OVERTIME')) ) return true;	//用户已经登录
 		//echo 'autoissue';
-		$acc = cookie('user');
+		//$acc = cookie('user');
+        $acc=$this->getAccountFromCookie();
 
 		//echo $acc;
-		if(!isset($acc))
+		if(!isset($acc) || null==$acc)
 		{
 			return false;
 		}
@@ -247,10 +321,9 @@ class authorize {
 		//unset($_SESSION['HDPlayer']);
 		unset($_SESSION['logfile']);
 		unset($_SESSION['_WX']);
-		setcookie('user', '', time()-1,'/');
+		//setcookie('user', '', time()-1,'/');
+        $this->clearAccountCookies();
 
-		//setcookie('user', '',time()-3600,'/');
-		//setCookie(session_name(),'',time()-3600,'/');
 		//session_unset();
 		//session_destroy();
 	}

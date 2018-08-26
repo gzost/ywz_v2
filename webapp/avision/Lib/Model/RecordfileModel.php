@@ -116,13 +116,12 @@ class RecordfileModel extends Model {
 	public function getVodMrl($recid){
 		//获取vod记录
 		$item = $this->where(array('id'=>$recid))->find();
+        if(null == $item) return '';
 
 		//以http开头的，不需要转换
-		if(preg_match("/^http/", $item['path']))
-		{
+		if(preg_match("/^http/", $item['path'])) {
 			return $item['path'];
 		}
-		if(null == $item) return '';
 
 		//获取mrl转换规则
 		$cond=array('category'=>'vod', 'ditem'=>'url' );
@@ -132,8 +131,21 @@ class RecordfileModel extends Model {
 		if(false==$record) return '';
 		$attr=json_decode($record['attr'],true);
 
-		$str=str_replace('%%filepath%%', $item['path'], $attr['mrl']);
+		$str=str_replace('%%filepath%%', $item['path'], $attr['mrl']);  //VOD播放地址，未处理防盗链部分
+        $mode=$attr['mode'];
+        if(null==$mode) $mode='';
+        $functionName='secret'.$mode;
+//echo $functionName," _str=",$str;
+        if(true==method_exists ($this,$functionName)){
+            //对mrl进行防盗链等进一步的处理
+            $ss = C('vodfile_base_path').$item['path'];
+            $str=$this->$functionName($ss, $str,$attr['cdnkey']);
 
+        }
+//echo "<br>ret=".$str;
+        return $str;
+
+var_dump( method_exists ($this,"secreta") );
 		if(false!==strpos($attr['mrl'], '%%secret%%')){	//需要生成时间戳防盗链
 			$ss = C('vodfile_base_path').$item['path'];
 			$str=$this->secret($ss, $str,$attr['cdnkey']);
@@ -141,6 +153,27 @@ class RecordfileModel extends Model {
 
 		return $str;
 	}
+
+    /**
+     * @param $stream   点播文件的路径
+     * @param $url      点播资源URL模板，已经嵌入点播文件路径
+     * @param $cdnkey   CDN约定的通讯默默
+     * @return string   向CDN申请点播流的URL
+     */
+	private function secretAC($stream,$url,$cdnkey){
+        $keeptime=platform::EFTIME;   //平台定义的有效时长
+        $defaultKeeptime=1800;  //CDN默认的有效时长（秒）
+	    $timestamp=sprintf("%08x",time()+$keeptime-$defaultKeeptime); //
+	    $rand=mt_rand(1000,9999);
+	    $uid=0;
+	    $sstring=sprintf("%s%s%s",$cdnkey,$stream,$timestamp);
+	    $md5hash=md5($sstring);
+	    $secret=$md5hash;
+        $str=str_replace('%%secret%%',$secret,$url);
+        $str=str_replace('%%keeptime%%',$timestamp,$str);
+//dump($sstring); dump($md5hash);
+        return $str;
+    }
 
 	/**
 	 * 

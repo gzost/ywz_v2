@@ -122,7 +122,13 @@ class TestAction extends Action
 		echo $ret;
 
 	}
-
+	function smsTest()
+	{
+		$sms = new Sms();
+		//$ret = $sms->sendSmsCom('13570422673', '易网真', 'SMS_117735021', '{"customer":"zjmzjm","num":"123"}');
+		$ret = $sms->sendSmsCom('13570422673', '易网真', 'SMS_117700023', '{"customer":"zjmzjm","num":"123"}');
+		echo $ret;
+	}
 	function sms()
 	{
 		require_once ALI_SMS_PATH.'aliyun-php-sdk-core/Regions/ProductDomain.php';

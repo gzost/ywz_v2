@@ -92,8 +92,7 @@ class ChannelAction extends AdminBaseAction
 		$signpass = $attr['signpass'];
 
 		$ansList = array();
-		foreach($questList as $i => $r)
-		{
+		foreach($questList as $i => $r){
 			$ansList[] = array('quest' => $r, 'answer' => I('POST.ans'.$i, ''));
 		}
 
@@ -102,6 +101,8 @@ class ChannelAction extends AdminBaseAction
 		$relInfo['uid'] = $userInfo['userId'];
 		$relInfo['note'] = json_encode($ansList);
 		$relInfo['status'] = '禁用';
+		$relInfo['begindate']=date('Y-m-d H:i:s');
+		$relInfo['enddate']='6999-12-31';
 		$isPass = false;
 		if($signpass)
 		{
@@ -164,7 +165,7 @@ class ChannelAction extends AdminBaseAction
 
 		$userInfo = $this->author->getUserInfo();
 		$st = $chnUser->WhatViewer($chnId,$userInfo['userId']);
-
+//dump($st);die('signUP');
 		switch($st)
 		{
 			case -1:
@@ -194,8 +195,6 @@ class ChannelAction extends AdminBaseAction
 			{
 				$queListOut[] = array('index'=>$i, 'quest'=>$r);
 			}
-			//$questList[$i]['index'] = $i;
-			//$questList[$i]['quest'] = $r;
 		}
 
 		/*
@@ -716,9 +715,10 @@ class ChannelAction extends AdminBaseAction
 
 	public function EditSign($chnId = 0)
 	{
-		$isAdmin = $this->IsAdminRole();
+		$isAdmin = $this->isAdmin;		//IsAdminRole();
+//var_dump($isAdmin);
 		$userInfo = authorize::getUserInfo();
-
+//var_dump($userInfo);
 		$chnDal = new channelModel();
 		$chnInfo = $chnDal->where(array('id'=>$chnId))->find();
 
@@ -729,7 +729,7 @@ class ChannelAction extends AdminBaseAction
 		$attr['signQuest'][2]['quest'] = 'q3';
 		var_dump($attr['signQuest']);
 		*/
-
+        $this->baseAssign();
 		if($isAdmin || $chnInfo['anchor'] === $userInfo['userId'])
 		{
 			$this->webVar['chnId'] = $chnId;

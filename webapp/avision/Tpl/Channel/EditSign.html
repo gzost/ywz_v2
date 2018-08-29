@@ -1,21 +1,10 @@
-<html class="panel-fit"><head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="renderer" content="webkit">
-<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<extend name="common:AdminBase" />
+<block name="bl_north">
+	<include file="Home:header_w" />
+	<include file="Console:north_w" />
+</block>
 
-<link rel="stylesheet" type="text/css" href="__PUBLIC__/jeasyui/themes/default/easyui.css">
-<link rel="stylesheet" type="text/css" href="__PUBLIC__/jeasyui/themes/icon.css">
-<link rel="stylesheet" type="text/css" href="/admin/default/css/base.css">
-<link rel="stylesheet" type="text/css" href="/admin/default/css/channel.css">
-
-<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.min.js"></script>
-<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.easyui.min.js"></script>
-
-<title>易网真视频直播系统</title>
-
-</head>
-<body style="padding:20px;">
+<block name="bl_main">
 <script type="text/javascript">
 var signpass = '{$signpass}';
 $(document).ready(function(){
@@ -40,11 +29,11 @@ $(document).ready(function(){
 	}
 });
 </script>
-
+	<link rel="stylesheet" type="text/css" href="/admin/default/css/channel.css">
 <style type="text/css">
 </style>
 
-
+频道ID：{$chnId}
 <form id="ff" action="__URL__/EditSignSubmit" method="post" enctype="multipart/form-data">
 <input type="hidden" name="chnId" value="{$chnId}"/>
 	<div class="itemRow">
@@ -88,5 +77,4 @@ $(document).ready(function(){
 	1、自动审核通过：观众提交报名后，系统会根据提交的回答内容进行匹配。提交的回答内容与预留答案一致表示通过；如果预留答案为空，表示不进行匹配直接通过。
 	</div>
 </form>
-</body>
-</html>
+</block>

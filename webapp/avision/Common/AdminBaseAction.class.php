@@ -60,12 +60,13 @@ class AdminBaseAction extends SafeAction {
 	
 	/**
 	 * 
-	 * 按屏幕类型决定调用竖屏（默认）还是宽屏显示模板
+	 * 按是否手机决定调用竖屏（默认）还是宽屏显示模板
 	 * @param string $name
 	 */
     public function show($name){
     	if(null==$name) $name=ACTION_NAME;	//默认模板与当前action同名
-    	$scrType=getPara('scrType');
+    	//$scrType=getPara('scrType');
+        $scrType=IsMobile()?'h':'w';
 
 		$name_org = $name;
     	if('w'==$scrType) $name .='_w';		//调用宽屏模板

@@ -110,7 +110,11 @@ class HomeAction extends SafeAction {
      */
 	public function wxLogin($chnId = '', $backUrl='')
 	{
-		if(empty($backUrl))
+		//dump($_REQUEST);
+		$backUrl=urldecode($backUrl);
+		//dump($backUrl);
+		//die('wxLogin');
+	    if(empty($backUrl))
 		{
 			if(0 < $chnId)
 			{
@@ -224,12 +228,37 @@ class HomeAction extends SafeAction {
     	}
     	return $chnList;
     }
-    
-    public function login($chnId=0,$wxonly=false, $bozhu=-1 )
-	{
-		session_start();
-		$scrType=$this->getScreenType();
 
+    /**
+     * 用户登录页面
+     * @param int $chnId    当前登录频道ID。为兼容2018-08-26之前的版本，不建议使用。
+     * @param bool $wxonly  仅使用微信登录
+     * @param int $bozhu    播主登录（仅使用账号/密码登录）
+     * @param string $acceptUrl 指定登录成功后跳转的URL，不用urlencode
+     * @param string $rejectUrl 指定登录失败后跳转的URL，预留还没启用
+     * @param string title     覆盖默认网页标题
+     * @param string coverImg  覆盖默认的封面图片
+     * @param string errorMsg 提示信息
+     */
+    public function login($chnId=0,$wxonly=false, $bozhu=0, $acceptUrl='',$rejectUrl='' )
+	{
+		//$scrType=$this->getScreenType();
+        $webVar=array('chnId'=>$chnId, 'bozhu'=>$bozhu, 'acceptUrl'=>$acceptUrl, 'rejectUrl'=>$rejectUrl, 'errorMsg'=>'',
+            'title'=>'', 'coverImg'=>'');
+        $webVar=getRec($webVar,false);
+        //若提供了频道ID而未提供$acceptUrl
+        if(''==$webVar['acceptUrl'] && 0<$chnId)  $webVar['acceptUrl']=U('HDPlayer/play',array('chnId'=>$chnId));
+        //if(''!=$webVar['acceptUrl']) $webVar['acceptUrl']=urlencode($webVar['acceptUrl']);
+        //if(''!=$webVar['rejectUrl']) $webVar['rejectUrl']=urlencode($webVar['rejectUrl']);
+
+//dump($_REQUEST);
+//dump($_SESSION[OUPARA]);
+//dump($webVar);
+//var_dump(IsMobile(),IsWxBrowser());
+//dump($_SESSION['_login']);
+//echo $scrType; die('rrr');
+
+        /* outao 2016-08-28
 		if(empty($_SESSION['_login']['bozhu']))
 		{
 			if($bozhu == -1)
@@ -240,41 +269,37 @@ class HomeAction extends SafeAction {
 		{
 			$bozhu = $_SESSION['_login']['bozhu'];
 		}
-
+        */
 		$wxLoginHelp = false;
 		
-		$auth=new authorize();
-    	$auth->logout();
+		//$auth=new authorize();
+		//$auth->logout();
+        $this->author->logout();
     	session_start();
     	
-    	$msg=getPara('loginMsg');
-		if(null!=$msg)	$this->assign('errorMsg',$msg);
+    	//$msg=getPara('loginMsg');
+		//if(null!=$msg)	$this->assign('errorMsg',$msg);
 		
 		if($wxonly){
-			$this->wxLogin($chnId);
+			$this->wxLogin($chnId, urldecode($webVar['acceptUrl']));
 			return;
 		}
 
-		if(IsMobile() && !IsWxBrowser())
-		{
+		if(IsMobile() && !IsWxBrowser())	{
 			$wxLoginHelp = '您可以微信关注“易网真”公众号';
-			if(0 < $chnId)
-			{
+			if(0 < $chnId)	{
 				$wxLoginHelp .= '，并发送\'ch'.$chnId.'\'获取观看链接。';
 			}
-			else
-			{
+			else		{
 				$wxLoginHelp .= '获取更多直播资讯。';
 			}
 		}
 
     	$this->baseAssign();
-		$this->assign('bozhu', $bozhu);
-		$this->assign('wxLoginHelp', $wxLoginHelp);
-    	$this->assign('wxLoginCodeUrl', U('wxLoginCode', array('chnId' => $chnId)));
-    	$this->assign('wxLoginUrl', U('wxLogin', array('chnId' => $chnId)));
-    	$this->assign('chnid',$chnId);
-    	$this->assign('step','login');
+		$webVar['wxLoginHelp']= $wxLoginHelp;
+        $webVar['wxLoginCodeUrl']= U('wxLoginCode', array('chnId' => $chnId));    //生成二维码的URL
+        $webVar['wxLoginUrl']= U('wxLogin'). '?backUrl='.urlencode($webVar['acceptUrl']);
+     	$this->assign($webVar);
     	$this->show('login');
     }
     public function logout(){
@@ -284,29 +309,27 @@ class HomeAction extends SafeAction {
     	$auth->logout();
 //echo "out!"; die;
 		$this->redirect('index');
-    	//$this->index();
-    	//return;
+
     }
-    public function authen($account='',$password='',$chnid=0){
+    public function authen($account='',$password='',$chnId=0){
+        $webVar=array('chnId'=>$chnId, 'bozhu'=>$bozhu, 'acceptUrl'=>$acceptUrl, 'rejectUrl'=>$rejectUrl, 'errorMsg'=>'',
+            'title'=>'', 'coverImg'=>'');
+        $webVar=getRec($webVar,false);
     	$auth=new authorize();
     	$ret=$auth->issue($account,$password);
-logfile("AUTHEN ret=".$ret." account=".$account." chnid=".$chnid, LogLevel::DEBUG);
+logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEBUG);
     	if($ret){
 			//登录认证成功
-//dump($_SESSION[authorize::USERMENU]);		die();	
-    		if($chnid>0){	//携带频道参数直接播放指定频道
-    			$this->redirect('HDPlayer/play',array('chnId'=>$chnid));
-    			//$play=A('HDPlayer');
-  			
-    			//$play->play($chnid);
-
-    			return;
+//dump($webVar);	echo(urldecode($webVar['acceptUrl']));	die();
+    		if(''!=$webVar['acceptUrl']) header('Location:'.urldecode($webVar['acceptUrl']));
+    		elseif ($chnId>0){	//携带频道参数直接播放指定频道
+    			$this->redirect('HDPlayer/play',array('chnId'=>$chnId));
     		} else {
 	    		$this->redirect('index');
     		}
     	}
     	else{
-    		$this->assign('errorMsg','账号或密码错误');
+    		setPara('errorMsg','账号或密码错误');
     		$this->login();
     	}
     }
@@ -463,12 +486,18 @@ logfile("AUTHEN ret=".$ret." account=".$account." chnid=".$chnid, LogLevel::DEBU
      * 重要限制：若原Action调用带参数要在调用本方法前进行处理，本方法会回调原Action但参数会丢失。
      */
     protected function getScreenType(){
+        $scrType=(true==IsMobile())?'h':'w';
+        setPara('scrType', $scrType);
+        return $scrType;
+
 		session_start();
     	$scrType=getPara('scrType');
     	if(null!=$scrType){
     		setPara('scrType', $scrType);
     		return $scrType;
     	} else {
+
+
     		$this->assign('callback', "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']);
     		$this->display('checkScreenWidth');		//调用HTML获得客户屏幕的分辨率并确定屏幕是横屏还是竖屏
     		exit;

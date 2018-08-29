@@ -15,27 +15,23 @@ class ChannelreluserModel extends Model {
 	}
 
 	/**
-	 * 
 	 * 检查$uid是否有观看$chnId的权限
-	 * @param unknown_type $chnId
-	 * @param unknown_type $uid
-	 * @return 1:可以收看 0:已报名未通过 -1:未报名
+	 * @param int $chnId
+	 * @param int $uid
+	 * @return int 1:可以收看 0:已报名未通过 -1:未报名
 	 */
-	public function WhatViewer($chnId,$uid)
-	{
-		$rec=$this->field('status')->where(array('chnid'=>$chnId, 'uid'=>$uid))->find();
-		if('正常' == $rec['status'])
-		{
-			return 1;
-		}
-		else if ('禁用' == $rec['status'])
-		{
-			return 0;
-		}
-		else
-		{
-			return -1;
-		}
+	public function WhatViewer($chnId,$uid)	{
+	    $now=date("Y-m-d H:i:s");
+	    $cond=array('chnid'=>$chnId, 'uid'=>$uid);
+	    $cond['type']=array('in',array('会员', '订购'));
+	    $cond['begindate']=array('ELT',$now);
+	    $cond['enddate']=array('EGT',$now);
+		$status=$this->where($cond)->getField('status');
+//echo $this->getLastSql(); dump($status);
+		if('正常' == $status) $rt=1;
+		elseif ('禁用' == $status) $rt=0;
+		else $rt=-1;
+		return $rt;
 	}
 
 	/**

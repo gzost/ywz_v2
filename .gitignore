@@ -12,3 +12,4 @@ webroot/Public/jeasyui_old/
 *.log
 *.mp4
 *.scc
+*.tmp

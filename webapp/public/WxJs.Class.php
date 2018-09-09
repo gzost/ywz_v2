@@ -54,9 +54,10 @@ class WxJs
 			$pam['url'] = $this->att['url'];
 		}
 		//var_dump($pam);
-
+logfile('genSing_att:'.print_r($this->att,true),LogLevel::DEBUG);
+logfile('genSing_pam:'.print_r($pam,true),LogLevel::DEBUG);
 		$ret = WxSys::JsSDKSignature($pam);
-
+logfile('genSign ret:'.$ret,LogLevel::DEBUG);
 		return $ret;
 	}
 

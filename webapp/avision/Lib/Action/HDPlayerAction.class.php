@@ -652,6 +652,7 @@ logfile('WhatViewer:'.$st);
 	{
 		logfile("chnid=".$chnId." userid=".$this->userId()." U=".$u." session:".session_id(), LogLevel::DEBUG);
 		//session_start();
+//echo 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];		die('eett');
 		$this->playingChannel=$chnId;
 		$this->playingFile=$r;
 //if($u<1) $u=$this->userId();
@@ -791,6 +792,7 @@ logfile('WhatViewer:'.$st);
             $userInfo=$this->author->getUserInfo();
             $myurl = 'http://'.$_SERVER['HTTP_HOST'].U('play').'?chnId='.$chnId.'&u='.$userInfo['userId'].'&r='.$r;
 			$nowurl = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+			//$myurl=$nowurl;
 //logfile("nowUrl=".$nowurl." myUrl=".$myurl, LogLevel::DEBUG);
 			//记录传播者
 			if(!empty($userInfo['userId']))
@@ -802,7 +804,7 @@ logfile('WhatViewer:'.$st);
 			//如果传播者ID不是我，要换回我。
 			if($myurl != $nowurl)
 			{
-				//header("location:".$myurl);	2018-08-26 outao
+				//header("location:".$myurl);		//2018-08-26 outao
 			}
 
 			//创建在线记录

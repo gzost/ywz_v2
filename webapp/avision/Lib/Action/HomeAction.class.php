@@ -88,14 +88,14 @@ class HomeAction extends SafeAction {
 	 * 显示观众服务首页。提供推荐频道列表。并根据用户是否已经登录显示功能按钮。
 	 */
     public function index($type=0){
-    	//$scrType=$this->getScreenType();
-		$scrType='w';	//为备案 2018-04-18
-		setPara('scrType','w');
+    	$scrType=$this->getScreenType();
+		//$scrType='w';	//为备案 2018-04-18
+		//setPara('scrType','w');
 		
-		$auth=new authorize();
+		//$auth=new authorize();
+    	//$auth->autoIssue();	//用cookies登录
 
-    	$auth->autoIssue();	//用cookies登录 
-    	
+    	$this->author->autoIssue(); //用cookies登录
     	$this->baseAssign();
 		$this->assign('type', $type);
     	$this->show('index');
@@ -222,7 +222,8 @@ class HomeAction extends SafeAction {
 			if('w'==$scrType){
 				$chnList[$key]['img']=R('Channel/getPosterImgUrl', array($attr,$rec['id']));
 			}else {
-				$chnList[$key]['img']=R('Channel/getLogoImgUrl', array($attr,$rec['id']));
+				//$chnList[$key]['img']=R('Channel/getLogoImgUrl', array($attr,$rec['id']));
+                $chnList[$key]['img']=R('Channel/getPosterImgUrl', array($attr,$rec['id']));    //2018-09-09 outao列表现实频道封面
 			}
 //echo $chnList[$key]['img'],'<br>',$rec['attr'],$rec['id'],'<br>';			
     	}
@@ -254,6 +255,7 @@ class HomeAction extends SafeAction {
 //dump($_REQUEST);
 //dump($_SESSION[OUPARA]);
 //dump($webVar);
+//dump($this->author->getUserInfo());
 //var_dump(IsMobile(),IsWxBrowser());
 //dump($_SESSION['_login']);
 //echo $scrType; die('rrr');
@@ -276,7 +278,8 @@ class HomeAction extends SafeAction {
 		//$auth->logout();
         $this->author->logout();
     	session_start();
-    	
+    	$this->baseAssign();
+
     	//$msg=getPara('loginMsg');
 		//if(null!=$msg)	$this->assign('errorMsg',$msg);
 		

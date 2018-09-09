@@ -465,6 +465,10 @@ function onVideoClick()
 
 var chat = null;
 $(document).ready(function(){
+    //设置当前URL
+    var nowURL="{$myurl}";
+    console.log("myurl:"+nowURL);
+    history.replaceState(null,null,nowURL);
 
 	//创建交流实例，并设置基本参数
 	if('CanChat' == jsCanChat)

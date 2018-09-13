@@ -807,7 +807,8 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 		try{
 			$this->toBroadcastPost($webvar);
 			//注册成功后，自己登录并回到第一页
-			$this->authen($webvar['account'],$webvar['password']);
+			$this->authen($webvar['account'],md5($webvar['password']));
+			return;
 			if(!$result) throw new Exception('用户信息错误！请重新登录。');
 		}catch (Exception $e){
 			$webvar['errorMsg']=$e->getMessage();

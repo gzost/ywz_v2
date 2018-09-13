@@ -91,6 +91,7 @@ class SafeAction extends Action {
 				$this->author->logout();
 				if('back'==$loginURL){
 					echo "<script>alert('请先登录。');javascript:history.back(1);</script>";
+					exit;
 				}else {
 					$this->redirect($loginURL);
 				}

@@ -266,9 +266,8 @@ class MonitorAction extends AdminBaseAction{
  			condition::save($condTpl,ACTION_NAME);	//更新并存储最新的查询条件
  		} else {
  			$cond=condition::update($condTpl,ACTION_NAME);
-//logfile('work chnId='.$cond['chnId'],9);
+ 			logfile('work chnId='.$cond['chnId'],9);
  			$chnList=json_decode(getPara('chnListJson'),true);	//从session中取可操作频道列表
-//dump(count($chnList));
  			if(isset($cond['chnId'])){
  				logfile('chnId is set',9);
  				$chnId=-1;

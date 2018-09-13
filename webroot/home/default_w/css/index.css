@@ -219,6 +219,7 @@ i.ico.ico-spec-open {
 	width:280px; height:220px;
 	margin:10px 20px;
 	overflow-x:visible;
+    vertical-align: top;
 }
 
 .chnPannel .cover{
@@ -250,6 +251,8 @@ i.ico.ico-spec-open {
     text-align:left;
     color: #333;
     padding:10px 0;
+    height: 2em;
+    overflow: hidden;
 }
 .chnPannel .cover:after{
 	position:absolute; bottom:0px;left:0px;

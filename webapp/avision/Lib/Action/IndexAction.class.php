@@ -44,11 +44,41 @@ echo $url.'<br>' ;
     }
 
     public function test(){
- 		$au=new authorize();
-        $au->setAccountToCookie('accPPW');
+ 		include_once COMMOM_PATH.'ChargeBase.class.php';
+ 		echo 'test';
+ 		$obj=ChargeBase::instance('push');
+ 		$rt=$obj->getUserDiscount(415);
+ 		var_dump($rt);
+    	return;
+    	$acceptPkgType="'stream','pushpkg'";
+     	$nowStr=date('Y-m-d H:i:s',time());	//当天的年月日时分秒
+		$dbPackage=D('Package');
+		//查找符合条件，并且在有效期内的套餐数组
+		$cond=array('userid'=>6764);
+		$cond['expiry']=array('GT',$nowStr);
+		$cond['type']=array('in',$acceptPkgType);
+		$cond['used']=array('EXP','<`total`');
+		$available=$dbPackage->where($cond)->order('purchase')->select();
+echo $dbPackage->getLastSql(); 
+dump($available)  ;	
+    	//return;
+    	dump(date('H:i:s',1490596501));
+    	
+    	include_once COMMON_PATH.'platform.class.php';
+    	$pf=new platform();
+    	$pf->load(3);
+		$hlsurl = $pf->getHls('ou');	
+    	echo $hlsurl,'<br>';
+    	$rtmpurl=$pf->getRtmp('ou');
+    	echo $rtmpurl,'<br>';
+    	//$base= $_SERVER['DOCUMENT_ROOT'];
+  		echo $pf->getHls('s665d7b74be');
+    	
+    	//OS::createSubdir($base,'/aa/bb/cc');
+    	//$rt=mkdir($base.'/aa/bb/cc',0777,true);
+//dump($_SERVER);  	
     }
     public function now(){
-        $au=new authorize();
-		echo $au->getAccountFromCookie();
+		printf("Now+60s is:%x",time()+60);
 	}
 }

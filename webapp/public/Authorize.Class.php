@@ -130,7 +130,7 @@ class authorize {
 	    $secrName='secr_'.$appid;
 	    $accountExt=sprintf("%08x%s",time(),$account);
 	    $secr=$this->mkCookieSecr($accountExt,$appid);
-	    $expire=time()+604800;
+	    $expire=time()+6048000;
         setcookie($accountName, $accountExt, $expire,'/');
         setcookie($secrName, $secr, $expire,'/');
     }

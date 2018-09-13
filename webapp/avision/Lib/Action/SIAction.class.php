@@ -274,6 +274,7 @@ class SIAction  extends Action {
         if(0<$sichannel) $cond['sichannel']=$sichannel;
         $fields='id,size,length,viewers,createtime,path,name,descript,siuser,sichannel';
         $recs=$db->field($fields)->where($cond)->order('seq')->select();
+//echo $db->getLastSql();
         //取图片url
         $host='http://'.$_SERVER['HTTP_HOST'];
         foreach ($recs as $key=>$row){

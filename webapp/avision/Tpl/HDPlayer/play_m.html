@@ -416,7 +416,10 @@ function graidShareHide()
 }
 
 $(document).ready(function(){
-
+	//设置当前URL 2018-09-10 outao
+    var nowURL="{$myurl}";
+    console.log("myurl:"+nowURL);
+    history.replaceState(null,null,nowURL);
 //alert('{$myurl}');
 	//设定divShow的高度
 	$('#divShow').css('height', parseInt($('#divShow').css('width'))/16*9);

@@ -22,16 +22,16 @@ require_once(LIB_PATH.'Model/UserModel.php');
 class HDPlayerAction extends SafeAction {
 
 	const ONLINEID='onlineId';		//在线ID变量名
-	protected $author=null;	//授权对象
+	//protected $author=null;	//授权对象
 	protected $dbOnline=null;	//在线用户表模型
 	protected $onlineArr=array();	//在线对象数组。元素：onlineId,objType,objId
 	protected $task = 'HDPlayer';
 	//url是客户端访问的url，link是分享时中转的地址
 	protected $secJs = array('url'=>'', 'title'=>'', 'desc'=>'', 'link'=>'', 'imgUrl'=>'');
 	
-public function tlog(){
-	logfile("log lever is:".C('LOGFILE_LEVEL'));
-} 
+//public function tlog(){
+//	logfile("log lever is:".C('LOGFILE_LEVEL'));
+//}
 	function __construct(){
 		parent::__construct(2); 
 		
@@ -459,130 +459,39 @@ public function tlog(){
 	 * - 若不提供$account及$password，通过essionID传递C++用webcall完成的登录
 	 * - 否则用新的用户名密码登录
 	 */
-	/*
-	public function index($chnId='',$account='', $password='')
-	{
-		//session_unset();
-		//if(''==$account) $account='anonymous';	//用匿名用户登录
-		
-		//$this->author = new authorize();
-		//$this->author->issue($account,$password);
 
-		$this->redirect('play',array('chnId'=>$chnId,'account'=>$account));
-	}
-	*/
-	
-	/*
-	public function author($account='',$password='', $chnId=''){
-		$message='';
-		//$dbLog=D('Applog');
-		//$dbLog->add();
-
-		try {
-			//用户认证及授权
-			$author = new authorize ();
-			if(''==$account) throw new Exception('必须输入用户名');
-			//$call=new WebCallBridge();
-			//$jsonAr=$call->webCall('AvisionCall/connect',array('userName'=>$account,'password'=>$password));
-
-			if (! $author->issue ( $account, $password )) {
-				throw new Exception('用户名或密码错误。');
-			}
-		} catch ( Exception $e ) {
-			setPara('loginMsg', $e->getMessage());
-			$this->redirect('login',array('chnId'=>$chnId,'account'=>$account));
-		}
-			
-		//dump($_SESSION[authorize::USERINFO]);
-		//$dbLog->add('登录成功',$username);
-		unsetPara('loginMsg');
-		$this->redirect('play',array('chnId'=>$chnId));
-	}
-	*/
-	
-	/*
-	public function login($chnId='',$account='',$password=''){
-		$author = new authorize();
-		if($author->autoIssue() && 0 < $chnId)
-		{
-			$this->redirect('play',array('chnId'=>$chnId));
-		}
-		
-		if(0 < $chnId)
-		{
-			//is public chnid?
-			$chnDb=D('Channel');
-			$chnInfo = $chnDb->where(array('id'=>$chnId))->find();
-			//echo $chnInfo['type'];
-			if('public' === $chnInfo['type'])
-			{
-				$this->redirect('play',array('chnId'=>$chnId));
-			}
-		}
-		
-		$message=getPara('loginMsg');
-		$this->assign('chnId',$chnId);
-		$this->assign('account',$account);
-		$this->assign('password',$password);
-		$this->assign('message',$message);
-		$this->assign('wxLoginUrl', U('Home/wxLogin', array('chnId' => $chnId)));
-		if(IsMobile())
-		{
-			$this->display('login_m');
-		}
-		else
-		{
-			$this->display('login');
-		}
-		exit;
-	}
-	*/
-
-	public function gotoLogin($chnId = 0, $wxonly = false)
-	{
+	public function gotoLogin($chnId = 0, $wxonly = false)	{
 		$this->redirect('Home/login', array('chnId' => $chnId));
 		exit;
-
 	}
 
-	public function isMasterOwner($userInfo, $chnInfo)
-	{
-		if(null != $userInfo)
-		{
+	public function isMasterOwner($userInfo, $chnInfo)	{
+		if(null != $userInfo)		{
 			$userRoleDb=D('Userrelrole');
 			//是否管理员或频道主播
 			//主播可以直接进入
-			if($userInfo['userId'] == $chnInfo['owner'])
-			{
+			if($userInfo['userId'] == $chnInfo['owner'])	{
 				return true;
 			}
 			//助手可以直接进入
-			if($userInfo['userId'] == $chnInfo['anchor'])
-			{
+			if($userInfo['userId'] == $chnInfo['anchor'])	{
 				return true;
 			}
 			//管理员可进入
-			if($userRoleDb->isInRole($userInfo['userId'],C('adminGroup')))
-			{
+			if($userRoleDb->isInRole($userInfo['userId'],C('adminGroup')))	{
 				return true;
 			}
 		}
-
 		return false;
 	}
 
 	//检查是否已登录
-	public function loginCheck($userInfo, $chnInfo, $wxonly = false, $canUnlogin = false)
-	{
-		if($canUnlogin)
-		{
-			if(isset($userInfo['userId']))
-			{
+	public function loginCheck($userInfo, $chnInfo, $wxonly = false, $canUnlogin = false)	{
+		if($canUnlogin)	{
+			if(isset($userInfo['userId']))			{
 				//已是登录
 				return;
-			}
-			else
-			{
+			}	else{
 				//允许匿名但又未登录
 				//匿名登录
 				$this->author->issue('anonymous','');
@@ -590,36 +499,18 @@ public function tlog(){
 			}
 		}
 
-		if($wxonly)
-		{
+		if($wxonly)	{
 			//检查是否微信登录
-			if(28 === strlen($userInfo['account']) && 0 === strlen($userInfo['password']))
-			{
+			if(28 === strlen($userInfo['account']) && 0 === strlen($userInfo['password']))	{
 				//已是微信登录
 				return;
-
-				/*
-				//检查wxlog表里是否存在记录
-				$wxDal = D('wxlog');
-				$rs = $wxDal->where("openid = '".$userInfo['account']."' or unionid = '".$userInfo['account']."'")->count();
-				var_dump($rs);
-				exit;
-				if(0 < $rs)
-				{
-					//已是微信登录
-					return;
-				}
-				*/
 			}
 			//需要微信登录
 			$this->redirect('Home/login', array('chnId'=>$chnInfo['id'], 'wxonly'=>$wxonly));
 			exit;
-		}
-		else
-		{
+		} else{
 			//检查是否已登录
-			if(!isset($userInfo['userId']) || 'anonymous' === $userInfo['account'])
-			{
+			if(!isset($userInfo['userId']) || 'anonymous' === $userInfo['account'])	{
 				//未登录
 				$this->redirect('Home/login', array('chnId'=>$chnInfo['id'], 'wxonly'=>$wxonly));
 				exit;
@@ -628,15 +519,14 @@ public function tlog(){
 	}
 
 	//会员报名检查
-	public function signCheck($userInfo, $chnInfo, $chnAttr, $u)
-	{
+	public function signCheck($userInfo, $chnInfo, $chnAttr, $u)	{
 		//是否已报名
-
 		//是否已报名未审核通过
 
 		$chnUser=D('Channelreluser');
 		$st = $chnUser->WhatViewer($chnInfo['id'],$userInfo['userId']);
-		//logfile('WhatViewer:'.$st);
+		//dump($st); die('ssss');
+logfile('WhatViewer:'.$st);
 		switch($st)
 		{
 			case -1:
@@ -659,24 +549,18 @@ public function tlog(){
 	}
 
 	//是否拥有观看票据
-	public function IsHaveTicket($chnId)
-	{
+	public function IsHaveTicket($chnId)	{
 		$isHaveTicket = false;
-
-		if(null == $this->author)
-		{
+		if(null == $this->author)	{
 			//初始化认证模块
 			$this->author = new authorize();
 		}
 		//用户信息
 		$userInfo=$this->author->getUserInfo();
-
-		if(null != $userInfo)
-		{
+		if(null != $userInfo)	{
 			$chnUserDal = new ChannelreluserModel();
 			$isHaveTicket = $chnUserDal->isHaveTicket($chnId, $userInfo['userId']);
 		}
-
 		return $isHaveTicket;
 	}
 
@@ -731,11 +615,36 @@ public function tlog(){
 		}
 	}
 
+    /**
+	 * 检查频道当前是否可以观看
+     * @param $chnInfo
+	 *
+	 * @throws Exception 若频道不可观看抛出错误
+     */
+	public function channelAvailable($chnInfo){
+
+        if(null == $chnInfo || $chnInfo['id']<1)  throw new Exception('频道不存在:'.$chnInfo['id']);
+        if('normal' != $chnInfo['status'] )	throw new Exception('频道未启用。');
+        if($chnInfo['viewerlimit']>0){	//频道有并发用户限制
+            //TODO:
+            //查询本频道并发用户
+        }
+
+        //获取播主的可用余额
+        $userDal = new UserModel();
+        $fee = $userDal->getAvailableBalance($chnInfo['owner']);
+        if($fee < 0) {
+            //频道欠费
+            throw new Exception('播主忘记充值了，请与播主或主办方联系[5001:'.$chnInfo['id'].']');
+        }
+ 	}
+
 	/*
 	 * 播放页面
 	 * $chnId 频道ID
 	 * $account
 	 * $u 传播的userId
+	 * $r	视频点播记录ID
 	 */
 	protected $playingChannel=0;
 	protected $playingFile=0;
@@ -743,9 +652,11 @@ public function tlog(){
 	{
 		logfile("chnid=".$chnId." userid=".$this->userId()." U=".$u." session:".session_id(), LogLevel::DEBUG);
 		//session_start();
+//echo 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];		die('eett');
 		$this->playingChannel=$chnId;
 		$this->playingFile=$r;
 //if($u<1) $u=$this->userId();
+		//以下4行是华夏商道对接需要
 		if(!empty($xtl))
 			$_SESSION['HDPlayer']['xtl'] = $xtl;
 		if(!empty($xu))
@@ -753,87 +664,98 @@ public function tlog(){
 //if(1253==$chnId) header('Location:https://www.douyu.com');
 
 		$upDal = new UserpassModel();
-		if(!empty($u))
-		{
+		if(!empty($u))	{
 			$upDal->SetUpUser($chnId, $u, 'pass');
 		}
-
-		if(IsWxBrowser())
-		{
+/* wxOpenid 本方法中没有使用，先不获取 2018-08-26 outao
+		if(IsWxBrowser())	{
 			//如果是微信浏览器，就去获取微信的openid
 			$wxOpenid = $this->getWxOpenId('key', $key);
 		}
+*/
+//dump($_SESSION['userinfo']);
+		$this->author->autoIssue();		//用cookie自动登录. 2018-08-26 outao
+//dump($_SESSION['userinfo']); die('ggg');
+		try{
+			$chn = new ChannelAction();	//TODO: 把相应的功能移到module中
 
-		try
-		{
-
-			//只限微信登录
-			$wxOnly = false;
-			//返回结果
-			$ret = false;
 			//频道信息
-			$chnDb = D('channel');
-			$chn = new ChannelAction();
-			$chnInfo = $chnDb->find($chnId);
-			$chnAttr = json_decode($chnInfo['attr'], true);
-			//频道类型
-			$type = $chnInfo['type'];
-			//频道状态
-			$status = $chnInfo['status'];
-			//初始化认证模块
-			$this->author = new authorize();
-			//用户信息
-			$userInfo=$this->author->getUserInfo();
+			$chnDb = D('Channel');
+			$chnInfo = $chnDb->getInfoExt($chnId);
+			$chnAttr = $chnInfo['ext'];
+			$this->channelAvailable($chnInfo);
 
-			//获取播主的可用余额
-			$userDal = new UserModel();
-			$fee = $userDal->getAvailableBalance($chnInfo['owner']);
-			if($fee < 0)
-			{
-				//不能进行频道
-				throw new Exception('频道已被关闭，请与播主或主办方联系[5001:'.$chnId.']');
-			}
+            //整理频道信息
+            $type = $chnInfo['type'];	//频道类型
+            if(isset($chnAttr['wxonly']) && 'true' == $chnAttr['wxonly'])			{
+                $wxOnly = true;
+            } else {
+                $wxOnly = false;	//只限微信登录
+            }
+//var_dump($wxOnly); die('rwee');
+            //$userInfo=array();	//当前登录的用户信息
+            //$myurl = 'http://'.$_SERVER['HTTP_HOST'].U('play').'?chnId='.$chnId.'&u='.$userInfo['userId'].'&r='.$r;	//可用做回调地址
+			$backUrl=U('play').'?chnId='.$chnId.'&u='.$u.'&r='.$r;
+			do{	//为了跳转到继续处理播放
+                if('public' === $type){
+                	//公开频道
+					if(!$this->author->isLogin())	$this->author->issue('anonymous','');	//未登录则以匿名登录
+					break;
+                }
 
+                //设置跳转登录、付费、会员登记等可能需要的参数
+                setPara('coverImg',$chn->getPosterImgUrl($chnAttr, $chnId) );	//修改登录页封面图片
+                setPara('title',$chnInfo['name']);	//修改登录页的网页标题
+                setPara('acceptUrl',$backUrl );		//登录成功后跳转页面
 
-			//整理频道信息
-			if(isset($chnAttr['wxonly']) && 'true' == $chnAttr['wxonly'])
-			{
-				$wxOnly = true;
-			}
+            	//除公开频道其它频道必须登录，这里检查是否登录，未登录则跳转到登录界面
+				if(!$this->author->isLogin() || $this->userId()==C('anonymousUserId')) {
+                	//通过session变量传递的参数
+                    setPara('errorMsg','本频道需要登录后观看');
+                	$this->redirect('Home/login', array('chnId'=>$chnId, 'wxonly'=>$wxOnly,  'bozhu'=>0 ));
+                }
+                $userInfo=$this->author->getUserInfo();
+                if($chnInfo['multiplelogin']>0){	//频道有同名用户重复登录限制
+                    //TODO:
+                    //查询本频道用户的重复登录数
+                }
+//dump($type); die('ggrr');
+                if('protect' === $type) break;	//已经登录，注册频道可直接观看
 
-			if(null == $chnInfo) {
-				throw new Exception('频道不存在:'.$chnId);
-			}
+                //可直接进入观看的用户或角色
 
-			if('normal' != $status)	{
-				throw new Exception('频道未启用。');
-			}
+                if($this->isMasterOwner($userInfo, $chnInfo)) break;	//管理员、播主、助手
+				if($this->IsHaveTicket($chnId)) break;		//已订购，且在有效期
 
+                //会员频道
+                if('private' === $type){
+                    $this->signCheck($userInfo, $chnInfo, $chnAttr, $u);	//若非会员跳转到会员报名界面及申请管理界面
+				}
+
+				//付费频道处理
+                if(isset($chnAttr['userbill']['isbill']) 	&& 'true' == $chnAttr['userbill']['isbill'])
+                	$this->redirect('chnBill', array('chnId'=>$chnId, 'userpass'=>$u));	//跳转到付费界面
+
+				//throw new Exception('不可识别的频道类型。');
+			}while(false);
+
+/*
 			//是否管理员或播主或助手
-
-			if(!$this->isMasterOwner($userInfo, $chnInfo))
-			{
+			if(!$this->isMasterOwner($userInfo, $chnInfo))	{
 				//检查是否已付费
 				$isHaveTicket = $this->IsHaveTicket($chnId);
-
-				if(!$isHaveTicket)
-				{
-					//没有票据
+				if(!$isHaveTicket)	{
+ 					//没有票据
 					//频道是否需要票据
-					if(isset($chnAttr['userbill']['isbill']) 
-						&& 'true' == $chnAttr['userbill']['isbill'])
-					{
+					if(isset($chnAttr['userbill']['isbill']) 	&& 'true' == $chnAttr['userbill']['isbill'])	{
 						//需要票据
 						//首先检查是否已登录
 						$this->loginCheck($userInfo, $chnInfo, $wxOnly);
 
-						if(empty($chnAttr['noRightFun']))
-						{
+						if(empty($chnAttr['noRightFun']))	{
 							//跳转到付费界面
 							$this->redirect('chnBill', array('chnId'=>$chnId, 'userpass'=>$u));
-						}
-						else
-						{
+						} else{
 							//跳转到指定的界面
 							$this->redirect($chnAttr['noRightFun'], array('chnId'=>$chnId, 'u'=>$u));
 						}
@@ -842,25 +764,22 @@ public function tlog(){
 					{
 						//不需要票据
 						if('public' === $type) {
-							//公开频道
+                            						//公开频道
 							$this->loginCheck($userInfo, $chnInfo, $wxOnly, true);
 						}
 						else
 						{
-							//会员或认证频道
+//echo "会员或认证频道"; 						//会员或认证频道
 							$this->loginCheck($userInfo, $chnInfo, $wxOnly);
-
-							if('private' === $type)
+//die('ppp');
+                            if('private' === $type)
 							{
 								//跳转到会员报名界面
 								$this->signCheck($userInfo, $chnInfo, $chnAttr, $u);
 							}
 						}
 						
-						if($chnInfo['viewerlimit']>0){	//频道有并发用户限制
-							//TODO:
-							//查询本频道并发用户 
-						}
+
 					
 						if($chnInfo['multiplelogin']>0){	//频道有同名用户重复登录限制
 							//TODO:
@@ -869,9 +788,11 @@ public function tlog(){
 					}
 				}
 			}
-
-			$myurl = 'http://'.$_SERVER['HTTP_HOST'].U('play').'?chnId='.$chnId.'&u='.$userInfo['userId'].'&r='.$r;
+*/
+            $userInfo=$this->author->getUserInfo();
+            $myurl = 'http://'.$_SERVER['HTTP_HOST'].U('play').'?chnId='.$chnId.'&u='.$userInfo['userId'].'&r='.$r;
 			$nowurl = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+			//$myurl=$nowurl;
 //logfile("nowUrl=".$nowurl." myUrl=".$myurl, LogLevel::DEBUG);
 			//记录传播者
 			if(!empty($userInfo['userId']))
@@ -883,7 +804,7 @@ public function tlog(){
 			//如果传播者ID不是我，要换回我。
 			if($myurl != $nowurl)
 			{
-				header("location:".$myurl);
+				//header("location:".$myurl);		//2018-08-26 outao
 			}
 
 			//创建在线记录

@@ -12,3 +12,10 @@ webroot/Public/jeasyui_old/
 *.log
 *.mp4
 *.scc
+*.tmp
+*.xml
+webroot/home/default_w/images/sky3.jpg
+webapp/avision/Lib/Action/HDPlayerAction.class_OLD.php
+webapp/avision/Tpl/Home/index - 20180418.html
+webapp/avision/Tpl/Home/index_20180908.html
+webapp/avision/Tpl/Home/index - 20180418.html

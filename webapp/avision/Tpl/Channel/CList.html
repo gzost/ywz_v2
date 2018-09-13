@@ -122,10 +122,14 @@ function NewChn()
 	<tr>
 		<th field="id" width="40px">ID</th>
 		<th field="name" width="200px">频道名称</th>
-		<th field="type" width="200px">观看方式</th>
-		<th field="status" width="200px">启/停</th>
+		<th field="type" width="100px">频道类型</th>
+		<th field="status" width="100px">启/停</th>
 		<th field="ownername" width="200px">播主</th>
-		<th field="adpush" width="200px" editor="{type:'numberbox',options:{required:true,min:0,max:99,missingMessage:'此字段必须输入'}}">推荐力度</th>
+		<th field="adpush" width="100px" editor="{type:'numberbox',options:{required:true,min:0,max:99,missingMessage:'此字段必须输入'}}">推荐力度</th>
+		<th field="operat" width="100px" data-options="formatter:function(value,row,index){
+			var str='<a href=__URL__/EditSign/chnId/'+row.id+' >会员注册设置</a>';
+			return str;
+		}" >操作</th>
 	</tr>
 </thead>
 </table>

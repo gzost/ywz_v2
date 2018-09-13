@@ -92,11 +92,12 @@ class ChannelModel extends Model {
 	 * 
 	 * @return array
 	 */
-	public function getPulldownList($userId=0,$type='',$status='normal'){
+	public function getPulldownList($userId=0,$type='',$status='normal',$name=null){
 		$cond=array();
 		if($status!='') $cond['status']=$status;
 		if($userId!=0) $cond['owner|anchor']=$userId;
 		if($type!='') $cond['type']=$type;
+		if(null !=$name) $cond['name']=array('like','%'.$name.'%');
 		$rec=$this->field('id,name')->where($cond)->select();
 		return $rec;
 	}
@@ -910,6 +911,36 @@ class ChannelModel extends Model {
 		}
 		return false;
 	}
+    /**
+     * 取指定频道的功能栏数组以及默认功能栏
+     * @param $id	频道id
+     * @return array	['tabs'=>[],'activetab'=>功能栏ID
+     */
+    public function getTabs($id){
+        $attr=$this->where("id=".$id)->getField('attr');
+        return $this->getTabs2(json_decode($attr,true));
+    }
 
+    /**
+     * 从频道属性数组提取功能栏数组以及默认功能栏
+     * @param $attr
+     * @return array
+     */
+    public function getTabs2($attr){
+        $ret=array('tabs'=>$attr['tabs'],'activetab'=>$attr['activetab']);
+        return  $ret;
+    }
+    /**
+     * 根据频道ID取频道属性，attr扩展属性扩展到ext数组中
+     * @param $chnId
+     * @return mixed 正常返回属性数组，找不到频道返回null，出错返回false
+     */
+    public function getInfoExt($chnId){
+        $info=$this->find($chnId);
+        if(is_array($info)){
+            $info['ext']=(isset($info['attr']))?json_decode($info['attr'],true):array();
+        }
+        return $info;
+    }
 }
 ?>

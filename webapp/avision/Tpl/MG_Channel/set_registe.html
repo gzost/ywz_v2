@@ -1,0 +1,67 @@
+<!--
+频道模块选择，功能选择。
+这段HTML代码将通过Ajax动态嵌入到setting页面中
+这段代码使用了在setting.html中定义的JS全局变量：
+chnRec
+-->
+<div style="text-align: center; margin: 0 5px;">
+    <div style="margin: 5px; padding:5px; border: 1px solid #eef; border-radius: 5px; ">
+        <input class="easyui-textbox" name="signNote" value="{$signNote}" style="width:100%"
+               data-options="label:'提问说明:',multiline:true, height:60 ">
+    </div>
+    <table id="tt" style="width:100%;"
+           title="注册提问及预留答案"
+           singleSelect="true">
+        <thead>
+        <tr>
+            <th field="quest" width="40%" editor="text" halign="center">问题</th>
+            <th field="answer" width="40%" editor="text" halign="center">预留答案</th>
+        </tr>
+        </thead>
+    </table>
+    <div ><input type="checkbox" name="signpass"
+        <if condition="$signpass eq 'true'">
+            checked="checked"
+        </if>
+        />自动审核通过
+    </div>
+</div>
+<div id="tt_titil" >
+
+    <a id="urAppend" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true"
+       onclick="$('#tt').edatagrid('addRow')">增加</a>
+    <a id="urRemove" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true "
+       onclick="$('#tt').edatagrid('destroyRow');">删除</a>
+    <a  href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true"
+        onclick="$('#tt').edatagrid('cancelRow')">取消</a>
+</div>
+<div style="text-align:center;padding:10px 0">
+    <div>{$msg}</div>
+    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="save_module();" style="width:80px">保存</a>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#tt').edatagrid({
+            toolbar:'#tt_titil',
+            data: {$tabJson},
+            saveUrl: '',
+            updateUrl: '',
+            destroyUrl: ''
+        });
+    });
+
+    function save_module(){
+        $('#tt').edatagrid('saveRow');
+        var rows=$('#tt').datagrid('getData');
+        //console.log(rows);
+
+        var data={};
+        data.signNote=$("input[name='signNote']").val();
+        data.signpass=$("input[name='signpass']").is(':checked');
+        $.extend(data,chnRec);  //将后面的对象合并到第一个对象中
+        console.log(data);
+        data.rows=rows;   //POST变量中带有ROWS属性作为保存操作的标志
+        DivLoadHtmlPost("__SELF__","modifySetting",data);
+    }
+</script>

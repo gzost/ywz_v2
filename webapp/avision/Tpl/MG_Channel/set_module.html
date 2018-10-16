@@ -41,8 +41,8 @@ chnRec
         //console.log(rows);
 
         var data={};
-        $.extend(data,chnRec);
-        console.log(chnRec);
+        $.extend(data,chnRec);  //将后面的对象合并到第一个对象中
+        console.log(data);
         data.rows=rows;   //POST变量中带有ROWS属性作为保存操作的标志
         DivLoadHtmlPost("__SELF__","modifySetting",data);
     }

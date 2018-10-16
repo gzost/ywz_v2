@@ -533,7 +533,8 @@ logfile('WhatViewer:'.$st);
 			case 0:
 					if(empty($chnAttr['noRightFun']))
 					{
-						$this->redirect('Channel/SignUp', array('chnId' => $chnInfo['id']));
+						//$this->redirect('Channel/SignUp', array('chnId' => $chnInfo['id']));
+						$this->redirect('chnRegiste', array('chnId' => $chnInfo['id']));
 					}
 					else
 					{
@@ -1834,5 +1835,17 @@ var_dump($location);
 		$this->display();
 	}
 
+    /**
+	 * 注册频道
+     * @param int $chnId
+     */
+	public function chnRegiste($chnId=0){
+		$uid=$this->userId();
+		$webVar=array('chnId'=>$chnId, 'uid'=>$uid);
+		$webVar['r']=(isset($_REQUEST['r']))?$_REQUEST['r']:'';
+		$webVar['backUrl']=urlencode(U('HDPlayer/play',array('chnId'=>$chnId,'r'=>$webVar['r'])));
+		$this->assign($webVar);
+		$this->display('chnRegiste');
+	}
  }
 ?>

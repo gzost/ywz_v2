@@ -128,4 +128,39 @@ class MG_ChannelAction extends AdminBaseAction
 //dump($webVar['tabJson']);
         return;
     }
+
+    public function set_registe(&$webVar){
+        //读频道信息
+        $chnid=$webVar['chnId'];
+        $dbchn=D('channel');
+        $chnAttr=$dbchn->getAttrArray($chnid);
+        if(isset($_POST['rows'])){
+            $quest=$answer=array();
+            foreach ($rows=$_POST['rows']['rows'] as $row){
+                $quest[]=$row['quest'];
+                $answer[]=$row['answer'];
+            }
+            $chnAttr['signQuest']=$quest;
+            $chnAttr['signQuestAns']=$answer;
+            $chnAttr['signNote']=(strlen($_POST['signNote'])>2)?$_POST['signNote']:'请回答以下问题';
+            $chnAttr['signpass']=('true'==$_POST['signpass'])?'true':'false';
+            $data=array('attr' => json_encode2($chnAttr));
+//dump($data['attr'] );
+            $ret = $dbchn->where(array('id'=>$chnid))->save($data);
+        }
+//var_dump(true==$_POST['signpass']);
+//dump($chnAttr);
+        $webVar['signpass']=$chnAttr['signpass'];
+        $webVar['signNote']=$chnAttr['signNote'];
+
+        $qna=array();
+        foreach ($chnAttr['signQuest'] as $k=>$v){
+            if(isset($chnAttr['signQuestAns']) && null!=$chnAttr['signQuestAns'][$k]) $ans=$chnAttr['signQuestAns'][$k];
+            else $ans='';
+            $qna[]=array('quest'=>$v, 'answer'=>$ans);
+        }
+        $webVar['tabJson']=json_encode2($qna);
+//dump($webVar);
+        return;
+    }
 }

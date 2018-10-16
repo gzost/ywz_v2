@@ -1,0 +1,40 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<title>{$title}</title>
+<meta name="keywords" content="易网真,易网真直播间,avision视频直播系统" />
+<link href="__PUBLIC__/jeasyui/themes/default/easyui.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/icon.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/color.css" rel="stylesheet" type="text/css">
+<load href="__ROOT__/player/{$theme|default='default'}/css/base.css" />
+
+
+<load href="__PUBLIC__/jeasyui/jquery.min.js"/>
+<load href="__PUBLIC__/jeasyui/jquery.easyui.min.js"/>
+<load href="__PUBLIC__/js/jquery.json.min.js"/>
+<load href="__PUBLIC__/js/publicFunction.js"/>
+
+
+<style type="text/css">
+
+</style>
+
+<script type="text/javascript">
+
+$(document).ready(function(){
+	//设置当前URL 2018-09-10 outao
+    var nowURL="{$myurl}";
+    console.log("myurl:"+nowURL);
+    DivLoadHtml('__APP__/My/chnRegiste/chnid/{$chnId}/mode/href?backUrl={$backUrl}', 'regContine');
+});
+
+</script>
+</head>
+<body style="background-color: #EEE">
+<div id="regContine">
+	contine
+</div>
+</body></html>

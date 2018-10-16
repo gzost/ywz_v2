@@ -11,6 +11,17 @@
         var para=$('#'+form).serialize();
         DivReplaceHtml('__ACTION__',continer,para);
     }
+
+    function chnRegBack() {
+        var url='{$backUrl}';
+        var cont='{$continerid}';
+        var mode='{$mode}';
+        if('ajax'==mode){
+            DivReplaceHtml(url,cont);
+        }else{
+            window.location.href=url;
+        }
+    }
 </script>
 
 
@@ -70,5 +81,6 @@
     </div>
     <div style="margin:5px 5px 5px 2em; font-size: 1.1em; color: #00f">{$msg}</div>
     <div class="OUI-btn OUI-font14" style="margin-left:2em; " onclick="postform('ff','{$continerid}')">保存</div>
-    <div class="OUI-btn OUI-font14" style="margin-left:2em; " onclick="DivReplaceHtml('{$backUrl}','{$continerid}')">返回</div>
+    <!-- div class="OUI-btn OUI-font14" style="margin-left:2em; " onclick="DivReplaceHtml('{$backUrl}','{$continerid}')">返回</div -->
+    <div class="OUI-btn OUI-font14" style="margin-left:2em; " onclick="chnRegBack();">返回</div>
 </div>

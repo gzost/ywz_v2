@@ -16,5 +16,16 @@ class GoodsModel extends Model {
 		$result=$this->select($select);
 		return $result;
 	}
+
+    /**
+     * 根据子路径取完整路径
+     * @param $url 数据库记录的图片URL子路径
+     */
+    public function getFullImgUrl($url){
+
+        $baseUrl=C('goodsImgBaseUrl')?C('goodsImgBaseUrl'):'/goodsimg';
+        return $baseUrl.$url;
+    }
+
 }
 ?>

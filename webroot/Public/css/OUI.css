@@ -28,6 +28,14 @@
 	color:#FFF;
 	background-color:#004040;
 }
+.OUI-btn a:link {
+	color:#fff;
+	text-decoration: none;
+}
+.OUI-btn a:visited {
+	color:#fff;
+	text-decoration: none;
+}
 .OUI-btn:hover{
 	color:yellow;
 	background-color:#304040;
@@ -37,7 +45,11 @@
 	font-size:16px;
 	border-radius:5px;
 }
-
+.OUI-font14{
+	font-size:12px;
+	line-height: 14px;
+	border-radius:5px;
+}
 .OUI-color1{
 	color:#fff;
 	background-color:#333;

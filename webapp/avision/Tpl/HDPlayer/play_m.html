@@ -140,9 +140,9 @@
 	height:1em;
 }
 
-.divMore{
+#divMore{
 	text-align:center;
-	background-color:#fff;
+	background-color:#aaa;
 }
 
 .tbBorder{
@@ -573,6 +573,10 @@ function showMsgAni(msg)
 	}
 }
 
+//append by outao 2018-10-13
+	function loadSubscriberInfo() {
+        DivLoadHtml('__APP__/My/showMyInfo/chnid/{$chnId}', 'divMore');
+    }
 </script>
 </head>
 <body class="flex-body" style="background-color:#000;font-size:24px;margin:0;padding:0;">
@@ -599,6 +603,8 @@ function showMsgAni(msg)
 		<neq name="noShare" value="yes">
 		<div class="statcell" id="tbShare"><img src="/player/{$theme|default='default'}/images/zhuanfa.png" src-sel="/player/{$theme|default='default'}/images/zhuanfa_s.png" src-org="/player/{$theme|default='default'}/images/zhuanfa.png"/>分享</div>
 		</neq>
+		<!-- 增加个人信息显示-->
+		<div style="float: right; font-size:0.8em; margin-right: 0.5em;" onclick="loadSubscriberInfo();"><img src="/player/{$theme|default='default'}/images/my.png" height="14" style="vertical-align:middle" >我</div>
 	</div>
 
 	<div class="contRow" style="height:1em;background-color:#333333;display:flex;justify-content:space-around;clear:both;">

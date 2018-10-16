@@ -796,7 +796,8 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 	}
 
 	/**
-	 * 手机页面提交
+	 * 手机页面提交注册播主
+     * TODO: 后续的充值，开设频道
 	 */
 	public function toBroadcastPostH()
 	{

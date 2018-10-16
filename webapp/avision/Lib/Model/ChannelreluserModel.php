@@ -130,5 +130,96 @@ class ChannelreluserModel extends Model {
 
 	}
 
+    /**
+     * User: outao
+     * Date: 2018/10/14
+     * 取指定频道及用户的关系，每种关系最多返回enddate最大的1条记录，并保证有一条记录，没有对应关系enddate=null
+     * @param $chnid
+     * @param $uid
+     * @return array
+     */
+	public function getAllStatus($chnid,$uid){
+	    $cond=array('chnid'=>$chnid, 'uid'=>$uid);
+	    $records=$this->where($cond)->field("type, note, status, max(enddate) as enddate")->group("type")->select();
+	    //echo $this->getLastSql();
+	    $ret=array();
+        $ret['订购']=$ret['会员']=$ret['关注']=array('enddate'=>null);
+	    foreach ($records as $row){
+	        $ret[$row['type']]=$row;
+        }
+	    return $ret;
+    }
+
+    /**
+     * 指定关注频道
+     * @param $chnid
+     * @param $uid
+     * @return mixed 失败返回false,成果返回正整数。
+     */
+    public function concern($chnid,$uid){
+	    $cond=array('chnid'=>$chnid,'uid'=>$uid,'type'=>'关注');
+        $rec=array('benindate'=>date('Y-m-d'),'enddate'=>'6999-12-31','status'=>'正常');
+
+	    $rt=$this->where($cond)->field('enddate')->find();   //测试是否已经关注
+        if(null==$rt){
+            //未关注
+            $rec=array_merge($cond,$rec);
+            $rt=$this->add($rec);
+        }else{
+            //已关注
+            $rt=$this->where($cond)->save($rec);
+        }
+ //echo $this->getLastSql();
+        return $rt;
+    }
+
+    /**
+     * 取消关注
+     * @param $chnid
+     * @param $uid
+     * @return mixed 失败返回false,成果返回正整数。
+     */
+    public function deconcern($chnid,$uid){
+        $cond=array('chnid'=>$chnid,'uid'=>$uid,'type'=>'关注');
+        $rt=$this->where($cond)->delete();
+        return $rt;
+    }
+
+    /**
+     * 取用户注册会员的问答信息
+     * @param $chnid
+     * @param $uid
+     * @return array
+     */
+    public function getAnswer($chnid,$uid){
+        $cond=array('chnid'=>$chnid, 'uid'=>$uid, 'type'=>'会员');
+        $note=$this->where($cond)->getField('note');
+        $rt=(is_string($note))?json_decode($note,true):array();
+        return $rt;
+    }
+
+    /**
+     * 频道会员注册及更新注册资料
+     * @param int $chnid
+     * @param int $uid
+     * @param array $qna    注册的问答内容
+     * @return mixed 失败返回false, 其它成功
+     */
+    public function saveAnswer($chnid,$uid,$qna,$status='正常',$enddate='6999-12-31'){
+        $cond=array('chnid'=>$chnid, 'uid'=>$uid, 'type'=>'会员');
+        $qna=array_values($qna);
+        //测试是否已经注册
+        $id=$this->where($cond)->getField(id);
+        $record=array('note'=>json_encode2($qna),'enddate'=>$enddate,'status'=>$status);
+        if(0<$id){
+            //已经注册
+            $rt=$this->where('id='.$id)->save($record);
+        }else{
+            //未注册
+            $record=array_merge($cond,$record);
+            $rt=$this->add($record);
+        }
+        return $rt;
+    }
 }
 ?>

@@ -19,6 +19,7 @@ function HeartBeat()
 	//维持心跳
 	this.keepAlive = function ()
 		{
+			var self = this;
 			console.log('keepAlive1,blood=' + this.aliveBlood);
 			/*
 			if(!this.enableKeepAlive)
@@ -54,7 +55,7 @@ function HeartBeat()
 						return;
 					}
 					//正常情况
-					this.aliveBlood=3;	//计数恢复原始值
+					self.aliveBlood=3;	//计数恢复原始值
 					//alert('success');
 				},
 				complete:function(){	//无论是否成功都会调用
@@ -63,8 +64,8 @@ function HeartBeat()
 					//alert('complete');
 				},
 				error:function(){
-					if(this.aliveBlood<1) forceLogout('网络或服务中断！');
-					console.log('Net broken blood=' + this.aliveBlood)	;
+					if(self.aliveBlood<1) self.forceLogout('网络或服务中断！');
+					console.log('Net broken blood=' + self.aliveBlood)	;
 					//alert('error');
 				}
 			});

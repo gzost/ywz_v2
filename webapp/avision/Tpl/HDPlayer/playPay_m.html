@@ -469,7 +469,11 @@ function graidShareHide()
 }
 
 $(document).ready(function(){
-	
+    //设置当前URL 2018-09-22 outao
+    var nowURL="{$myurl}";
+    console.log("myurl:"+nowURL);
+    history.replaceState(null,null,nowURL);
+
 	heart.keepAlive();
 
 	//设定divShow的高度

@@ -1,6 +1,6 @@
 <?php
 //var_dump($_SERVER);
-printr($_SERVER);
+echo date("Y-m-d H:i:s",1537451065);
 
 die("===");
 $html = file_get_contents('http://demo.av365.cn:8011/stat');

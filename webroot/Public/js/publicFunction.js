@@ -65,16 +65,58 @@ function copyToClipBoard(id, msgId)
 	}
 }
 
-function DivLoadHtml(urlstr, divId)
+function DivLoadHtml(urlstr, divId, formdata)
 {
+	if(null == formdata)
+	{
+		formdata = {};
+	}
 	$.ajax({
 	  url: urlstr,
-	  data: {},
+	  data: formdata,
 	  success: function(data){
 		$('#'+divId).html(data);
+		//alert('tobe parese');
+		$.parser.parse('#'+divId);
 	  },
 	  dataType: 'html'
 	});
+}
+function DivReplaceHtml(urlstr, divId, formdata)
+{
+    if(null == formdata)
+    {
+        formdata = {};
+    }
+    $.ajax({
+        url: urlstr,
+        data: formdata,
+        type:"POST",
+        success: function(data){
+            $('#'+divId).replaceWith(data);
+            //alert('tobe parese');
+            $.parser.parse('#'+divId);
+        },
+        dataType: 'html'
+    });
+}
+function DivLoadHtmlPost(urlstr, divId, formdata)
+{
+    if(null == formdata)
+    {
+        formdata = {};
+    }
+    $.ajax({
+        url: urlstr,
+        data: formdata,
+        type:"POST",
+        success: function(data){
+            $('#'+divId).html(data);
+            //alert('tobe parese');
+            $.parser.parse('#'+divId);
+        },
+        dataType: 'html'
+    });
 }
 
 function DivLoadText(urlstr, divId, node)
@@ -88,3 +130,16 @@ function DivLoadText(urlstr, divId, node)
 	  dataType: 'json'
 	});
 }
+
+function htmlencode(s){  
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(s));
+    return div.innerHTML;
+}
+
+function htmldecode(s){  
+    var div = document.createElement('div');
+    div.innerHTML = s;
+    return div.innerText || div.textContent;
+}
+

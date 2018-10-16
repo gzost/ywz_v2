@@ -699,7 +699,7 @@ class ChannelAction extends AdminBaseAction
 			$attr['signpass'] = $post['signpass'];
 			
 
-			$save['attr'] = json_encode($attr);
+			$save['attr'] = json_encode2($attr);
 			$ret = $chnDal->where(array('id'=>$chnId))->save($save);
 
 			//echo $chnDal->getLastSQL();

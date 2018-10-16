@@ -33,8 +33,8 @@ class HDPlayerAction extends SafeAction {
 //	logfile("log lever is:".C('LOGFILE_LEVEL'));
 //}
 	function __construct(){
-		parent::__construct(2); 
-		
+		parent::__construct(2);
+        set_time_limit(0);
 		//$mysession=getPara('mysession');	//如果提供了session ID启用 
 		//if(null != $mysession) session_id($mysession);
 		//session_start();

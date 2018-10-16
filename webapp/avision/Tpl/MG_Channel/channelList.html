@@ -1,0 +1,6 @@
+
+	<ul class="m-list" style="margin:0 20px;">
+		<foreach name="chnList" item="chn">
+			<li><a href="javascript:void(0)" row="{ chnId:'{$chn.id}', chnName:'{$chn.name}', owner:'{$chn.owner}' }" class="chnSettingLink">{$chn.name}</a></li>
+		</foreach>
+	</ul>

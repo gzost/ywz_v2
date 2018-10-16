@@ -395,46 +395,6 @@ function DelDir($dirPath)
     }
 }
 
-/**
- * 
- * 将msg写入log文件中
- * @param string $msg
- * @param int	$level	记录等级。系统有当前记录等级的配置，只有$level不大于系统设置的等级才会记录
- */
-class LogLevel{
-	// 日志级别 从上到下，由低到高
-    const EMERG   = 1;  // 严重错误: 导致系统崩溃无法使用
-    const ALERT    = 2;  // 警戒性错误: 必须被立即修改的错误
-    const CRIT      = 3;  // 临界值错误: 超过临界值的错误，例如一天24小时，而输入的是25小时这样
-    const ERR       = 4;  // 一般错误: 一般性错误
-    const WARN    = 5;  // 警告性错误: 需要发出警告的错误
-    const NOTICE  = 6;  // 通知: 程序可以运行但是还不够完美的错误
-    const INFO     = 7;  // 信息: 程序输出信息
-    const DEBUG   = 8;  // 调试: 调试信息
-    const SQL       = 9;  // SQL：SQL语句 注意只在调试模式开启时有效
-}
-function logfile($msg='', $level=5){
-	$logfile=C('APP_LOG_PATH')?C('APP_LOG_PATH').'/':'/';
-	$logfile .=C('LOG_FILE')?C('LOG_FILE'):"PHP.log";
-	$logfile=str_ireplace('%y%', date('Y'), $logfile);
-	$logfile=str_ireplace('%m%', date('m'), $logfile);
-	$logfile=str_ireplace('%d%', date('d'), $logfile);
-//echo 	$logfile;
-	$cfgLevel=C('LOGFILE_LEVEL')?C('LOGFILE_LEVEL'):5;
-	if($cfgLevel<$level) return;
-	
-	$str=date('m-d H:i:s').' ';
-	if(true || $_SESSION['logfile']['module']!=MODULE_NAME ){
-		$str .=MODULE_NAME .':'.ACTION_NAME.' ';
-	} elseif($_SESSION['logfile']['action'] !=ACTION_NAME){
-		$str .="\t".ACTION_NAME.' ';
-	} else $str .="\t\t";
-	$str .="\t".$msg."\n";
-	//echo $str;
-	error_log($str,3,$logfile);
-	$_SESSION['logfile']['module']=MODULE_NAME;
-	$_SESSION['logfile']['action']=ACTION_NAME;
-}
 
 
 ?>

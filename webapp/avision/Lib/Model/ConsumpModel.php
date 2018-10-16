@@ -159,7 +159,7 @@ class ConsumpModel extends Model {
 			 ifnull((select max(id) from $tableName where userid=".$record['userid']."),0)";
 		$result=$this->execute($sql);
 
-//echo $sql; 		
+//echo $sql;
 		if(false===$result) throw new Exception('Insert consump failure:'.$this->getLastSql());
 
 		return $result;

@@ -94,7 +94,7 @@ class SubscriberAction extends AdminBaseAction{
 		$result["rows"]=$data;
 		$result["total"]=$rows;
 		if(null==$result)	echo '[]';
-		else echo json_encode($result);
+		else echo json_encode2($result);
 	}
 	public function authorizeUpdateAjax(){
 		$recTPL=array('chnid'=>0,'uid'=>0,'status'=>'','note2'=>'','classify'=>'');

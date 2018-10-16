@@ -1,0 +1,49 @@
+<!--
+频道模块选择，功能选择。
+这段HTML代码将通过Ajax动态嵌入到setting页面中
+这段代码使用了在setting.html中定义的JS全局变量：
+chnRec
+-->
+<div style="text-align: center; margin: 0 0px;">
+<table id="tt" style="width:100%;"
+       title="标签模块配置"
+       singleSelect="true">
+    <thead>
+    <tr>
+        <th field="name" width="30%" >模块名</th>
+        <th field="text" width="30%" editor="text">显示文本</th>
+        <th field="use" width="10%" align="center" editor="{type:'checkbox',options:{on:'Y',off:'N'}}" >选用</th>
+        <th field="order" width="20%" align="center" editor="{type:'numberbox',options:{precision:0}}">顺序</th>
+        <th field="default" width="10%" editor="{type:'checkbox',options:{on:'Y',off:'N'}}">默认</th>
+    </tr>
+    </thead>
+</table>
+</div>
+
+<div style="text-align:center;padding:10px 0">
+    <div>{$msg}</div>
+    <a href="javascript:void(0)" class="easyui-linkbutton" onclick="save_module();" style="width:80px">保存</a>
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#tt').edatagrid({
+            data: {$tabJson},
+            saveUrl: '',
+            updateUrl: '',
+            destroyUrl: ''
+        });
+    });
+
+    function save_module(){
+        $('#tt').edatagrid('saveRow');
+        var rows=$('#tt').datagrid('getData');
+        //console.log(rows);
+
+        var data={};
+        $.extend(data,chnRec);
+        console.log(chnRec);
+        data.rows=rows;   //POST变量中带有ROWS属性作为保存操作的标志
+        DivLoadHtmlPost("__SELF__","modifySetting",data);
+    }
+</script>

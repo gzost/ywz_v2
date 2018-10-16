@@ -1,3 +1,8 @@
+/*
+ * 异步上传文件
+ * Note:需要引用jquery.form.js
+ */
+
 $.fn.uploadprogress = function() {
 
 	$(this).change(function(){

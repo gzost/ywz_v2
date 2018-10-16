@@ -174,7 +174,8 @@ class SIAction  extends Action {
 		logfile("Stream=".$stream." size=".$size,LogLevel::DEBUG);
 		$dbActivestream=D('activestream');
 		$cond=array('name'=>$stream,'isactive'=>'true');
-		$rt=$dbActivestream->where($cond)->setField('size',$size);
+		$record=array('size'=>$size,'activetime'=>time());
+		$rt=$dbActivestream->where($cond)->save($record);
 		logfile($dbActivestream->getLastSql(),LogLevel::SQL);
 		Oajax::successReturn();
 	}

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width">
+	<meta name="renderer" content="webkit">
+	<meta http-equiv="pragma" content="no-cache">
+	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+<load href="__PUBLIC__/jeasyui/themes/material-teal/easyui.css" />
+<load href="__PUBLIC__/jeasyui/themes/icon.css" />
+
+
+<load href="__PUBLIC__/jeasyui/jquery.min.js" />
+<load href="__PUBLIC__/jeasyui/jquery.easyui.min.js" />
+	<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/jeasyui/themes/mobile.css">
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.easyui.mobile.js"></script>
+<load href="__PUBLIC__/js/publicFunction.js"/>
+
+<script type="text/javascript">
+	var chnRec=null;	//当前频道属性对象：{ chnId:'{$chn.id}', chnName:'{$chn.name}', owner:'{$chn.owner}'
+	$(document).ready(function(){
+	    //绑定频道列表点击处理
+		$("#p1").on('click',".chnSettingLink",function(event){
+			//console.log('click');
+			//console.log(event.target);
+			var target=$(event.target);
+			var row=target.attr('row');
+			//console.log(row);
+			//var j=JSON.parse("{'name':'jjj','id':88}");	//这种方式属性必须用双引号
+            //var j=eval('('+"{'name':'jjj',id:88}"+')');
+            chnRec=eval('('+row+')');	//这种方式把字串转换成json对象的兼容性好很多，属性可以无引号，单引号，双引号都可以
+			console.log(chnRec);
+            //DivLoadHtmlPost("__URL__/settingList","settingList",chnRec);
+            $('#settingList-title').html('['+chnRec.chnId+'] '+chnRec.chnName);
+            $.mobile.go('#settingList');
+		});
+
+		$("#settingList").on('click',".chnSettingLink",function(event){
+            var target=$(event.target);
+            var func=target.attr('func');
+            chnRec.func=func;
+            //console.log(chnRec);
+            var text=target.text();
+
+            DivLoadHtmlPost("__URL__/modifySetting","modifySetting",chnRec);
+            $('#modifySetting-title').html(text);
+            $.mobile.go('#modifySetting');
+		});
+	});
+
+	function channelList(form){
+		//alert(form);
+		var data=$("#"+form).serialize();
+		//console.log(data);
+        DivLoadHtmlPost("__URL__/channelList","p1",data);
+
+        //$("#p1").panel('open').panel('refresh','__URL__/channelList');
+        $.mobile.go('#p1');
+	}
+</script>
+
+<style type="text/css"> 
+</style>
+</head>
+<body>
+
+<equal name="showCond" value="true" >
+	<div class="easyui-navpanel" >
+		<header>
+			<div class="m-toolbar">
+				<span class="m-title">频道综合管理-查找频道</span>
+			</div>
+		</header>
+		<div style="margin:50px auto; width:80%; text-align:center">
+			<form id="ff" method="post">
+				<div style="margin-bottom:20px;white-space: nowrap;">
+					<input class="easyui-textbox" name="chnId" value="{$chnId}" style="width:100%" data-options="label:'频道ID:' ">
+				</div>
+				<div style="margin-bottom:20px;white-space: nowrap;">
+					<input class="easyui-textbox" name="chnName" value="{$chnName}" style="width:100%" data-options="label:'频道名称:' ">
+				</div>
+				<div style="margin-bottom:20px;white-space: nowrap;">
+					<input class="easyui-textbox" name="account" value="{$account}" style="width:100%" data-options="label:'播主账号:'">
+				</div>
+				<input type="hidden" name="work" value="search">
+			</form>
+			<div style="text-align:center;padding:5px 0">
+				<a href="javascript:void(0)" class="easyui-linkbutton" onclick="channelList('ff');" style="width:80px">查找</a>
+			</div>
+		</div>
+	</div>
+</equal>
+<div id="p1" class="easyui-navpanel">
+	<header>
+		<div class="m-toolbar">
+			<div class="m-left">
+				<equal name="showCond" value="true" >
+					<a href="javascript:void(0)" class="easyui-linkbutton m-back" plain="true" outline="true" onclick="$.mobile.back()">返回</a>
+				</equal>
+			</div>
+			<span class="m-title">频道综合管理-频道列表</span>
+		</div>
+	</header>
+	{$channelListHtml}
+</div>
+<div id="settingList" class="easyui-navpanel" >
+	<header>
+		<div class="m-toolbar">
+			<span id="settingList-title" class="m-title">__</span>
+			<div class="m-left">
+				<a href="javascript:void(0)" class="easyui-linkbutton m-back" plain="true" outline="true" onclick="$.mobile.back()">返回</a>
+			</div>
+		</div>
+	</header>
+	<ul class="m-list" style="margin:0 20px;">
+		<li><a href="javascript:void(0)"  func="set_module" class="chnSettingLink">功能模块设置</a></li>
+		<li><a href="javascript:void(0)"  func="set_module" class="chnSettingLink">界面装修(TODO)</a></li>
+		<li><a href="javascript:void(0)"  func="set_module" class="chnSettingLink">可用礼物选择(TODO)</a></li>
+		<li><a href="javascript:void(0)"  func="set_module" class="chnSettingLink">观众注册信息设置(TODO)</a></li>
+
+	</ul>
+</div>
+
+<div id="modifySetting" class="easyui-navpanel" >
+	<header>
+		<div class="m-toolbar">
+			<span id="modifySetting-title" class="m-title">__</span>
+			<div class="m-left">
+				<a href="javascript:void(0)" class="easyui-linkbutton m-back" plain="true" outline="true" onclick="$.mobile.back()">返回</a>
+			</div>
+		</div>
+	</header>
+	修改设置页面
+</div>
+
+
+</body>
+</html>

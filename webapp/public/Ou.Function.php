@@ -262,7 +262,7 @@ function updateExtAttr($model,$cond,$attrArr,$attrName=null,$field='attr'){
 		$fullAttr=getExtAttr($model,$cond,null,$field);
 		$fullAttr[$attrName]=$attrArr;
 	}
-	$attrStr=json_encode($fullAttr);
+	$attrStr=json_encode2($fullAttr);
 	$result=$model->where($cond)->save(array($field=>$attrStr));
 	//echo $this->getLastSql();
 	return $result;
@@ -299,6 +299,13 @@ function result2string($reslut,$field,$separator=','){
 	return $str;
 }
 
+//对于支持的版本不转义斜杠及中文
+function json_encode2($attr){
+    if(version_compare(PHP_VERSION,'5.4.0')>=0)
+        return json_encode($attr,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
+    else
+        return json_encode($attr);
+}
 /**
  * 
  * ajax调用基本功能支持
@@ -313,9 +320,10 @@ class Oajax{
 	 * @param array $retAttr	要返回的属性数组
 	 */
 	public static function successReturn($retAttr=array()){
+        self::sendHeader();
 		if(!isset($retAttr['success'])) $retAttr=array_merge(array('success'=>'true'),$retAttr );//为了success是第一个属性
-		echo json_encode($retAttr);
-		logfile("Ajaxsuccess:".json_encode($retAttr),LogLevel::INFO);
+		echo json_encode2($retAttr);
+		logfile("Ajaxsuccess:".json_encode2($retAttr),LogLevel::DEBUG);
 		exit;
 	}
 	
@@ -326,11 +334,13 @@ class Oajax{
 	 * 若提供msg，则返回Json对象附加msg属性："msg":msg
 	 * @param string $msg
 	 */
-	public static function errorReturn($msg=''){
-		$retArray=array('success'=>'false');
-		if('' != $msg) $retArray['msg']=$msg;
-		echo json_encode($retArray);
-		logfile("Ajaxerror:".json_encode($retArray),LogLevel::ERR);	
+	public static function errorReturn($msg='',$retAttr=array()){
+        self::sendHeader();
+        if(!isset($retAttr['success'])) $retAttr=array_merge(array('success'=>'false'),$retAttr );//为了success是第一个属性
+//var_dump($retAttr);
+		if('' != $msg) $retAttr['msg']=$msg;
+		echo json_encode2($retAttr);   //,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE
+		logfile("Ajaxerror:".json_encode2($retAttr),LogLevel::ERR);
 		exit;
 	}
 	
@@ -344,6 +354,7 @@ class Oajax{
 	 * @return	若属性数组包括全部属性返回true。否则：当$option==true 直接输出错误信息退出程序，否则返回false。
 	 */
 	public function needAttr($attr,$need,$option=true){
+
 		$needArr=explode(',', $need);
 
 		if(false==$needArr) return true;
@@ -354,6 +365,34 @@ class Oajax{
 			}
 		}
 	}	//class Oajax
+
+    /**
+     * 把data编码成json对象输出
+     * @param $data array 输出数组
+     */
+    public function ajaxReturn($data){
+        //允许跨域
+        self::sendHeader();
+
+        if(!is_array($data)) {
+            $ret= '[]';
+        } else {
+            $ret= json_encode2($data);  //,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE
+        }
+        echo $ret;
+        logfile($ret,LogLevel::DEBUG);
+        exit;
+    }
+
+    /**
+     * 发送HTTP header以备跨域等支持使用
+     */
+    public function sendHeader(){
+        //允许跨域
+        header("Access-Control-Allow-Origin:*");
+        header("Access-Control-Allow-Methods:*");
+        header("Access-Control-Allow-Headers:*");
+    }
 }
 
 /**
@@ -418,5 +457,65 @@ function OUdetailform($data,$cols=1){
 	}
 	$html .= '</table>';
 	return $html;
+}
+
+
+/**
+ *
+ * 将msg写入log文件中
+ * @param string $msg
+ * @param int	$level	记录等级。系统有当前记录等级的配置，只有$level不大于系统设置的等级才会记录
+ */
+class LogLevel{
+    // 日志级别 从上到下，由低到高
+    const EMERG   = 1;  // 严重错误: 导致系统崩溃无法使用
+    const ALERT    = 2;  // 警戒性错误: 必须被立即修改的错误
+    const CRIT      = 3;  // 临界值错误: 超过临界值的错误，例如一天24小时，而输入的是25小时这样
+    const ERR       = 4;  // 一般错误: 一般性错误
+    const WARN    = 5;  // 警告性错误: 需要发出警告的错误
+    const NOTICE  = 6;  // 通知: 程序可以运行但是还不够完美的错误
+    const INFO     = 7;  // 信息: 程序输出信息
+    const DEBUG   = 8;  // 调试: 调试信息
+    const SQL       = 9;  // SQL：SQL语句 注意只在调试模式开启时有效
+}
+function logfile($msg='', $level=5){
+    $logfile=C('APP_LOG_PATH')?C('APP_LOG_PATH').'/':'/';
+    $logfile .=C('LOG_FILE')?C('LOG_FILE'):"PHP.log";
+    $logfile=str_ireplace('%y%', date('Y'), $logfile);
+    $logfile=str_ireplace('%m%', date('m'), $logfile);
+    $logfile=str_ireplace('%d%', date('d'), $logfile);
+//echo 	$logfile;
+    $cfgLevel=C('LOGFILE_LEVEL')?C('LOGFILE_LEVEL'):5;
+    if($cfgLevel<$level) return;
+
+    $str=date('m-d H:i:s').' ';
+    if(true || $_SESSION['logfile']['module']!=MODULE_NAME ){
+        $str .=MODULE_NAME .':'.ACTION_NAME.' ';
+    } elseif($_SESSION['logfile']['action'] !=ACTION_NAME){
+        $str .="\t".ACTION_NAME.' ';
+    } else $str .="\t\t";
+    $str .="\t".$msg."\n";
+    //echo $str;
+    error_log($str,3,$logfile);
+    $_SESSION['logfile']['module']=MODULE_NAME;
+    $_SESSION['logfile']['action']=ACTION_NAME;
+}
+
+
+class Osession{
+    static function setLoginSuccessUri($uri){   $_SESSION['LoginSuccessUri']=$uri;    }
+    static function getLoginSuccessUri(){   return $_SESSION['LoginSuccessUri'];    }
+
+    static function setLoginFalseUri($uri){   $_SESSION['LoginFalseUri']=$uri;    }
+    static function getLoginFalseUri(){   return $_SESSION['LoginFalseUri'];    }
+
+    static function setLastWorking($w){ $_SESSION['LastWorking']=$w; }
+    static function getLastWorking(){ return $_SESSION['LastWorking']; }
+
+    static function setPaySuccessUri($uri){   $_SESSION['PaySuccessUri']=$uri;    }
+    static function getPaySuccessUri(){   return $_SESSION['PaySuccessUri'];    }
+
+    static function setPayFalseUri($uri){   $_SESSION['PayFalseUri']=$uri;    }
+    static function getPayFalseUri(){   return $_SESSION['PayFalseUri'];    }
 }
 ?>

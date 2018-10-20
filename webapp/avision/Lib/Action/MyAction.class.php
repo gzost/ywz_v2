@@ -158,17 +158,17 @@ class MyAction extends SafeAction
             if('save'==$work){
                 //保存提交的数据
                 $quest=$_REQUEST['quest'];
-                $anwser=$_REQUEST['anwser'];
+                $answer=$_REQUEST['answer'];
                 $qna=array();
                 foreach ($quest as $k=>$v){
-                    $qna[$v]=array('quest'=>$v, 'anwser'=>$anwser[$k]);
+                    $qna[$v]=array('quest'=>$v, 'answer'=>$answer[$k]);
                 }
 //dump($qna);
                 $status='正常';
                 if('true'==$chnAttr['signpass']){
                     //自动审核
                     foreach ($chnAttr['signQuest'] as $k=>$v){
-                        if(0<strlen($chnAttr['signQuestAns'][$k]) && 0<>strcmp($chnAttr['signQuestAns'][$k],$qna[$v]['anwser']) ){
+                        if(0<strlen($chnAttr['signQuestAns'][$k]) && 0<>strcmp($chnAttr['signQuestAns'][$k],$qna[$v]['answer']) ){
                             $status='禁用';
                             $webVar['msg']='自动审核失败，请修改注册信息或等待人工审核。';
                             break;
@@ -189,7 +189,7 @@ class MyAction extends SafeAction
             $rt=$dbChnUser->getAnswer($chnid,$uid);  //问题及应答每行2个属性：quest,anwer
             $qna=array();
             foreach ($rt as $row){
-                $qna[$row['quest']]=$row['anwser'];
+                $qna[$row['quest']]=$row['answer'];
             }
             //补充没回答过的行
             foreach ($signQuest as $val){

@@ -351,7 +351,8 @@ class TestAction extends Action
 
 	public function T()
 	{
-		echo $_SERVER['HTTP_USER_AGENT'];
+		//echo $_SERVER['HTTP_USER_AGENT'];
+        $this->display();
 	}
 
 

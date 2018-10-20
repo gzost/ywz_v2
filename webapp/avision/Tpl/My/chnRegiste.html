@@ -68,7 +68,7 @@
         <form id='ff' method="post">
             <foreach name="qna" item="r" key="k">
 
-                <input class="easyui-textbox" name="anwser[]" value="{$r}" style="width:90%" data-options="label:'{$k}:' "><br>
+                <input class="easyui-textbox" name="answer[]" value="{$r}" style="width:90%" data-options="label:'{$k}:' "><br>
                 <input type="hidden" name="quest[]" value="{$k}">
             </foreach>
 

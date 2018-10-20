@@ -50,7 +50,8 @@ class VodAction extends AdminBaseAction {
 		else{
 			if(''!=$webVar['ownerAccount']) $cond['account']=$webVar['ownerAccount'];
 		}
-		if(''!=$webVar['name']) $cond['name']=array('LIKE',$webVar['name'].'%');
+		if(''!=$webVar['name']) $cond['name']=array('LIKE','%'.$webVar['name'].'%');
+		if(isset($webVar['channelname']) && ''!=$webVar['channelname']) $cond['channelname']=array('LIKE','%'.$webVar['channelname'].'%');
 		$rt=$this->betweenDate($webVar['beginTime'], $webVar['endTime']);
 		if(null!=$rt) $cond['createtime']=$rt;
 //dump($cond);

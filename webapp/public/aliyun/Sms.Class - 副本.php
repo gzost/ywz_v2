@@ -8,13 +8,11 @@
  * 
  * 
  */
-//namespace Aliyun\DySDKLite\Sms;
+
 require_once APP_PATH.'../public/aliyun/SignatureHelper.php';
 require_once APP_PATH.'../public/aliyun/Sms.Config.php';
 require_once APP_PATH.'../public/CommonFun.php';
-require_once APP_PATH.'../public/Ou.Function.php';
 require_once LIB_PATH.'Model/MessageModel.php';
-//use Aliyun\DySDKLite\SignatureHelper;
 
 class Sms
 {
@@ -65,8 +63,6 @@ class Sms
 		$params = array ();
 
 		// *** 需用户填写部分 ***
-        // fixme 必填：是否启用https
-        $security = false;
 
 		// fixme 必填: 请参阅 https://ak-console.aliyun.com/ 取得您的AK信息
 		$accessKeyId = ALI_AccKey;
@@ -85,20 +81,23 @@ class Sms
 		$params["TemplateParam"] = $var;
 
 		// fixme 可选: 设置发送短信流水号
-		$params['OutId'] = "12345";
+		//$params['OutId'] = "12345";
 
 		// fixme 可选: 上行短信扩展码, 扩展码字段控制在7位或以下，无特殊需求用户请忽略此字段
-		$params['SmsUpExtendCode'] = "1234567";
+		//$params['SmsUpExtendCode'] = "1234567";
 
 
 		// *** 需用户填写部分结束, 以下代码若无必要无需更改 ***
 		if(!empty($params["TemplateParam"]) && is_array($params["TemplateParam"])) {
-			$params["TemplateParam"] = json_encode($params["TemplateParam"], JSON_UNESCAPED_UNICODE);
+			$params["TemplateParam_json"] = json_encode($params["TemplateParam"], JSON_UNESCAPED_UNICODE);
 		}
+
+		if(null == $params["TemplateParam_json"])
+			$params["TemplateParam"] = json_encode($params["TemplateParam"]);
 
 		// 初始化SignatureHelper实例用于设置参数，签名以及发送请求
 		$helper = new SignatureHelper();
-//dump($params); die('ooo');
+
 		// 此处可能会抛出异常，注意catch
 		try
 		{
@@ -110,19 +109,20 @@ class Sms
 					"RegionId" => "cn-hangzhou",
 					"Action" => "SendSms",
 					"Version" => "2017-05-25",
-				)),$security
+				))
 			);
-logfile('SMS send ret:'.json_encode2($content),LogLevel::DEBUG);
-			if(0 == strcasecmp('OK',$content->Message)){
+
+			if('ok' == $content->Message)
+			{
 				return '';
-			} else return $content->Message;
+			}
 		}
-		catch(Exception $e){
-            logfile('SMS send Exception:'.$e->getMessage(),LogLevel::DEBUG);
+		catch(Exception $e)
+		{
 			return $e->getMessage();
 		}
 
-		//return $content;
+		return $content;
 	}
 
 	/*
@@ -220,7 +220,8 @@ logfile('SMS send ret:'.json_encode2($content),LogLevel::DEBUG);
 	 */
 	public function SendRegSms($phone, $code, $ip = '')
 	{
-		if('' == $ip)	{
+		if('' == $ip)
+		{
 			$ip = getip();
 		}
 		//echo $ip;
@@ -239,7 +240,8 @@ logfile('SMS send ret:'.json_encode2($content),LogLevel::DEBUG);
 			//echo '不能操作太频密';
 			return $this->RetJson('不能操作太频密,验证码'.($this->timeout/60).'分钟内有效！', 'false');
 		}
-		else	{
+		else
+		{
 			//24小时内限制发送次数判断
 			if($this->sendlimit > $this->GetExpMsgNumPerDay())
 			{
@@ -253,7 +255,7 @@ logfile('SMS send ret:'.json_encode2($content),LogLevel::DEBUG);
 				$parm['code'] = $code;
 				$parm['product'] = '易网真';
 				$msg = $this->sendSmsCom($phone, '易网真', 'SMS_37125132', $parm);
-				//$msg = null;
+				$msg = null;
 				if(empty($msg))
 				{
 					return $this->RetJson('发送成功');

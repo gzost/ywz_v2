@@ -27,6 +27,7 @@ class StatAction extends Action{
 		parent::__construct();
 		$str=sprintf("\n\r======= BEGIN stat %s =========",date("m-d H:i:s"));
 		C('LOG_FILE','stat%m%.log');
+		C('LOGFILE_LEVEL','9');
 		logfile($str,LogLevel::NOTICE);
 		echo $str."\n\r";
 		session_start();

@@ -29,11 +29,12 @@ class MG_ChannelAction extends AdminBaseAction
 
         if(false==$mgrAll){
             //只查看自己的频道
+            $this->channelListSetVar();
             $webVar['channelListHtml']=$this->fetch('channelList');
         } else {
             $webVar['channelListHtml']='';
         }
-
+//var_dump( $webVar['channelListHtml']);
         $this->assign($webVar);
         $this->display('setting');
     }
@@ -46,9 +47,16 @@ class MG_ChannelAction extends AdminBaseAction
      * @param int $owner
      */
     public function channelList($chnId=0,$chnName='',$account='',$owner=0){
+        $this->channelListSetVar($chnId,$chnName,$account,$owner);
+        $this->display('channelList');
+        return;
+     }
+    protected function channelListSetVar($chnId=0,$chnName='',$account='',$owner=0){
         $mgrAll=$this->isOpPermit('A');     //是否可管理所有频道
         $webVar=array();
         $cond=array();
+//var_dump($mgrAll);
+//echo '====='; die('dddd');
         if(false == $mgrAll){
             $cond['owner']=$this->userId();
             if(null==$cond['owner']) $cond['owner']=-1;
@@ -57,6 +65,7 @@ class MG_ChannelAction extends AdminBaseAction
             $userId=$dbUser->where(array('account'=>array('like','%'.$account.'%')))->field('id')->select();
 //echo $dbUser->getLastSql();
             if(null!=$userId) $cond['owner']=array('in',result2string($userId,'id'));
+            else $cond['owner']=-1; //找不到播主，赋值一个不可能条件
         }
         $chnId=intval($chnId);
         if(0<$chnId) $cond['id']=$chnId;
@@ -66,10 +75,9 @@ class MG_ChannelAction extends AdminBaseAction
         $chnList=$dbChannel->where($cond)->field('id,name,owner')->order('owner')->select();
         $webVar['chnList']=(null==$chnList)?array():$chnList;
 //dump($chnList);
+//echo $dbChannel->getLastSql();
         $this->assign($webVar);
-        $this->display();
     }
-
     /**
      * 修改相关频道的设置，保存时也调用此函数
      * @param int $chnId

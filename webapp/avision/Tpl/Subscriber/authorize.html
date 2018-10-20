@@ -133,6 +133,9 @@ function setUserStatus(status){
 		分组：<input class='easyui-combobox' name='classify' value='{$classify}'  style='width:100px'
 				data-options="valueField:'id',textField:'name', editable:false,
 					data: classifyData " />
+		类型：<input class='easyui-combobox' name='type' value='{$type}'  style='width:100px'
+				  data-options="valueField:'id',textField:'name', editable:false,
+					data: [{id:'0',name:'全部'},{id:'关注',name:'关注'},{id:'会员',name:'会员'},{id:'订购',name:'订购'}] " />
 		<input name='work' value='{$work}' style="display:none" />
 		<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
 	</form>

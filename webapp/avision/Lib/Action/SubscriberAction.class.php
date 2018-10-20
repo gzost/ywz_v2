@@ -29,8 +29,8 @@ class SubscriberAction extends AdminBaseAction{
  		$this->assign('mainTitle','观众管理');
  		$this->assign('userName',$this->userName());
  		//网页传递的变量模板
- 		$webVarTpl=array('work'=>'init','chnId'=>-1,'classify'=>0,'classifyListJson'=>'[]');
- 		$condTpl=array('chnId'=>0,'classify'=>0);
+ 		$webVarTpl=array('work'=>'init','chnId'=>-1,'classify'=>0,'type'=>'0','classifyListJson'=>'[]');
+ 		$condTpl=array('chnId'=>0,'classify'=>0,'type'=>'0');
  		 		
   		condition::clear(ACTION_NAME);
  		pagination::clear(ACTION_NAME);
@@ -43,9 +43,10 @@ class SubscriberAction extends AdminBaseAction{
  			//$userInfo['userId']=22;
  			$db=D('userrelrole');
  			$isAdmin=$db->isInRole($userInfo['userId'],C('adminGroup'));
+//var_dump($isAdmin);
  			$db=D(channel);
- 			$chnList=($isAdmin)?$db->getPulldownList(0,'private'):$db->getPulldownList($userInfo['userId'],'private');
-//echo $db->getLastSql(); 			
+ 			$chnList=($isAdmin)?$db->getPulldownList(0,''):$db->getPulldownList($userInfo['userId'],'');
+//echo $db->getLastSql();
  			if(count($chnList)<1){
  				//没有任何频道的管理权限
  				$this->assign('msg','您还没有开设[会员]类型的频道，您可以在 【频道管理】-【高级设置】中设定。');
@@ -82,9 +83,10 @@ class SubscriberAction extends AdminBaseAction{
 			//新的查询
 			$cond=condition::get('authorize');
 			$cond=arrayZip($cond,array(null,0,'不限','0','','全部'));
-//dump($cond);			
+//dump($cond);
 			$db=D('ChannelRelUserView');
 			$rec=$db->getList($cond);
+//echo $db->getLastSql();
 			pagination::setData('authorize', $rec);
 		}
 		$result=array();
@@ -143,5 +145,30 @@ class SubscriberAction extends AdminBaseAction{
 		echo $ret;
 //echo $db->getLastSql();		
 	}
+
+	public function an(){
+        $db=D('Channelreluser');
+        $cond=array('type'=>'会员');
+        $recs=$db->where($cond)->getField('id,note');
+        foreach ($recs as $id=>$note){
+            if(isset($note) && strlen($note)>10){
+                echo $id,'=>',$note,'<br>';
+                $ar=json_decode($note,true);
+                foreach ($ar as $k=>$v){
+                    //echo $k,'***<br>';
+                    if(isset($v['anwser'])){
+                        $ar[$k]['answer']=$v['anwser'];
+                        unset($ar[$k]['anwser']);
+                    }
+                }
+                $note=json_encode2(array_values($ar));
+                echo $note,'<br>';
+                $rt=$db->where('id='.$id)->save(array('note'=>$note));
+                echo '('.$rt.')'.$db->getLastSql().'<br>';
+            }
+        }
+        //echo $db->getLastSql();
+        //dump($an);
+    }
 }
 ?>

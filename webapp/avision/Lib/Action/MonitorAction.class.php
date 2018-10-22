@@ -8,6 +8,7 @@ require_once APP_PATH.'../public/Pagination.class.php';
 require_once APP_PATH.'../public/Authorize.Class.php';
 require_once(LIB_PATH.'Model/UserrelroleModel.php');
 require_once(LIB_PATH.'Model/ChannelModel.php');
+require_once(LIB_PATH.'Model/ChannelreluserModel.php');
 require_once(LIB_PATH.'Model/OnlineUserViewModel.php');
 require_once(LIB_PATH.'Model/ConsumpModel.php');
 require_once(LIB_PATH.'Model/OnlineModel.php');
@@ -228,8 +229,8 @@ class MonitorAction extends AdminBaseAction{
  		$this->baseAssign();
  		$this->assign('mainTitle','观众列表');
  		//网页传递的变量模板
- 		$webVarTpl=array('work'=>'init','chnId'=>-1,'beginTime'=>date('Y-m-d',strtotime('-1 day')),'endTime'=>date('Y-m-d'));
- 		$condTpl=array('chnId'=>0,'beginTime'=>$webVarTpl['beginTime'],'endTime'=>$webVarTpl['endTime']);
+ 		$webVarTpl=array('work'=>'init','chnId'=>-1,'objtype'=>0,'beginTime'=>date('Y-m-d',strtotime('-1 day')),'endTime'=>date('Y-m-d'));
+ 		$condTpl=array('chnId'=>0,'objtype'=>0,'beginTime'=>$webVarTpl['beginTime'],'endTime'=>$webVarTpl['endTime']);
 
   		condition::clear(ACTION_NAME);
  		pagination::clear(ACTION_NAME);
@@ -250,8 +251,8 @@ class MonitorAction extends AdminBaseAction{
  			$chnList=($isAdmin)?$db->getPulldownList():$db->getPulldownList($userInfo['userId']);
 //echo $db->getLastSql();
  			if($isAdmin) {
- 				$chnList=array_merge(array(array('id'=>0,'name'=>'全部')),$chnList);
- 				$webVar['chnId']=0;
+ 				//$chnList=array_merge(array(array('id'=>0,'name'=>'全部')),$chnList);    //2018-10-21 只能按频道查询
+ 				$webVar['chnId']=$chnList[0]['id'];
  			} else if(count($chnList)<1){
  				//没有任何频道的管理权限
  				$this->display('common:noRight');
@@ -264,6 +265,7 @@ class MonitorAction extends AdminBaseAction{
  			setPara('chnListJson', $chnListJson);
  			$condTpl['chnId']=$webVar['chnId'];
  			condition::save($condTpl,ACTION_NAME);	//更新并存储最新的查询条件
+            $webVar['header']=array();
  		} else {
  			$cond=condition::update($condTpl,ACTION_NAME);
  			logfile('work chnId='.$cond['chnId'],9);
@@ -296,35 +298,57 @@ class MonitorAction extends AdminBaseAction{
 				logfile('last chnId='.$chnId,9);
 				$cond['chnId']=$chnId;
 				condition::save($cond,ACTION_NAME);	//更新并存储最新的查询条件
+
+                //频道注册问题,生成datagrid动态扩展标题
+                $dbchannel=D('channel');
+                $chnAttr=$dbchannel->getAttrArray($cond['chnId']);
+                $quest=$chnAttr['signQuest'];
+                $header=array();
+                foreach ($quest as $v){
+                    $header[]=array('name'=>$v,'text'=>$v);
+                }
+                setPara('MonitorViewerListHeader',$header);
+                $webVar['header']=$header;
  			}	//if(isset())
  		}
  		
  		
 		$editable=($isAdmin)?'true':false;
  		$webVar['work']='search';
- 		$this->assignB($webVar);
+ 		$this->assign($webVar);
  		$this->assign('editable',$editable);
  		$this->display();
 	}
 	
 	public function getViewerList($page=1,$rows=1){
+	    //无论新旧查询都要分析查询条件
+        $cond=condition::get('viewerList');
+        $cond=arrayZip($cond,array(null,0,'不限','0','','全部'));
+
 		if(!pagination::isAvailable('viewerList'.'Total')){
 			//新的查询
 			logfile('新的查询',8);
-			$cond=condition::get('viewerList');
-			$cond=arrayZip($cond,array(null,0,'不限','0','','全部'));
-//var_dump($cond);			
+
+//var_dump($cond);
 			$db= new Model() ;
 			$queryStr ="select objtype,refid,userid, name chnname, U.username, count(*) viewtimes,sum(ceil((activetime-logintime)/60)) duration 
-					from __PREFIX__onlinelog 
-					
+					from __PREFIX__onlinelog 					
 					left join __PREFIX__user U on userid=U.id
 					where ";
-			$where=' refid>0 and objtype in("live","vod")';
+			$objtype=(isset($cond['objtype']) && strlen($cond['objtype'])>2)?'objtype="'.$cond['objtype'].'"':'objtype in("live","vod")';
+			$where=' refid>0 and '.$objtype;
 			//指定频道
 			logfile($cond['chnId'],8);
 			if(isset($cond['chnId'])){
-				$where .= " and refid=".$cond['chnId'];
+			    //读取与频道关联的VOD id，要同时查询频道及频道关联的VOD消费记录
+                $dbrecordfile=D('recordfile');
+                $vodRecs=$dbrecordfile->where('channelid='.$cond['chnId'])->getField('id,id,name'); //关联VOD文件列表
+                $vodRecs[]['id']=$cond['chnId'];  //频道ID
+                setPara('MonitorVodRec',$vodRecs);
+//dump($vodRecs); echo $dbrecordfile->getLastSql();
+                $idstr=result2string($vodRecs,'id',',');
+				$where .= ' and refid in('.$idstr.') ';
+
 			}
 			//日期范围
 			if(isset($cond['beginTime'])){
@@ -333,9 +357,7 @@ class MonitorAction extends AdminBaseAction{
 			if(isset($cond['endTime'])){
 				$where .=" and activetime<=".strtotime('+1 day',strtotime($cond['endTime']));	//?array('LT',date('Y-m-d',strtotime('+1 day',strtotime($cond['endTime']))))
 			}
-			
-			
-			$queryStr .= $where." group by objtype,refid,userid ";
+			$queryStr .= $where." group by refid,userid order by refid,userid";
 			
 			$rec=$db->query($queryStr);
 			logfile($db->getLastSql(),8);
@@ -352,9 +374,33 @@ class MonitorAction extends AdminBaseAction{
 			pagination::setData('viewerList'.'Total', $total);
 		
 		}
+
+        //var_dump($cond);
+
 		$result=array();
-		
+        $vodRecs=getPara('MonitorVodRec');
+//dump($vodRecs);
 		$data=pagination::getData('viewerList',$page,$rows);
+//dump($data);
+        //整理输出
+        $header=getPara('MonitorViewerListHeader');
+        $dbChannelreluser=D('channelreluser');
+        foreach ($data as $key=>$row){
+            //更新VOD标题
+            if('vod'==$row['objtype']) $data[$key]['chnname']=$vodRecs[$row['refid']]['name'];
+            //读扩展信息
+            $qna=$dbChannelreluser->getAnswer($cond['chnId'],$row['userid']);
+//var_dump($qna);
+//echo $dbChannelreluser->getLastSql();
+            foreach ($qna as $k=>$v) {
+                $qna[$v['quest']]=$v['answer'];
+                unset($qna[$k]);
+            }
+            foreach ($header as $col){
+                $quest=$col['name'];
+                $data[$key][$quest]=$qna[$quest];
+            }
+        }
 
 		$result["rows"]=$data;
 		$result["total"]=$rows;

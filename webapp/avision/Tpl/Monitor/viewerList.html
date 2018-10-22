@@ -23,11 +23,14 @@ $(document).ready(function(){
 	<thead>
 		<tr>
 			<th data-options="field:'chnname', width:200,align:'left', halign:'center' ">节目名称</th>
-			<th data-options="field:'objtype', width:100,align:'left', halign:'center' ">节目类型</th>
+			<th data-options="field:'objtype', width:60,align:'left', halign:'center' ">节目类型</th>
 			<th data-options="field:'username', width:200,align:'left', halign:'center' ">观众名称</th>
 			
 			<th data-options="field:'viewtimes', width:100,align:'right', halign:'center'">观看次数</th>
 			<th data-options="field:'duration', width:100,align:'right', halign:'center' ">观看时长(分)</th>
+			<foreach name="header" item="p">
+				<th data-options="field:'{$p.name}',width:100,align:'center'">{$p.text}</th>
+			</foreach>
 		</tr>
 	</thead>
 
@@ -37,9 +40,12 @@ $(document).ready(function(){
 	<form id='cond' method='post' style="display:inline">
 		查询条件：　
 
-		频道：<input class='easyui-combobox' name='chnId' value='{$chnId}'  style='width:180px'
+		频道：<input class='easyui-combobox' name='chnId' value='{$chnId}'  style='width:200px'
 				data-options="valueField:'id',textField:'name', editable:{$editable|default='false'}, 
 					url:'__URL__/onlineUserGetChnPulldown' " />
+		观看内容：<input class='easyui-combobox' name='objtype' value='{$objtype}'  style='width:80px'
+					data-options="valueField:'id',textField:'name', editable:{$editable|default='false'},
+					data:[{id:0,name:'全部'},{id:'live',name:'直播'},{id:'vod',name:'点播'}] " />
 		时间范围：
 		从<input class="easyui-datebox" name="beginTime" value="{$beginTime}" style="width:120px"
 			data-options="required:true,formatter:cn_formatter,parser:cn_parser" >

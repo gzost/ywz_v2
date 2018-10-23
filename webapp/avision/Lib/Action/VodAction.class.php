@@ -165,7 +165,7 @@ class VodAction extends AdminBaseAction {
 	public function showDetail($rec,$new=false){
 		
 		$mf=self::$modifyField;
-logfile(json_encode($rec),LogLevel::DEBUG);
+logfile(json_encode2($rec),LogLevel::DEBUG);
 		if($new){
 			if($this->isOpPermit('A')){
 				//可设置所有
@@ -199,7 +199,7 @@ logfile(json_encode($rec),LogLevel::DEBUG);
 //dump($chnList);
 		$webVar=$rec;	
 		$webVar['detailFormData']=OUdetailform($mf);
-		$webVar['imageUrl']=RecordfileModel::getImgMrl($rec['path']);
+		$webVar['imageUrl']=RecordfileModel::getImgMrl($rec['path']);   //$rec['path']为图片文件的相当路径
 		$webVar['permitCreate']=($_REQUEST['permitCreate']=='true')?'true':'false';
 		$webVar['permitModify']=($_REQUEST['permitModify']=='true')?'true':'false';
 		if($new){
@@ -306,16 +306,10 @@ logfile(json_encode($rec),LogLevel::DEBUG);
 		
 		//Insert by outao 2017-04-10
 		$uploader->useUuid=false;	//不建立UUID子目录
-		//$dbRecord=D('recordfile');
-		//$vodpath=$dbRecord->createSubDir($_REQUEST['owner']);
-		//$vodname=$_REQUEST['owner'].'_'.time();
-		$basePath=(''==C(vodfile_base_path))?'/vodfile':C(vodfile_base_path);
-		$info = pathinfo($_REQUEST['path']);
-		$vodpath=$basePath.$info['dirname'];
-		$vodpath=substr($vodpath,1);
-		$vodname=substr($info['basename'],0,strrpos($info['basename'],'.'));
-		//$info = pathinfo($uploader->getName());
-		//$vodname =$vodname.'.'.$info['extension'];
+
+        $vodname=basename($_REQUEST['path']);   //path参数包括 图片文件的相对路径及文件名
+        $vodname=substr($vodname,0,strrpos($vodname,'.'));    //剔除文件扩展名
+        $vodpath=RecordfileModel::getImgPhysicalPath(dirname($_REQUEST['path']));
 		if($_REQUEST['type']=='cover') $ext='jpg';
 		else $ext='mp4';
 		$vodname =$vodname.'.'.$ext;
@@ -327,7 +321,7 @@ logfile('Upload path:'.$vodpath.' name:'.$vodname,LogLevel::INFO);
 		// delete a file using a POST request. In that case, "DELETE" will be sent along with
 		// the request in a "_method" parameter.
 		
-logfile(json_encode($_REQUEST),LogLevel::DEBUG);
+logfile(json_encode2($_REQUEST),LogLevel::DEBUG);
 		if ($method == "POST") {
 			header ( "Content-Type: text/plain" );
 	

@@ -237,5 +237,16 @@ var_dump( method_exists ($this,"secreta") );
 //echo $this->getLastSql();
 		return $rec;
 	}
+
+    /**
+     * 根据录像封面图片的相对路径取绝对存储路径
+     * @param string $RelativePath  录像封面图片的相对路径
+     * @return string
+     */
+	static public function getImgPhysicalPath($RelativePath){
+	    $baseUrlPath=(''==C(vodfile_base_path))?'/vodfile':C(vodfile_base_path);
+        return $_SERVER["DOCUMENT_ROOT"].$baseUrlPath.$RelativePath;
+    }
+
 }
 ?>

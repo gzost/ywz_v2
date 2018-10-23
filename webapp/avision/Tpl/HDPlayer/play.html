@@ -30,7 +30,7 @@
 div{
 	position:relative;
 	margin:0 auto;
-	display:inline-block;
+	/*display:inline-block;*/
 	vertical-align:top;
 	text-align:left;
 	overflow:hidden;
@@ -42,6 +42,7 @@ div{
 
 .bodyLeftCanChat{
 	width:865px;
+	display: inline-block;
 }
 
 .bodyLeft{
@@ -51,6 +52,7 @@ div{
 .bodyRightCanChat{
 	width:320px;
 	margin-left:4px;
+	display:inline-block;
 }
 
 .bodyRight{
@@ -103,7 +105,7 @@ div{
 .bodyChat{
 	width:320px;
 	#height:380px;
-	height:560px;
+	height:568px;
 	text-align:left;
 }
 
@@ -124,21 +126,6 @@ div{
 	color:#FFF;
 }
 
-.msgFlow{
-	display:none;
-	position:absolute;
-	margin:auto;
-	left:0;
-	right:0;
-	top:178px;
-	background-color:#333;
-	line-height:1.2em;
-	font-size:1.2em;
-	z-index:98;
-	color:#F00;
-	height:1.2em;
-	overflow:hidden;
-}
 
 #divGuaidShare{
 	position:fixed;
@@ -158,7 +145,7 @@ div{
 .contRow{
 	color:#FFF;
 	display:block;
-	padding:0.3em 0.1em 0.3em 0.1em;
+	padding:0.3em 0em 0.3em 0em;
 }
 
 .contRow img{
@@ -288,8 +275,36 @@ div{
 	opacity:1;
 	padding:5px;
 }
+.msgFlow{
+	/*
+        position:absolute;
+        margin:auto;
+        left:0;
+        right:0;
+        top:178px;
+        */
+	display: none;
+	background-color:#333;
+	line-height:1.2em;
+	font-size:1.2em;
+	/*z-index:98;*/
+	color:#F00;
+	height:1.2em;
+	overflow:hidden;
+}
 
-
+.scroll-left{
+	box-sizing: border-box;
+	animation:move-left 10s ease-in;
+	/*-webkit-animation:move-left 15s ; Safari and Chrome*/
+	animation-fill-mode:forwards;
+}
+@keyframes move-left{
+	50%   {padding-left:0px;}
+	70%	{padding-left:40px;;}
+	80%  {padding-left:10px;opacity: 1;}
+	100% {padding-left:10px; opacity: 0;}
+}
 </style>
 
 <script type="text/javascript">
@@ -519,6 +534,9 @@ function showMsgAni(msg)
 {
 	if(0 < msg.length)
 	{
+        $('#msgShow').text(msg);
+        $('#msgShow').show();
+        return;
 		$('#msgShow').text(msg);
 		//$('#msgShow').css('width', $('.contRow').css('width'));
 		$('#msgShow').css('width', '200px');
@@ -574,7 +592,10 @@ function onResizeEven()
 {
 	//DivMoreFit(moreFit);
 }
-
+//append by outao 2018-10-13
+function loadSubscriberInfo() {
+    DivLoadHtml('__APP__/My/showMyInfo/chnid/{$chnId}', 'divMore');
+}
 </script>
 </head>
 <body style="background-color:#FFF;font-size:24px;line-height:24px;text-align:center;padding:0;margin-top:1em;background-image: url(/player/{$theme|default='default'}/images/bg.jpg);background-repeat: no-repeat;">
@@ -587,7 +608,13 @@ function onResizeEven()
 			<div class="bodyTitle" style="width:500px; display: inline-block;">
 				{$title}
 			</div>
-			<div style="float: right; width:10em; font-size:0.6rem; overflow: hidden">{$username}</div>
+			<!-- 增加个人信息显示-->
+			<div style="float: right; font-size:0.8em; margin-right: 1em;" onclick="loadSubscriberInfo();">
+				<img src="/player/{$theme|default='default'}/images/renxian_s.png" height="18" style="vertical-align:middle" >
+			</div>
+			<div style="float: right; text-align:right; width:10em; font-size:0.8rem; overflow: hidden">
+				{$username}
+			</div>
 			<div class="btnLink">
 				<div id="tbEntrytimes" style="cursor:pointer;">
 					<img src="/player/{$theme|default='default'}/images/bofan_s.png"/>
@@ -631,13 +658,12 @@ function onResizeEven()
 	</div>
 </div>
 
-	<div class="msgFlow" id="msgShow">
-	</div>
-
 	<div class="contRow" style="width:1200px;height:1em;background-color:#333333">
 		<div class="statcell" id="tbInfo"><img src="/player/{$theme|default='default'}/images/renxian.png" src-sel="/player/{$theme|default='default'}/images/renxian_s.png" src-org="/player/{$theme|default='default'}/images/renxian.png"/>直播</div>
 		<div class="imgSp"></div>
 		<div class="statcell" id="tbRePlay"><img src="/player/{$theme|default='default'}/images/huifan.png" src-sel="/player/{$theme|default='default'}/images/huifan_s.png" src-org="/player/{$theme|default='default'}/images/huifan.png"/>录像</div>
+		<div id="msgShow" class="scroll-left msgFlow" style="position: relative; top:-34px; width:100%;   padding-left: 80%;"></div>
+
 	</div>
 
 	<!--下部可变内容，宣传介绍，-->

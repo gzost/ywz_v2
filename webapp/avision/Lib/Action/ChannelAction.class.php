@@ -1596,12 +1596,65 @@ class ChannelAction extends AdminBaseAction
 	public function showPhoto($chnId){
 		$photos=$this->getPhotoList($chnId);
 		$webVar['photos']=$photos;
+		$webVar['chnId']=$chnId;
 		$this->assign($webVar);
 		$this->display("showPhoto_m");
+
+	}
+
+	//显示指定图片的原图及相关信息
+	public function showPhotoDetail($chnId,$photoName){
+		$webVar=array("chnId"=>$chnId,"photoName"=>$photoName);
+        $webVar['dataRec']=json_encode2($webVar);
+		//读出图片记录（若存在）
+        $prefix=C('DB_PREFIX');
+		$photoRec=D('photo photo')->field('uploadtime,desc,praise,value,username')->join("{$prefix}user user on photo.uploader=user.id")->where(array('uuname'=>$photoName))->find();
+//echo M()->getLastSql();
+//dump($photoRec);
+		if(null==$photoRec){
+			//数据库无此记录，则用空数据显示
+			$photoRec=array('uploadtime'=>'', 'desc'=>'', 'praise'=>0, 'value'=>0, 'username'=>'未知');
+		}
+		$webVar=array_merge($webVar,$photoRec);
+
+        $baseUrl=C('roomImgView').$this->subpath($chnId).'photoOrg/';
+        $webVar['photoUrl']=$baseUrl.$photoName;
+
+		$this->assign($webVar);
+		$this->display("showPhotoDetail_m");
+	}
+
+    /**
+     * 增加点赞数
+	 * 输入POST参数：
+	 * 	- chnId	频道ID
+	 * 	- photoName	图片UUName
+	 * 返回Json对象success, praise:最新的点赞数
+	 */
+	public function plusPraiseJson(){
+		//var_dump($_REQUEST);
+		$chnid=$_POST['chnId'];
+		$uuname=$_POST['photoName'];
+		if(null==$chnid || null==$uuname) Oajax::errorReturn('缺少必要的参数。');
+		$dbPhoto=D('photo');
+		$cond=array('uuname'=>$uuname,'chnid'=>$chnid);
+		$rt=$dbPhoto->where($cond)->setInc('praise',1);
+		$zhan=0;	//准备返回的点赞值
+		if(1==$rt){
+			//正常会修改且只一条记录，读取最新的点赞值
+			$zhan=$dbPhoto->where($cond)->getField('praise');
+		}elseif (0==$rt){
+			//无此记录
+			//TODO:
+		}else{
+			//数据库操作出错
+			//TODO:
+		}
+		Oajax::successReturn(array('praise'=>$zhan));
 	}
     /**
      *
-     * 文件上传的后台处理程序
+     * 图片直播中图片文件上传的后台处理程序
      */
     public function endpoint() {
         $uploader = new UploadHandler ();
@@ -1629,6 +1682,8 @@ logfile("method:".$method,LogLevel::DEBUG);
 
         $basePath=$_REQUEST['path'];
 		$vodname =$_REQUEST['qqfilename'];
+		//修改为唯一文件名
+        $vodname=OreplaceBaseName($_REQUEST['qqfilename'],Ouuid());
         $vodpath=$_REQUEST['path'].'photoOrg/';
 logfile('Upload path:'.$vodpath.' name:'.$vodname,LogLevel::INFO);
 
@@ -1687,12 +1742,13 @@ logfile("M file:".$filePath,LogLevel::DEBUG);
     }
     /**
      *
-     * 上传封面图片成功
+     * 上传图片成功
      */
     public function postUploadJson(){
         logfile(json_encode($_REQUEST),LogLevel::DEBUG);
         $basePath=$_POST['path'];
-        $fileName=$_POST['name'];
+        $sourceFileName=$_POST['name'];	//上传文件原来的名字
+        $fileName=$_POST['uploadName'];	//存储到服务器上的名字
 		$chnId=$_POST['chnId'];
 
         $image = new imgcompress($basePath.'photoOrg/'.$fileName,1);
@@ -1706,6 +1762,14 @@ logfile("M file:".$filePath,LogLevel::DEBUG);
         logfile("M file:".$filePath,LogLevel::DEBUG);
         $image ->compressImg($filePath,480);
         unset($image);
+
+        //填写数据库记录
+		$record=array('chnid'=>$chnId,
+			'uploader'=>$this->userId(),
+			'uuname'=>$fileName,
+			'sourcename'=>$sourceFileName
+			);
+		D('photo')->add($record);
 
 		$arr=array();
 		$arr['imgsrc']=C('roomImgView').$this->subpath($chnId).'photoM/'.$fileName;	//新图片的URL

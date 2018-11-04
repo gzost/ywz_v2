@@ -1,13 +1,20 @@
 <div id="album" >
     <foreach name="photos" item="pt">
         <div >
-            <img src="{$pt.imgsrc}" >
+            <img data-name="{$pt.imgName}" class="photo ccc" src="{$pt.imgsrc}" >
         </div>
     </foreach>
 </div>
+<div id="detailContent" style="box-sizing: border-box; padding:20px 10px; background-color: #6f6f6f; display:none;" >
+    <div style="text-align: right;  height:0px;">
+        <img id="hideDetail" src="/player/default/images/close_w.png" width="26px" style="position: relative; right: -10px;top:-10px; opacity: 0.7;">
+    </div>
+    <div id="photoDetail">
+    </div>
+</div>
 
 <style type="text/css">
-    #album{
+    #album, #photoDetail{
         border:0px solid #0fbad6; padding:1px; min-height: 200px; text-align: center;/*display: flex; flex-warp:wrap;*/
     }
     #album div{
@@ -30,6 +37,33 @@
 
     $(document).ready(function(){
         setPicWidth();
+
+        $("#album,#detailContent").on("click",function(event){
+            var target=event.target;
+            console.log(target);
+            if(target.classList.contains('photo')){
+                //点击了包括photo类的对象
+                var photoName=$(target).attr('data-name'); //图片文件名
+                console.log(photoName);
+                var para={ "chnId":{$chnId},"photoName":photoName };
+                DivLoadHtmlPost('__APP__/Channel/showPhotoDetail', 'photoDetail',para,function (rt) {
+                    if(true==rt){
+                        $("#detailContent").show();
+                        $("#album").hide();
+                    }
+                });
+            }
+            console.log("id="+target.id);
+            switch(target.id){
+                case 'hideDetail':
+                    //隐藏大图片，显示图片列表
+                    $("#detailContent").hide();
+                    $("#album").show();
+                    break;
+
+            }
+
+        });
     });
     function setPicWidth() {
         var width=$("#album div").width();

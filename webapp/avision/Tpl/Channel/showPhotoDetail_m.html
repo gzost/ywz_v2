@@ -1,0 +1,46 @@
+<script type="text/javascript">
+    //点赞数加1
+    function plusPraise(env){
+        event.stopPropagation();    //不再上抛消息
+        console.log(env);
+        var para=eval("("+$(env).attr('data-options')+")"); //字串转换为json对象
+        console.log(para)
+        $.post("__URL__/plusPraiseJson",para,function(data){
+            console.log('ret:'+data);
+            if(data.success=="true"){
+                $("#praise").html(data.praise);
+            }
+        },'json');
+    }
+</script>
+<div id="photoDetailRec"  style="background-color: #3f3f3f">
+    <div style="color: #DDD; font-size: 14px;  height:22px; padding: 10px 20px 5px 0px;">
+        <div style="float: left;">
+            <div  data-options="{ chnId:{$chnId}, photoName:'{$photoName}',praise:'{$praise}',value:'{$value}'  }"
+                 style="vertical-align:middle; padding: 0 10px" onclick="plusPraise(this);">
+                <img src="/player/default/images/dianzhang_s.png" height="20" style="vertical-align:middle;">
+                <span id="praise">{$praise}</span>
+            </div>
+            <!--
+            <div style="display: inline-block; width: 20px;"></div>
+            <span id="value" style="vertical-align:middle;">
+                <img src="/player/default/images/c14_y.png" height="20" style="vertical-align:middle;">
+                {$value}
+            </span>
+            -->
+        </div>
+        <div style="float:right;">
+            长按下载图片
+        </div>
+    </div>
+    <div>
+        <img src="{$photoUrl}" width="100%">
+    </div>
+    <!-- 照片信息 -->
+    <div style="color:#CCC; font-size:12px; padding:5px 20px; text-align: left;">
+        上传：{$username} {$uploadtime}
+    </div>
+    <div style="color:#EEE; font-size:14px; line-height: 20px; padding:5px 10px; text-align: left;">
+        {$desc}
+    </div>
+</div>

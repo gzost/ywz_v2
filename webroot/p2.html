@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link href="source/plugin/vyuan_zhibo/static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="source/plugin/vyuan_zhibo/static/css/zhibo_new_edition_animate.css" rel="stylesheet">
+    <link href="source/plugin/vyuan_zhibo/static/css/swiper-3.4.1.min.css" rel="stylesheet">
+    <link href="source/plugin/vyuan_zhibo/static/layui2/css/layui.css?v3" rel="stylesheet">
+    <link href="source/plugin/vyuan_zhibo/static/css/zhibo_new_edition_style.css" rel="stylesheet">
+    <link href="source/plugin/vyuan_zhibo/static/css/zhibo_new_edition_zhibo_base.css" rel="stylesheet">
+    <link href="source/plugin/vyuan_zhibo/static/css/zhibo_new_edition_zhibo_index.css?135" rel="stylesheet">
+    <link href="source/plugin/vyuan_zhibo/static/css/zhibo_new_edition_weixin_PC_jindutiao.css?v=101" rel="stylesheet" type="text/css">
+    <script src="https://hm.baidu.com/hm.js?1396f843e161fab07806076b37cbdefe"></script><script src="source/plugin/vyuan_zhibo/static/js/jquery.min.js" type="text/javascript"></script>
+
+    <title>
+        【直播回放】余姚市兰江小学建校十周年教育成果展
+    </title>
+    <style type="text/css">
+        .layui-form-switch{
+            margin-top:0px !important;
+            width:5rem !important;
+        }
+
+        .layui-form-switch em{
+            right:-2px !important;
+            top:-1px !important;
+        }
+
+        .layui-form-onswitch em{
+            left:0rem !important;
+        }
+
+        .layui-form-onswitch i{
+            left:2.5rem !important;
+        }
+
+        .layui-form-radio{
+            margin:0px !important;
+        }
+        .layui-form-switch i{
+            top:2px !important;
+        }
+        .fullscreen_liveHeader{
+            background-size:2rem !important;
+        }
+        .fullscreen_icon-refresh{
+            background-size:2rem !important;
+        }
+        .fullscreen_danmubar{
+            height:2rem !important;
+            line-height:2rem !important;
+            font-size:1rem !important;
+        }
+
+        .fullscreen_danmubarImg{
+            height:1.1rem !important;
+            width:1.1rem !important;
+            line-height:1.1rem !important;
+        }
+        .video-icon.fullscreen_playbtn:before{
+            width:2rem !important;
+            height:2rem !important;
+        }
+        .fullscreen_control{
+            width:2rem !important;
+            height:2rem !important;
+        }
+        .fullscreen_seek{
+            height:2rem !important;
+            line-height:2rem !important;
+        }
+    </style>
+    <link id="layuicss-layer" href="https://www.vyuan8.com/vyuan/source/plugin/vyuan_zhibo/static/layui2/css/modules/layer/default/layer.css?v=3.1.1" rel="stylesheet" media="all"></head>
+
+<body style="overflow: auto; background-color: rgb(255, 255, 255);">
+<form id="payForm" action="plugin.php?id=vyuan_zhibo&amp;mod=info&amp;identify=5712047">
+    <input name="formhash" id="formhash" type="hidden" value="a553f119">
+    <input name="formhashCheck" id="formhashCheck" type="hidden" value="14154452">
+    <input name="paysubmit" type="hidden" value="yes">
+    <input name="gift_id" id="gift_id" type="hidden">
+    <input name="ip" id="ip" type="hidden" value="113.65.206.45">
+    <!-- <input type="hidden" id="uid" name="uid" value="0"> -->
+    <input name="uid" id="uid" type="hidden" value="0">
+    <input name="zhibopid" id="zhibopid" type="hidden" value="289910">
+    <input name="videoTime" id="videoTime" type="hidden" value="6022.627">
+    <input name="adv_video" id="adv_video" type="hidden" value="">
+    <input name="zhibostatus" id="zhibostatus" type="hidden" value="2">
+    <input name="open_id" id="open_id" type="hidden" value="oJRTvw6ATHCUnhq7sTxzU_5-lh1E">
+    <input name="is_scan_flag" id="is_scan_flag" type="hidden" value="0">
+    <!-- <input type="hidden" name="is_scan_flag" id="is_scan_flag" value="1"> -->
+    <!-- <input type="hidden" id="zhibo_headimage" name="zhibo_headimage" value="http://wx.qlogo.cn/mmopen/vi_32/IBA8raXNff539ySJDJydHcQxufNvIbkMUKvlkRVYpawoUaRSX0bGzJkyiaUzUrwmlyB79Ryn1q2RbbOJOxrib46g/0"> -->
+    <!-- <input type="hidden" id="zhibo_nickname" name="zhibo_nickname" value="My'Th"> -->
+    <input name="identify" id="identify" type="hidden" value="5712047">
+    <!-- <input type="hidden" name="identify" id="identify" value="5704374"> -->
+    <input name="video_type" id="video_type" type="hidden" value="0">
+
+    <!-- 拉取评论所需数据 -->
+    <input name="sendMsgId" id="sendMsgId" type="hidden" value="0">
+    <input name="min_commentid" id="min_commentid" type="hidden" value="3063600">
+    <input name="max_commentid" id="max_commentid" type="hidden" value="3065509">
+    <input name="comment_page" id="comment_page" type="hidden" value="3063600">
+    <input name="atuserid" id="atuserid" type="hidden" value="atuserid">
+    <input name="ac" id="ac" type="hidden" value="activity">
+    <input name="adminid" id="adminid" type="hidden" value="6060726">
+    <input name="adminheadimg" id="adminheadimg" type="hidden" value="https://cdn.vyuan8.cn/vyuan/source/plugin/vyuan/img/20180626/wxupload_15300157928706.jpg">
+    <input name="adminnickname" id="adminnickname" type="hidden" value="品质广电 幸福传播">
+    <input id="allowActive" type="hidden" value="0">
+
+    <!-- 微信接口需求数据 -->
+    <input name="appId" id="appId" type="hidden" value="">
+    <input name="timestamp" id="timestamp" type="hidden" value="1540801423">
+    <input name="nonceStr" id="nonceStr" type="hidden" value="">
+    <input name="signature" id="signature" type="hidden" value="">
+    <input id="checkdomain" type="hidden" value="0">
+    <input name="wx_title" id="wx_title" type="hidden" value="【直播回放】余姚市兰江小学建校十周年教育成果展">
+    <input name="wx_link" id="wx_link" type="hidden" value="http://www.vyuan8.com/vyuan/plugin.php?id=vyuan_zhibo&amp;mod=info&amp;identify=5712047&amp;uid=0">
+    <input name="wx_imgUrl" id="wx_imgUrl" type="hidden" value="https://www.vyuan8.com/vyuan/source/plugin/vyuan/data/avatar/2018-10-26/1540520089971263.jpg">
+    <input name="wx_desc" id="wx_desc" type="hidden" value="2008-2018余姚市兰江小学建校10周年">
+
+    <input name="zhiboUsername" id="zhiboUsername" type="hidden" value="">
+    <input name="zhiboUsernickname" id="zhiboUsernickname" type="hidden" value="">
+    <input name="zhiboUserimage" id="zhiboUserimage" type="hidden" value="">
+    <input name="region_id" id="region_id" type="hidden">
+    <input name="formCheck" id="formCheck" type="hidden" value="a553f119">
+    <input name="ad_force" id="ad_force" type="hidden" value="0">
+    <input name="rpopenid" id="rpopenid" type="hidden" value="">
+
+</form>
+<div class="sk-wave" id="loadingView" style="display: none;">
+    <div class="sk-rect sk-rect1"></div>
+    <div class="sk-rect sk-rect2"></div>
+    <div class="sk-rect sk-rect3"></div>
+    <div class="sk-rect sk-rect4"></div>
+    <div class="sk-rect sk-rect5"></div>
+</div>
+<div class="videoTitle" style="background: rgb(0, 0, 0); height: 4.5rem; text-align: center; color: rgb(255, 255, 255); line-height: 5.5rem; font-size: 1.7rem; display: none;">品质广电 幸福传播</div>
+<input name="adv_position" id="adv_position" type="hidden" value="2">
+<div class="warpper" style="overflow: auto; visibility: visible;">
+
+    <div id="burlcl" style="width:100%;display:block;z-index:99;position:relative;">
+
+        <div class="container" style="margin: 0px auto; padding: 0px 0px 233px; width: 100%; height: 0px; overflow: hidden; display: block;">
+            <div class="pause" style='background: url("/vyuan/source/plugin/vyuan_zhibo/static/img/loading.jpg") no-repeat center / 4.6rem rgb(0, 0, 0); z-index: 0;'></div>
+            <img class="poster" style="width: 100%; height: 233px; max-width: 100%;" src="https://www.vyuan8.com/vyuan/source/plugin/vyuan/data/avatar/2018-10-26/1540557697119162.jpg">
+
+            <video class="playing" id="player" style="width:100%;max-height:21.1rem" src="http://live.vyuan8.cn/57120471540694743420.m3u8" x5-video-player-type="h5" playsinline="true" webkit-playsinline="true" x5-video-player-fullscreen="true">
+                <span>您的手机版本，网页版暂未能支持！</span>
+            </video>
+            <canvas></canvas>
+            <div class="video-controls-1 hidden">
+                <div style="width: 100%;height: 2rem;position: absolute;bottom: 3.5rem;left: 0rem;"> </div>
+                <div class="video-seek-1 clearfix">
+                    <div class="video-seek__container-1">
+                        <div class="video-progress-bar-1"></div>
+                    </div>
+                </div>
+                <button class="video-icon-1"></button>
+                <div class="video-time-1">
+                    <span class="video-time__current-1"> 00:00:00 </span>
+                    <span class="video-time__plus-1"> / </span>
+                    <span class="video-time__duration-1"> 00:00:00</span>
+                </div>
+                <button class="video-full-status-1"></button>
+                <input name="fullscreen" id="fullscreen" type="hidden" value="no">
+                <input name="videoHeight" id="videoHeight" type="hidden" value="">
+            </div>
+
+            <div class="video-controls new-video-controls" id="newVideoControl" style="display: none;">
+                <button class="video-icon"></button>
+                <div class="video-time">
+                    <span class="video-time__current">02:31</span>
+                </div>
+                <div class="live-progress-bar" id="liveProgressBar">
+                    <div class="video-seek clearfix" id="videoSeek">
+                        <div class="video-seek__container">
+                            <div class="video-progress-bar" style="width: 2.5%;"></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="video-time">
+                    <span class="video-time__duration">100:22</span>
+                </div>
+                <button class="video-full-status"></button>
+            </div>
+
+            <style>
+                .new-video-controls {
+                    display: -webkit-box;
+                    display: -ms-flexbox;
+                    display: flex;
+                    -webkit-box-orient: horizontal;
+                    -webkit-box-direction: normal;
+                    -ms-flex-direction: row;
+                    flex-direction: row;
+                    -webkit-box-align: center;
+                    -ms-flex-align: center;
+                    align-items: center;
+                    -webkit-box-pack: justify;
+                    -ms-flex-pack: justify;
+                    justify-content: space-between;
+                }
+
+                .new-video-controls .live-progress-bar {
+                    height: 3rem;
+                    margin: 0 .8rem;
+                    -webkit-box-flex: 2;
+                    -ms-flex: 2;
+                    flex: 2;
+                }
+
+                .new-video-controls .video-seek {
+                    top: 50%;
+                    padding: 0;
+                }
+
+                .new-video-controls .video-icon,
+                .new-video-controls .video-time,
+                .new-video-controls .video-full-status {
+                    margin: 0;
+                }
+
+                .new-video-controls .video-seek .video-seek__container {
+                    top: auto;
+                    height: .2rem;
+                    background: rgba(255,255,255,.6);
+                    box-shadow: none;
+                }
+
+                .video-controls .video-seek .video-progress-bar:before {
+                    top: -.46rem;
+                }
+            </style>
+
+
+            <!-- <script src="source/plugin/vyuan_zhibo/static/js/new_edition_player.js?v=286" type="text/javascript" charset='UTF-8'></script> -->
+            <script src="source/plugin/vyuan_zhibo/static/js/new_edition_player-180906.js?v=2" type="text/javascript" charset="UTF-8"></script>
+            <script type="text/javascript">
+                var video = document.querySelector('video');
+                var vList = [{"record_url":"http:\/\/live.vyuan8.cn\/57120471540694743420.m3u8","session_time":"907.217"},{"record_url":"http:\/\/live.vyuan8.cn\/57120471540694743992.m3u8","session_time":"2402.443"},{"record_url":"http:\/\/live.vyuan8.cn\/571204715406947431564.m3u8","session_time":"2402.442"},{"record_url":"http:\/\/live.vyuan8.cn\/571204715406947431638.m3u8","session_time":"310.525"}];
+                // console.log(vList);
+
+                if ($('#ad_force').val()==1){
+                    var curr = -1;
+// $('#videoTime').val('')
+
+                }else{
+                    var curr = 0;
+                }
+
+                // var curr = 1;
+                var currTime = 0;
+                var previousClipDuration = 0;    // 视频之前段落的时长
+                var video = document.getElementById("player");
+                video.addEventListener("ended", function(){
+                    var video_type = $('#video_type').val();
+
+//判断是否为小视频
+                    if(video_type != 1){
+                        if (vList.length - 1 >curr){
+// 多段视频
+                            play();
+                        }else if(vList.length - 1 == curr){
+// 视频播放结束初始化参数
+// video.src = "http://live.vyuan8.cn/57120471540694743420.m3u8";
+// video.play();
+                            currTime = 0;
+// curr = 0;
+                            if ($('#ad_force').val()==1){
+                                curr = -1;
+                                video.src = "";
+
+                            }else{
+                                curr = 0;
+                                video.src = "http://live.vyuan8.cn/57120471540694743420.m3u8";
+                            }
+
+
+// $('#videoTime').val($('#videoTime').val());
+                        }
+                    }else{
+                        $("#iframe_one_1").contents().find(".is_playing").text('暂停').css('color','#5b5b5b');
+                        $("#iframe_one_2").contents().find(".is_playing").text('暂停').css('color','#5b5b5b');
+                        $("#iframe_one_3").contents().find(".is_playing").text('暂停').css('color','#5b5b5b');
+                    }
+// $('#videoTime').val(6022.627) //强制看视频
+                    if ($('#ad_force').val()==1 && curr == -1 && $('#zhibostatus').val()==1 ){
+                        video.src = "";
+                        curr = 0;
+                        video.play();
+                    }
+
+                });
+
+                function play() {
+                    if (curr==-1){
+                        currTime=0;
+                    }else{
+                        currTime=parseInt(currTime)+parseInt(vList[curr].session_time);
+                        previousClipDuration=parseInt(previousClipDuration)+parseInt(vList[curr].session_time);
+                    }
+
+                    curr++;
+                    video.src = vList[curr].record_url;
+                    video.addEventListener("canplay",function() {
+                        // video.currentTime=0;
+                    });
+                    video.play();
+                }
+
+                function seekVideo(lTime) {
+                    var totalTime=0;
+                    var myVideo=new Array();
+                    for (i=0;i<=vList.length;i++){
+                        curr = i ;
+                        totalTime= parseInt(vList[i].session_time)+totalTime;
+                        if (lTime<=totalTime){
+                            myVideo[0]=lTime -(totalTime-vList[i].session_time);
+                            currTime=totalTime-vList[i].session_time;
+                            myVideo[1]=vList[i].record_url;
+                            return myVideo;
+                            break;
+                        }
+                    }
+                }
+
+                function newSeekVideo(currentDuration) {
+// 遍历视频片段，如果当前的播放进度 <= 遍历视频长度和
+// 则进度在该视频片段内
+                    var videoTotalDurantion = 0;
+                    var myVideo = {};
+                    if (vList.length > 0) {
+                        for (let i = 0; i < vList.length; i++) {
+                            let ele = vList[i];
+                            if (ele !== undefined && ele !== null) {
+                                var previousClipDuration = videoTotalDurantion;
+                                videoTotalDurantion += parseInt(vList[i].session_time);
+                                if (currentDuration <= videoTotalDurantion) {
+                                    curr = i ;
+                                    var currentClipIndex = i;
+                                    var currentVideoClip = ele.record_url;
+                                    var currentClipDuration = ele.session_time;
+                                    var currentClipVideoTime = currentDuration - previousClipDuration;
+// 当前视频段落
+                                    myVideo['currentClipIndex'] = currentClipIndex;
+// 当前视频的链接地址
+                                    myVideo['currentClipUrl'] = currentVideoClip;
+// 当前视频的总时长
+                                    myVideo['currentClipDuration'] = currentClipDuration;
+// 当前视频播放到位置
+                                    myVideo['currentClipVideoTime'] = currentClipVideoTime;
+// 前面部分视频段落的时长
+                                    myVideo['previousClipDuration'] = previousClipDuration;
+                                    return myVideo;
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+                // function seekVideo(lTime,lTime1) {
+                // 	var myVideo=new Array();
+                // 	var sTime=0;
+                // 	for (var i = 0; i < vList.length; i ++) {
+                // 		lTime -= vList[i].session_time;
+                // 		curr = i;
+                // 		if(lTime < 0){
+                // 			if(i == 0){
+                // 				myVideo[0]= parseFloat(vList[i].session_time) + lTime;
+                // 				myVideo[1]=vList[i].record_url;
+                // 				return myVideo;
+                // 			}else{
+                // 				for(var j = 0;j < i;j++){
+                // 					sTime += parseFloat(vList[j].session_time);
+                // 				}
+                // 				myVideo[0]=lTime1 - sTime;
+                // 				myVideo[1]=vList[i].record_url;
+                // 				return myVideo;
+                // 			}
+                // 		}
+                // 	}
+                // }
+
+            </script>
+        </div>
+
+        <!-- 浏览量 -->
+        <div class="danmu_bar on" id="Cntdown" style="top: 2rem; right: 9.5rem; display: none;">
+            <img src="source/plugin/vyuan_zhibo/static/img/countdown.png?v1">
+            <span class="Countdown">
+      		99
+        </span>
+        </div>
+
+        <div class="danmu_bar on" style="top: 2.0rem;">
+            <img src="source/plugin/vyuan_zhibo/static/img/live_logo1.png">
+            <span class="qlOLPeople">28.92万</span>
+        </div>
+        <!-- 浏览量end -->
+        <!-- 重播按钮 -->
+        <a class="videoicon icon-refresh" style="bottom: 5rem; display: none;" href="plugin.php?id=vyuan_zhibo&amp;mod=info&amp;identify=5712047">
+        </a>
+        <a class="liveHeader" style="top: 2rem; display: none;" href="plugin.php?id=vyuan_zhibo&amp;mod=openlistV&amp;zhibo_pid=289910">
+        </a>
+    </div>
+    <!-- <script src="source/plugin/vyuan_zhibo/static/js/new_edition_player.js?v=118" type="text/javascript"></script> -->
+    <script>
+        video = document.querySelector('video');
+
+    </script>
+
+    <!-- 跑马灯 -->
+    <div class="promote">
+        <marquee scrollamount="3">余姚市兰江小学建校十周年教育成果展</marquee>
+    </div>
+    <!-- 跑马灯end -->
+
+    <!-- 菜单 -->
+    <div class="tabbar">
+        <input name="list-name" id="list-name" type="hidden" value="">
+        <input name="menuType" id="menuType" type="hidden" value="">
+        <ul class="clearfix user-prefer-orange">
+            <li class="tabbar-item active" id="zhibo_first"><a menutype="0">互动</a></li>
+
+            <li class="tabbar-item">
+                <a menutype="1">
+                    活动介绍                </a>
+            </li>
+
+
+            <li class="tabbar-item follow">
+                <a style="color:#fff">
+                    关注
+                </a>
+            </li>
+            <li id="indicator" style="width: 138px;"></li>
+        </ul>
+    </div>
+    <!-- 菜单end -->
+
+    <div class="main-content swiper-container swiper-container-horizontal" style="height: 431.97px;">
+        <div class="swiper-wrapper">
+            <!-- 互动 -->
+            <div class="main-content-detail swiper-slide swiper-slide-active" id="interactDetail" style="width: 414px; height: 431.97px;">
+                <!-- 消息置顶 -->
+                <div class="user-prefer-orange msgSettop_box" style="display:none">
+                    <img class="msgTopAvatar" src="">
+                    <marquee class="msgTopMessage" style="width:80%" onmouseover="this.stop()" onmouseout="this.start()" scrollamount="5"></marquee>
+                </div>
+                <!-- 消息置顶end -->
+
+                <ul class="comment-list">
+                    <!-- <li attr-id="146977"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/PiajxSqBRaEIryHrL25zXOAo5MjZ4IDMO8fYdaMSzKO30ZmeXjo4KRLnFkFxvr3icepvUUTlxg7zGGD0gWO3mWWQ/132"></dt><dd class="comment-user-name"><span>Rock</span>04-24 17:39</dd><dd class="comment-detail redPacketDetail"><div class="lRedPacketSendTip" id="146977"><p class="tipRedMessage">恭喜发财</p><p><span>Rock</span>的红包</p></div></dd></dl></li> -->
+                    <!-- <li attr-id="3473442"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://wx.qlogo.cn/mmopen/vi_32/0wDPfIXS2f1OwibhHDBPWTuOicUibicZIyJ3Shd5c33niaYWcfyVfbq6vvHicE42y7C24Ow2QwVHxkHA8YO5R3Piczq3g/0"></dt><dd class="comment-user-name"><span class="user-name">谢谢60962</span><span class="flag msgsetTop" commentid="1925108">置顶1</span><span class="flag delete" id="1925108">删除</span><span class="flag ban" id="3473442">禁言</span>05-20 11:07</dd><dd class="comment-detail"><p>哈哈</p></dd></dl></li> -->
+
+                    <li attr-id="10449064"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJLCibicOeXme4xQDo9ZUBK6zfEjBTPllwrnmndDGSzUQCp6HqoLCViccNrEbXRtEb2nTfkAh6uecjuQ/132"></dt><dd class="comment-user-name"><span class="user-name">兰兰</span><span class="time">10-29 08:52</span></dd><dd class="comment-detail"><p>? </p></dd></dl></li><li attr-id="10454569"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKTEZYWTIFdg8LnP17T0bwVshMic1doT51WurnpDBM35b0pRiaI1gg21JjTibnwBWjd0H4B7cLibw59qA/132"></dt><dd class="comment-user-name"><span class="user-name">小雨细细</span><span class="time">10-29 08:04</span></dd><dd class="comment-detail"><p>为兰小自豪</p></dd></dl></li><li attr-id="10446786"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKDl0vMEMSh7PKFwhBTSbfbVx0zXvDXRgt0B8fZ5o4XYlck8ibcC2JQZVibY29mR3raib5KM8Bia5pibCw/132"></dt><dd class="comment-user-name"><span class="user-name">Swaller</span><span class="time">10-28 21:42</span></dd><dd class="comment-detail"><p>兰小，十岁生日快乐！未来十年更加辉煌！</p></dd></dl></li><li attr-id="10553317"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/8Czic0dj6Le06EpEWaEz1VsPrMZIas2v4dkiaTEQSpNBiaCfM5TiasDWKpNGsEtm6byHngb8XIaRQLHhFbEU5zl22w/132"></dt><dd class="comment-user-name"><span class="user-name">云上漫步</span><span class="time">10-28 21:30</span></dd><dd class="comment-detail"><p>祝兰江小学生日快乐！兰江小学棒棒棒！</p></dd></dl></li><li attr-id="10447940"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/pOzoSvgia1elJ9szYp1whcUpAaH05tNrfibM89ibZRMoJg9CVeT6cI2u8zaNCXibjpXA5tpZpoRIgRwxBk7DEicggJg/132"></dt><dd class="comment-user-name"><span class="user-name">荆棘鸟</span><span class="time">10-28 21:30</span></dd><dd class="comment-detail"><p>十年相守，见证成长，初心不变，愿更加茁壮</p></dd></dl></li><li attr-id="0"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="source/plugin/vyuan_zhibo/static/image/default.png"></dt><dd class="comment-user-name"><span class="user-name"></span><span class="time">10-28 21:25</span></dd><dd class="comment-detail"><p>兰小棒棒的</p></dd></dl></li><li attr-id="10446639"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJQ8ykWbKalHxTY1TN7icxUiaS6hk65OzChfEGTknymRcR4wZ78Fq98uyfiaiaxux7fByhiaWj68iaf7pxw/132"></dt><dd class="comment-user-name"><span class="user-name">一一</span><span class="time">10-28 21:18</span></dd><dd class="comment-detail"><p>祝兰小生日快乐，越办越好！</p></dd></dl></li><li attr-id="10522464"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/v2NFObAXQDGpXOfUjrlucBukf4Sv1Mlx7TOacC7SmNQSmgfpN1mJnVoIvM8aPv9wIEK4WOBYLxBGALGfQyPZBw/132"></dt><dd class="comment-user-name"><span class="user-name">久能建筑垃圾综合利用，李道庆！</span><span class="time">10-28 20:33</span></dd><dd class="comment-detail"><p>祝兰江小学生日快乐。</p></dd></dl></li><li attr-id="10551012"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJJibRXtcpJr8dVILWVyMCx1Z8YibIZicJ6mD0KqnRyEbdHMNVVQdUWoWNibz8EWkvSQIxy3w9lQD0yxg/132"></dt><dd class="comment-user-name"><span class="user-name">蘅芜春风</span><span class="time">10-28 20:12</span></dd><dd class="comment-detail"><p>十年载，风雨兼程，用心谱写篇章。十年后，桃李满园，再续辉煌华章</p></dd></dl></li><li attr-id="10455159"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/jN6JV0J9eYeqXo5tTCTQtib98caLLcIMAue95lRzxkE6TXhDostwamX0NO7dFos9oe3vVTcEIMqibLiaviaciag0ianw/132"></dt><dd class="comment-user-name"><span class="user-name">^_^慧^_^</span><span class="time">10-28 19:51</span></dd><dd class="comment-detail"><p>兰小，棒棒哒！</p></dd></dl></li><li attr-id="10450707"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKiaQiagXQJev0V1mYjppUsqWKqibV0rmFQSAQGExhrIxAgyV3EFI6Xiayzia9vUIQKNEsGMZLS3OjPuog/132"></dt><dd class="comment-user-name"><span class="user-name">沈敏</span><span class="time">10-28 19:50</span></dd><dd class="comment-detail"><p>喜迎十年华诞，再谱兰小新篇；唯厚可以载物，唯德可以育才！我们全家祝您芳华永驻，桃李芬芳<img class="vzan-ubb" src="source/plugin/vyuan/images/ubb/178.gif"><img class="vzan-ubb" src="source/plugin/vyuan/images/ubb/178.gif"><img class="vzan-ubb" src="source/plugin/vyuan/images/ubb/163.gif"><img class="vzan-ubb" src="source/plugin/vyuan/images/ubb/163.gif">👍👍</p></dd></dl></li><li attr-id="10534979"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLKc8VctZ9H1Ec1h1haJibGbLBEAPfwCqiawwad2ibDps0KbE2ibcFKrfeIYzcR8j6oGrianLzENaP8Syw/132"></dt><dd class="comment-user-name"><span class="user-name">恋恋北极星</span><span class="time">10-28 19:35</span></dd><dd class="comment-detail"><p>祝兰小越来越好</p></dd></dl></li><li attr-id="4794355"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://wx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJHW8y32VsjxGndUHE6fAGm9B8ZxyE7w1Hpa2y1cJKbSnLgYicK2sMysNlo96zz57ABn9uNnOD5iaJA/132"></dt><dd class="comment-user-name"><span class="user-name">清水</span><span class="time">10-28 19:35</span></dd><dd class="comment-detail"><p>祝兰江小学培养的学生明天会更好<img class="vzan-ubb" src="source/plugin/vyuan/images/ubb/163.gif"></p></dd></dl></li><li attr-id="10549292"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTIdSKD9UlAG7XINlSicnD5y8svLGWokYb00Fd66DRVW5wcm1uoTIxO3tLdJHz2VgQuicduIrkO61xvQ/132"></dt><dd class="comment-user-name"><span class="user-name">水竹</span><span class="time">10-28 19:13</span></dd><dd class="comment-detail"><p>生日快乐！<img class="vzan-ubb" src="source/plugin/vyuan/images/ubb/163.gif"><img class="vzan-ubb" src="source/plugin/vyuan/images/ubb/163.gif"></p></dd></dl></li><li attr-id="10446394"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTJmEzU09AJVlBFhrOnpuQnxpC7VEDmCg1MKViaAKYlPBLuuWjWGnvYkNNdS9z2iaS6v2nzoFPDOvvyQ/132"></dt><dd class="comment-user-name"><span class="user-name">雨的旋律</span><span class="time">10-28 18:57</span></dd><dd class="comment-detail"><p> 祝兰小生日快乐🎂🎂🎂，明天更美好！</p></dd></dl></li><li attr-id="10535651"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/B6l9HbWQl7OYRua7gU3Xj5PRRbFVt9hL5MczqOVwVvRPcg0WiaFcflWdBgTmZnFZthhibyBX1Cu6icyiaFUwLfW8VQ/132"></dt><dd class="comment-user-name"><span class="user-name">姚姚</span><span class="time">10-28 18:56</span></dd><dd class="comment-detail"><p>祝兰江小学生日快乐，越来越好。</p></dd></dl></li><li attr-id="0"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="source/plugin/vyuan_zhibo/static/image/default.png"></dt><dd class="comment-user-name"><span class="user-name"></span><span class="time">10-28 18:54</span></dd><dd class="comment-detail"><p>满满地感动，祝我们的兰小越来越好！</p></dd></dl></li><li attr-id="10547590"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTKJJvOhDib2YLJZLGKkVHPiaYVKytZW7rzKkeap2MDUGN2hZZTKP5HGZrIV4ztoDSEuiaDz2u25fcmCg/132"></dt><dd class="comment-user-name"><span class="user-name">富而思进</span><span class="time">10-28 18:50</span></dd><dd class="comment-detail"><p>祝贺兰小十周年生日，未来十年更辉煌！<img class="vzan-ubb" src="source/plugin/vyuan/images/ubb/185.gif"><img class="vzan-ubb" src="source/plugin/vyuan/images/ubb/185.gif"></p></dd></dl></li><li attr-id="10548431"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/CKYlJ82hpKc4GefMzT2XGicKcL0pUzrwwibzXl4lAvWQ5iceLB8N6VwLb2CF0icHibAHgw6etsWOwuVA8x1YdL6a9ibQ/132"></dt><dd class="comment-user-name"><span class="user-name">动静2</span><span class="time">10-28 18:49</span></dd><dd class="comment-detail"><p>身在其中，感动多多。</p></dd></dl></li><li attr-id="10548036"><dl class="comment-bubble clearfix"><dt class="comment-user-head"><img class="avatar" src="http://thirdwx.qlogo.cn/mmopen/vi_32/iaKHPgibIl8RyQQmwVhKzBQXTs2YH2TcmsAm7WPyJDagDFicQwWG4MMlCoHfWANlsg7WzYpumHm2mYwkicFIh1EcPA/132"></dt><dd class="comment-user-name"><span class="user-name">阿菊</span><span class="time">10-28 18:32</span></dd><dd class="comment-detail"><p>祝兰小生日快乐！🎂 🎂 👑 🎈 🎉 </p></dd></dl></li></ul>
+                <div class="pubilc-load" id="loading" style="top: -4rem; display: none; position: relative;">
+                    <div class="paginationbutton pubilc-loading">
+                        <div class="loading">加载中</div>
+                    </div>
+                </div>
+                <div class="load-more " style="text-align: center; height: 7rem;">
+                    <a class="next-page-link" href="javascript:;">点击加载更多互动留言</a>
+                </div>
+            </div>
+            <!-- 互动end -->
+
+            <div class="main-content-detail swiper-slide swiper-slide-next" style="background: rgb(255, 255, 255); top: 0px; width: 414px; height: 431.97px; overflow: hidden; position: relative; z-index: 99;">
+                <div class="con4List appear-from-right" id="zhiboinfo" style="height: 431.97px; overflow: auto !important; position: relative;">
+                    <iframe id="iframe_one_2" src="https://www.vyuan8.com/vyuan/plugin.php?id=vyuan_zhibo&amp;mod=tw&amp;zhiboid=5712047&amp;page=1" frameborder="0" scrolling="yes" style="width: 100%; height: 431.97px;"></iframe>
+                </div>
+            </div>
+
+
+
+
+
+
+        </div>
+    </div>
+
+    <div class="dimmer" style="background-color: rgba(255, 255, 255, 0.6);"></div>
+    <!-- 公众号弹出层 -->
+    <div class="popup" id="followPopup">
+        <!-- 公众号弹出层 -->
+        <div class="popup-head">
+            <h3 class="popup-title">长按关注
+                <span class="popup-platform-name">
+                    【直播回放】余姚市兰江小学建校十周年教育成果展                </span> 公众号
+            </h3>
+        </div>
+        <div class="popup-body">
+            <img alt="" src="https://www.vyuan8.com/vyuan/source/plugin/vyuan/data/avatar/2018-10-26/1540520106367891.notype">
+        </div>
+        <div class="popup-notice">
+            点击灰色区域关闭弹窗
+        </div>
+    </div>
+    <!-- 公众号弹出层end -->
+
+    <div class="right-tool-bar">
+        <!-- 新红包提醒 -->
+        <div class="new-red-Packet-notice" style="display: none;" data-orderid="">
+            <img width="45" alt="" src="source/plugin/vyuan_zhibo/static/images/newhongbao.png">
+        </div>
+        <!-- 邀请button -->
+
+        <div class="like">
+            <!-- 点赞button -->
+            <div class="tool-bar-item like-icon Dzan_button"></div>
+            <!-- 点赞数量 -->
+            <div class="like-count" id="likeCount">7206</div>
+            <div class="like-view"></div>
+        </div>
+    </div>
+
+    <div class="footer user-prefer-orange">
+        <a id="atsb" style="background: rgba(255, 255, 255, 1); width: 35%;left:-35%;line-height: 3rem;bottom: 6rem;font-size: 1.5rem;position: fixed;color: rgb(9, 187, 7);text-align: center; background: rgb(255, 255, 255);" onclick="javascript:hidetips()" href="#">
+            有人@你
+            <i class="layui-icon" id="hidetips" style="float: right;margin-right: 5px" onclick="javascript:hidetips()">|ဆ</i>
+        </a>
+
+        <div class="input-bar">
+            <div class="emoji-btn">
+                <img alt="emji_button" src="source/plugin/vyuan_zhibo/static/images/zhibo_info_emoji.png">
+            </div>
+            <div class="input-box">
+                <input id="speakContent" type="text" readonly="" placeholder="来说点什么吧">
+            </div>
+            <div class="plus-btn" style="display: flex;">
+                <img alt="plus_button" src="source/plugin/vyuan_zhibo/static/images/zhibo_info_plus.png">
+            </div>
+            <div class="send-btn" style="display: none;">
+                <span>发送</span>
+            </div>
+        </div>
+        <div class="emoji-list swiper-container swiper-container-horizontal">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide clearfix swiper-slide-active" id="emojiPage1" style="width: 414px;"><span class="emoji"><a title="撇嘴" style="background-position: left -29px;" href="javascript:;" code="[撇嘴]"></a></span><span class="emoji"><a title="发呆" style="background-position: left -87px;" href="javascript:;" code="[发呆]"></a></span><span class="emoji"><a title="得意" style="background-position: left -116px;" href="javascript:;" code="[得意]"></a></span><span class="emoji"><a title="流泪" style="background-position: left -145px;" href="javascript:;" code="[流泪]"></a></span><span class="emoji"><a title="害羞" style="background-position: left -174px;" href="javascript:;" code="[害羞]"></a></span><span class="emoji"><a title="闭嘴" style="background-position: left -203px;" href="javascript:;" code="[闭嘴]"></a></span><span class="emoji"><a title="睡" style="background-position: left -232px;" href="javascript:;" code="[睡]"></a></span><span class="emoji"><a title="大哭" style="background-position: left -261px;" href="javascript:;" code="[大哭]"></a></span><span class="emoji"><a title="尴尬" style="background-position: left -290px;" href="javascript:;" code="[尴尬]"></a></span><span class="emoji"><a title="发怒" style="background-position: left -319px;" href="javascript:;" code="[发怒]"></a></span><span class="emoji"><a title="调皮" style="background-position: left -348px;" href="javascript:;" code="[调皮]"></a></span><span class="emoji"><a title="呲牙" style="background-position: left -377px;" href="javascript:;" code="[呲牙]"></a></span><span class="emoji"><a title="惊讶" style="background-position: left -406px;" href="javascript:;" code="[惊讶]"></a></span><span class="emoji"><a title="难过" style="background-position: left -435px;" href="javascript:;" code="[难过]"></a></span><span class="emoji"><a title="酷" style="background-position: left -464px;" href="javascript:;" code="[酷]"></a></span><span class="emoji"><a title="冷汗" style="background-position: left -493px;" href="javascript:;" code="[冷汗]"></a></span><span class="emoji"><a title="抓狂" style="background-position: left -522px;" href="javascript:;" code="[抓狂]"></a></span><span class="emoji"><a title="吐" style="background-position: left -551px;" href="javascript:;" code="[吐]"></a></span><span class="emoji"><a title="偷笑" style="background-position: left -580px;" href="javascript:;" code="[偷笑]"></a></span><span class="emoji"><a title="可爱" style="background-position: left -609px;" href="javascript:;" code="[可爱]"></a></span><span class="emoji"><a title="白眼" style="background-position: left -638px;" href="javascript:;" code="[白眼]"></a></span></div>
+                <div class="swiper-slide clearfix swiper-slide-next" id="emojiPage2" style="width: 414px;"><span class="emoji"><a title="傲慢" style="background-position: left -667px;" href="javascript:;" code="[傲慢]"></a></span><span class="emoji"><a title="饥饿" style="background-position: left -696px;" href="javascript:;" code="[饥饿]"></a></span><span class="emoji"><a title="困" style="background-position: left -725px;" href="javascript:;" code="[困]"></a></span><span class="emoji"><a title="惊恐" style="background-position: left -754px;" href="javascript:;" code="[惊恐]"></a></span><span class="emoji"><a title="流汗" style="background-position: left -783px;" href="javascript:;" code="[流汗]"></a></span><span class="emoji"><a title="憨笑" style="background-position: left -812px;" href="javascript:;" code="[憨笑]"></a></span><span class="emoji"><a title="大兵" style="background-position: left -841px;" href="javascript:;" code="[大兵]"></a></span><span class="emoji"><a title="奋斗" style="background-position: left -870px;" href="javascript:;" code="[奋斗]"></a></span><span class="emoji"><a title="咒骂" style="background-position: left -899px;" href="javascript:;" code="[咒骂]"></a></span><span class="emoji"><a title="疑问" style="background-position: left -928px;" href="javascript:;" code="[疑问]"></a></span><span class="emoji"><a title="嘘" style="background-position: left -957px;" href="javascript:;" code="[嘘]"></a></span><span class="emoji"><a title="晕" style="background-position: left -986px;" href="javascript:;" code="[晕]"></a></span><span class="emoji"><a title="折磨" style="background-position: left -1015px;" href="javascript:;" code="[折磨]"></a></span><span class="emoji"><a title="衰" style="background-position: left -1044px;" href="javascript:;" code="[衰]"></a></span><span class="emoji"><a title="骷髅" style="background-position: left -1073px;" href="javascript:;" code="[骷髅]"></a></span><span class="emoji"><a title="敲打" style="background-position: left -1102px;" href="javascript:;" code="[敲打]"></a></span><span class="emoji"><a title="再见" style="background-position: left -1131px;" href="javascript:;" code="[再见]"></a></span><span class="emoji"><a title="擦汗" style="background-position: left -1160px;" href="javascript:;" code="[擦汗]"></a></span><span class="emoji"><a title="抠鼻" style="background-position: left -1189px;" href="javascript:;" code="[抠鼻]"></a></span><span class="emoji"><a title="鼓掌" style="background-position: left -1218px;" href="javascript:;" code="[鼓掌]"></a></span><span class="emoji"><a title="糗大了" style="background-position: left -1247px;" href="javascript:;" code="[糗大了]"></a></span></div>
+                <div class="swiper-slide clearfix" id="emojiPage3" style="width: 414px;"><span class="emoji"><a title="坏笑" style="background-position: left -1276px;" href="javascript:;" code="[坏笑]"></a></span><span class="emoji"><a title="左哼哼" style="background-position: left -1305px;" href="javascript:;" code="[左哼哼]"></a></span><span class="emoji"><a title="右哼哼" style="background-position: left -1334px;" href="javascript:;" code="[右哼哼]"></a></span><span class="emoji"><a title="哈欠" style="background-position: left -1363px;" href="javascript:;" code="[哈欠]"></a></span><span class="emoji"><a title="鄙视" style="background-position: left -1392px;" href="javascript:;" code="[鄙视]"></a></span><span class="emoji"><a title="委屈" style="background-position: left -1421px;" href="javascript:;" code="[委屈]"></a></span><span class="emoji"><a title="快哭了" style="background-position: left -1450px;" href="javascript:;" code="[快哭了]"></a></span><span class="emoji"><a title="阴险" style="background-position: left -1479px;" href="javascript:;" code="[阴险]"></a></span><span class="emoji"><a title="亲亲" style="background-position: left -1508px;" href="javascript:;" code="[亲亲]"></a></span><span class="emoji"><a title="吓" style="background-position: left -1537px;" href="javascript:;" code="[吓]"></a></span><span class="emoji"><a title="可怜" style="background-position: left -1566px;" href="javascript:;" code="[可怜]"></a></span><span class="emoji"><a title="菜刀" style="background-position: left -1595px;" href="javascript:;" code="[菜刀]"></a></span><span class="emoji"><a title="西瓜" style="background-position: left -1624px;" href="javascript:;" code="[西瓜]"></a></span><span class="emoji"><a title="啤酒" style="background-position: left -1653px;" href="javascript:;" code="[啤酒]"></a></span><span class="emoji"><a title="篮球" style="background-position: left -1682px;" href="javascript:;" code="[篮球]"></a></span><span class="emoji"><a title="乒乓" style="background-position: left -1711px;" href="javascript:;" code="[乒乓]"></a></span><span class="emoji"><a title="咖啡" style="background-position: left -1740px;" href="javascript:;" code="[咖啡]"></a></span><span class="emoji"><a title="饭" style="background-position: left -1769px;" href="javascript:;" code="[饭]"></a></span><span class="emoji"><a title="猪头" style="background-position: left -1798px;" href="javascript:;" code="[猪头]"></a></span><span class="emoji"><a title="玫瑰" style="background-position: left -1827px;" href="javascript:;" code="[玫瑰]"></a></span><span class="emoji"><a title="凋谢" style="background-position: left -1856px;" href="javascript:;" code="[凋谢]"></a></span></div>
+                <div class="swiper-slide clearfix" id="emojiPage4" style="width: 414px;"><span class="emoji"><a title="示爱" style="background-position: left -1885px;" href="javascript:;" code="[示爱]"></a></span><span class="emoji"><a title="爱心" style="background-position: left -1914px;" href="javascript:;" code="[爱心]"></a></span><span class="emoji"><a title="心碎" style="background-position: left -1943px;" href="javascript:;" code="[心碎]"></a></span><span class="emoji"><a title="蛋糕" style="background-position: left -1972px;" href="javascript:;" code="[蛋糕]"></a></span><span class="emoji"><a title="闪电" style="background-position: left -2001px;" href="javascript:;" code="[闪电]"></a></span><span class="emoji"><a title="炸弹" style="background-position: left -2030px;" href="javascript:;" code="[炸弹]"></a></span><span class="emoji"><a title="刀" style="background-position: left -2059px;" href="javascript:;" code="[刀]"></a></span><span class="emoji"><a title="足球" style="background-position: left -2088px;" href="javascript:;" code="[足球]"></a></span><span class="emoji"><a title="瓢虫" style="background-position: left -2117px;" href="javascript:;" code="[瓢虫]"></a></span><span class="emoji"><a title="便便" style="background-position: left -2146px;" href="javascript:;" code="[便便]"></a></span><span class="emoji"><a title="月亮" style="background-position: left -2175px;" href="javascript:;" code="[月亮]"></a></span><span class="emoji"><a title="太阳" style="background-position: left -2204px;" href="javascript:;" code="[太阳]"></a></span><span class="emoji"><a title="礼物" style="background-position: left -2233px;" href="javascript:;" code="[礼物]"></a></span><span class="emoji"><a title="拥抱" style="background-position: left -2262px;" href="javascript:;" code="[拥抱]"></a></span><span class="emoji"><a title="强大" style="background-position: left -2291px;" href="javascript:;" code="[强大]"></a></span><span class="emoji"><a title="弱" style="background-position: left -2320px;" href="javascript:;" code="[弱]"></a></span><span class="emoji"><a title="握手" style="background-position: left -2349px;" href="javascript:;" code="[握手]"></a></span><span class="emoji"><a title="胜利" style="background-position: left -2378px;" href="javascript:;" code="[胜利]"></a></span><span class="emoji"><a title="抱拳" style="background-position: left -2407px;" href="javascript:;" code="[抱拳]"></a></span><span class="emoji"><a title="勾引" style="background-position: left -2436px;" href="javascript:;" code="[勾引]"></a></span><span class="emoji"><a title="拳头" style="background-position: left -2465px;" href="javascript:;" code="[拳头]"></a></span></div>
+                <div class="swiper-slide clearfix" id="emojiPage5" style="width: 414px;"><span class="emoji"><a title="差劲" style="background-position: left -2494px;" href="javascript:;" code="[差劲]"></a></span><span class="emoji"><a title="爱你" style="background-position: left -2523px;" href="javascript:;" code="[爱你]"></a></span><span class="emoji"><a title="no" style="background-position: left -2552px;" href="javascript:;" code="[no]"></a></span><span class="emoji"><a title="ok" style="background-position: left -2581px;" href="javascript:;" code="[ok]"></a></span><span class="emoji"><a title="爱情" style="background-position: left -2610px;" href="javascript:;" code="[爱情]"></a></span><span class="emoji"><a title="飞吻" style="background-position: left -2639px;" href="javascript:;" code="[飞吻]"></a></span><span class="emoji"><a title="跳跳" style="background-position: left -2668px;" href="javascript:;" code="[跳跳]"></a></span><span class="emoji"><a title="发抖" style="background-position: left -2697px;" href="javascript:;" code="[发抖]"></a></span><span class="emoji"><a title="怄火" style="background-position: left -2726px;" href="javascript:;" code="[怄火]"></a></span><span class="emoji"><a title="转圈" style="background-position: left -2755px;" href="javascript:;" code="[转圈]"></a></span><span class="emoji"><a title="磕头" style="background-position: left -2784px;" href="javascript:;" code="[磕头]"></a></span><span class="emoji"><a title="回头" style="background-position: left -2813px;" href="javascript:;" code="[回头]"></a></span><span class="emoji"><a title="跳绳" style="background-position: left -2842px;" href="javascript:;" code="[跳绳]"></a></span><span class="emoji"><a title="挥手" style="background-position: left -2871px;" href="javascript:;" code="[挥手]"></a></span></div>
+            </div>
+            <div class="swiper-pagination swiper-pagination-bullets"><span class="swiper-pagination-bullet swiper-pagination-bullet-active"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span><span class="swiper-pagination-bullet"></span></div>
+        </div>
+
+        <!-- 礼物列表 -->
+        <div class="gift-list">
+            <ul class="clearfix">
+                <li data-gift="1">
+                    <a href="javascript:;">
+                        <span>
+                            <img alt="" src="data/attachment/portal/17.jpg">
+                        </span>
+                        <p class="gift-name">掌声</p>
+                        <p class="gift-price">RMB:1.00</p>
+                    </a>
+                </li>
+                <li data-gift="2">
+                    <a href="javascript:;">
+                        <span>
+                            <img alt="" src="data/attachment/portal/15.jpg">
+                        </span>
+                        <p class="gift-name">鲜花</p>
+                        <p class="gift-price">RMB:1.68</p>
+                    </a>
+                </li>
+                <li data-gift="3">
+                    <a href="javascript:;">
+                        <span>
+                            <img alt="" src="data/attachment/portal/18.jpg">
+                        </span>
+                        <p class="gift-name">钻戒</p>
+                        <p class="gift-price">RMB:6.66</p>
+                    </a>
+                </li>
+                <li data-gift="260">
+                    <a href="javascript:;">
+                        <span>
+                            <img alt="" src="data/attachment/portal/3.jpg">
+                        </span>
+                        <p class="gift-name">皇冠</p>
+                        <p class="gift-price">RMB:8.88</p>
+                    </a>
+                </li>
+                <li data-gift="4">
+                    <a href="javascript:;">
+                        <span>
+                            <img alt="" src="data/attachment/portal/19.jpg">
+                        </span>
+                        <p class="gift-name">跑车</p>
+                        <p class="gift-price">RMB:10.00</p>
+                    </a>
+                </li>
+                <li data-gift="5">
+                    <a href="javascript:;">
+                        <span>
+                            <img alt="" src="data/attachment/portal/14.jpg">
+                        </span>
+                        <p class="gift-name">游艇</p>
+                        <p class="gift-price">RMB:20.00</p>
+                    </a>
+                </li>
+                <li data-gift="261">
+                    <a href="javascript:;">
+                        <span>
+                            <img alt="" src="data/attachment/portal/7.jpg">
+                        </span>
+                        <p class="gift-name">飞机</p>
+                        <p class="gift-price">RMB:66.00</p>
+                    </a>
+                </li>
+                <li data-gift="6">
+                    <a href="javascript:;">
+                        <span>
+                            <img alt="" src="data/attachment/portal/16.jpg">
+                        </span>
+                        <p class="gift-name">火箭</p>
+                        <p class="gift-price">RMB:99.00</p>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 更多操作 -->
+        <div class="more-list">
+            <ul class="clearfix">
+
+            </ul>
+        </div>
+    </div>
+
+    <div class="red-Packet-sheet">
+        <div class="content layui-m-anim-up layui-form">
+            <div class="Packet-item">
+                <span class="title">红包个数</span>
+                <div class="input-box">
+                    <input id="redPacketQty" type="text" placeholder="填写个数">
+                </div>
+                <span class="unit">个</span>
+            </div>
+            <div class="Packet-item">
+                <span class="title">总金额<span class="luck">拼</span></span>
+                <div class="input-box">
+                    <input id="redPacketAmount" type="text" placeholder="填写金额">
+                </div>
+                <span class="unit">元</span>
+            </div>
+            <div class="reminder clearfix">
+                <span>金额随机</span>
+                <span>需支付2%手续费</span>
+            </div>
+            <div class="Packet-item">
+                <span class="title">留言</span>
+                <div class="input-box">
+                    <input id="redPacketDesc" type="text" placeholder="恭喜发财">
+                </div>
+            </div>
+            <div class="Packet-item secureItem">
+                <div class="title">
+                    <div>口令红包</div>
+                    <input name="pwd" id="isPwd" type="checkbox" value="off" lay-skin="switch" lay-filter="pwd" lay-text="开|关"><div class="layui-unselect layui-form-switch" lay-skin="_switch"><em>关</em><i></i></div>
+
+                </div>
+                <div class="input-box">
+                    <input id="pwd" type="" readonly="readonly" placeholder="口令未开启">
+                </div>
+            </div>
+            <div class="Packet-item secureItem">
+                <div class="title">
+                    <div>区域红包</div>
+                    <input name="area" id="isLocal" type="checkbox" lay-skin="switch" lay-filter="area" lay-text="开|关"><div class="layui-unselect layui-form-switch" lay-skin="_switch"><em>关</em><i></i></div>
+
+                </div>
+                <div class="input-box">
+                    <input name="area" title="本市" disabled="" id="city" type="radio" checked="" lay-filter="city"><div class="layui-unselect layui-form-radio layui-form-radioed layui-radio-disbaled layui-disabled"><i class="layui-anim layui-icon"></i><div>本市</div></div>
+                    <input name="area" title="本省" disabled="" id="province" type="radio" lay-filter="province"><div class="layui-unselect layui-form-radio layui-radio-disbaled layui-disabled"><i class="layui-anim layui-icon"></i><div>本省</div></div>
+                </div>
+            </div>
+            <div class="btn-view">
+                <div class="button ok" id="sendRedPacket">塞钱进红包</div>
+                <div class="button cancel" id="cancelRedPacket">取消</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="red-packet-dialog-wrapper"></div>
+
+    <div class="tips-packet-dialog-warapper"></div>
+
+    <!-- 收益弹出层 -->
+    <div class="profile animated">
+        <div class="head">
+            <img alt="用户头像" src="">
+            <div class="user-name"></div>
+        </div>
+        <span class="close"></span>
+        <ul class="content">
+            <li><span>个人总收益：</span>￥<span class="profit"></span></li>
+            <li><span>已到账金额：</span>￥<span class="income"></span></li>
+            <li><span>未到账金额：</span>￥<span class="untransfer-income"></span></li>
+            <li class="mark">备注：每满一元系统自动提现到微信零钱</li>
+        </ul>
+    </div>
+    <!-- 收益弹出层end -->
+
+
+    <!-- 点击头像弹出层 -->
+    <div class="info-popup">
+        <div class="popup-top">
+            <img id="popupHeadImg" src="">
+            <div class="nick-name" id="popupNickName">我系小王子</div>
+        </div>
+        <div class="popup-bottom">
+            <div class="mention-btn" id="mentionSomeone">@TA</div>
+            <div class="tips-btn" id="tipsSomeone">打赏TA</div>
+        </div>
+    </div>
+    <!-- 点击头像弹出层end -->
+
+    <!-- 清理口令红包弹出层start -->
+    <div class="share-btn clicked clearurlBox" style="display:none;">
+        <span class="onlineCount">当前在线人数：<span></span></span>
+        <ul class="social">
+            <li class="clearurlButton">清理<b>口令</b>红包：<button class="layui-btn layui-btn-xs layui-btn-normal" type="1">确定</button></li>
+            <li class="clearurlButton">清理<b>区域</b>红包：<button class="layui-btn layui-btn-xs layui-btn-normal" type="2">确定</button></li>
+        </ul>
+        <div class="clearurl-bottom">知道了</div>
+    </div>
+    <!-- 清理口令红包弹出层end -->
+
+
+    <!-- iOS 互动输入框 start -->
+    <div class="iOS-input-popup animated">
+        <div class="iOS-popup-title">发表评论</div>
+        <div class="iOS-popup-content">
+            <textarea id="iOSPopupInput" placeholder="来说点什么吧"></textarea>
+        </div>
+        <div class="iOS-popup-toolbar clearfix">
+            <span id="iOSPopupCancel">取消</span>
+            <span id="iOSPopupSend">发送</span>
+        </div>
+    </div>
+    <!-- iOS 互动输入框 end -->
+
+
+    <script src="source/plugin/vyuan_zhibo/static/layui2/layui.js" type="text/javascript"></script>
+    <script src="source/plugin/vyuan_zhibo/static/js/swiper-3.4.1.jquery.min.js" type="text/javascript"></script>
+    <script src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js" type="text/javascript"></script>
+    <script src="source/plugin/vyuan_zhibo/static/js/new_edition_tabbar.js" type="text/javascript"></script>
+    <script src="source/plugin/vyuan_zhibo/static/js/new_edition_emoji.js" type="text/javascript"></script>
+    <script src="source/plugin/vyuan_zhibo/static/js/new_edition_footer.js?v=1" type="text/javascript"></script>
+    <script src="source/plugin/vyuan_zhibo/static/js/new_edition_comment.js?v29" type="text/javascript"></script>
+    <script src="source/plugin/vyuan_zhibo/static/js/new_edition_redpacket.js?v35" type="text/javascript" charset="UTF-8"></script>
+    <script src="source/plugin/vyuan_zhibo/static/js/new_edition_chat_button.js?v50" type="text/javascript" charset="UTF-8"></script>
+    <script>
+        var _hmt = _hmt || [];
+        (function () {
+            var hm = document.createElement("script");
+            hm.src = "https://hm.baidu.com/hm.js?1396f843e161fab07806076b37cbdefe";
+            var s = document.getElementsByTagName("script")[0];
+            s.parentNode.insertBefore(hm, s);
+        })();
+    </script>
+    <script>
+        $(function () {
+
+
+            $('.tabbar-item:not(:first,:last)').click(function(){
+                $('.footer').hide();
+            });
+
+            $('.tabbar-item:first-child').click(function(){
+                $('.footer').show();
+            });
+
+            //封面图高度设定
+            var imgheight = $('#burlcl').height();
+            $('.poster').css({'height':imgheight});
+            // 设置发红包菜单 layui 控件
+            function layUIPageSetup() {
+                $('#isPwd').val('off');
+                layui.use('form', function() {
+                    var form = layui.form;
+
+                    form.on('switch(pwd)', function(data) {
+                        console.log('form switch');
+                        if (data.elem.checked) {
+                            $('#pwd').attr('readOnly', false);
+                            $('#pwd').attr('placeholder', '请输入口令');
+                            $('#isPwd').val('on');
+                        } else {
+                            $('#pwd').attr('readOnly', true);
+                            $('#pwd').val('');
+                            $('#pwd').attr('placeholder', '口令未开启');
+                            $('#isPwd').val('off');
+                        }
+                    });
+
+                    form.on('switch(area)', function(data) {
+                        if (data.elem.checked) {
+                            $('#city').removeAttr('disabled');
+                            $('#province').removeAttr('disabled');
+                            form.render('radio');
+                            getip(1);
+                        } else {
+                            layer.msg('关闭区域红包');
+                            $('#city').attr('disabled','disabled');
+                            $('#province').attr('disabled','disabled');
+                            form.render('radio');
+                            $('#region_id').val();
+                        }
+                    });
+
+                    form.on('radio(city)', function(data) {
+                        if (data.elem.checked) {
+                            getip(1);
+                        }
+                    });
+
+                    form.on('radio(province)', function(data) {
+                        if (data.elem.checked) {
+                            getip(0);
+                        }
+                    });
+                });
+            }
+
+            // 获取当前区域
+            function getip(type) {
+                var formhash = $('#formhash').val();
+                var ip = $("#ip").val();
+                $.ajax({
+                    type: "GET",
+                    url: "plugin.php?id=vyuan_zhibo",
+                    data: "mod=ajax&ac=requestip&formhash="+formhash+"&ip="+ip,
+                    dataType: "json",
+                    success: function (res) {
+                        if (res.code==0){
+                            if (type==1) {
+                                layer.msg("当前区域 "+res.data.city)
+                                $("#region_id").val(res.data.city_id)
+                            } else {
+                                layer.msg("当前区域 " + res.data.region)
+                                $("#region_id").val(res.data.region_id)
+                            }
+                        } else {
+                            // alert(111)
+                        }
+                    },
+                    error: function(jqXhr, textStatus, err) {
+                        console.log(jqXhr);
+                        console.log(textStatus);
+                        console.log(err);
+                    }
+                });
+            }
+
+            layUIPageSetup();
+        });
+
+        //对接千帆部分
+        $(window).on('load', function () {
+            $.ajax({//进入即关注
+                type:'GET',
+                url:'plugin.php?id=vyuan_zhibo&mod=ajax_n&act=zhibofocusInfo&formhash2='+$('#formhashCheck').val(),
+                data: {identify:5712047,uid:0,zhibo_pid:289910,Inviteuid:0,wx_domain:0},
+                success:function(data){
+//自动关注成功
+                }
+            });
+
+            $.ajax({
+//获取用户城市信息
+                type:'GET',
+// url: 'plugin.php?id=vyuan_zhibo&mod=ajax_n&formhash=a553f119&act=userGeographical',
+                url:'https://api.vyuan8.cn/vyuan/plugin.php?id=vyuan_zhaopin&mod=zhibo_ajax&act=userGeographical&formhash2='+$('#formhashCheck').val(),
+                data: {identify:5712047,uid:0,type:0,zhibopid:289910,nickname:$('#zhiboUsernickname').val(),headimgurl:$('#zhiboUserimage').val()},
+                success:function(data){
+                }
+            });
+        });
+    </script>
+
+
+</div></body></html>

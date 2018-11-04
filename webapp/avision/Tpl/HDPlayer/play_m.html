@@ -452,7 +452,9 @@ $(document).ready(function(){
 
 	$('#msgShow').click(hidenMsg);
 $('#photo').click(function(){
-        DivLoadHtml('__APP__/Channel/showPhoto/chnId/{$chnId}', 'divMore');
+        DivLoadHtml('__APP__/Channel/showPhoto/chnId/{$chnId}', 'divMore','',function(status){
+			console.log('callback:'+status);
+        });
     });
 
 <foreach name="plugin" item="p">

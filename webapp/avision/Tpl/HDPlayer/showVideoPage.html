@@ -175,8 +175,27 @@ function getmrl()
 
 <else/>
 <!--o-player-fullscreen="false"-->
-<video id="h5Player" controls="controls" poster="{$poster}" x5-vide playsinline="playsinline" webkit-playsinline="true" x-webkit-airplay="false" style="position:relative;width:100%;margin:0;max-height:100%" filetype="{$filetype}" innerId="{$innerId}" src="" type="video/mp4">
+
+<!-- 2018-10-23 之前
+<video id="h5Player" controls="controls"   poster="{$poster}" x5-vide playsinline="playsinline"
+	   webkit-playsinline="true" x-webkit-airplay="false" style="position:relative;width:100%;margin:0;max-height:100%" filetype="{$filetype}" innerId="{$innerId}" src="" type="video/mp4">
 </video>
+-->
+<!--
+x5-video-player-type="h5"	//要安卓不自动全屏不能加入此参数，而此参数是实现同层显示必须
+x5-playsinline="true"
+x-webkit-airplay="true"
+webkit-playsinline="true"
+playsinline="true"
+-->
+<video id="h5Player" controls="controls"   poster="{$poster}"
+	   x5-playsinline="true"
+	   x-webkit-airplay="true"
+	   webkit-playsinline="true"
+	   playsinline="true"
+	    style="position:relative;width:100%;margin:0;max-height:100%" filetype="{$filetype}" innerId="{$innerId}" src="" type="video/mp4">
+</video>
+
 	<if condition="$preview eq '1'">
 		下载地址:<input type="text" id="h5Src" value="" style="width:450px;"/>
 	</if>

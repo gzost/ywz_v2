@@ -59,6 +59,9 @@ function vodfunction(work){
 	para.permitCreate='{$permitCreate}';
 	para.permitModify='{$permitModify}';
 	console.log(para);
+	$.ajaxSetup({
+        cache:false
+    });
 	$.post(url,para,function(data){
 		$("#detail").html(data);
 		$.parser.parse($('#detail'));

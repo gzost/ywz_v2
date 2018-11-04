@@ -518,4 +518,35 @@ class Osession{
     static function setPayFalseUri($uri){   $_SESSION['PayFalseUri']=$uri;    }
     static function getPayFalseUri(){   return $_SESSION['PayFalseUri'];    }
 }
+
+//返回不重复的字串
+function Ouuid(){
+    $t=microtime();
+    list($usec, $sec) = explode(" ",$t );
+    $usec=substr($usec,2,6);
+    $rand=mt_rand(0,0xfffff);
+    //echo $t.'='.$usec.'<br>';
+    $uuid=sprintf("%08x%05x%05x",$sec,$usec,$rand);
+    return $uuid;
+}
+
+/**
+ * 把filename除最后的扩展名外全替换成newbasename
+ * @param $fileName
+ * @param $newBasename
+ * @return string 替换后的文件名
+ */
+function OreplaceBaseName($fileName,$newBasename){
+    $pos=strripos($fileName,'.');   //最后.出现的位置
+    if(false===$pos){
+        //没扩展名
+        $newName=$newBasename;
+    }elseif (0===$pos){
+        //只有扩展名
+        $newName=$fileName;
+    }else{
+        $newName=$newBasename.substr($fileName,$pos);
+    }
+    return $newName;
+}
 ?>

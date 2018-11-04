@@ -199,7 +199,7 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 //dump($chnList);
 		$webVar=$rec;	
 		$webVar['detailFormData']=OUdetailform($mf);
-		$webVar['imageUrl']=RecordfileModel::getImgMrl($rec['path']);   //$rec['path']为图片文件的相当路径
+		$webVar['imageUrl']=RecordfileModel::getImgMrl($rec['path']).'?'.Ouuid();   //$rec['path']为图片文件的URL路径
 		$webVar['permitCreate']=($_REQUEST['permitCreate']=='true')?'true':'false';
 		$webVar['permitModify']=($_REQUEST['permitModify']=='true')?'true':'false';
 		if($new){

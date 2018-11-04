@@ -64,13 +64,14 @@ function copyToClipBoard(id, msgId)
 		$('#'+msgId).text('(已复制)');
 	}
 }
-
-function DivLoadHtml(urlstr, divId, formdata)
+//载入HTML，完成后调用回调函数，callback(status) 若成功status=true,否则=false
+function DivLoadHtml(urlstr, divId, formdata, callback)
 {
 	if(null == formdata)
 	{
 		formdata = {};
 	}
+	var retStatus=true;
 	$.ajax({
 	  url: urlstr,
 	  data: formdata,
@@ -78,7 +79,16 @@ function DivLoadHtml(urlstr, divId, formdata)
 		$('#'+divId).html(data);
 		//alert('tobe parese');
 		$.parser.parse('#'+divId);
+        retStatus=true;
 	  },
+		error:function(){
+            retStatus=false;
+		},
+		complete:function(){
+            if (typeof callback === "function"){
+                callback(retStatus);
+            }
+		},
 	  dataType: 'html'
 	});
 }
@@ -100,9 +110,10 @@ function DivReplaceHtml(urlstr, divId, formdata)
         dataType: 'html'
     });
 }
-function DivLoadHtmlPost(urlstr, divId, formdata)
+function DivLoadHtmlPost(urlstr, divId, formdata,callback)
 {
-    if(null == formdata)
+    var retStatus=true;
+	if(null == formdata)
     {
         formdata = {};
     }
@@ -114,6 +125,15 @@ function DivLoadHtmlPost(urlstr, divId, formdata)
             $('#'+divId).html(data);
             //alert('tobe parese');
             $.parser.parse('#'+divId);
+            retStatus=true;
+        },
+        error:function(){
+            retStatus=false;
+        },
+        complete:function(){
+            if (typeof callback === "function"){
+                callback(retStatus);
+            }
         },
         dataType: 'html'
     });

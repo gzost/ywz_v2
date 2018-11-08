@@ -1657,6 +1657,7 @@ class ChannelAction extends AdminBaseAction
      * 图片直播中图片文件上传的后台处理程序
      */
     public function endpoint() {
+        set_time_limit(3600);	//设置最长运行时间，秒
         $uploader = new UploadHandler ();
 
         // Specify the list of valid extensions, ex. array("jpeg", "xml", "bmp")

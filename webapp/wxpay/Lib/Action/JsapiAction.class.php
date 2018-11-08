@@ -2,6 +2,7 @@
 require_once MODEL_PATH.'MessageModel.php';
 require_once MODEL_PATH.'PrepayModel.php';
 require_once APP_PUBLIC.'CommonFun.php';
+require_once APP_PUBLIC.'Ou.Function.php';
 require_once COMMON_PATH.'functions.php';
 require_once APP_PUBLIC_WXPAY."WxPay.Config.php";
 require_once APP_PUBLIC_WXPAY."WxPay.JsApiPay.php";

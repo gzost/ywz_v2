@@ -5,11 +5,11 @@
         </div>
     </foreach>
 </div>
-<div id="detailContent" style="box-sizing: border-box; padding:20px 10px; background-color: #6f6f6f; display:none;" >
+<div id="detailContent"  style="box-sizing: border-box; padding:20px 10px; background-color: #6f6f6f; display:none; position: fixed ;top:100px;  z-index:1" >
     <div style="text-align: right;  height:0px;">
         <img id="hideDetail" src="/player/default/images/close_w.png" width="26px" style="position: relative; right: -10px;top:-10px; opacity: 0.7;">
     </div>
-    <div id="photoDetail">
+    <div id="photoDetail" style="overflow-y:auto;max-height: 100%;">
     </div>
 </div>
 
@@ -18,9 +18,10 @@
         border:0px solid #0fbad6; padding:1px; min-height: 200px; text-align: center;/*display: flex; flex-warp:wrap;*/
     }
     #album div{
-        width:48%; border: 1px solid #aaa; background: #eee; border-radius: 2px; text-align: center;margin:2px;
-        background-size: contain; background-repeat:no-repeat;
-        background-position: center top;
+        width:48%; border: 1px solid #aaa;
+        border-radius: 2px; text-align: center;margin:2px;
+        background-size: contain;
+        background: #eee no-repeat center top;
         padding:0px; overflow:hidden;
         display: inline-block;
     }
@@ -37,6 +38,14 @@
 
     $(document).ready(function(){
         setPicWidth();
+        //计算原图弹窗的top和height
+        var albumTop=$("#album").offset().top;
+        console.log("albumtop="+albumTop);
+        $("#detailContent").css("top",albumTop+'px');
+        var viewHeight=$(window).height();
+        console.log("viewHeight="+viewHeight);
+        $("#detailContent").css("height",viewHeight-albumTop-10+'px');
+
 
         $("#album,#detailContent").on("click",function(event){
             var target=event.target;
@@ -49,7 +58,7 @@
                 DivLoadHtmlPost('__APP__/Channel/showPhotoDetail', 'photoDetail',para,function (rt) {
                     if(true==rt){
                         $("#detailContent").show();
-                        $("#album").hide();
+                        //$("#album").hide();
                     }
                 });
             }
@@ -58,7 +67,7 @@
                 case 'hideDetail':
                     //隐藏大图片，显示图片列表
                     $("#detailContent").hide();
-                    $("#album").show();
+                    //$("#album").show();
                     break;
 
             }

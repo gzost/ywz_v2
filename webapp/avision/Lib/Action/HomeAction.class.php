@@ -808,7 +808,8 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 		try{
 			$this->toBroadcastPost($webvar);
 			//注册成功后，自己登录并回到第一页
-			$this->authen($webvar['account'],md5($webvar['password']));
+			//$this->authen($webvar['account'],md5($webvar['password']));
+            $this->authen($webvar['account'],($webvar['password']));    //在toBroadcastPost中对password进行了MD5
 			return;
 			if(!$result) throw new Exception('用户信息错误！请重新登录。');
 		}catch (Exception $e){
@@ -825,7 +826,7 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
      * 处理页面提交的数据
      * @param array $webvar	页面提交的数组，处理过程可能修改数组内容，该数组会用于重新生成页面
      */
-    public function toBroadcastPost($webvar){
+    public function toBroadcastPost(&$webvar){
 
     	$dbUser=D('User');
 		$userAction=A('User');
@@ -842,7 +843,7 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 		{
 			$sms = new Sms();
 			$smsCheck = $sms->Check($webvar['phone'], $webvar['code']);
-			//$smsCheck = true;
+//$smsCheck = true;
 			if(!$smsCheck)
 			{
 				$webvar['code'] = '';
@@ -909,7 +910,7 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 				$userAction=A('User');
 				$userAction->userValidate($webvar);
 
-
+//dump($webvar);
 	    		//注册新用户
 	    		//检查输入合法性
 	    		if(''==$webvar['username']) $webvar['username']=$webvar['account'];
@@ -1050,7 +1051,8 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 	 */
 	public function rechargePayCheck($t)
 	{
-		$msgDal = new MessageModel();
+		//$msgDal = new MessageModel();
+        $msgDal = D('Message');
 		$r = $msgDal->where(array('keystr'=>$t))->find();
 		if(is_array($r) && -1 == $r['step'])
 		{
@@ -1069,13 +1071,14 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 	 */
 	function rechargePaySucess($t = '', $c = '')
 	{
-		try
+		logfile('rechargePaySucess: t='.$t.' c='.$c,LogLevel::DEBUG);
+	    try
 		{
 			//echo 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 			$msgDal = new MessageModel();
 			//$step = $msgDal->GetMsgStep(null, $t);
 			$r = $msgDal->where(array('keystr'=>$t))->find();
-			//echo $msgDal->getLastSQL();
+			logfile($msgDal->getLastSQL(),LogLevel::SQL);
 			if(is_array($r) && 0 == $r['step'])
 			{
 				//事务开始

@@ -157,12 +157,7 @@
 	color:#fff;
 }
 
-.tbCellSp{
-	height: 1px;
-    border-top: 1px solid #666;
-    text-align: center;
-	width:100%;
-}
+/*
 
 .tbCell{
     color: #000;
@@ -197,6 +192,7 @@
 	width:40%;
 }
 
+*/
 .divLayer{
 	position: fixed;
 	left: 0;
@@ -358,7 +354,9 @@ function tbInfoClick()
 function tbRePlayClick()
 {
 	DivMoreFit(true);
-	DivLoadHtml('__APP__/HDPlayer/recordPage/chnId/{$chnId}', 'divMore');
+	//DivLoadHtml('__APP__/HDPlayer/recordPage/chnId/{$chnId}/rId/{$rId}', 'divMore');
+	var para={ chnId:{$chnId}, rId: {$rId} };
+    DivLoadHtmlPost('__APP__/HDPlayer/recordPage', 'divMore', para);
 	selImgChange('tbRePlay');
 	DivMoreFit(true);
 }

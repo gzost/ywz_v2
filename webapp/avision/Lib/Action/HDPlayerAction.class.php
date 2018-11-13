@@ -51,8 +51,9 @@ class HDPlayerAction extends SafeAction {
 	/*
 	 * 局部页面加载,加载录像列表
 	*/
-	public function recordPage($chnId = 0)
+	public function recordPage($chnId = 0,$rId=0)
 	{
+//dump($_REQUEST);
 		//获取录像文件记录
 		$data = null;
 		if(0 < $chnId)
@@ -83,7 +84,8 @@ class HDPlayerAction extends SafeAction {
 		{
 			$data[$i]['imgpath'] = $rec->getImgMrl($r['path']);
 		}
-
+//dump($data);
+		$this->assign('rId', $rId);
 		$this->assign('recList', $data);
 		$this->display('recordPage');
 	}

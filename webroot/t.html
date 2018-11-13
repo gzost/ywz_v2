@@ -5,9 +5,10 @@
     <title>Basic Messager - jQuery EasyUI Demo</title>
     <link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/icon.css">
-    <link rel="stylesheet" type="text/css" href="../demo.css">
+    <link rel="stylesheet" type="text/css" href="Public/jeasyui/demo.css">
     <script type="text/javascript" src="/Public/jeasyui/jquery.min.js"></script>
     <script type="text/javascript" src="/Public/jeasyui/jquery.easyui.min.js"></script>
+    <script type="text/javascript" src="/Public/js/jquery.lazyload.min.js?v=1.9.3"></script>
 </head>
 <body>
     <h2>Basic Messager</h2>
@@ -18,7 +19,66 @@
         <a href="#" class="easyui-linkbutton" onclick="fade()">Fade</a>
         <a href="#" class="easyui-linkbutton" onclick="progress()">Progress</a>
     </div>
+    <div id="album" style="margin: 0 auto; width: 300px; height: 200px; overflow: auto; background-color: #0cb781;">
+        <div><img class="lazy" src="" data-original="t/1.jpg"></div><div><img class="lazy" src="" data-original="t/2.jpg"></div>
+        <div><img class="lazy" src="" data-original="t/3.jpg"></div><div><img class="lazy" src="" data-original="t/4.jpg"></div>
+        <div><img class="lazy" src="" data-original="t/5.jpg"></div><div><img class="lazy" src="" data-original="t/6.jpg"></div>
+        <div><img class="lazy" src="" data-original="t/7.jpg"></div><div><img class="lazy" src="" data-original="t/8.jpg"></div>
+        <div><img class="lazy" src="" data-original="t/9.jpg"></div><div><img class="lazy" src="" data-original="t/10.jpg"></div>
+    </div>
+    <style type="text/css">
+        #album, #photoDetail{
+            border:0px solid #0fbad6; padding:1px; min-height: 200px; text-align: center;/*display: flex; flex-warp:wrap;*/
+            position: relative;
+        }
+        #album div{
+            width:45%; border: 1px solid #aaa;
+            /*
+            border-radius: 2px; text-align: center;margin:2px;
+            background-size: contain;
+            background: #eee no-repeat center top;
+            padding:0px; overflow:hidden;
+            display: inline-block;*/
+            position: absolute;
+            left:0; top:0;
+        }
+        #album img{
+            width:100%;
+        }
+        #album input{
+            display:block; clear: both; float: right;margin-right: 10px;
+        }
+    </style>
     <script type="text/javascript">
+        $(function () {
+            var ob={};
+            $(ob).on('save',function(event,data){
+                //alert('save!'+data.name);
+                console.log(data);
+            });
+
+            $(ob).on('save',function(event,data){
+                //alert('save!ag!');
+                console.log('save!ag!');
+            });
+            $(ob).on('post',function(event,data){
+                //alert('post!');
+                console.log('post');
+            });
+            $(ob).trigger('save',{name:"jone"});
+            $(ob).trigger('post',{name:"jone"});
+            $(ob).trigger('save',{name:"hhhh11"});
+
+
+            var width=$("#album div").width();
+            console.log("setPicWidth:"+width);
+            $("#album div").height(width*4/7);
+
+            $('img.lazy').lazyload({
+                container: $("#album")
+            });
+        });
+
         function show(){
             $.messager.show({
                 title:'My Title',
@@ -53,6 +113,6 @@
         }
     </script>
     
-    <iframe width=500 height=500 src="http://vod.aodianyun.cn/share/merge/iframe/57cfb29b80c96fce425b08b4?token=9bd0q52Kbw%252FOaMYL4q8zatJ4UGzYz3CwqVevs6yUsDqYQS68of7qtYxsqoN%252FDgY6GLd7%252B7MvgfLZVYOcyqivi0kDZ%252BOC9XlEt4LSvFatS%252FT7A6nRgSbjR67c2emGQ3s5" frameborder=0 allowfullscreen></iframe>
+
 </body>
 </html>

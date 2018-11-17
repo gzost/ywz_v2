@@ -1,0 +1,65 @@
+<div id="{$continerid}" class="mycontiner" >
+<!-- 显示用户对频道的订阅状态，输出的HTML将嵌入到其它页面中 -->
+
+<load href="__PUBLIC__/js/publicFunction.js"/>
+<load href="__PUBLIC__/css/OUI.css" />
+<script type="text/javascript">
+    function modifyNrefresh(url,continer,msg){
+        console.log(url);
+        console.log(continer);
+        console.log(msg);
+        if(msg.length>1){
+            $.messager.confirm('确认',msg,function(r){
+               if(r){
+                   DivLoadHtml(url,continer);
+               }
+            });
+        }else {
+            DivLoadHtml(url,continer);
+        }
+    }
+</script>
+
+
+<style type="text/css">
+.mycontiner{
+    color: #001122;
+    font-size: 14px;
+    background-color: #eee;
+    min-height: 400px;
+    text-align: left;
+}
+
+.block-title{
+    text-align: left;
+    font-size: 1.1em;
+    color: #557;
+    font-weight: bold;
+    margin: 5px 5px 5px 25px;
+    padding-left: 5px;
+    background-color: #ddd;
+    line-height: 20px;
+}
+.block-title:before{
+    content:'';
+    position: absolute;
+    width:0px;
+    height:0px;
+    margin-left:-20px;
+    line-height: 20px;
+    border-width:8px;
+    border-style:solid dashed dashed dashed;
+    border-color:transparent transparent transparent #e66161;
+}
+.block-contain{
+    margin-left:2em;
+}
+</style>
+
+
+    <div style="height: 1px"></div>
+    <div class="block-title">{$title}</div>
+
+    <div style="margin:5px 5px 5px 2em; font-size: 1.1em; color: #00f">{$msg}</div>
+    <div class="OUI-btn OUI-font14" style="margin-left:2em; " onclick="DivReplaceHtml('{$backUrl}','{$continerid}')">返回</div>
+</div>

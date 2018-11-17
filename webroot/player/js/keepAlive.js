@@ -90,8 +90,8 @@ function HeartBeat()
 
 	//关闭倒计时，并退出
 	this.doLogout = function(){
-		//$.messager.progress('close');
-		//window.location.replace(logoutUrl);
+		$.messager.progress('close');
+		window.location.replace(logoutUrl);
 	}
 
 	/**

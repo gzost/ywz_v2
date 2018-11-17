@@ -409,7 +409,7 @@ function tbRePlayClick()
 {
 	//DivMoreFit(true);
 	//DivLoadHtml('__APP__/HDPlayer/recordPage/chnId/{$chnId}', 'divMore');
-    var para={ chnId:{$chnId}, rId: {$rId} };
+    var para={ chnId:{$chnId}, rId: "{$rId}" };
     DivLoadHtmlPost('__APP__/HDPlayer/recordPage', 'divMore', para);
 	selImgChange('tbRePlay');
 	//DivMoreFit(true);

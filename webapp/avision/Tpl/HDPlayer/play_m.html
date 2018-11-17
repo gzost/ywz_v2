@@ -125,7 +125,7 @@
 
 .chatCellCanChat img{
 	height:1em;
-	vertical-align:middle;
+	vertical-align:text-bottom;
 }
 
 .chatCell{
@@ -355,7 +355,7 @@ function tbRePlayClick()
 {
 	DivMoreFit(true);
 	//DivLoadHtml('__APP__/HDPlayer/recordPage/chnId/{$chnId}/rId/{$rId}', 'divMore');
-	var para={ chnId:{$chnId}, rId: {$rId} };
+	var para={ chnId:{$chnId}, rId: "{$rId}" };
     DivLoadHtmlPost('__APP__/HDPlayer/recordPage', 'divMore', para);
 	selImgChange('tbRePlay');
 	DivMoreFit(true);
@@ -449,8 +449,9 @@ $(document).ready(function(){
 	$('#tbEntrytimes').click(tbEntrytimesClick);
 
 	$('#msgShow').click(hidenMsg);
-$('#photo').click(function(){
-        DivLoadHtml('__APP__/Channel/showPhoto/chnId/{$chnId}', 'divMore','',function(status){
+	$('#photo').click(function(){
+        selImgChange('photo');
+	    DivLoadHtml('__APP__/Channel/showPhoto/chnId/{$chnId}', 'divMore','',function(status){
 			console.log('callback:'+status);
         });
     });
@@ -596,7 +597,7 @@ function showMsgAni(msg)
 </div>
 <div class="flex-row">
 	<div class="contRow" style="height:0.9em;font-size:0.8em;">
-		<div class="statcell" id="tbEntrytimes"><img src="/player/{$theme|default='default'}/images/bofan.png" src-sel="/player/{$theme|default='default'}/images/bofan_s.png" src-org="/player/{$theme|default='default'}/images/bofan.png"/><span id="entrytimes">{$entrytimes}</span> 热度</div>
+		<div class="statcell" id="tbEntrytimes"><img src="/player/{$theme|default='default'}/images/bofan.png" src-sel="/player/{$theme|default='default'}/images/bofan_s.png" src-org="/player/{$theme|default='default'}/images/bofan.png"/><span id="entrytimes">{$entrytimes}</span> 点</div>
 		<div class="statcell" id="tbBillPay">
 		<!--
 		<img src="/player/{$theme|default='default'}/images/dianzhang.png" src-sel="/player/{$theme|default='default'}/images/dianzhang_s.png" src-org="/player/{$theme|default='default'}/images/dianzhang.png"/><span id="billpay"></span>订阅/打赏--></div>
@@ -604,7 +605,7 @@ function showMsgAni(msg)
 		<div class="statcell" id="tbShare"><img src="/player/{$theme|default='default'}/images/zhuanfa.png" src-sel="/player/{$theme|default='default'}/images/zhuanfa_s.png" src-org="/player/{$theme|default='default'}/images/zhuanfa.png"/>分享</div>
 		</neq>
 		<!-- 增加个人信息显示-->
-		<div style="float: right; font-size:0.8em; margin-right: 0.5em;" onclick="loadSubscriberInfo();"><img src="/player/{$theme|default='default'}/images/my.png" height="14" style="vertical-align:middle" >我</div>
+		<div style="float: right; font-size:0.8em; margin-right: 0.5em;" onclick="loadSubscriberInfo();"><img src="/player/{$theme|default='default'}/images/my.png" height="14" style="vertical-align:text-bottom" >我</div>
 	</div>
 
 	<div class="contRow" style="height:1em;background-color:#333333;display:flex;justify-content:space-around;clear:both;">
@@ -615,7 +616,7 @@ function showMsgAni(msg)
 		<div class="chatCell{$CanChat}" id="tbDiscu"><img src="/player/{$theme|default='default'}/images/pinglun.png" src-sel="/player/{$theme|default='default'}/images/pinglun_s.png" src-org="/player/{$theme|default='default'}/images/pinglun.png"/>讨论</div>
 		<notempty name="tabs['105']">
 		<div class="imgSp"></div>
-		<div class="statcell" id="photo"><img src="/player/{$theme|default='default'}/images/pinglun.png" src-sel="/player/{$theme|default='default'}/images/pinglun_s.png" src-org="/player/{$theme|default='default'}/images/pinglun.png"/>相册</div>
+		<div class="statcell" id="photo"><img src="/player/{$theme|default='default'}/images/album_w32.png" src-sel="/player/{$theme|default='default'}/images/album_o32.png" src-org="/player/{$theme|default='default'}/images/album_w32.png"/>相册</div>
 		</notempty>
 	</div>
 </div>

@@ -4,7 +4,7 @@ class RecordfileDetailViewModel extends ViewModel {
 	
 	public $viewFields=array(
 		'recordfile'=>array('id','owner','channelid','size','length','viewers','createtime','path',
-		'name','descript','_type'=>'LEFT'),
+		'name','descript','seq','_type'=>'LEFT'),
 		'User'=>array('account'=>'account','_on'=>'recordfile.owner=User.id','_type'=>'LEFT'),
 		'channel'=>array('name'=>'channelname','_on'=>'recordfile.channelid=channel.id')
 	);

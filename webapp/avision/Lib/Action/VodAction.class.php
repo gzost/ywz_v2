@@ -103,6 +103,7 @@ class VodAction extends AdminBaseAction {
 		'createtime'=>array('name'=>'createtime','txt'=>'录像时间'),
 		'length'=>array('name'=>'length','txt'=>'录像时长'),
 		'channelid'=>array('name'=>'channelid','txt'=>'关联频道'),
+        'seq'=>array('name'=>'seq','txt'=>'显示顺序'),
 		'account'=>array('name'=>'account','txt'=>'属主')
 	);
 	/**
@@ -220,7 +221,7 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 	
 	//更新录像记录
 	public function updateAjax(){
-		$rec=array('owner'=>0,'channelid'=>0,'length'=>'','createtime'=>'','name'=>'','descript'=>'');
+		$rec=array('owner'=>0,'channelid'=>0,'length'=>'','createtime'=>'','name'=>'','descript'=>'','seq'=>0);
 		$rec=getRec($rec,TRUE);
 //dump($_REQUEST);
 		$dbUser=D('user');

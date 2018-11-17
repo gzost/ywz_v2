@@ -1,0 +1,268 @@
+<extend name="common:PhoneBase" />
+
+<block name="bl_main">
+
+<script type="text/javascript" src="__PUBLIC__/js/jquery.md5.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	$("input",$("#username").next("span")).focus(function(){  
+	});
+	$("input",$("#password").next("span")).focus(function(){  
+	});
+});
+
+function goReg()
+{
+	location.href = "__URL__/register/bozhu/{$bozhu}";
+}
+
+function wxLog(chnid)
+{
+	if(0 < chnid)
+	{
+		location.href = "__URL__/wxLogin/chnId/"+chnid;
+	}
+	else
+	{
+		location.href = "__URL__/wxLogin";
+	}
+}
+
+function goLog()
+{
+	var psw=$('#password').textbox('getValue');
+	console.log(psw);
+	console.log($.md5(psw));
+	$('#password').textbox('setValue',$.md5(psw));
+	$('#form1').submit();
+}
+
+</script>
+<style type="text/css">
+
+.textbox {
+  position: relative;
+  border: 1px solid #FFF;
+  background-color: #fff;
+  vertical-align: middle;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0;
+  padding: 0;
+  top:-1px;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
+}
+.textbox .textbox-text {
+  #font-size: 12px;
+  border: 0;
+  margin: 0;
+  padding: 4px;
+  white-space: normal;
+  vertical-align: top;
+  outline-style: none;
+  resize: none;
+  -moz-border-radius: 5px 5px 5px 5px;
+  -webkit-border-radius: 5px 5px 5px 5px;
+  border-radius: 5px 5px 5px 5px;
+}
+.textbox .textbox-text::-ms-clear,
+.textbox .textbox-text::-ms-reveal {
+  display: none;
+}
+.textbox textarea.textbox-text {
+  white-space: pre-wrap;
+}
+.textbox .textbox-prompt {
+  #font-size: 12px;
+  font-size: 1em;
+  color: #aaa;
+}
+.textbox .textbox-bgicon {
+  background-position: 3px center;
+  padding-left: 21px;
+}
+.textbox .textbox-button,
+.textbox .textbox-button:hover {
+  position: absolute;
+  top: 0;
+  padding: 0;
+  vertical-align: top;
+  -moz-border-radius: 0 0 0 0;
+  -webkit-border-radius: 0 0 0 0;
+  border-radius: 0 0 0 0;
+}
+.textbox-button-right,
+.textbox-button-right:hover {
+  border-width: 0 0 0 1px;
+}
+.textbox-button-left,
+.textbox-button-left:hover {
+  border-width: 0 1px 0 0;
+}
+.textbox-addon {
+  position: absolute;
+  top: 0;
+}
+.textbox-icon {
+  display: inline-block;
+  #width: 18px;
+  #height: 20px;
+  overflow: hidden;
+  vertical-align: top;
+  background-position: center center;
+  cursor: pointer;
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+  text-decoration: none;
+  outline-style: none;
+}
+.textbox-icon-disabled,
+.textbox-icon-readonly {
+  cursor: default;
+}
+.textbox-icon:hover {
+  opacity: 1.0;
+  filter: alpha(opacity=100);
+}
+.textbox-icon-disabled:hover {
+  opacity: 0.6;
+  filter: alpha(opacity=60);
+}
+.textbox-focused {
+  #border-color: #16599f;
+  #-moz-box-shadow: 0 0 3px 0 #aaa;
+  #-webkit-box-shadow: 0 0 3px 0 #aaa;
+  #box-shadow: 0 0 3px 0 #aaa;
+}
+.textbox-invalid {
+  border-color: #ffa8a8;
+  background-color: #fff3f3;
+}
+.filebox .textbox-value {
+  vertical-align: top;
+  position: absolute;
+  top: 0;
+  left: -5000px;
+}
+.filebox-label {
+  display: inline-block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  left: 0;
+  top: 0;
+  z-index: 10;
+  background: url('images/blank.gif') no-repeat;
+}
+.iptBtn{
+	width:40%;
+	height:2.3em;
+	font-size:1.3em;
+	margin-left:1em;
+	margin-right:1em;
+	border-radius:3px;
+}
+.iptReg{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #16599f;
+    background-color: #fff;
+}
+.iptLog{
+	border-color: #16599f;
+    border-style: solid;
+    border-width: thin;
+    color: #fff;
+    background-color: #16599f;
+	margin-right:1em;
+}
+.logName{
+    color: #16599f;
+    background-color: #fff;
+	font-size:0.8em;
+}
+.logo{
+	height:1.2em;
+	vertical-align:middle;
+	margin-left:0.3em;
+	margin-right:0.3em;
+	margin-bottom:0.2em;
+}
+.iptItem{
+	margin:2em 1em 0.5em 1em;
+	border-bottom-style:solid;
+	border-bottom-width:1px;
+	border-bottom-color:#16599f;
+	text-align:left;
+}
+.flex-contBetween {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+}
+.wxLogTitle{
+	text-align:center;
+	margin-top:2em;
+	margin-bottom:1em;
+	color:#666;
+	overflow:hidden;
+	background-image:url(/Public/images/rowSplit.png);
+	background-repeat:repeat-x;
+    background-position-y: 50%;
+}
+.errorMsg{
+	display:inline;
+	text-align:center;
+	font-size:0.8em;
+	color:rgb(200, 0, 0);
+	position:relative;
+}
+
+</style>
+
+<div>
+	<form id="form1" action="__URL__/authen" method="post">
+		<div class="iptItem">
+			<img class="logo" src="/Public/images/my.png"/>
+			<input name='account' class="easyui-textbox" data-options="prompt:'请输入手机号码或平台账号',width:'80%'">
+		</div>
+		<div class="iptItem">
+			<img class="logo" src="/Public/images/key.png"/>
+			<input id="password" name='password' type="" class="easyui-textbox" data-options="type:password,prompt:'请输入密码',width:'80%'">
+		</div>
+		<div style="text-align:center;margin-bottom:0.5em;">
+			<span id="msgBox" class="errorMsg">&nbsp;{$errorMsg}</span>
+		</div>	
+		<div class="flex-contBetween" style="text-align:center;width:100%">
+			<input type="button" class="iptReg iptBtn" value="注册" onclick="goReg();"/>
+			<input type="button" class="iptLog iptBtn" value="登录" onclick="goLog();"/>
+		</div>
+		<input type='hidden' name='chnid' value='{$chnid}' />
+	</form>
+	<!--
+	<div style="text-align:right;margin:0.5em;color:#666;">
+		<a style="color:#666;">忘记密码</a>
+	</div>
+	-->
+	<!--
+	<div style="text-align:left;margin:0.5em;color:#666;font-size:0.8em;">
+		<input style="height:0.9em;" type="checkbox" checked="checked">关注公众号，获取更多资讯。</input>
+	</div>
+	-->
+	<if condition="$bozhu eq 0">
+		<div class="wxLogTitle">
+			<span style="background-color:#FFF;padding-left:0.5em;padding-right:0.5em;">微信登录</span>
+		</div>
+		<div style="text-align:center;margin:0.5em;">
+			<img style="width:4.5em;" src="/Public/images/wxlog.png" onclick="wxLog({$chnid});"/>
+		</div>
+	</if>
+</div>
+
+</block>

@@ -61,7 +61,7 @@ class HDPlayerAction extends SafeAction {
 			$recDal = D('recordfile');
 			$w = array();
 			$w['channelid'] = $chnId;
-			$data = $recDal->where($w)->order('id desc')->select();
+			$data = $recDal->where($w)->order('seq')->select();
 		}
 		else
 		{

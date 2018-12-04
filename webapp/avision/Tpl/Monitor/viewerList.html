@@ -22,14 +22,16 @@ $(document).ready(function(){
 >
 	<thead>
 		<tr>
+			<!--
 			<th data-options="field:'chnname', width:200,align:'left', halign:'center' ">节目名称</th>
 			<th data-options="field:'objtype', width:60,align:'left', halign:'center' ">节目类型</th>
 			<th data-options="field:'username', width:200,align:'left', halign:'center' ">观众名称</th>
-			
+
 			<th data-options="field:'viewtimes', width:100,align:'right', halign:'center'">观看次数</th>
 			<th data-options="field:'duration', width:100,align:'right', halign:'center' ">观看时长(分)</th>
-			<foreach name="header" item="p">
-				<th data-options="field:'{$p.name}',width:100,align:'center'">{$p.text}</th>
+			-->
+			<foreach name="header" item="col">
+				<th  data-options="field:'{$col.name}',{$col.data-options}" >{$col.text}</th>
 			</foreach>
 		</tr>
 	</thead>
@@ -51,8 +53,12 @@ $(document).ready(function(){
 			data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
 		至<input class="easyui-datebox" name="endTime" value="{$endTime}" style="width:120px"
 			data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
-		<input name='work' value='{$work}' style="display:none" />
+		<input name='work' value='search' style="display:none" />
 		<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
+		<if condition="$work eq 'search'">
+			<a href="__URL__/viewerListSaveExcel" class="easyui-linkbutton" iconCls="icon-down" data-options="plain:true">另存为Excel</a>
+		</if>
+
 	</form>
 	
 	

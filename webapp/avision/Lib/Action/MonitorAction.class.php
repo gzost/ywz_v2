@@ -14,6 +14,7 @@ require_once(LIB_PATH.'Model/ConsumpModel.php');
 require_once(LIB_PATH.'Model/OnlineModel.php');
 require_once APP_PATH.'Common/functions.php';
 
+require_once APP_PATH.'../public/exportExecl.php';
 /**
  * 
  * 监控分析相关功能
@@ -218,14 +219,12 @@ class MonitorAction extends AdminBaseAction{
 	
 	/**
 	 * 
-	 * 列出指定时间内曾经观看过某频道的观众
+	 * 列出指定时间内曾经观看过某频道的观众，统计观看次数及观看时长
+     * 若是频道会员，列出频道会员信息
+     * 同时列出与频道关联的VOD观看信息
+     * {"operation":[{"text":"允许","val":"R"},{"text":"查看所有","val":"A"}]}
 	 */
 	public function viewerList(){
-//		$menu=new AdminMenu();
-//		$menuStr=$menu->Menu(1);
-// 		$this->assign('menuStr',$menuStr);
-// 		$this->assign('mainTitle','观众列表');
-// 		$this->assign('userName',$this->userName());
  		$this->baseAssign();
  		$this->assign('mainTitle','观众列表');
  		//网页传递的变量模板
@@ -241,7 +240,8 @@ class MonitorAction extends AdminBaseAction{
 //dump($userInfo['userName']);
  		//$userInfo['userId']=22;
  		$db=D('userrelrole');
- 		$isAdmin=$db->isInRole($userInfo['userId'],C('adminGroup'));
+ 		//$isAdmin=$db->isInRole($userInfo['userId'],C('adminGroup'));
+        $isAdmin=$this->isOpPermit('A');
 //var_dump($isAdmin);
  		if('init'==$webVar['work']){
  			
@@ -304,6 +304,12 @@ class MonitorAction extends AdminBaseAction{
                 $chnAttr=$dbchannel->getAttrArray($cond['chnId']);
                 $quest=$chnAttr['signQuest'];
                 $header=array();
+                $header[]=array('name'=>'chnname','text'=>'节目名称','data-options'=>"width:200,align:'left', halign:'center'");
+                $header[]=array('name'=>'objtype','text'=>'节目类型','data-options'=>"width:60,align:'left', halign:'center'");
+                $header[]=array('name'=>'username','text'=>'观众名称','data-options'=>"width:200,align:'left', halign:'center'");
+                $header[]=array('name'=>'viewtimes','text'=>'观看次数','data-options'=>"width:100,align:'right', halign:'center'");
+                $header[]=array('name'=>'duration','text'=>'观看时长(分)','data-options'=>"width:100,align:'right', halign:'center'");
+
                 foreach ($quest as $v){
                     $header[]=array('name'=>$v,'text'=>$v);
                 }
@@ -314,12 +320,20 @@ class MonitorAction extends AdminBaseAction{
  		
  		
 		$editable=($isAdmin)?'true':false;
- 		$webVar['work']='search';
+ 		//$webVar['work']='search';
  		$this->assign($webVar);
  		$this->assign('editable',$editable);
+//dump($webVar);
  		$this->display();
+
 	}
-	
+
+    /**
+     * 输出符合条件的观众列表数据
+     * 一般通过Ajax调用，返回符合JUIdatagrid格式的json数据，以显示查询结果
+     * @param int $page 从1开始的分页数
+     * @param int $rows 每页行数
+     */
 	public function getViewerList($page=1,$rows=1){
 	    //无论新旧查询都要分析查询条件
         $cond=condition::get('viewerList');
@@ -377,11 +391,28 @@ class MonitorAction extends AdminBaseAction{
 
         //var_dump($cond);
 
-		$result=array();
-        $vodRecs=getPara('MonitorVodRec');
-//dump($vodRecs);
+
+
 		$data=pagination::getData('viewerList',$page,$rows);
-//dump($data);
+
+        $data=$this->viewerListFillData($data,$cond['chnId']);
+        $result=array();
+		$result["rows"]=$data;
+		$result["total"]=$rows;
+		$result["footer"][]=pagination::getData('viewerList'.'Total');
+		if(null==$result)	echo '[]';
+		else echo json_encode2($result);
+	}
+
+    /**
+     * 整理viewerList查询输出结果，填写扩展信息
+     * @param array $data
+     * @param int $chnId
+     * @return array
+     */
+    private function viewerListFillData($data,$chnId){
+        $vodRecs=getPara('MonitorVodRec');
+//var_dump($chnId);
         //整理输出
         $header=getPara('MonitorViewerListHeader');
         $dbChannelreluser=D('channelreluser');
@@ -389,7 +420,7 @@ class MonitorAction extends AdminBaseAction{
             //更新VOD标题
             if('vod'==$row['objtype']) $data[$key]['chnname']=$vodRecs[$row['refid']]['name'];
             //读扩展信息
-            $qna=$dbChannelreluser->getAnswer($cond['chnId'],$row['userid']);
+            $qna=$dbChannelreluser->getAnswer($chnId,$row['userid']);
 //var_dump($qna);
 //echo $dbChannelreluser->getLastSql();
             foreach ($qna as $k=>$v) {
@@ -398,17 +429,29 @@ class MonitorAction extends AdminBaseAction{
             }
             foreach ($header as $col){
                 $quest=$col['name'];
-                $data[$key][$quest]=$qna[$quest];
+                if(isset($qna[$quest]))       $data[$key][$quest]=$qna[$quest];
             }
         }
+	    return $data;
+    }
+    /**
+     * 把当前观众列表的查询结果输出为xls格式并下载
+     */
+	public function viewerListSaveExcel(){
+        $cond=condition::get('viewerList');
+        $cond=arrayZip($cond,array(null,0,'不限','0','','全部','--'));	//清除实际上不限制的条件
+	    $fileData=array();
+        $fileData['rows']=$this->viewerListFillData(pagination::getData('viewerList'),$cond['chnId']);	//取全部数据
+        $fileData['header'][]=getPara('MonitorViewerListHeader');
+        $fileData["footer"][]=pagination::getData('viewerList'.'Total');
 
-		$result["rows"]=$data;
-		$result["total"]=$rows;
-		$result["footer"][]=pagination::getData('viewerList'.'Total');
-		if(null==$result)	echo '[]';
-		else echo json_encode($result);
-	}
-	
+
+//dump($cond); dump($fileData);
+        $fileData['title'][]=array('text'=>$cond['beginTime'].'至'.$cond['endTime'].'观众列表及观看时长统计','size'=>16);
+        $fileData['defaultFile']='观众列表及观看时长统计.xlsx';
+        //dump($fileData); die();
+        exportExecl($fileData);
+    }
 	public function onlineUserGetChnPulldown(){
 		echo getPara('chnListJson');
 	}

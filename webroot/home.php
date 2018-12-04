@@ -17,7 +17,7 @@ define('ALI_SMS_PATH', APP_PUBLIC.'aliyun/');
 
 //开启调试模式
 define('APP_DEBUG', true);
-
+set_time_limit(7200);   //最长执行2小时
 //加载框架入文件
 require '../../WebLib/ThinkPHP/ThinkPHP.php';
 

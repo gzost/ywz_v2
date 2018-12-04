@@ -29,7 +29,6 @@ class HomeAction extends SafeAction {
 	function __construct(){
 		parent::__construct(1,'back');
 		$this->setIdentity();
-    		
 	}
 
 	public function t(){
@@ -43,8 +42,8 @@ class HomeAction extends SafeAction {
 		if( $this->auth->isLogin(C('OVERTIME')) && $this->auth->getUserInfo('account')!='anonymous' ){	
 			$this->isLogin='true';
 			$userExtAttr=$this->auth->getUserInfo(UserModel::userExtAttr);
-//dump($userExtAttr);	
-//dump($_SESSION['userinfo']);	
+//dump($userExtAttr);
+//dump($_SESSION['userinfo']);
 			if(null!=$userExtAttr['bozhu'] && false!==stripos('junior,normal,senior', $userExtAttr['bozhu']))
 				$this->isBoZhu='true';
 		}
@@ -367,12 +366,13 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 		$this->assign('chkVaildAccUrl',U('chkVaildAcc'));
     	$webvarTpl=array('account'=>'','username'=>'','password'=>'','password2'=>'','phone'=>'','code'=>'','regtype'=>'','status'=>'正常');
 		$webvar=$this->getRec($webvarTpl);
-
+//dump($webvar);
 		$userAction=A('User');
 		try{
 			//检验输入数据是否合理
 			if($webvar['password']!=$webvar['password2']) throw new Exception('两次输入的密码不一致。');
-			$pattern = "/^([0-9A-Za-z\\-_\\.]+)@([0-9a-z]+\\.[a-z]{2,3}(\\.[a-z]{2})?)$/i";
+            $pattern="/^[a-zA-Z0-9_-]{6,16}$/"; //字母数字_-长度6~16
+            if(0==preg_match($pattern,$webvar['account'])) throw new Exception('账号应由字符及数字组成，长度6~16位。');
         	//组装用户记录数据
 			$regInfo=array('regInfo'=>array('mobile'=>$webvar['phone']), 'userExtAttr'=>array('phoneVerify'=>date('Y-m-d'), 'phone'=>$webvar['phone']));
 

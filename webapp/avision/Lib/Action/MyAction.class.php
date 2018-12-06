@@ -136,19 +136,22 @@ class MyAction extends SafeAction
     }
 
     /**
-     * @param int $chnid
-     * @param string $msg
-     * @param string $continerid
-     * @param strin $backUrl
+     * 显示及修改会员信息
+     * @param int $chnid    频道ID
+     * @param string $msg   提示信息
+     * @param string $continerid    当以ajax形式调用时，返回页面装入的DOM容器ID
+     * @param strin $backUrl    按返回键时调用的URL
+     * @param string $mode  返回模式：ajax|page 当以ajax返回时，返回地址输出页面装入指定容器，否则做页面跳转
      */
-    public function chnRegiste($chnid=0,$msg='',$continerid=''){
+    public function chnRegiste($chnid=0,$msg='',$continerid='',$mode=''){
         $webVar=array('chnid'=>$chnid,'msg'=>$msg);
         try{
             $uid=$this->userId();
             if((1>$uid) || (1>$chnid)) throw new Exception('未登录或找不到频道。');
             $webVar['continerid']=(''==$continerid)?SUBSCRIBER_CONTNER:$continerid;
             $webVar['backUrl']=urldecode($_REQUEST['backUrl']);
-            $webVar['mode']=$_REQUEST['mode'];
+            //$webVar['mode']=$_REQUEST['mode'];
+            $webVar['mode']=$mode;
 
             $dbChnUser=D('channelreluser');
             $dbchn=D('channel');
@@ -161,7 +164,7 @@ class MyAction extends SafeAction
                 $answer=$_REQUEST['answer'];
                 $qna=array();
                 foreach ($quest as $k=>$v){
-                    $qna[$v]=array('quest'=>$v, 'answer'=>$answer[$k]);
+                    $qna[$v]=array('quest'=>$v, 'answer'=>strip_tags($answer[$k])); //清除HTML标签后保存
                 }
 //dump($qna);
                 $status='正常';
@@ -183,19 +186,42 @@ class MyAction extends SafeAction
 
             //读频道注册需填写的资料
             $signQuest=(is_array($chnAttr['signQuest']))?$chnAttr['signQuest']:array();   //注册提问问题
-            $webVar['signNote']=(isset($chnAttr['signNote']))?$chnAttr['signNote']:'注册需要补充以下资料：';  //提问说明
+            $webVar['signNote']=(isset($chnAttr['signNote']))? htmlspecialchars($chnAttr['signNote']):'注册需要补充以下资料：';  //提问说明
             //读目前已填写的资料
-
-            $rt=$dbChnUser->getAnswer($chnid,$uid);  //问题及应答每行2个属性：quest,anwer
+//dump($signQuest);
+            $cond=array('chnid'=>$chnid,'uid'=>$uid,'type'=>'会员');
+            $record=$dbChnUser->where($cond)->find();
+            if(null != $record){
+                //已经注册过会员
+                $rt=json_decode($record['note'],true);
+                $webVar['signNote']='您已经成功提交了本频道的会员注册申请。';
+                if('禁用'==$record['status']){
+                    $webVar['signNote'] .='正等待播主审核或会员资格被播主暂停。';
+                } else{
+                    $webVar['signNote'] .='已经是频道会员。';
+                }
+                $now=date('Y-m-d');
+                $bdate=substr($record['begindate'],0,10);
+                $edate=substr($record['enddate'],0,10);
+                if($now<$bdate) $webVar['signNote'].='您的会员资格从 '.$bdate.' 开始生效，请耐心等待。';
+                if($now>$edate) $webVar['signNote'].='您的会员资格已于 '.$edate.' 终止。';
+            }else{
+                $rt=array();
+            }
+            //$rt=$dbChnUser->getAnswer($chnid,$uid);  //问题及应答每行2个属性：quest,anwer
+            //把答案转换为 quest=>anser的形式
+            foreach ($rt as $key=>$row){
+                $rt[$row['quest']]=$row['answer'];
+                unset($rt[$key]);
+            }
+//dump($rt);
             $qna=array();
-            foreach ($rt as $row){
-                $qna[$row['quest']]=$row['answer'];
+            foreach($signQuest as $k){
+                $qna[$k]=(isset($rt[$k]))?$rt[$k]:'';
             }
-            //补充没回答过的行
-            foreach ($signQuest as $val){
-                if(!isset($qna[$val])) $qna[$val]='';
-            }
+
             $webVar['qna']=$qna;
+//dump($webVar);
         }catch (Exception $e){
             $webVar['msg']=$e->getMessage();
             $webVar['show']='none';

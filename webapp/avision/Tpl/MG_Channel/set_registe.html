@@ -14,8 +14,8 @@ chnRec
            singleSelect="true">
         <thead>
         <tr>
-            <th field="quest" width="40%" editor="text" halign="center">问题</th>
-            <th field="answer" width="40%" editor="text" halign="center">预留答案</th>
+            <th field="quest" width="40%" editor="text" halign="center" data-options="formatter:formatEncodeHtml">问题</th>
+            <th field="answer" width="40%" editor="text" halign="center" data-options="formatter:formatEncodeHtml">预留答案</th>
         </tr>
         </thead>
     </table>
@@ -64,4 +64,5 @@ chnRec
         data.rows=rows;   //POST变量中带有ROWS属性作为保存操作的标志
         DivLoadHtmlPost("__SELF__","modifySetting",data);
     }
+
 </script>

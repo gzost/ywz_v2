@@ -145,12 +145,12 @@ class MG_ChannelAction extends AdminBaseAction
         if(isset($_POST['rows'])){
             $quest=$answer=array();
             foreach ($rows=$_POST['rows']['rows'] as $row){
-                $quest[]=$row['quest'];
-                $answer[]=$row['answer'];
+                $quest[]=strip_tags($row['quest']); //清除HTML标签
+                $answer[]=strip_tags($row['answer']);
             }
             $chnAttr['signQuest']=$quest;
             $chnAttr['signQuestAns']=$answer;
-            $chnAttr['signNote']=(strlen($_POST['signNote'])>2)?$_POST['signNote']:'请回答以下问题';
+            $chnAttr['signNote']=(strlen($_POST['signNote'])>2)?strip_tags($_POST['signNote']):'请回答以下问题';   //不允许HTML标签
             $chnAttr['signpass']=('true'==$_POST['signpass'])?'true':'false';
             $data=array('attr' => json_encode2($chnAttr));
 //dump($data['attr'] );

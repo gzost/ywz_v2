@@ -5,8 +5,6 @@
  * @author outao
  *
  */
-//require_once APP_PATH.'../public/SafeAction.Class.php';
-//require_once APP_PATH.'../public/AdminMenu.class.php';
 require_once COMMON_PATH.'AdminBaseAction.class.php';
 require_once APP_PATH.'../public/Ou.Function.php';
 require_once APP_PATH.'../public/Pagination.class.php';
@@ -21,21 +19,17 @@ class SubscriberAction extends AdminBaseAction{
 	 * 查看注册了私有频道的用户并管理观看授权
 	 */
 	public function authorize(){
-		//显示菜单
-		//$menu=new AdminMenu();
-		//$menuStr=$menu->Menu(1);
- 		//$this->assign('menuStr',$menuStr);
  		$this->baseAssign();
  		$this->assign('mainTitle','观众管理');
  		$this->assign('userName',$this->userName());
  		//网页传递的变量模板
- 		$webVarTpl=array('work'=>'init','chnId'=>-1,'classify'=>0,'type'=>'0','classifyListJson'=>'[]');
- 		$condTpl=array('chnId'=>0,'classify'=>0,'type'=>'0');
+ 		$webVarTpl=array('work'=>'init','chnId'=>-1,'classify'=>0,'type'=>'0','classifyListJson'=>'[]','status'=>'0','note'=>'');
+ 		$condTpl=array('chnId'=>0,'classify'=>0,'type'=>'0','status'=>'0','note'=>'');
  		 		
   		condition::clear(ACTION_NAME);
  		pagination::clear(ACTION_NAME);
  		$webVar=$this->getRec($webVarTpl,false);
- 		
+        $dbChannel=D(channel);
  		if('init'==$webVar['work']){
  			
  			//取下拉频道数据
@@ -44,8 +38,8 @@ class SubscriberAction extends AdminBaseAction{
  			$db=D('userrelrole');
  			$isAdmin=$db->isInRole($userInfo['userId'],C('adminGroup'));
 //var_dump($isAdmin);
- 			$db=D(channel);
- 			$chnList=($isAdmin)?$db->getPulldownList(0,''):$db->getPulldownList($userInfo['userId'],'');
+
+ 			$chnList=($isAdmin)?$dbChannel->getPulldownList(0,''):$dbChannel->getPulldownList($userInfo['userId'],'');
 //echo $db->getLastSql();
  			if(count($chnList)<1){
  				//没有任何频道的管理权限
@@ -63,6 +57,25 @@ class SubscriberAction extends AdminBaseAction{
  			condition::update($condTpl,ACTION_NAME);
  		}
 
+ 		//取频道信息
+        $header=array();
+        $chnId=$webVar['chnId'];
+ 		if(1>$chnId){
+ 		    $webVar['msg']="必须选择一个频道。";
+        }else{
+ 		    $chnName=$dbChannel->getName($chnId);
+            $webVar['msg']="当前频道：[$chnId]$chnName";
+            //取频道会员问题
+            $chnAttr=$dbChannel->getAttrArray($chnId);
+            $quest=$chnAttr['signQuest'];
+
+            foreach ($quest as $v){
+                $header[]=array('name'=>$v,'text'=>htmlspecialchars($v));
+            }
+        }
+        setPara('ExtHeader',$header);
+        $webVar['header']=$header;
+
  		//取用户分组数据
  		$chm=D('Channelreluser');
 		$r=$chm->getClassifyList($webVar['chnId']);
@@ -73,16 +86,19 @@ class SubscriberAction extends AdminBaseAction{
  		$webVar['classifyListJson']=json_encode($data);
 //var_dump($webVar);
  		$webVar['work']='search';
- 		$this->assignB($webVar);
+ 		$this->assign($webVar);
 		$this->display('authorize');
 	}
 
 	
 	public function authorizeGetList($page=1,$rows=1,$renew='false'){
-	if('true'==$renew || !pagination::isAvailable('authorize')){
+	    if('true'==$renew || !pagination::isAvailable('authorize')){
 			//新的查询
 			$cond=condition::get('authorize');
 			$cond=arrayZip($cond,array(null,0,'不限','0','','全部'));
+			if(isset($cond['note']) && '' != $cond['note']){
+			    $cond['note']=array('like','%'.$cond['note'].'%');
+            }
 //dump($cond);
 			$db=D('ChannelRelUserView');
 			$rec=$db->getList($cond);
@@ -93,6 +109,13 @@ class SubscriberAction extends AdminBaseAction{
 		
 		$data=pagination::getData('authorize',$page,$rows);
 
+		//填写扩展字段
+        foreach ($data as $k=>$row){
+            $qna=json_decode($row['note'],true);
+            foreach ($qna as $val){
+                $data[$k][$val['quest']]=$val['answer'];
+            }
+        }
 		$result["rows"]=$data;
 		$result["total"]=$rows;
 		if(null==$result)	echo '[]';
@@ -101,7 +124,9 @@ class SubscriberAction extends AdminBaseAction{
 	public function authorizeUpdateAjax(){
 		$recTPL=array('chnid'=>0,'uid'=>0,'status'=>'','note2'=>'','classify'=>'');
 		$rec=$this->getRec($recTPL);
-		
+		//删除输入可能存在的HTML标签
+        $rec['note2']=strip_tags($rec['note2']);
+        $rec['classify']=strip_tags($rec['classify']);
 		try{
 			if($rec['chnid']==0 || $rec['uid']==0) throw new Exception('必须提供频道ID及用户ID');
 			$cond=array('chnid'=>$rec['chnid'],'uid'=>$rec['uid']);

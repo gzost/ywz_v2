@@ -3,7 +3,7 @@ class ChannelRelUserViewModel extends ViewModel {
 	public $viewFields=array(
 		'channelreluser'=>array('chnid','uid','status','type','note','classify','note2','_type'=>'LEFT'),
 		'Channel'=>array('name'=>'chnname','_on'=>'chnid=Channel.id','_type'=>'LEFT'),
-		'User'=>array('username','_on'=>'uid=User.id')
+		'User'=>array('account','username','_on'=>'uid=User.id')
 	);
 	
 	/**

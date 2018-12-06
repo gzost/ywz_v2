@@ -695,7 +695,7 @@ logfile('WhatViewer:'.$st);
             } else {
                 $wxOnly = false;	//只限微信登录
             }
-//var_dump($wxOnly); die('rwee');
+//var_dump($type); die('rwee');
             //$userInfo=array();	//当前登录的用户信息
             //$myurl = 'http://'.$_SERVER['HTTP_HOST'].U('play').'?chnId='.$chnId.'&u='.$userInfo['userId'].'&r='.$r;	//可用做回调地址
 			$backUrl=U('play').'?chnId='.$chnId.'&u='.$u.'&r='.$r;
@@ -1846,6 +1846,9 @@ var_dump($location);
 		$webVar=array('chnId'=>$chnId, 'uid'=>$uid);
 		$webVar['r']=(isset($_REQUEST['r']))?$_REQUEST['r']:'';
 		$webVar['backUrl']=urlencode(U('HDPlayer/play',array('chnId'=>$chnId,'r'=>$webVar['r'])));
+
+		$img=getPara('coverImg');
+		$webVar['coverImg']=(''==$img)?'/Public/images/topbar.png':$img;
 		$this->assign($webVar);
 		$this->display('chnRegiste');
 	}

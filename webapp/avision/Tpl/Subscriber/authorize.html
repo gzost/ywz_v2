@@ -87,14 +87,18 @@ function setUserStatus(status){
 
 <table id="dg" class="easyui-edatagrid"  style="width:99%"
 	data-options="url:'__URL__/authorizeGetList',rownumbers:true,singleSelect:false,checkOnSelect:true,
-		toolbar:'#tb',pagination:true,  pageSize:10,
+		toolbar:'#tb',pagination:true,  pageSize:20,
 		updateUrl:'__URL__/authorizeUpdateAjax' "
 >
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>
+			<!--
 			<th data-options="field:'chnname', width:200,align:'left', halign:'center' ">频道名称</th>
-			<th data-options="field:'username', width:150,align:'left', halign:'center'">用户名称</th>
+			-->
+			<th data-options="field:'account', width:150,align:'left', halign:'center' ">观众账号</th>
+			<th data-options="field:'username', width:150,align:'left', halign:'center'">观众名称</th>
+			<th data-options="field:'type', width:80,align:'center', halign:'center'">类型</th>
 			<th data-options="field:'status', width:80,align:'center',
 				editor: {
 							type:'checkbox',
@@ -116,7 +120,10 @@ function setUserStatus(status){
 			">分组</th>
 			<th data-options="field:'note2', width:160,align:'left', halign:'center',
 				editor:{type:'textbox'}
-			">备注</th>			
+			">备注</th>
+			<foreach name="header" item="col">
+				<th  data-options="field:'{$col.name}',{$col.data-options}" >{$col.text}</th>
+			</foreach>
 		</tr>
 	</thead>
 
@@ -128,14 +135,18 @@ function setUserStatus(status){
 		查询条件：　
 
 		频道：<input class='easyui-combobox' name='chnId' value='{$chnId}'  style='width:180px'
-				data-options="valueField:'id',textField:'name', editable:false,
+				data-options="valueField:'id',textField:'name', editable:true,
 					url:'__URL__/onlineUserGetChnPulldown' " />
+		会员信息：<input class="easyui-textbox" name="note" value="{$note}" data-options="width:150" >
 		分组：<input class='easyui-combobox' name='classify' value='{$classify}'  style='width:100px'
 				data-options="valueField:'id',textField:'name', editable:false,
 					data: classifyData " />
 		类型：<input class='easyui-combobox' name='type' value='{$type}'  style='width:100px'
 				  data-options="valueField:'id',textField:'name', editable:false,
 					data: [{id:'0',name:'全部'},{id:'关注',name:'关注'},{id:'会员',name:'会员'},{id:'订购',name:'订购'}] " />
+		状态：<input class='easyui-combobox' name='status' value='{$status}'  style='width:100px'
+				  data-options="valueField:'id',textField:'name', editable:false,
+					data: [{id:'0',name:'全部'},{id:'正常',name:'正常'},{id:'禁用',name:'禁用'}] " />
 		<input name='work' value='{$work}' style="display:none" />
 		<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
 	</form>
@@ -157,6 +168,7 @@ function setUserStatus(status){
     	<a  href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-cancel',plain:false" 
     		onclick="setUserStatus('删除')">删除</a>
 	</div>
+	<div style="font-weight: bolder; font-size:1.2em; margin-top:0.5em;">{$msg}</div>
 </div>
 
 <!-- 帮助 -->

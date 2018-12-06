@@ -311,7 +311,7 @@ class MonitorAction extends AdminBaseAction{
                 $header[]=array('name'=>'duration','text'=>'观看时长(分)','data-options'=>"width:100,align:'right', halign:'center'");
 
                 foreach ($quest as $v){
-                    $header[]=array('name'=>$v,'text'=>$v);
+                    $header[]=array('name'=>$v,'text'=>htmlspecialchars($v));
                 }
                 setPara('MonitorViewerListHeader',$header);
                 $webVar['header']=$header;

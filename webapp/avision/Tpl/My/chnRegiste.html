@@ -64,12 +64,11 @@
     <div style="height: 1px"></div>
     <div class="block-title">填写或修改频道注册资料</div>
     <div class="block-contain">
-        <div style="margin:10px 2em 10px 0;">{$signNote}</div>
+        <div style="margin:10px 2em 10px 0;color: #ce6500; line-height: 1.3em;">{$signNote}</div>
         <form id='ff' method="post">
             <foreach name="qna" item="r" key="k">
-
-                <input class="easyui-textbox" name="answer[]" value="{$r}" style="width:90%" data-options="label:'{$k}:' "><br>
-                <input type="hidden" name="quest[]" value="{$k}">
+                <input type="text" name="quest[]" value="{$k}" readonly="readonly" style="background-color:transparent;border:none;margin:7px 0 2px 0;">
+                <input class="easyui-textbox" name="answer[]" value="{$r}" style="width:90%" data-options=" "><br>
             </foreach>
 
             <input type="hidden" name="chnid" value="{$chnid}">
@@ -79,6 +78,7 @@
             <input type="hidden" name="work" value="save">
         </form>
     </div>
+    <div style="height:5px;"></div>
     <div style="margin:5px 5px 5px 2em; font-size: 1.1em; color: #00f">{$msg}</div>
     <div class="OUI-btn OUI-font14" style="margin-left:2em; " onclick="postform('ff','{$continerid}')">保存</div>
     <!-- div class="OUI-btn OUI-font14" style="margin-left:2em; " onclick="DivReplaceHtml('{$backUrl}','{$continerid}')">返回</div -->

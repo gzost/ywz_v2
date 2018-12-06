@@ -59,7 +59,25 @@ function datagridQuery(para){
 		},"json");
 	//alert(cond);
 }
-
+/**
+ * datagrid数据行原样显示HTML标签
+ * 用法： <th field="name" width="20" align="center" data-options="formatter:formatEncodeHtml">名称</th>  
+ */
+function formatEncodeHtml(value, row, index) {
+	return encodeHtml(value);
+}
+this.REGX_HTML_ENCODE = /"|&|'|<|>|[\x00-\x20]|[\x7F-\xFF]|[\u0100-\u2700]/g;
+function encodeHtml(s) {
+        return (typeof s != "string") ? s :
+            s.replace(this.REGX_HTML_ENCODE,
+                function ($0) {
+                    var c = $0.charCodeAt(0), r = ["&#"];
+                    c = (c == 0x20) ? 0xA0 : c;
+                    r.push(c);
+                    r.push(";");
+                    return r.join("");
+                });
+}
 $(document).ready(function(){
 	//cn_Pagination($(".easyui-datagrid").datagrid('getPager'));
 });

@@ -1,6 +1,7 @@
 <?php
 require_once(APP_PATH.'/Common/functions.php');
 require_once APP_PATH.'Lib/Model/Ip2addrModel.php';
+require_once APP_PATH.'../public/Ou.Function.php';
 
 class OnlineModel extends Model {
 
@@ -240,5 +241,40 @@ class OnlineModel extends Model {
 		logfile($this->getLastSql(),LogLevel::SQL);
 		return $result;
 	}
+
+    /**
+     * 检查用户的重复登录状态。
+     * @param int $uid 用户ID
+     * @return int  0:可继续登录, 1：重复登录（默认，最多登录次数为1，且已经有一条在线记录），2：账号已到达最大同时登录次数。
+     */
+	public function checkMultiLogin($uid){
+	    //统计在线记录
+	    $cond=array('userid'=>$uid, 'objtype'=>'web', 'isonline'=>'true');
+	    $loginTimes=$this->where($cond)->count();
+	    if(0==$loginTimes) return 0;  //没在线记录可继续登录
+        //读用户的重复登录设定
+        $multiLogin=getExtAttr(D('User'),array('id'=>$uid),'multiLogin');
+        if(null===$multiLogin) $multiLogin=1;   //不定义默认不能重复登录
+
+        if(0==$multiLogin || intval($loginTimes)<intval($multiLogin))   return 0;
+        elseif(1==$multiLogin) return 1;
+        else return 2;
+    }
+
+    //向所有$uid的在线记录添加强制下线命令
+    public function rejectUser($uid){
+	    if(0==$uid) return;
+	    $cond=array('userid'=>$uid,'isonline'=>'true');
+	    $this->where($cond)->setField('isonline','false');
+//echo $this->getLastSql(); die('hhhh');
+	    return;
+
+
+	    $idList=$this->where($cond)->getField('id',true);
+//dump($idList)	    ;
+	    foreach ($idList as $onlineId){
+	        $this->setReject($onlineId);
+        }
+    }
 }
 ?>

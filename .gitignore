@@ -62,3 +62,4 @@ webapp/public/aliyun/aliyun-php-sdk-sms/Sms/Request/V20160927/QuerySmsFailByPage
 webapp/public/aliyun/aliyun-php-sdk-sms/Sms/Request/V20160927/QuerySmsStatisticsRequest.php
 webapp/public/aliyun/aliyun-php-sdk-sms/Sms/Request/V20160927/SingleSendSmsRequest.php
 *.tlog
+webroot/player/js/keepAlive - 20181206.js

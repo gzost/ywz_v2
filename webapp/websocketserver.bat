@@ -1,0 +1,1 @@
+d:\xampp\php\php.exe -c d:\xampp\php D:\MyProject\ywz\webapp\cmd.php WebSocketServer/test

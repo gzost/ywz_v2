@@ -1,13 +1,12 @@
+<!--
 <script type="text/javascript" src="/player/js/keepAlive.js?t={$time}"></script>
-
+-->
 <script type="text/javascript">
 //创建心跳管理对象
-var heart = new HeartBeat();
-//heart.onShowMsg = heartMsg;
-//heart.onShowMsg = showMsgAni;
+//var heart = new HeartBeat();
 heart.onMsgExit = heartMsgExit;
 
-//定时发送心跳
+//开始发送心跳
 heart.keepAlive();
 
 function heartMsgExit(msg)

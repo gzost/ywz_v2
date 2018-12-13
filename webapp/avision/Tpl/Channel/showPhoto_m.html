@@ -1,10 +1,13 @@
+
 <div id="album" >
     <foreach name="photos" item="pt">
-        <div >
-            <img data-name="{$pt.imgName}" class="photo ccc" src="{$pt.imgsrc}" >
-        </div>
+        <!--<div class="'masonryItem">-->
+            <img data-name="{$pt.imgName}" class="photo ccc masonry-item" src="{$pt.imgsrc}" >
+        <!--</div>-->
     </foreach>
+
 </div>
+<div style="height: 10px;"></div>
 <div id="detailContent"  style="box-sizing: border-box; padding:20px 10px; background-color: #6f6f6f; display:none; position: fixed ;top:100px;  z-index:1" >
     <div style="text-align: right;  height:0px;">
         <img id="hideDetail" src="/player/default/images/close_w.png" width="26px" style="position: relative; right: -10px;top:-10px; opacity: 0.7;">
@@ -13,31 +16,47 @@
     </div>
 </div>
 
+<div style="position: fixed;top: 100px; z-index: 22; width:600px; height:2em;overflow:scroll ;
+background-color: #bbb; white-space: nowrap;
+">
+    sldkjf lkdjffdks lsdjfsldj 999999999999 98888888888<br>
+    2223445 555<br>
+    9988<br>
+    00llskjd
+</div>
+
 <style type="text/css">
-    #album, #photoDetail{
-        border:0px solid #0fbad6; padding:1px; min-height: 200px; text-align: center;/*display: flex; flex-warp:wrap;*/
+    #album, #album * { box-sizing: border-box; }
+    #album { margin:0 auto; border: 5px solid #333;  }
+    #album,#photoDetail{
+        border:0px solid #0fbad6; padding:0px; min-height: 200px; text-align: center;/*display: flex; flex-warp:wrap;*/
     }
+
     #album div{
-        width:48%; border: 1px solid #aaa;
+        width:48%; border: 0px solid #aaa;
         border-radius: 2px; text-align: center;margin:2px;
         background-size: contain;
         background: #eee no-repeat center top;
         padding:0px; overflow:hidden;
         display: inline-block;
     }
+
     #album img{
-        width:100%;
+        width:33.3%;
+        border:1px solid #666;
     }
     #album input{
         display:block; clear: both; float: right;margin-right: 10px;
     }
 
-</style>
 
+ </style>
+<script src="__PUBLIC__/js/masonry.pkgd.min.js?ver=4.2.2"></script>
+<script src="__PUBLIC__/js/imagesloaded.pkgd.min.js?ver=4.1.4"></script>
 <script type="text/javascript">
 
     $(document).ready(function(){
-        setPicWidth();
+        //setPicWidth();
         //计算原图弹窗的top和height
         var albumTop=$("#album").offset().top;
         console.log("albumtop="+albumTop);
@@ -45,6 +64,25 @@
         var viewHeight=$(window).height();
         console.log("viewHeight="+viewHeight);
         $("#detailContent").css("height",viewHeight-albumTop-10+'px');
+
+        /*
+        //瀑布流排列图片，等图片全部加载成功后一次性排列
+        var $album=$('#album');
+        $album.imagesLoaded(function(){
+            $album.masonry({
+                itemSelector:'.grid-item, .masonry-item',
+                percentPosition:true
+            });
+        });
+        */
+        //瀑布流排列图片，每载入一张都重新排列
+        var $album=$('#album').masonry({
+            itemSelector:'.grid-item, .masonry-item',
+            percentPosition:true
+        });
+        $album.imagesLoaded().progress( function() {
+            $album.masonry('layout');
+        });
 
 
         $("#album,#detailContent").on("click",function(event){
@@ -73,10 +111,18 @@
             }
 
         });
+
+        $(document).on("swipe",function(){
+            console.log("滑动检测!");
+            //alert('fffss');
+        });
     });
+    /*
+    用了瀑布流显示，这就不需要了。
     function setPicWidth() {
         var width=$("#album div").width();
         console.log("setPicWidth:"+width);
         $("#album div").height(width*4/7);
     }
+    */
 </script>    

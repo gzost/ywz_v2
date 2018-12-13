@@ -1581,6 +1581,7 @@ class ChannelAction extends AdminBaseAction
 		$dir=C('roomImgUpload').$this->subpath($chnId).'photoM/';
 		$baseUrl=C('roomImgView').$this->subpath($chnId).'photoM/';
 		$photos=array();
+		/*
 		if($handle=opendir($dir)){
 			while(false !==($file = readdir($handle))){
 				$p=strripos($file,'.JPG')+4;
@@ -1589,6 +1590,15 @@ class ChannelAction extends AdminBaseAction
                 array_push($photos,array('imgsrc'=>$baseUrl.$file,'imgName'=>$file));
             }
             closedir($handle);
+		}
+		*/
+		$cond=array('chnid'=>$chnId);
+		$photoList=D('photo')->where($cond)->order('uploadtime desc')->select();
+		foreach ($photoList as $row){
+			if(is_file($dir.$row['uuname'])){
+            	array_push($photos,array('imgsrc'=>$baseUrl.$row['uuname'],'imgName'=>$row['uuname']));
+			}
+
 		}
 		return $photos;
 	}

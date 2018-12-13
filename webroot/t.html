@@ -5,19 +5,24 @@
     <title>Basic Messager - jQuery EasyUI Demo</title>
     <link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/default/easyui.css">
     <link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/icon.css">
-    <link rel="stylesheet" type="text/css" href="Public/jeasyui/demo.css">
+
     <script type="text/javascript" src="/Public/jeasyui/jquery.min.js"></script>
     <script type="text/javascript" src="/Public/jeasyui/jquery.easyui.min.js"></script>
     <script type="text/javascript" src="/Public/js/jquery.lazyload.min.js?v=1.9.3"></script>
 </head>
 <body>
-    <h2>Basic Messager</h2>
+    <h2>Basic<span><span style="color: #00ee00;">▶</span></span> Messager</h2>
+    <span class="emoji emoji1f619" role="button" title="笑咪咪亲吻的表情"></span>
+    <span ><i>🙄</i></span><i>👨&zwj;🎓</i>
     <p>Click on each button to see a distinct message box.</p>
     <div style="margin:20px 0;">
         <a href="#" class="easyui-linkbutton" onclick="show()">Show</a>
         <a href="#" class="easyui-linkbutton" onclick="slide()">Slide</a>
         <a href="#" class="easyui-linkbutton" onclick="fade()">Fade</a>
         <a href="#" class="easyui-linkbutton" onclick="progress()">Progress</a>
+        <a href="#" class="easyui-linkbutton" onclick=" $('body').html($('#ext').html());
+
+        ">replace</a>
     </div>
     <div id="album" style="margin: 0 auto; width: 300px; height: 200px; overflow: auto; background-color: #0cb781;">
         <div><img class="lazy" src="" data-original="t/1.jpg"></div><div><img class="lazy" src="" data-original="t/2.jpg"></div>
@@ -50,9 +55,19 @@
         }
     </style>
     <script type="text/javascript">
+        (function () {
+            var a='1111111';
+            console.log('innnnnnnn kkkk:'+a);
+
+        })();
+        (function () {
+            var a='2222222';
+            console.log('innnnnnnn 222:'+a);
+        })();
         $(function () {
+            console.log($("#ext").html());
             var ob={};
-            $(ob).on('save',function(event,data){
+            $(window).on('save',function(event,data){
                 //alert('save!'+data.name);
                 console.log(data);
             });
@@ -65,7 +80,7 @@
                 //alert('post!');
                 console.log('post');
             });
-            $(ob).trigger('save',{name:"jone"});
+            $(window).trigger('save',{name:"jone"});
             $(ob).trigger('post',{name:"jone"});
             $(ob).trigger('save',{name:"hhhh11"});
 
@@ -115,4 +130,5 @@
     
 
 </body>
+<div id="ext" style="display: none">oooowww</div>
 </html>

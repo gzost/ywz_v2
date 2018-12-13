@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
 <title>{$title}</title>
 <meta name="keywords" content="易网真,易网真直播间,avision视频直播系统" />
-<link href="__PUBLIC__/jeasyui/themes/default/easyui.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/material-teal/easyui.css" rel="stylesheet" type="text/css">
 <link href="__PUBLIC__/jeasyui/themes/icon.css" rel="stylesheet" type="text/css">
 <link href="__PUBLIC__/jeasyui/themes/color.css" rel="stylesheet" type="text/css">
 <load href="__ROOT__/player/{$theme|default='default'}/css/base.css" />
@@ -16,6 +16,7 @@
 <load href="__ROOT__/player/{$theme|default='default'}/css/info.css" />
 
 <load href="__PUBLIC__/jeasyui/jquery.min.js"/>
+
 <load href="__PUBLIC__/jeasyui/jquery.easyui.min.js"/>
 <load href="__PUBLIC__/js/jquery.json.min.js"/>
 <load href="__PUBLIC__/js/publicFunction.js"/>
@@ -32,8 +33,10 @@
 <script type="text/javascript" src="/player/js/plugin/{$p}.js?t={$time}"></script>
 </foreach>
 
+<script type="text/javascript" src="/player/js/keepAlive.js?t={$time}"></script>
 
 <style type="text/css">
+	/*
 #.flex-body {
     display: -webkit-flex;
     display: flex;
@@ -43,7 +46,11 @@
 	flex-flow: row;
 	-webkit-flex-flow: row;
 }
-
+*/
+	body{
+		width:100%; height:100%;
+		background-color:#000;font-size:24px;margin:0;padding:0;
+	}
 .FlowBottom{
 	position:fixed;
 	margin:auto;
@@ -255,6 +262,9 @@ var moreFit = false;
 var nowPlayType = '';
 var nowVodId = '';
 ////心跳设置的变量////
+var heart = new HeartBeat();
+heart.showForceOutUrl="__APP__/HDPlayer/showForceOut";
+
 var aliveTime={$aliveTime};	//心跳间隔秒数
 var onlineId={$onlineId};	//在线ID
 //在线对象列表，列表属性：
@@ -278,7 +288,6 @@ chat.appUrl="__APP__";
 <foreach name="plugin" item="p">
 	//var _{$p} = new {$p}();
 </foreach>
-
 
 /*
 function heartMsg(msg)
@@ -459,6 +468,11 @@ $(document).ready(function(){
 <foreach name="plugin" item="p">
 	//_{$p}.init(chnId);
 </foreach>
+	$(window).on('HeartBeatSuccess',function (event,data) {
+		console.log('proc HeartBeatSuccess');
+		console.log(data);
+    });
+
 
 });
 
@@ -561,6 +575,7 @@ function hidenMsg()
 
 function showMsgAni(msg)
 {
+    return;
 	if(0 < msg.length)
 	{
 		$('#msgShow').text(msg);
@@ -580,7 +595,7 @@ function showMsgAni(msg)
     }
 </script>
 </head>
-<body class="flex-body" style="background-color:#000;font-size:24px;margin:0;padding:0;">
+<body  style="">
 <if condition="$xtl neq ''">
 <div id="divNavCtrl" style="height:1em;margin-top:3px;">
 	<div style="display:inline;float:left;color:#FFF;text-align:center;width:100%;font-size:0.7em;line-height:1.2em;">{$title}</div>
@@ -597,19 +612,25 @@ function showMsgAni(msg)
 </div>
 <div class="flex-row">
 	<div class="contRow" style="height:0.9em;font-size:0.8em;">
-		<div class="statcell" id="tbEntrytimes"><img src="/player/{$theme|default='default'}/images/bofan.png" src-sel="/player/{$theme|default='default'}/images/bofan_s.png" src-org="/player/{$theme|default='default'}/images/bofan.png"/><span id="entrytimes">{$entrytimes}</span> 点</div>
+		<div class="statcell" id="tbEntrytimes"><img src="/player/{$theme|default='default'}/images/bofan.png" src-sel="/player/{$theme|default='default'}/images/bofan_s.png" src-org="/player/{$theme|default='default'}/images/bofan.png"/><span id="entrytimes">{$entrytimes}</span> </div>
 		<div class="statcell" id="tbBillPay">
 		<!--
 		<img src="/player/{$theme|default='default'}/images/dianzhang.png" src-sel="/player/{$theme|default='default'}/images/dianzhang_s.png" src-org="/player/{$theme|default='default'}/images/dianzhang.png"/><span id="billpay"></span>订阅/打赏--></div>
 		<neq name="noShare" value="yes">
 		<div class="statcell" id="tbShare"><img src="/player/{$theme|default='default'}/images/zhuanfa.png" src-sel="/player/{$theme|default='default'}/images/zhuanfa_s.png" src-org="/player/{$theme|default='default'}/images/zhuanfa.png"/>分享</div>
 		</neq>
-		<!-- 增加个人信息显示-->
+		<!-- 增加个人信息显示  1315是临时补丁-->
+		<neq name="chnId" value="1315">
 		<div style="float: right; font-size:0.8em; margin-right: 0.5em;" onclick="loadSubscriberInfo();"><img src="/player/{$theme|default='default'}/images/my.png" height="14" style="vertical-align:text-bottom" >我</div>
+		</neq>
 	</div>
 
 	<div class="contRow" style="height:1em;background-color:#333333;display:flex;justify-content:space-around;clear:both;">
-		<div class="statcell" id="tbInfo"><img src="/player/{$theme|default='default'}/images/renxian.png" src-sel="/player/{$theme|default='default'}/images/renxian_s.png" src-org="/player/{$theme|default='default'}/images/renxian.png"/>介绍</div>
+		<div class="statcell" id="tbInfo"><img src="/player/{$theme|default='default'}/images/renxian.png" src-sel="/player/{$theme|default='default'}/images/renxian_s.png" src-org="/player/{$theme|default='default'}/images/renxian.png"/>
+			<eq name="chnId" value="1315">日程
+				<else/>介绍
+			</eq>
+		</div>
 		<div class="imgSp"></div>
 		<div class="statcell" id="tbRePlay"><img src="/player/{$theme|default='default'}/images/huifan.png" src-sel="/player/{$theme|default='default'}/images/huifan_s.png" src-org="/player/{$theme|default='default'}/images/huifan.png"/>回放</div>
 		<div class="imgSp"></div>
@@ -642,4 +663,6 @@ function showMsgAni(msg)
 	<div id="divLayer" class="divLayer" style="display:none;">
 	</div>
 <img id="logoimg" src="{$logoImg}" style="display:none;"/>
-</body></html>
+</body>
+
+</html>

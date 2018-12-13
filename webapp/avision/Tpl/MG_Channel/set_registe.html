@@ -4,11 +4,12 @@
 这段代码使用了在setting.html中定义的JS全局变量：
 chnRec
 -->
-<div style="text-align: center; margin: 0 5px;">
-    <div style="margin: 5px; padding:5px; border: 1px solid #eef; border-radius: 5px; ">
-        <input class="easyui-textbox" name="signNote" value="{$signNote}" style="width:100%"
-               data-options="label:'提问说明:',multiline:true, height:60 ">
-    </div>
+<div style="text-align: center; margin: 10px 5px;padding: 5px;">
+    <div style=" text-align: left;">频道会员注册提问说明：</div>
+    <div>
+         <textarea name="signNote" wrap="hard" style="margin: 5px 0; padding:5px; box-sizing: border-box;
+         border: 1px solid #ddf; border-radius: 5px; text-align: left;display:block; width: 100%; height: 6em;">{$signNote}</textarea>
+
     <table id="tt" style="width:100%;"
            title="注册提问及预留答案"
            singleSelect="true">
@@ -57,7 +58,7 @@ chnRec
         //console.log(rows);
 
         var data={};
-        data.signNote=$("input[name='signNote']").val();
+        data.signNote=$("textarea[name='signNote']").val();
         data.signpass=$("input[name='signpass']").is(':checked');
         $.extend(data,chnRec);  //将后面的对象合并到第一个对象中
         console.log(data);

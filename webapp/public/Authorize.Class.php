@@ -400,8 +400,8 @@ class authorize {
 	 * 保存用户权限
 	 * @param int $id
 	 * @param array $right
-	 * 
-	 * 失败返回false
+	 * @return mixed 失败返回false
+	 *
 	 */
 	public function saveUserRight($id,$right){
 		unset($right[inherit]);
@@ -490,6 +490,7 @@ class authorize {
 	 * 根据session变量的记录，查找$module/$action是否在保护列表中
 	 * @param string $module
 	 * @param string $action
+     * @return bool
 	 */
 	public function isProtectAction($module,$action){
 		if(null==$_SESSION[self::PROTECTFUNC]){

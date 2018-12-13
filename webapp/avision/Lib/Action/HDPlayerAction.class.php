@@ -205,31 +205,6 @@ class HDPlayerAction extends SafeAction {
 				$useH5 = 'true';
 			}
 
-			$videoLink = '';
-			/*
-			if('true' == $useH5)
-			{
-				//H5的播放地址
-				//添加一条message记录,用于获取live地址
-				$msgDal = new MessageModel();
-				$arr = array();
-				$arr['streamid'] = $chnInfo['streamid'];
-				$attr = json_encode($arr);
-				$keystr = $msgDal->AddMsgRandStr($this->task, 'liveurl', $attr);
-				$videoLink = U('getMrl', array('str' => $keystr));
-			}
-			else
-			{
-				//$streamDal = new StreamModel();
-				//$videoLink = $streamDal->getHls($chnInfo['streamid']);
-				$msgDal = new MessageModel();
-				$arr = array();
-				$arr['streamid'] = $chnInfo['streamid'];
-				$attr = json_encode($arr);
-				$keystr = $msgDal->AddMsgRandStr($this->task, 'liveurl', $attr);
-				$videoLink = U('getMrl', array('str' => $keystr));
-			}
-			*/
 			$msgDal = new MessageModel();
 			$arr = array();
 			$arr['streamid'] = $chnInfo['streamid'];
@@ -654,8 +629,6 @@ logfile('WhatViewer:'.$st);
 	public function play($chnId='',$account='', $u='', $r='', $key='', $xtl='', $xu='')
 	{
 		logfile("chnid=".$chnId." userid=".$this->userId()." U=".$u." session:".session_id(), LogLevel::DEBUG);
-		//session_start();
-//echo 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];		die('eett');
 		$this->playingChannel=$chnId;
 		$this->playingFile=$r;
 //if($u<1) $u=$this->userId();
@@ -664,7 +637,6 @@ logfile('WhatViewer:'.$st);
 			$_SESSION['HDPlayer']['xtl'] = $xtl;
 		if(!empty($xu))
 			$_SESSION['HDPlayer']['xu'] =  $xu;
-//if(1253==$chnId) header('Location:https://www.douyu.com');
 
 		$upDal = new UserpassModel();
 		if(!empty($u))	{
@@ -695,7 +667,6 @@ logfile('WhatViewer:'.$st);
             } else {
                 $wxOnly = false;	//只限微信登录
             }
-//var_dump($type); die('rwee');
             //$userInfo=array();	//当前登录的用户信息
             //$myurl = 'http://'.$_SERVER['HTTP_HOST'].U('play').'?chnId='.$chnId.'&u='.$userInfo['userId'].'&r='.$r;	//可用做回调地址
 			$backUrl=U('play').'?chnId='.$chnId.'&u='.$u.'&r='.$r;
@@ -742,60 +713,28 @@ logfile('WhatViewer:'.$st);
 				//throw new Exception('不可识别的频道类型。');
 			}while(false);
 
-/*
-			//是否管理员或播主或助手
-			if(!$this->isMasterOwner($userInfo, $chnInfo))	{
-				//检查是否已付费
-				$isHaveTicket = $this->IsHaveTicket($chnId);
-				if(!$isHaveTicket)	{
- 					//没有票据
-					//频道是否需要票据
-					if(isset($chnAttr['userbill']['isbill']) 	&& 'true' == $chnAttr['userbill']['isbill'])	{
-						//需要票据
-						//首先检查是否已登录
-						$this->loginCheck($userInfo, $chnInfo, $wxOnly);
-
-						if(empty($chnAttr['noRightFun']))	{
-							//跳转到付费界面
-							$this->redirect('chnBill', array('chnId'=>$chnId, 'userpass'=>$u));
-						} else{
-							//跳转到指定的界面
-							$this->redirect($chnAttr['noRightFun'], array('chnId'=>$chnId, 'u'=>$u));
-						}
-					}
-					else
-					{
-						//不需要票据
-						if('public' === $type) {
-                            						//公开频道
-							$this->loginCheck($userInfo, $chnInfo, $wxOnly, true);
-						}
-						else
-						{
-//echo "会员或认证频道"; 						//会员或认证频道
-							$this->loginCheck($userInfo, $chnInfo, $wxOnly);
-//die('ppp');
-                            if('private' === $type)
-							{
-								//跳转到会员报名界面
-								$this->signCheck($userInfo, $chnInfo, $chnAttr, $u);
-							}
-						}
-						
-
-					
-						if($chnInfo['multiplelogin']>0){	//频道有同名用户重复登录限制
-							//TODO:
-							//查询本频道用户的重复登录数
-						}
-					}
-				}
-			}
-*/
             $userInfo=$this->author->getUserInfo();
             $myurl = 'http://'.$_SERVER['HTTP_HOST'].U('play').'?chnId='.$chnId.'&u='.$userInfo['userId'].'&r='.$r;
 			$nowurl = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
-			//$myurl=$nowurl;
+
+			//检查账号的重复登录许可，超过重复登录次数时，强制使用该账号登录的播放器退出，然后跳转到登录页面
+			$dbOnline=D('Online');
+			$checkMultiLogin=$dbOnline->checkMultiLogin($userInfo['userId']);
+//var_dump($checkMultiLogin);
+ //die($userInfo['userId']);
+			if($checkMultiLogin!=0) {
+				//超过了允许的重复登录次数
+				if(1==$checkMultiLogin){
+                    $dbOnline->rejectUser($userInfo['userId']);	//发送强制退出命令
+                    setPara('errorMsg','您已经在别的地方登录了，请退出后重新尝试登录。'); //die('fffff');
+                    //$this->redirect('Home/login', array('chnId'=>$chnId, 'wxonly'=>$wxOnly,  'bozhu'=>0 ));	//取消这句只是通知其它已登录的退出，允许本次登录
+				}else{
+					setPara('errorMsg','此账号已达到最大同时登录数，请稍后重新尝试登录。');
+                    $this->redirect('Home/login', array('chnId'=>$chnId, 'wxonly'=>$wxOnly,  'bozhu'=>0 ));
+				}
+                //$this->redirect('Home/login', array('chnId'=>$chnId, 'wxonly'=>$wxOnly,  'bozhu'=>0 ));	//取消这句只是通知其它已登录的退出，允许本次登录
+			}
+
 //logfile("nowUrl=".$nowurl." myUrl=".$myurl, LogLevel::DEBUG);
 			//记录传播者
 			if(!empty($userInfo['userId']))
@@ -850,8 +789,6 @@ logfile('WhatViewer:'.$st);
 		$_SESSION['HDPlayer']['refId'] = $chnId;
 		$_SESSION['HDPlayer']['refType'] = 'live';
 		
-//临时补丁频道ower=150649（云联惠)不显示分享
-if($chnInfo['owner']==150649)		$this->assign('noShare','yes');
 
 		$this->assign('rId', $r);
 		$this->assign('logoImg', $logoImg);
@@ -1008,48 +945,32 @@ logfile("Play:befor display.");
 	/**
 	 * 
 	 * 终端定时发送心跳信号，汇报工作状态，以及接受服务端推送的指令
-	 * @param int $onlineId 在线记录ID
-	 * @param int $playtype 播放模式
-	 * 
-	 * @return array可能包含以下属性
-	 * 	- result	对心跳信号的处理结果, 以下是可能的值: 
-	 * 		false	某种原因导致处理失败; 
-	 * 		true	正常完成
-	 * 	- message	对返回结果的文字说明
-	 *  - command	给终端发的命令(存储在在线用户表的command字段中), 对应的Json对象示例：
-	 *  	{"reject":"true", "channel":"78"}
-	 *  	可能包括以下一项或多项属性：
-	 *  	- reject	true强制退出
-	 *  	- channel	强制更换频道，值为频道ID
+	 * @param  array $onlineList 在线记录数组：{[onlineId,objType,objId],...}
+	 * 	- onlineId: 对应online表中的id字段，建立在线记录后由后台赋值到前端
+	 * 	- objType:	web-登录了频道， live-正在观看直播  vod-正在观看点播
+	 * 	- objId:	当objType=web/live时对应频道Id， objType=vod时对应录像文件Id
+	 *
+	 * 输出json ：[{"type":"数据分类名称","data":{} }, ...]
+	 * 前端将遍历此数组，根据“分类名称”发出消息，通知相应的过程处理data
+	 * 目前仅处理分类名称为：online	-在线记录处理
+	 * 	- "type":"online","data":[{"id":在线ID, "action":要求前端的处理动作, "msg":可以显示的提示信息},..]
+	 * 		- action:通知前端的动作，不定义或none则前端无需处理，reject-退出登录，sopt-停止播放
 	 */
-	public function KeepAlive($onlineId=0, $onlineList='', $chnId=0)
+	/* public function KeepAlive($onlineId=0, $onlineList='', $chnId=0) */ //2018-12-10之前的参数
+	public function KeepAlive($onlineList=array())
 	{
 		//在父类SafeAction构造函数中已经刷新$_SESSION[authorize::USERINFO]['activeTime']
-		//logfile("onlineList=".$onlineList,8);
-		//echo '{"result":"true"}';
-		//exit;
-		$ret = array ('result' => 'true' );
+		$ret = array ();
 		$item = array();
-		if (''==$onlineList || 1>count($onlineList)) {
-			//没在线记录放弃心跳处理
-			//logfile ( "No online info.", 3 );
-			$ret = array ('result' => 'false' );
-		} else {
+		if (count($onlineList)>0) {
 			foreach ($onlineList as $rec){
-				$item=$this->updateOnline($rec['onlineId']);
-				if(!empty($item['command']['reject']))
-				{
-					$ret['reject'] = 'true';
-				}
-				if(!empty($item['command']['rejectTO']))
-				{
-					$ret['rejectTO'] = 'true';
-				}
+				$item[]=$this->updateOnline($rec['onlineId']);
 			}
 		}
-		
+        //$item[]=array('id'=>112233,'action'=>'stop',msg=>'123停重');
+		$ret[]=array('type'=>'online','data'=>$item);
 		//$this->postKeepAlive(&$ret, $playtype, $chnId);
-		echo json_encode ( $ret );
+		echo json_encode2( $ret );
 	}
 
 	/**
@@ -1095,38 +1016,56 @@ var_dump($location);
 	 * 若失败返回array('result'=>'false')
 	 * 
 	 * @param int $onlineId	在线记录ID
+	 * @return array {id, action, msg}
+	 * 	- id在线记录ID
+	 * 	- action 通知前端的动作，不定义或none则前端无需处理，reject-退出登录，sopt-停止播放
+	 * 	- msg 附带的通知信息
 	 */
 	private function updateOnline($onlineId=0){
 		if(null==$this->dbOnline) $this->dbOnline=D('Online');
 		
-		$ret = array ('result' => 'false' );
-		$onlineRec=$this->dbOnline->field('activetime,refid,command')->where ( array ('id' => $onlineId, 'isonline'=>'true' ))->find();
-		if(null==$onlineRec){	//找不到记录或查询出错
-			logfile('找不到在线记录：'.$onlineId,1);
-			return $ret;
-		}
-		$data=array('id'=>$onlineId, 'activetime'=>time(), 'command' =>'');
-		$result=$this->dbOnline->save($data);
-		if(false===$result){
-			logfile('更新在线记录失败：'.$onlineId,1);
-			return $ret;
-		}
-		$ret = array ('result' => 'true' );
+		$ret = array ('id' => $onlineId,'action'=>'none' );
+		$onlineRec=$this->dbOnline->field('activetime,refid,command,isonline')->where ( array ('id' => $onlineId ))->find();	//读取在线记录
+		do{		//非循环，为跳到最后方便
+			if(null==$onlineRec) {    //找不到记录或查询出错
+                logfile('找不到在线记录：' . $onlineId, LogLevel::WARN);
+                $ret['action'] = 'reject';    //通知前端退出
+                $ret['msg'] = '您已经掉线';
+                break;
+            }
 
-		if($onlineRec['command']!=null){
-			logfile('find command:'.$onlineRec['command'],5);
-			$ret ['command'] = json_decode ( $onlineRec['command'], true );
-		}
+            //刷新最后活动时间，忽略isonline标志
+            $data=array('id'=>$onlineId, 'activetime'=>time(), 'command' =>'');
+            $result=$this->dbOnline->save($data);
+            if(false===$result){
+                logfile('更新在线记录失败：'.$onlineId,LogLevel::EMERG);
+                //return $ret;
+            }
+            if('true'!=$onlineRec['isonline']) {
+                //若已经标记为不在线
+                $ret['action'] = 'reject';    //通知前端退出
+                $ret['msg'] = '您已经在别的地方登录或网络故障';
+                break;
+            }
 
-		//是否超过观看时间，需要强制下线？
-		if(OnlineModel::isRejectTimeout($onlineId))
-		{
-			$ret['command']['rejectTO'] = 'true';
-		}
-		$ret['id'] = $onlineId;
+            //目前还正常在线
+            if($onlineRec['command']!=null){
+                $command=json_decode ( $onlineRec['command'], true );
+                if(isset($command['reject']) && $command['reject']=='true'){
+                    $ret['action']='reject';	//通知前端退出
+                    $ret['msg']='您已经被管理员强制退出';
+                    break;
+                }
+            }
 
+            //是否超过观看时间，需要强制下线？
+            if(OnlineModel::isRejectTimeout($onlineId)){
+                $ret['action']='stop';	//通知前端退出
+                $ret['msg']='您已经超过观看时间了';
+                break;
+            }
+		}while(false);
 		return $ret;
-
 	}
 	/**
 	 * 
@@ -1851,6 +1790,11 @@ var_dump($location);
 		$webVar['coverImg']=(''==$img)?'/Public/images/topbar.png':$img;
 		$this->assign($webVar);
 		$this->display('chnRegiste');
+	}
+
+	public function showForceOut($msg=''){
+		$this->assign('msg',$msg);
+		$this->display();
 	}
  }
 ?>

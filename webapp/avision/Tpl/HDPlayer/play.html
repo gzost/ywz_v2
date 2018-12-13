@@ -23,7 +23,7 @@
 <script type="text/javascript" src="__PUBLIC__/js/publicFunction.js"></script>
 <script type="text/javascript" src="/player/js/webChat.js?t={$time}"></script>
 <script type="text/javascript" src="__ROOT__/player/js/video.js"></script>
-
+	<script type="text/javascript" src="/player/js/keepAlive.js?t={$time}"></script>
 
 <style type="text/css">
 
@@ -316,6 +316,7 @@ var nowPlayType = '';
 var nowVodId = '';
 
 ////心跳设置的变量////
+var heart = new HeartBeat();
 var aliveTime={$aliveTime};	//心跳间隔秒数
 var onlineId={$onlineId};	//在线ID
 //在线对象列表，列表属性：
@@ -534,6 +535,7 @@ function hidenMsg()
 
 function showMsgAni(msg)
 {
+    return;
 	if(0 < msg.length)
 	{
         $('#msgShow').text(msg);
@@ -610,10 +612,12 @@ function loadSubscriberInfo() {
 			<div class="bodyTitle" style="width:500px; display: inline-block;">
 				{$title}
 			</div>
-			<!-- 增加个人信息显示-->
+			<!-- 增加个人信息显示 1315是临时补丁-->
+			<neq name="chnId" value="1315">
 			<div style="float: right; font-size:0.8em; margin-right: 1em;" onclick="loadSubscriberInfo();">
 				<img src="/player/{$theme|default='default'}/images/renxian_s.png" height="18" style="vertical-align:middle" >
 			</div>
+			</neq>
 			<div style="float: right; text-align:right; width:10em; font-size:0.8rem; overflow: hidden">
 				{$username}
 			</div>

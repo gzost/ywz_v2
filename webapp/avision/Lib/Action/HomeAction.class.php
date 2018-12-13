@@ -259,29 +259,12 @@ class HomeAction extends SafeAction {
 //dump($_SESSION['_login']);
 //echo $scrType; die('rrr');
 
-        /* outao 2016-08-28
-		if(empty($_SESSION['_login']['bozhu']))
-		{
-			if($bozhu == -1)
-				$bozhu = 0;
-			$_SESSION['_login']['bozhu'] = $bozhu;
-		}
-		else
-		{
-			$bozhu = $_SESSION['_login']['bozhu'];
-		}
-        */
+
 		$wxLoginHelp = false;
-		
-		//$auth=new authorize();
-		//$auth->logout();
         $this->author->logout();
     	session_start();
     	$this->baseAssign();
 
-    	//$msg=getPara('loginMsg');
-		//if(null!=$msg)	$this->assign('errorMsg',$msg);
-		
 		if($wxonly){
 			$this->wxLogin($chnId, urldecode($webVar['acceptUrl']));
 			return;

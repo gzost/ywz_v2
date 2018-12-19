@@ -18,7 +18,9 @@
  * echo $html; 
  * die("====");
  */
-
+set_time_limit(0);
+error_reporting(E_ALL ^ E_NOTICE);
+ob_implicit_flush();
 define('MODE_NAME', 'Cli');  // 采用CLI运行模式运行
 //定义项目名称
 define('APP_NAME', 'admin');

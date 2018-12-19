@@ -29,7 +29,9 @@ function HeartBeat()
 					try{
 						//typeof返回值：number, boolean, string, undefined, object, function,symbol.
 						if('object'!=typeof (json)) throw new Error('服务器返回错误！');
-                        for(let item of json){
+                        //for(let item of json){
+                        for(var i=0, len=json.length; i<len; i++){
+                        	var item=json[i];
                         	//console.log(item);
                         	//console.log(typeof(item.type));
                             if('string'!=typeof (item.type) || 'undefined'==typeof(item.data)) throw new Error('数据格式错误');
@@ -133,7 +135,15 @@ function HeartBeat()
 		}
 
 	_this.stopOnline = function (onlineId,callBack){
-			console.log('stopOnline:'+onlineId.toString());	
+			console.log('stopOnline:'+onlineId.toString());
+        //删除前端存储的在线列表。
+        var i=onlineList.length;
+        while(i--){
+            if(onlineId==onlineList[i].onlineId) {
+                onlineList.splice(i,1);	//删除当前数组元素
+                break;
+            }
+        }
 			//this.enableKeepAlive=false;
 			$.ajax({
 				url: stopOnlineUrl,
@@ -147,14 +157,7 @@ function HeartBeat()
 						if(typeof(data)!="object" || null==data ) throw new Error("Return data formet error!");
 						if(data.success !='true') throw new Error("Recived a error!");
 
-						//正常返回，删除前端存储的在线列表。
-						var i=onlineList.length;
-						while(i--){
-							if(onlineId==onlineList[i].onlineId) {
-								onlineList.splice(i,1);	//删除当前数组元素
-								break;
-							}
-						}
+
 					} catch(e){
 						retMsg=e.message;
 					}

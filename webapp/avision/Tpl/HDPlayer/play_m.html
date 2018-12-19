@@ -261,10 +261,10 @@ var lastSecId = '';
 var moreFit = false;
 var nowPlayType = '';
 var nowVodId = '';
+
 ////心跳设置的变量////
 var heart = new HeartBeat();
 heart.showForceOutUrl="__APP__/HDPlayer/showForceOut";
-
 var aliveTime={$aliveTime};	//心跳间隔秒数
 var onlineId={$onlineId};	//在线ID
 //在线对象列表，列表属性：
@@ -273,6 +273,7 @@ var keepAliveUrl="__APP__/HDPlayer/keepAlive";
 var startOnlineUrl="__APP__/HDPlayer/startOnline";
 var stopOnlineUrl="__APP__/HDPlayer/stopOnline";
 var logoutUrl="__APP__/Home/logout";
+heart.keepAlive();	//开始发送心跳
 /////////
 
 var jsCanChat = '{$CanChat}';

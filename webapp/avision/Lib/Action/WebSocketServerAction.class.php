@@ -11,9 +11,11 @@ require_once APP_PATH.'../public/Ou.Function.php';
 require_once APP_PATH.'../public/WSSessionLayer.class.php';
 class WebSocketServerAction extends Action implements WSAppLyer
 {
+    private $wss=null;
+
     public function __construct()
     {
-        if('Cli'!=MODE_NAME) die("Must run in Cli!");
+        
     }
 
     public function run(){
@@ -22,12 +24,14 @@ class WebSocketServerAction extends Action implements WSAppLyer
         ob_implicit_flush();
 
         //地址与接口，即创建socket时需要服务器的IP和端口
-        $sk=new WSSessionLayer('0.0.0.0',8000);
-
+        $this->wss=new WSSessionLayer('0.0.0.0',8000);
+$this->wss->onReceive=function($k,$msg){
+    $this->onReceive($k,$msg);
+};
         //对创建的socket循环进行监听，处理数据
-        $sk->start($this);
+        $this->wss->start($this);
 
-        echo "服务已停止\n";
+        echo "WSS stoped.\n";
     }
 
     /**
@@ -45,7 +49,9 @@ class WebSocketServerAction extends Action implements WSAppLyer
      * @return mixed
      */
     public function onReceive($key,$data){
-echo "receive data\n";
+echo "receive data, key= $key, data=$data \n";
+        $this->wss->send5($key,$data);
+
     }
 
     /**
@@ -62,5 +68,20 @@ echo "receive data\n";
      */
     public function onIdle(){
 echo "Idle\n";
+    }
+
+    public function test(){
+        $this->wss=new WSSessionLayer('0.0.0.0',8001);
+        $frame=$this->wss->code("556677");
+        $ar=unpack("H*",$frame);
+        dump($ar);
+        $frame=$this->wss->pack("556677");
+        $ar=unpack("H*",$frame);
+        dump($ar);
+        return;
+        echo "aa";
+        $len=66;
+        $frame = sprintf("817f%016x",$len);
+        echo pack("H*", $frame);
     }
 }

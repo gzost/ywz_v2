@@ -67,7 +67,7 @@
         <div style="margin:10px 2em 10px 0;color: #ce6500; line-height: 1.3em;white-space: pre-wrap;">{$signNote}</div>
         <form id='ff' method="post">
             <foreach name="qna" item="r" key="k">
-                <input type="text" name="quest[]" value="{$k}" readonly="readonly" style="background-color:transparent;border:none;margin:7px 0 2px 0;">
+                <input type="text" name="quest[]" value="{$k}" readonly="readonly" style="background-color:transparent;border:none;margin:7px 0 2px 0;width:90%;">
                 <input class="easyui-textbox" name="answer[]" value="{$r}" style="width:90%" data-options=" "><br>
             </foreach>
 
@@ -80,7 +80,7 @@
     </div>
     <div style="height:5px;"></div>
     <div style="margin:5px 5px 5px 2em; font-size: 1.1em; color: #00f">{$msg}</div>
-    <div class="OUI-btn OUI-font14" style="margin-left:2em; " onclick="postform('ff','{$continerid}')">保存</div>
+    <div class="OUI-btn OUI-font14" style="margin-left:2em; " onclick="postform('ff','{$continerid}')">提交</div>
     <!-- div class="OUI-btn OUI-font14" style="margin-left:2em; " onclick="DivReplaceHtml('{$backUrl}','{$continerid}')">返回</div -->
     <div class="OUI-btn OUI-font14" style="margin-left:2em; " onclick="chnRegBack();">返回</div>
 </div>

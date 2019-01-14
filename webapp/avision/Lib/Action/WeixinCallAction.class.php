@@ -233,7 +233,8 @@ class WeixinCallAction extends Action
 	 */
 	public function Apply($backUrl)
 	{
-		if('Client' == WX_TYPE)
+//die('weixin login:'.$backUrl);
+	    if('Client' == WX_TYPE)
 		{
 			//向远端服务器申请live.av365.cn
 			//添加到消息

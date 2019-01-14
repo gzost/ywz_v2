@@ -14,6 +14,7 @@ class a{
     private $obj;
     private $func;
     private $para;
+    public $callback;
     public function show($msg='emp'){
         echo "a->".$msg;
         call_user_func_array(array($this->obj,$this->func),$this->para);
@@ -23,10 +24,14 @@ class a{
         $this->obj=$obj;
         $this->func=$func;
         $this->para=$para;
-
+    }
+    public function bb($msg){
+        $a=$this->callback;
+        $a($msg);
     }
 }
 class b   extends a implements f1{
+    private $tt='tt2';
     public function cc(){
         echo "b->cc<br>";
         $c= new a;
@@ -38,14 +43,24 @@ class b   extends a implements f1{
     public function d($msg){
         echo "b->d:".$msg;
     }
-    public function onRecv88($obj, $func, $para)
+    public function on()
     {
+        $w=new a;
+        $w->callback=function($msg){
+          echo $msg.$this->tt."<br>";
+        };
 
+        $w->bb("ppppww");
     }
 }
-$a= 0x2;
-$a=$a<<2;
-echo $a;
+$u=new b;
+$u->on();
+
+$a= "中12"."\0"."3";
+$b=$a;
+$a .='666';
+echo $a,'==',ord($a[5]),'len:',strlen($a);
+echo "\n".PHP_INT_MAX."\n";
 //$k=new b;
 //$k->cc();
 

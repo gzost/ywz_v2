@@ -1,7 +1,7 @@
 php='/usr/bin/php'
-workpath='/var/www/ywz/webapp'
-logpath='/var/www/ywz/log'
+workpath='/home/www/ywz/webapp'
+logpath='/home/www/ywz/logs'
 account='account/system/password/admin@135'
 
 cd $workpath
-$php $workpath/cmd.php CheckAlive/checkPerMinute/$account >> $logpath/checkAlive.log
+$php $workpath/cmd.php CheckAlive/checkPerMinute/$account >> $logpath/checkAlive.debug.log

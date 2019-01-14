@@ -349,6 +349,8 @@ function livePlayerLoad()
 	{
 		nowPlayType = 'live';
 		DivLoadHtml('__APP__/HDPlayer/liveShowPage/chnId/{$chnId}', 'divShow');
+		//var title=document.title;
+        //document.getElementsByTagName("title")[0].innerText = title;
 		onStopEven();
 	}
 }
@@ -444,7 +446,10 @@ $(document).ready(function(){
 		recPlay(rId);
 	}
 
-	$('#tbInfo').click(tbInfoClick);
+	//$('#tbInfo').click(tbInfoClick);
+    $('#tbInfo').click(function(){
+        location.href = "__ACTION__"+"/chnId/{$chnId}";
+	});
 
 	$('#tbRePlay').click(tbRePlayClick);
 
@@ -622,15 +627,13 @@ function showMsgAni(msg)
 		</neq>
 		<!-- 增加个人信息显示  1315是临时补丁-->
 		<neq name="chnId" value="1315">
-		<div style="float: right; font-size:0.8em; margin-right: 0.5em;" onclick="loadSubscriberInfo();"><img src="/player/{$theme|default='default'}/images/my.png" height="14" style="vertical-align:text-bottom" >我</div>
+		<div style="float: right; font-size:0.8em; margin-right: 0.5em;" onclick="loadSubscriberInfo();"><img src="/player/{$theme|default='default'}/images/my.png" height="14" style="vertical-align:text-bottom" >会员</div>
 		</neq>
 	</div>
 
 	<div class="contRow" style="height:1em;background-color:#333333;display:flex;justify-content:space-around;clear:both;">
 		<div class="statcell" id="tbInfo"><img src="/player/{$theme|default='default'}/images/renxian.png" src-sel="/player/{$theme|default='default'}/images/renxian_s.png" src-org="/player/{$theme|default='default'}/images/renxian.png"/>
-			<eq name="chnId" value="1315">日程
-				<else/>介绍
-			</eq>
+			介绍
 		</div>
 		<div class="imgSp"></div>
 		<div class="statcell" id="tbRePlay"><img src="/player/{$theme|default='default'}/images/huifan.png" src-sel="/player/{$theme|default='default'}/images/huifan_s.png" src-org="/player/{$theme|default='default'}/images/huifan.png"/>回放</div>

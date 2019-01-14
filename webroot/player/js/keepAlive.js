@@ -203,7 +203,7 @@ function HeartBeat()
 	//看门狗:每10秒所有看门狗变量-1，当变量到达0时，看门狗程序发出
 	const netBrokenInt=6*2;	//网络中断最长时间，初始值，2分钟
 	var netBroken=netBrokenInt;	//网络中断计数值，此值=0时发出netBroken消息，每次心跳成功消息时把他设为初始值，这样当一段时间心跳失败时，判断为网络中断
-	const operatorIdleInt=6*60;	//播放终端最长不操作时间，初始值60分钟
+	const operatorIdleInt=6*240;	//播放终端最长不操作时间，初始值60分钟
 	var operatorIdle=operatorIdleInt;	//当终端出现键盘，鼠标，滚动等操作时，把此值设为初始值
 	var watchdogId =setInterval(function(){
 		console.log('watchdog:'+netBroken+'-'+operatorIdle);

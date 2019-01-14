@@ -52,12 +52,12 @@ class WSSessionLayer
     public $sockets; //socket的连接池，即client连接进来的socket标志
     public $users;   //所有client连接进来的信息，包括socket、client名字等
     public $master;  //socket的resource，即前期初始化socket时返回的socket资源
-
-    private $sda=array();   //已接收的数据
-    private $slen=array();  //数据总长度
-    private $sjen=array();  //接收数据的长度
-    private $ar=array();    //加密key
-    private $n=array();
+public $onReceive=null;
+    //private $sda=array();   //已接收的数据
+    //private $slen=array();  //数据总长度
+    //private $sjen=array();  //接收数据的长度
+    //private $ar=array();    //加密key
+    //private $n=array();
 
     private $appObj=null;   //应用层对象
 
@@ -71,7 +71,7 @@ class WSSessionLayer
     }
 
     //对创建的socket循环进行监听，处理数据
-    function start($appObj=null){
+    public function start($appObj=null){
         set_time_limit(0);
         if(null==$appObj) die("Server failed. Application layer Object must define.");
         $this->appObj=$appObj;  //回调的对象
@@ -122,35 +122,43 @@ echo "Key=".$key."\n";
                         $len+=$l;
                         $buffer.=$buf;
                     }while($l==1000);
-
+echo "recv from $sock len= $len \n";
                     //根据socket在user池里面查找相应的$k,即健ID
                     $k=$this->search($sock);
 
-                    //如果接收的信息长度小于9，则该client的socket为断开连接
-                    if($len<9){
-                        //给该client的socket进行断开操作，并在$this->sockets和$this->users里面进行删除
-                        $this->send2($k);
-                        continue;
-                    }
-                    //判断该socket是否已经握手
-                    if(!$this->users[$k]['shou']){
-                        //如果没有握手，则进行握手处理
-                        $this->handshake($k,$buffer);
-                    }else{
-                        //走到这里就是该client发送信息了，对接受到的信息进行uncode处理
-                        $buffer = $this->decode($buffer,$k);
-//echo "callback\n";
-                        call_user_func_array(array($this->appObj,"onReceive"),array($k,$buffer));
-
-                        if($buffer==false){
+                    //这里处理多个完整数据包毡包情况
+                    do{
+                        //原则上，客户端断开时会收到长度为0的包，但也有可能只是没有playload因此用<7判断客户端是断开连接
+                        if($len<7){
+                            //给该client的socket进行断开操作，并在$this->sockets和$this->users里面进行删除
+                            $this->close($k);
+                            $buffer='';
                             continue;
                         }
-                        //如果不为空，则进行消息推送操作
-                        $this->send($k,$buffer);
-                    }
+                        //判断该socket是否已经握手
+                        if(!$this->users[$k]['shou']){
+                            //如果没有握手，则进行握手处理
+                            $this->handshake($k,$buffer);
+                            $buffer='';
+                        }else{
+                            //走到这里就是该client发送信息了，对接受到的信息进行uncode处理
+                            $decoded = $this->decode($buffer);    //若粘包此方法内会截断$buffer剩下未处理的部分
+//echo "callback\n";
+                            if($decoded===false){
+                                $buffer='';
+                                $this->e("fream format error.");
+                                continue;
+                            }
+                            //call_user_func_array(array($this->appObj,"onReceive"),array($k,$decoded));
+$callback= $this->onReceive;
+$callback($k,$decoded);
+                            //如果不为空，则进行消息推送操作
+                            //$this->send($k,$decoded);
+                        }
+                    }while(strlen($buffer)>0);
+                    unset($buffer); //释放内存
                 }
             } //end of foreach
-
             //回调询问服务端是否有信息主动发送到终端
             call_user_func_array(array($this->appObj,"onIdle"),array());
         }
@@ -264,194 +272,83 @@ echo "Key=".$key."\n";
     如果值是126，则后面2个字节形成的16位无符号整型数的值是payload的真实长度。
     如果值是127，则后面8个字节形成的64位无符号整型数的值是payload的真实长度。
      *
-     * @param $str
-     * @param $key
-     * @return bool|string
+     * 特别说明：
+     * 1、一段时间没数据流动时WS会自动断开，超时时间IE约30秒，chrome似乎不会超时。超时断开时，服务端会收到playload长度为0的帧，总帧长度6
+     * 2、当按浏览器按“刷新”按钮时，会发送 0x03 0xe9两个字符到后端，然后如同超时一样后端收到无数据的空帧。
+     *
+     * @param &$str  收到的数据缓冲区。由于可能粘包，函数内部会把已经解码的数据帧从数据缓存区清除
+     * @return bool|string 解码后的数据。数据帧格式出错返回false
      */
-
-    private function decode($str, $key){
+    private function decode(&$str){
         //解析数据帧头
         $fin=(0!= (ord($str[0]) & 0x80))?true:false;   //1则该消息为消息尾部,如果为零则还有后续数据包
         $opcode=ord($str[0]) & 0x0f;    //帧类型
         $hasMask=$fin=(0!= (ord($str[1]) & 0x80))?true:false;   //数据是否需要掩码
 
         $len=ord($str[1]) &  0x7f;
+echo "len= $len \n";
+//var_dump( unpack("H*",$str));
         if ($len === 126)  {
-            $playloadLen=ord(str[2])<<8 + ord(str[3]);
-            $masks = substr($str, 4, 4);
-            $data = substr($str, 8, $playloadLen);
+//echo "H= ".ord($str[2])." L= ".ord($str[3])."\n";
+            $playloadLen= (ord($str[2])<<8) + ord($str[3]);
+            //若无需掩码，则数据帧中不包含mask数据
+            $playloadStart= (true==$hasMask)? 8:4;
          } else if ($len === 127)  {
             // !!! 32位系统不能处理 64位的数据长度
-            $playloadLen=ord(str[2]);
+            $playloadLen=ord($str[2]);
             for($i=3; $i<10; $i++){
-                $playloadLen=$playloadLen<<8 +ord(str[$i]);
+                $playloadLen=($playloadLen<<8) +ord($str[$i]);
             }
-            $masks = substr($str, 10, 4);
-            $data = substr($str, 14,$playloadLen);
+            $playloadStart= (true==$hasMask)? 14:10;
          } else  {  //playload 长度0-125
             $playloadLen=$len;
-            $masks = substr($str, 2, 4);
-            $data = substr($str, 6,$playloadLen);
+            $playloadStart= (true==$hasMask)? 6:2;
          }
+        $frameLen=strlen($str);
+echo "frameLen= $frameLen, playloadStart=$playloadStart, playloadLen=$playloadLen \n";
+        if($frameLen<($playloadLen+$playloadStart)){
+            $this->e("帧不完整");
+            $str='';
+            return false;
+        }
+        $data=substr($str, $playloadStart,$playloadLen);
+        $masks = (true==$hasMask)? substr($str,$playloadStart-4,4):"\0\0\0\0";
 
-echo "fin= $fin, opcode=$opcode \n";
         //若数据有掩码，再进行解码
-        $decoded='';
+        $decoded='';    //最后输出帧数据
         if(true==$hasMask){
             for($i=0; $i<$playloadLen; $i++) $decoded .= $data[$i] ^ $masks[$i %4];
+        }else{
+            $decoded=$data;
         }
+
+        //截走接收缓冲区中已处理的帧
+        $str =($frameLen==($playloadLen+$playloadStart))? '':substr($str,$playloadLen+$playloadStart);
 echo $decoded."\n";
-/*
-        $mask = array();
-        $data = '';
-        $msg = unpack('H*',$str);
-//ump($msg);
-        $head = substr($msg[1],0,2);
-        if ($head == '81' && !isset($this->slen[$key])) {
-            $len=substr($msg[1],2,2);
-            $len=hexdec($len);//把十六进制的转换为十进制
-            if(substr($msg[1],2,2)=='fe'){
-                $len=substr($msg[1],4,4);
-                $len=hexdec($len);
-                $msg[1]=substr($msg[1],4);
-            }else if(substr($msg[1],2,2)=='ff'){
-                $len=substr($msg[1],4,16);
-                $len=hexdec($len);
-                $msg[1]=substr($msg[1],16);
-            }
-            $mask[] = hexdec(substr($msg[1],4,2));
-            $mask[] = hexdec(substr($msg[1],6,2));
-            $mask[] = hexdec(substr($msg[1],8,2));
-            $mask[] = hexdec(substr($msg[1],10,2));
-            $s = 12;
-            $n=0;
-        }else if($this->slen[$key] > 0){
-            $len=$this->slen[$key];
-            $mask=$this->ar[$key];
-            $n=$this->n[$key];
-            $s = 0;
-        }
+//var_dump(unpack("H*",$decoded));
+        return $decoded;
+    }
 
-        $e = strlen($msg[1])-2;
-        for ($i=$s; $i<= $e; $i+= 2) {
-            $data .= chr($mask[$n%4]^hexdec(substr($msg[1],$i,2)));
-            $n++;
-        }
-*/
-$data=$decoded;
-        $dlen=strlen($data);
-
-        if($len > 255 && $len > $dlen+intval($this->sjen[$key])){
-            $this->ar[$key]=$mask;
-            $this->slen[$key]=$len;
-            $this->sjen[$key]=$dlen+intval($this->sjen[$key]);
-            $this->sda[$key]=$this->sda[$key].$data;
-            $this->n[$key]=$n;
-            return false;
+    /**
+     * 将要发送的data加上websocket帧头
+     * @param $data
+     */
+    function pack($data){
+        $len=strlen($data);
+        if($len<126){
+            $frame = sprintf("81%02x",$len);
+        }elseif ($len<=0xffff){
+            $frame = sprintf("817e%04x",$len);
         }else{
-            unset($this->ar[$key],$this->slen[$key],$this->sjen[$key],$this->n[$key]);
-            $data=$this->sda[$key].$data;
-            unset($this->sda[$key]);
-            return $data;
+            $frame = sprintf("817f%016x",$len);
         }
-
+        return pack("H*", $frame).$data;
     }
 
-    //与uncode相对
-    function code($msg){
-        $frame = array();
-        $frame[0] = '81';
-        $len = strlen($msg);
-        if($len < 126){
-            $frame[1] = $len<16?'0'.dechex($len):dechex($len);
-        }else if($len < 65025){
-            $s=dechex($len);
-            $frame[1]='7e'.str_repeat('0',4-strlen($s)).$s;
-        }else{
-            $s=dechex($len);
-            $frame[1]='7f'.str_repeat('0',16-strlen($s)).$s;
-        }
-        $frame[2] = $this->ord_hex($msg);
-        $data = implode('',$frame);
-        return pack("H*", $data);
-    }
 
-    function ord_hex($data)  {
-        $msg = '';
-        $l = strlen($data);
-        for ($i= 0; $i<$l; $i++) {
-            $msg .= dechex(ord($data{$i}));
-        }
-        return $msg;
-    }
-
-    //用户加入或client发送信息
-    function send($k,$msg){
-        //将查询字符串解析到第二个参数变量中，以数组的形式保存如：parse_str("name=Bill&age=60",$arr)
-        parse_str($msg,$g);
-        $ar=array();
-
-        if($g['type']=='add'){
-            //第一次进入添加聊天名字，把姓名保存在相应的users里面
-            $this->users[$k]['name']=$g['ming'];
-            $ar['type']='add';
-            $ar['name']=$g['ming'];
-            $key='all';
-        }else{
-            //发送信息行为，其中$g['key']表示面对大家还是个人，是前段传过来的信息
-            $ar['nrong']=$g['nr'];
-            $key=$g['key'];
-        }
-        //推送信息
-        $this->send1($k,$ar,$key);
-    }
-
-    //对新加入的client推送已经在线的client
-    function getusers(){
-        $ar=array();
-        foreach($this->users as $k=>$v){
-            $ar[]=array('code'=>$k,'name'=>$v['name']);
-        }
-        return $ar;
-    }
-
-    //$k 发信息人的socketID $key接受人的 socketID ，根据这个socketID可以查找相应的client进行消息推送，即指定client进行发送
-    function send1($k,$ar,$key='all'){
-        $ar['code1']=$key;
-        $ar['code']=$k;
-        $ar['time']=date('m-d H:i:s');
-        //对发送信息进行编码处理
-        $str = $this->code(json_encode($ar));
-        //面对大家即所有在线者发送信息
-        if($key=='all'){
-            $users=$this->users;
-            //如果是add表示新加的client
-            if($ar['type']=='add'){
-                $ar['type']='madd';
-                $ar['users']=$this->getusers();        //取出所有在线者，用于显示在在线用户列表中
-                $str1 = $this->code(json_encode($ar)); //单独对新client进行编码处理，数据不一样
-                //对新client自己单独发送，因为有些数据是不一样的
-                socket_write($users[$k]['socket'],$str1,strlen($str1));
-                //上面已经对client自己单独发送的，后面就无需再次发送，故unset
-                unset($users[$k]);
-            }
-            //除了新client外，对其他client进行发送信息。数据量大时，就要考虑延时等问题了
-            foreach($users as $v){
-                socket_write($v['socket'],$str,strlen($str));
-            }
-        }else{
-            //单独对个人发送信息，即双方聊天
-            socket_write($this->users[$k]['socket'],$str,strlen($str));
-            socket_write($this->users[$key]['socket'],$str,strlen($str));
-        }
-    }
-
-    //用户退出向所用client推送信息
-    function send2($k){
-        $this->close($k);
-        $ar['type']='rmove';
-        $ar['nrong']=$k;
-        $this->send1(false,$ar,'all');
+    function send5($key,$data){
+        $str = $this->pack($data);
+        socket_write($this->users[$key]['socket'],$str,strlen($str));
     }
 
     //记录日志

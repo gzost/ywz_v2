@@ -43,7 +43,10 @@ class HDPlayerAction extends SafeAction {
 	public function infoPage($chnId = 0)
 	{
 		$chnDal = new ChannelModel();
-		$attr = $chnDal->getAttrArray($chnId);
+		$rec=$chnDal->where("id=$chnId")->field('name,attr')->find();
+		$attr=(null==$rec['attr'])?array():json_decode($rec['attr'],true);
+		//$attr = $chnDal->getAttrArray($chnId);
+		$this->assign('title',$rec['name']);
 		$this->assign('infojson', $attr['info']);
 		$this->display('infoPage');
 	}
@@ -61,7 +64,7 @@ class HDPlayerAction extends SafeAction {
 			$recDal = D('recordfile');
 			$w = array();
 			$w['channelid'] = $chnId;
-			$data = $recDal->where($w)->order('seq')->select();
+			$data = $recDal->where($w)->order('seq, createtime desc')->select();
 		}
 		else
 		{

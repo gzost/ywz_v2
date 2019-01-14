@@ -1,7 +1,7 @@
 php='/usr/bin/php'
-workpath='/var/www/ywz/webapp'
-logpath='/var/www/ywz/logs'
+workpath='/home/www/ywz/webapp'
+logpath='/home/www/ywz/logs'
 account='account/system/password/admin@135'
 
 cd $workpath
-$php $workpath/cmd.php CheckAlive/updateStreamStat/$account 
+$php $workpath/cmd.php CheckAlive/updateStreamStat/$account >> $logpath/checkAlive.debug.log

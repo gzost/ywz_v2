@@ -1,0 +1,25 @@
+@charset "utf-8";
+/* 基本的页面布局及基础字体定义 */
+.questionTitle
+{
+	font-family:"微软雅黑","宋体",Courier, "Courier New", monospace ;
+	font-size: 16px;
+	margin: 5px;
+	margin-left: 10px;
+}
+
+.ansinput
+{
+	font-family:"微软雅黑","宋体",Courier, "Courier New", monospace ;
+	font-size: 16px;
+}
+
+#content{
+	text-align:center
+}
+
+#descript{
+	font-family:"微软雅黑","宋体",Courier, "Courier New", monospace ;
+	font-size: 16px;
+	margin:8px;
+}

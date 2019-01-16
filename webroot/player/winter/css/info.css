@@ -1,0 +1,19 @@
+@CHARSET "UTF-8";
+#infoShow div{
+	width:100%;
+	margin: 0px;
+	padding: 0;
+}
+
+#infoShow p{
+    display: block;
+	word-wrap:break-word;
+}
+
+.txtIndent{
+	font-size:16px;
+	line-height:24px;
+	padding-top:5px;
+	padding-bottom:5px;
+	color:chocolate;
+}

@@ -1,0 +1,171 @@
+/*
+    base_m.css
+    播放器手机基础样式
+ */
+
+
+body{
+    width:100%; height:100%;
+    background-color:#fff;font-size:24px;margin:0;padding:0;
+}
+.FlowBottom{
+    position:fixed;
+    margin:auto;
+    left:0;
+    right:0;
+    #top:0;
+    bottom:0;
+    z-index:99;
+    text-align:center;
+}
+
+.FlowBottom div{
+    #margin:1em;
+    display:inline;
+    color:#FFF;
+}
+
+.msgFlow{
+    display:none;
+    position:absolute;
+    margin:auto;
+    left:0;
+    right:0;
+    top:178px;
+    background-color:#000;
+    line-height:1.2em;
+    font-size:0.8em;
+    z-index:98;
+    color:#F00;
+    height:1.2em;
+    overflow:hidden;
+}
+.contRow1{
+    color:#333;
+    display:block;
+    padding:0.1em 0.1em 0.2em 0.1em;
+    font-size:0.8em;
+    background-color:#eee;
+    /* border-bottom: 1px solid #ddd; */
+}
+.contRow2{
+    color:#333;
+    display:block;
+    padding:0.1em 0.1em 0.3em 0.1em;
+    font-size:0.8em;
+    background-color:#fff;
+    display:flex;justify-content:space-around;clear:both;
+}
+
+.contRow1 img, .contRow2 img{
+    margin:0.2em;
+}
+
+.statcell{
+    float:left;
+    width:32%;
+    text-align:center;
+    font-size:0.8em;
+
+    overflow:hidden;
+    word-break:keep-all;/* 不换行 */
+    white-space:nowrap;/* 不换行 */
+    text-overflow:ellipsis;/* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/
+
+}
+
+.statcell span{
+    #padding-left:3px;
+    padding-right:3px;
+}
+
+.statcell img{
+    height:1em;
+    vertical-align: text-bottom;
+}
+
+.chatCellCanChat{
+    float:left;
+    width:32%;
+    text-align:center;
+    font-size:0.8em;
+}
+
+.chatCellCanChat span{
+    #padding-left:3px;
+    padding-right:3px;
+}
+
+.chatCellCanChat img{
+    height:1em;
+    vertical-align:text-bottom;
+}
+
+.chatCell{
+    display:none;
+}
+
+
+.imgSp{
+    display:none;
+    float:left;
+    width:1px;
+    border-left: 1px solid #666;
+    height:1em;
+}
+
+#divMore{
+    text-align:left;
+    background-color:#eee;
+}
+
+.tbBorder{
+    width:98%;
+    margin:auto;
+    #margin-top:0.3em;
+    padding:1px;
+    border: 1px solid #eee;
+    border-bottom:0px;
+    display:table;
+    background-color:#fff;
+    color:#fff;
+}
+
+.divLayer{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 900;
+    #padding-top:3px;
+    #padding-right:3px;
+    display:table;
+}
+
+.divFullBg{
+    width: 100%;
+    text-align: center;
+    display: table-cell;
+    background-color: #111;
+    opacity:0.8;
+}
+.divCenter{
+    width: 100%;
+    text-align: center;
+    vertical-align: middle;
+    display: table-cell;
+}
+.divBlock div{
+    display:block;
+    text-align:center;
+    margin:20px;
+}
+.divBlock{
+    background-color:#000;
+    color:#eee;
+    opacity:1;
+    padding:5px;
+}
+
+

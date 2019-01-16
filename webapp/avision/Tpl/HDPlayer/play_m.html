@@ -9,11 +9,13 @@
 <link href="__PUBLIC__/jeasyui/themes/material-teal/easyui.css" rel="stylesheet" type="text/css">
 <link href="__PUBLIC__/jeasyui/themes/icon.css" rel="stylesheet" type="text/css">
 <link href="__PUBLIC__/jeasyui/themes/color.css" rel="stylesheet" type="text/css">
-<load href="__ROOT__/player/{$theme|default='default'}/css/base.css" />
+
 <load href="__PUBLIC__/NivoSlider/nivo-slider.css" />
 <load href="__PUBLIC__/NivoSlider/themes/default/default.css" />
-<load href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" />
-<load href="__ROOT__/player/{$theme|default='default'}/css/info.css" />
+	<load href="__ROOT__/player/{$theme|default='default'}/css/base99.css" />
+	<load href="__ROOT__/player/{$theme|default='default'}/css/base_m.css" />
+	<load href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" />
+	<load href="__ROOT__/player/{$theme|default='default'}/css/info.css" />
 
 <load href="__PUBLIC__/jeasyui/jquery.min.js"/>
 
@@ -36,208 +38,6 @@
 <script type="text/javascript" src="/player/js/keepAlive.js?t={$time}"></script>
 
 <style type="text/css">
-	/*
-#.flex-body {
-    display: -webkit-flex;
-    display: flex;
-}
-
-#.flex-row {
-	flex-flow: row;
-	-webkit-flex-flow: row;
-}
-*/
-	body{
-		width:100%; height:100%;
-		background-color:#000;font-size:24px;margin:0;padding:0;
-	}
-.FlowBottom{
-	position:fixed;
-	margin:auto;
-	left:0;
-	right:0;
-	#top:0;
-	bottom:0;
-	z-index:99;
-	text-align:center;
-}
-
-.FlowBottom div{
-	#margin:1em;
-	display:inline;
-	color:#FFF;
-}
-
-.msgFlow{
-	display:none;
-	position:absolute;
-	margin:auto;
-	left:0;
-	right:0;
-	top:178px;
-	background-color:#000;
-	line-height:1.2em;
-	font-size:0.8em;
-	z-index:98;
-	color:#F00;
-	height:1.2em;
-	overflow:hidden;
-}
-
-.contRow{
-	color:#FFF;
-	display:block;
-	padding:0.1em 0.1em 0.2em 0.1em;
-	font-size:0.8em;
-}
-
-.contRow img{
-	margin:0.2em;
-}
-
-.statcell{
-	float:left;
-	width:32%;
-	text-align:center;	
-	font-size:0.8em;
-
-	overflow:hidden;
-	word-break:keep-all;/* 不换行 */
-    white-space:nowrap;/* 不换行 */
-    text-overflow:ellipsis;/* 当对象内文本溢出时显示省略标记(...) ；需与overflow:hidden;一起使用。*/
-
-}
-
-.statcell span{
-	#padding-left:3px;
-	padding-right:3px;
-}
-
-.statcell img{
-	height:1em;
-	vertical-align: text-bottom;
-}
-
-.chatCellCanChat{
-	float:left;
-	width:32%;
-	text-align:center;	
-	font-size:0.8em;
-}
-
-.chatCellCanChat span{
-	#padding-left:3px;
-	padding-right:3px;
-}
-
-.chatCellCanChat img{
-	height:1em;
-	vertical-align:text-bottom;
-}
-
-.chatCell{
-	display:none;
-}
-
-
-.imgSp{
-	float:left;
-	width:1px;
-	border-left: 1px solid #666;
-	height:1em;
-}
-
-#divMore{
-	text-align:left;
-	background-color:#aaa;
-}
-
-.tbBorder{
-	width:98%;
-	margin:auto;
-	#margin-top:0.3em;
-	padding:1px;
-	border: 1px solid #eee;
-	border-bottom:0px;
-	display:table;
-	background-color:#fff;
-	color:#fff;
-}
-
-/*
-
-.tbCell{
-    color: #000;
-	width:99%;
-	#display:table-row;
-}
-
-.tbCell img{
-	width:100%;
-	display:table-cell;
-	object-fit:cover;
-}
-
-.tbCell div{
-	padding:0.3em;
-	font-size:0.7em;
-	line-height:1em;
-	display:table-cell;
-	vertical-align:middle;
-}
-
-.tbCell table{
-    width: 100%;
-}
-
-.recDesc{
-	overflow:auto;
-	width:60%;
-}
-
-.recImg{
-	width:40%;
-}
-
-*/
-.divLayer{
-	position: fixed;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	z-index: 900;
-	#padding-top:3px;
-	#padding-right:3px;
-	display:table;
-}
-
-.divFullBg{
-    width: 100%;
-    text-align: center;
-    display: table-cell;
-	background-color: #111;
-	opacity:0.8;
-}
-.divCenter{
-    width: 100%;
-    text-align: center;
-    vertical-align: middle;
-    display: table-cell;
-}
-.divBlock div{
-	display:block;
-	text-align:center;
-	margin:20px;
-}
-.divBlock{
-	background-color:#000;
-	color:#eee;
-	opacity:1;
-	padding:5px;
-}
-
-
 
 
 </style>
@@ -609,7 +409,7 @@ function showMsgAni(msg)
 </div>
 </if>
 
-<div id="divShow" class="flex-row" style="width:100%;background-color:#fff;">
+<div id="divShow" class="flex-row" style="width:100%;">
 	<!--封面图片
 	<img src="/player/{$theme|default='default'}/images/unstart.jpg" style="width:100%"/>
 	-->
@@ -617,7 +417,7 @@ function showMsgAni(msg)
 <div class="msgFlow" id="msgShow">
 </div>
 <div class="flex-row">
-	<div class="contRow" style="height:0.9em;font-size:0.8em;">
+	<div class="contRow1" style="height:0.9em;font-size:0.8em;">
 		<div class="statcell" id="tbEntrytimes"><img src="/player/{$theme|default='default'}/images/bofan.png" src-sel="/player/{$theme|default='default'}/images/bofan_s.png" src-org="/player/{$theme|default='default'}/images/bofan.png"/><span id="entrytimes">{$entrytimes}</span> </div>
 		<div class="statcell" id="tbBillPay">
 		<!--
@@ -631,7 +431,7 @@ function showMsgAni(msg)
 		</neq>
 	</div>
 
-	<div class="contRow" style="height:1em;background-color:#333333;display:flex;justify-content:space-around;clear:both;">
+	<div class="contRow2" style="height:1em;">
 		<div class="statcell" id="tbInfo"><img src="/player/{$theme|default='default'}/images/renxian.png" src-sel="/player/{$theme|default='default'}/images/renxian_s.png" src-org="/player/{$theme|default='default'}/images/renxian.png"/>
 			介绍
 		</div>

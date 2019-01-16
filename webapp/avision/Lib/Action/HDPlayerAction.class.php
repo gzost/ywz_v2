@@ -88,6 +88,12 @@ class HDPlayerAction extends SafeAction {
 			$data[$i]['imgpath'] = $rec->getImgMrl($r['path']);
 		}
 //dump($data);
+		//取频道的皮肤模板, 支持播放器皮肤定义 2019-01-16 outao
+        $chnDal = new ChannelModel();
+        $chnAttr=$chnDal->getAttrArray($chnId);
+        $theme=(is_string($chnAttr['theme']))?$chnAttr['theme']:"default";
+        $this->assign('theme',$theme);
+
 		$this->assign('rId', $rId);
 		$this->assign('recList', $data);
 		$this->display('recordPage');
@@ -813,6 +819,10 @@ logfile('WhatViewer:'.$st);
 		$this->assign('xu', $_SESSION['HDPlayer']['xu']);
 		//$this->assign('myurl','http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].$_SERVER['QUERY_STRING']);
 		$this->assign('myurl',$myurl);
+
+		//不同频道可以定义播放器皮肤
+		$theme=(is_string($chnAttr['theme']))?$chnAttr['theme']:"default";
+		$this->assign('theme',$theme);
 
 		$tabs=array();
 		foreach ($chnAttr['tabs'] as $row){

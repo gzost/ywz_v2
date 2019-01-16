@@ -1,0 +1,44 @@
+/*
+    播放器上回放列表样式
+ */
+#record-list{
+    box-sizing: border-box;
+    flex-direction: column;
+    display:flex;
+    width:100%;
+    margin:auto;
+    border: 2px solid #eee;
+    border-bottom:0px;
+    background-color:#fff;
+    color:#004040;
+}
+.record-item{
+    box-sizing: border-box;
+    width:100%;
+    /* min-height: 100px; */
+    padding: 5px;
+    border-top: 0px solid #888;
+}
+.record-img{
+    float: left;
+    margin: 0 5px 2px 0;
+}
+.current-item {
+    background-color: #ffffcc;
+    order: -1;
+}
+.record-title {
+    font-size: 1rem;
+
+}
+.record-desc{
+    font-size: 0.8rem;
+    font-weight: normal;
+    color: #3f3f3f;
+}
+.record-cut{
+    height: 1px;
+    background-color: #bbb;
+    border-top: 0px solid #666;
+    width:100%;
+}

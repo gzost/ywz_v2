@@ -379,7 +379,7 @@ class ConsoleAction extends AdminBaseAction {
 		$webVar['viewurl'] = C('webdomain').'r.php?i='.$webVar['chnId'].'&u='.$r['owner'];
 		$webVar['editurl'] = U('chnEdit', array('chnId' => $webVar['chnId']));
 		$webVar['logoUrl'] = $chn->getLogoImgUrl($attr, $webVar['chnId']).'?'.time();
-		$webVar['coverUrl'] = $chn->getPosterImgUrl($attr, $webVar['chnId']).'?'.time();
+		$webVar['posterUrl'] = $chn->getPosterImgUrl($attr, $webVar['chnId']).'?'.time();
 
 		$this->baseAssign();
 		$this->assign($webVar);
@@ -838,15 +838,15 @@ class ConsoleAction extends AdminBaseAction {
 		$upload = new FileUpload();
 		$uparray = array();
 
-		$sizelimit = array('logo' => 20*1024, 'cover' => 200*1024, 'infoimg' => 300*1024);
+		$sizelimit = array('logo' => 50*1024, 'poster' => 300*1024, 'infoimg' => 400*1024);
 		if(0 < $power)
 		{
-			if('logo' == $t || 'cover' == $t)
+			if('logo' == $t || 'poster' == $t)
 			{
 				//处理上传文件
 				try
 				{
-					$uparray = $upload->BeginUpload2($t, array('jpg','png'), $sizelimit[$t]);
+					$uparray = $upload->BeginUpload2($t, array('jpg','png','gif'), $sizelimit[$t]);
 				}
 				catch(Exception $e)
 				{
@@ -857,7 +857,8 @@ class ConsoleAction extends AdminBaseAction {
 				$chn = new ChannelAction();
 				//获取频道图片路径
 				$path = $chn->getSavePath($c);
-				$newName = $t.'.'.$uparray[0]['ext'];
+				//$newName = $t.'.'.$uparray[0]['ext'];
+                $newName = uniqid($t).'.'.$uparray[0]['ext'];    //生成唯一文件名 2019-01-18 outao
 				//复制文件
 				$ret = move_uploaded_file($uparray[0]['tmp_name'], $path.$newName);
 				if(!$ret)
@@ -866,13 +867,33 @@ class ConsoleAction extends AdminBaseAction {
 					echo '{"retcode":"false", "message":"文件写入错误"}';
 					exit;
 				}
-				//写入数据库
+
 				$chnDal = new ChannelModel();
+                //记录旧文件的路径，以便新文件上传成功后删除
+                $chnAttr=$chnDal->getAttrArray($c);
+                $oldFile=$chnAttr[$t];
+
+
+                //写入数据库
 				$attr[$t] = $newName;
-				$chnDal->appendAttr($c, $attr);
+				if(false===$chnDal->appendAttr($c, $attr)){
+				    $retcode="false";
+				    $message="数据库写入错误！";
+				    $url="";
+                }else{
+				    //删除旧文件
+                    $oldFilePath=$path.$oldFile;
+
+                    if(null != $oldFile && true===is_file($oldFilePath)){
+                        unlink($oldFilePath);
+                    }
+                    $retcode="true";
+                    $message=$newName;
+                    $url = $chn->GetWebPath($c).$newName;
+                }
 				//返回处理结果
-				$url = $chn->GetWebPath($c).$newName;
-				echo '{"retcode":"true","url":"'.$url.'", "message":"'.$t.'"}';
+
+				echo '{"retcode":'.$retcode.',"url":"'.$url.'", "message":"'.$message.'"}';
 				exit;
 			}
 			else if('infoimg' == $t)

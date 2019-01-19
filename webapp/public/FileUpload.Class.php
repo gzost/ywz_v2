@@ -123,7 +123,7 @@ class FileUpload {
 			{
 				foreach($extAllow as $i => $v)
 				{
-					if($v === $fileExt)
+					if(0===strcasecmp($v, $fileExt))    //忽略扩展名的大小写
 					{
 						$retItem['extPass'] = true;
 					}

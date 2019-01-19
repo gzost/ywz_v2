@@ -65,3 +65,6 @@ webapp/public/aliyun/aliyun-php-sdk-sms/Sms/Request/V20160927/SingleSendSmsReque
 webroot/player/js/keepAlive - 20181206.js
 *.ts
 *.m3u8
+webroot/t/p.html
+webroot/t/p1.jpg
+webroot/t/p2.jpg

@@ -160,13 +160,14 @@ class ChannelModel extends Model {
 	 *	向某一个频道属性追加属性项
 	 *	$id 频道ID
 	 *  $appendAttr 追加的属性数组
+	 * @return mixed	int-被修改的记录数，正常应该是1或0；false数据库写入错误
 	 */	
 	public function appendAttr($id, $appendAttr)
 	{
 		 $attr = $this->getAttrArray($id);
 		 $attr = array_merge($attr, $appendAttr);
-		 $save['attr'] = json_encode($attr);
-		 $this->where(array('id'=>$id))->save($save);
+		 $save['attr'] = json_encode2($attr);
+		 return $this->where(array('id'=>$id))->save($save);
 	}
 
 	///返回报名问题的数组

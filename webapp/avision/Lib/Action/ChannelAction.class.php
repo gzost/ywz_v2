@@ -946,11 +946,12 @@ class ChannelAction extends AdminBaseAction
 	/**
 	 * 
 	 * 根据数据库中记录的路径转换成实际显示的路径
-	 * $chnAttr 频道属性数组
-	 * $chnId 频道ID
+	 * @param $chnAttr array 频道属性数组。若传入null, 方法内从数据库读取
+	 * @param $chnId int 频道ID
+	 * @return mixed
 	 */
 	//
-	public function getPosterImgUrl($chnAttr = null, $chnId = 0)
+	public function getPosterImgUrl($chnAttr = null, $chnId = 0 )
 	{
 		$attr = $chnAttr;
 		if(null == $chnAttr)
@@ -958,7 +959,7 @@ class ChannelAction extends AdminBaseAction
 			$chnDal = new ChannelModel();
 			$attr = $chnDal->getAttrArray($chnId);
 		}
-		$file = $attr['cover'];
+		$file = $attr['poster'];
 		//var_dump($attr);
 		$path = $this->GetSavePath($chnId).$file;
 //var_dump($path);

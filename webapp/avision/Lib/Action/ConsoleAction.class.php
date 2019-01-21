@@ -838,7 +838,7 @@ class ConsoleAction extends AdminBaseAction {
 		$upload = new FileUpload();
 		$uparray = array();
 
-		$sizelimit = array('logo' => 50*1024, 'poster' => 300*1024, 'infoimg' => 400*1024);
+		$sizelimit = array('logo' => 50*1024, 'poster' => 300*1024, 'infoimg' => 500*1024);
 		if(0 < $power)
 		{
 			if('logo' == $t || 'poster' == $t)
@@ -900,7 +900,7 @@ class ConsoleAction extends AdminBaseAction {
 			{
 				try
 				{
-					$uparray = $upload->BeginUpload2($t, array('jpg','png'), $sizelimit[$t]);
+					$uparray = $upload->BeginUpload2($t, array('jpg','png','gif'), $sizelimit[$t]);
 				}
 				catch(Exception $e)
 				{

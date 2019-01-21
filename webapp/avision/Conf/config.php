@@ -57,6 +57,9 @@
     	'webCallExpire'=>60,				//webcall连接无活动后自动断开的秒数。
     	'webCallTable'=>'webcallhandle',	//数据表名，用于记录连接中的webCall
 
+		//网站域名
+		'webdomain'=>'http://localhost:8003/',
+
         // ...
         'SESSION_AUTO_START' =>false			//thinkphp默认是true的
     );

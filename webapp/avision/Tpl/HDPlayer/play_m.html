@@ -268,6 +268,7 @@ $(document).ready(function(){
 	    DivLoadHtml('__APP__/Channel/showPhoto/chnId/{$chnId}', 'divMore','',function(status){
 			console.log('callback:'+status);
         });
+        DivMoreFit(false);
     });
 
 <foreach name="plugin" item="p">
@@ -408,7 +409,7 @@ function showMsgAni(msg)
 </div>
 </if>
 
-<div id="divShow" class="flex-row" style="width:100%;">
+<div id="divShow" class="flex-row" style="width:100%; position: relative;">
 	<!--封面图片
 	<img src="/player/{$theme|default='default'}/images/unstart.jpg" style="width:100%"/>
 	-->

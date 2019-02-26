@@ -23,6 +23,7 @@ var chnId = '{$chnId}';
 //logo图片上传成功
 function logoSuccess(url)
 {
+console.log(url);
 	$('#logoimg').attr('src', url+'?'+Math.random());
 	setTimeout("genQrcode()", 1000);
 }

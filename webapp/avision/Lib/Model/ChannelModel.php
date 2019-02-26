@@ -166,8 +166,11 @@ class ChannelModel extends Model {
 	{
 		 $attr = $this->getAttrArray($id);
 		 $attr = array_merge($attr, $appendAttr);
+		 $save=array();
 		 $save['attr'] = json_encode2($attr);
-		 return $this->where(array('id'=>$id))->save($save);
+		 $rt=$this->where(array('id'=>$id))->save($save);
+		 logfile("rt= $rt,SQL=".$this->getLastSql(), LogLevel::SQL);
+		 return $rt;
 	}
 
 	///返回报名问题的数组

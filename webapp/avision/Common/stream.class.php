@@ -190,7 +190,9 @@ class stream {
 		
 //echo $fulldir,'<br>';
 		if(!is_dir($fulldir)){
-			$rt=mkdir($fulldir,0777,true);	//若不存在则建立
+            $oldumask=umask(0);
+            $rt=mkdir($fulldir,0777,true);	//若不存在则建立
+            umask($oldumask);
 			if(!$rt) throw new Exception('Can not create dir: '.$fulldir);	//平台没设置录像路径，因此无法记录录像文件
 		}
 		$videoInfo=$this->videoInfo($sourceFilePath);

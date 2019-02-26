@@ -185,7 +185,7 @@ class ConsoleAction extends AdminBaseAction {
 	public function getPkgListAjax(){
 		$pkg=new package();
 		$result=$pkg->pkgList($this->userId(),true);	//取可用消费包列表数组
-		if(null!=$result) echo json_encode($result);
+		if(null!=$result) echo json_encode2($result);
 		else echo '[]';
 	}
 	
@@ -290,11 +290,11 @@ class ConsoleAction extends AdminBaseAction {
 			$rec['id']=$result;
 		}catch (Exception $e){
 			//出错
-			echo json_encode(array(	'isError' => true,
+			echo json_encode2(array(	'isError' => true,
 				'msg' => $e->getMessage() ));
 			return;
 		}
-		echo json_encode($rec);
+		echo json_encode2($rec);
 	}
 	
 	//更新
@@ -316,18 +316,18 @@ class ConsoleAction extends AdminBaseAction {
 			$result=$stream->updataRec($rec);
 			if(false===$result) throw new Exception('更新错误，请重新查询后再试。');
 		}catch (Exception $e){
-			echo json_encode(array(	'isError' => true,'msg' => $e->getMessage() ));
+			echo json_encode2(array(	'isError' => true,'msg' => $e->getMessage() ));
 			return;
 		}
-		echo json_encode($rec);
+		echo json_encode2($rec);
 		return;
 	}
 	//删除
 	public function destroyStreamAjax($id){
 		$stream=new stream();
 		$result=$stream->deleteRec($id);
-		if(false!=$result) echo json_encode(array(	'success' => true));
-		else echo json_encode(array(	'isError' => true,
+		if(false!=$result) echo json_encode2(array(	'success' => true));
+		else echo json_encode2(array(	'isError' => true,
 					'msg' => '无法删除'	));
 	}
 	
@@ -355,7 +355,8 @@ class ConsoleAction extends AdminBaseAction {
 
 	public function chnBase()
 	{
-		$webVar['chnId'] = getPara('chnId');;
+		$webVar=array();
+	    $webVar['chnId'] = getPara('chnId');;
 		$chnDal = D('channel');
 		$chn = new ChannelAction();
 		$r = $chnDal->where(array('id'=>$webVar['chnId']))->find();
@@ -391,13 +392,65 @@ class ConsoleAction extends AdminBaseAction {
 
 	public function chnEdit($chnId = 0)
 	{
-		$chnDal = D('channel');
-		$u = $_POST;
+		try{
+		    if( $chnId <=0 ) throw new Exception("缺少频道ID");
 
-		//判断权限
-		$power = $this->IsGetRightChn($chnId);
-		if(0 < $power)
-		{
+            $chnDal = D('channel');
+            $para = $_POST;
+            //判断权限
+            $power = $this->IsGetRightChn($chnId);
+            if($power<=0) throw new Exception("权限不足");
+
+            $record=array();
+            //频道名称
+            if(isset($para['name'])){
+                $record['name']=htmlspecialchars(str_replace("\n", "", $para['name']));
+                if(!is_string($record['name']) || $record['name']=='' ) throw new Exception('必须指定频道名称');
+            }
+
+            //频道描述
+            if(isset($para['descript'])){
+                $record['descript']=htmlspecialchars(str_replace("\n", "", $para['descript']));
+            }
+
+            //频道状态
+            if(isset($para['status'])){
+                $statusList=array('normal','disable','ban');
+                if(is_inArray($para['status'],$statusList))  $record['status']=$para['status'];
+                else throw new Exception('状态值错误');
+                /*
+                $found=false;
+                foreach ($statusList as $v){
+                    if($v==$para['status']){
+                        $found=true;
+                        break;
+                    }
+                }
+                if(false == $found) throw new Exception('状态值错误');
+                $record['status']=$para['status'];
+                */
+            }
+
+            //综合属性
+            $attr=$chnDal->getAttrArray($chnId);
+            if(isset($para['discuss'])) $attr['discuss'] = $para['discuss'];
+            if(isset($para['livetime'])) $attr['livetime'] = $para['livetime'];
+            if(isset($para['livekeep'])) $attr['livekeep'] = $para['livekeep'];
+            if(isset($para['tplname'])) $attr['tplname'] = $para['tplname'];
+            $record['attr'] = json_encode2($attr);
+            $ret = $chnDal->where(array('id'=>$chnId))->save($record);
+            logfile("ret= $ret, SQL_chnE=".$chnDal->getLastSql(), LogLevel::SQL);
+            if(false===$ret) throw new Exception('写入数据库错误');
+            echo '{"result":"true"}';
+		    return;
+        }catch (Exception $e){
+		    $retstr='{"result":"false", "msg":"'.$e->getMessage().'"}';
+            echo $retstr;
+            logfile("ErrReturn:".$retstr,LogLevel::WARN);
+            return;
+        }
+
+/*
 			$r = $chnDal->where(array('id'=>$chnId))->find();
 			$r['name'] = htmlspecialchars(str_replace("\n", "", $u['name']));
 			$r['descript'] = htmlspecialchars(str_replace("\n", "", $u['descript']));
@@ -407,20 +460,77 @@ class ConsoleAction extends AdminBaseAction {
 			$attr['livetime'] = $u['livetime'];
 			$attr['livekeep'] = $u['livekeep'];
 			$attr['tplname'] = $u['tplname'];
-			$r['attr'] = json_encode($attr);
+			$r['attr'] = json_encode2($attr);
 			$ret = $chnDal->where(array('id'=>$chnId))->save($r);
 			echo '{"result":"true"}';
-		}
-		else
-		{
-			echo '{"result":"false", "msg":"no right."}';
-		}
+*/
 	}
 
 	public function chnAdvEdit($chnId = 0)
 	{
 		$chnDal = new ChannelModel();
-		$u = $_POST;
+		$para = $_POST;
+
+		try{
+            if($chnId <= 0) throw new Exception("必须指定频道ID");
+            $power = $this->IsGetRightChn($chnId);
+            if($power<=0) throw new Exception("操作权限不足");
+
+            $record=array();    //需要修改的记录字段
+            //频道类型
+            if(!empty($para['type'])){
+                $typeList=array('public','private','protect','charge');
+                if(is_inArray($para['type'],$typeList)) $record['type']=$para['type'];
+                else throw new Exception('频道类型错误:'.$para['type']);
+            }
+            //捆绑推流
+            if(!empty($para['stream'])) $record['streamid']=$para['stream'];
+
+            //点击次数
+            if(!empty($para['entrytimes'])) $record['entrytimes'] = $para['entrytimes'];
+
+            //综合属性
+            $attr=$chnDal->getAttrArray($chnId);
+            if(!empty($para['wxonly'])) $attr['wxonly']=$para['wxonly'];
+            if(!empty($para['userbill'])) $attr['userbill']['isbill'] = $para['userbill'];
+
+            if(2 == $power) {
+                $record['multiplelogin']=('on' == $para['multiplelogin']) ? 1 : 0;
+                if(!empty($para['maxvlimit'])) $record['viewerlimit'] = $para['maxvlimit'];
+                if(!empty($para['viewIncRand']) && $para['viewIncRand']>0)  $attr['viewIncRand'] = $para['viewIncRand'];
+            }
+            if(1 == $power)  {
+                if(!empty($para['vlimit'])) $attr['viewerlimit'] = $para['vlimit'];
+                //TODO: 读频道控制，播主不能设置大于此限制
+/*
+                if(0 != $r['viewerlimit'])
+                {
+                    if($r['viewerlimit'] < $attr['viewerlimit'])
+                    {
+                        $attr['viewerlimit'] = $r['viewerlimit'];
+                    }
+                }
+*/
+            }
+            $list = $chnDal->getBillNameList(true);
+            foreach($list as $key => $item)
+            {
+                $tt = $item['type'];
+                $attr['userbill']['bill'.$tt] = $para['bill'.$tt];
+            }
+            $record['attr'] = json_encode2($attr);
+            $ret = $chnDal->where(array('id'=>$chnId))->save($record);
+            logfile("ret= $ret, SQL_chnE=".$chnDal->getLastSql(), LogLevel::SQL);
+            if(false===$ret) throw new Exception('写入数据库错误');
+            echo '{"result":"true"}';
+            return;
+        }catch (Exception $e){
+            $retstr='{"result":"false", "msg":"'.$e->getMessage().'"}';
+            echo $retstr;
+            logfile("ErrReturn:".$retstr,LogLevel::WARN);
+            return;
+        }
+
 
 		//判断权限
 		$power = $this->IsGetRightChn($chnId);
@@ -476,7 +586,7 @@ class ConsoleAction extends AdminBaseAction {
 				$attr['userbill']['bill'.$tt] = $u['bill'.$tt];
 			}
 
-			$r['attr'] = json_encode($attr);
+			$r['attr'] = json_encode2($attr);
 			
 			$ret = $chnDal->where(array('id'=>$chnId))->save($r);
 			echo '{"result":"true"}';
@@ -490,15 +600,19 @@ class ConsoleAction extends AdminBaseAction {
 	public function chnInfoEdit($chnId = 0)
 	{
 		$chnDal = new ChannelModel();
-		$u = $_POST['data'];
-
+		$u = trim($_POST['data']);
+logfile("chnIE_data=".$u,LogLevel::DEBUG);
+        if(strlen($u)<2){
+            echo '{"result":"false", "msg":"数据错误无法保存！"}';
+            exit;
+        }
 		//判断权限
 		$power = $this->IsGetRightChn($chnId);
 		if(0 < $power)
 		{
-			//直接把json格式写入数据库
+			//直接把json格式写入数据库 2019-02-25 不能直接写json字串，outao
 			$u = str_replace("\n", "", $u);
-			$attr['info'] = $u;
+			$attr=array('info' => $u);
 			$list = json_decode($attr['info'], true);
 
 			if(!empty($attr['info']) && null == $list)
@@ -506,15 +620,15 @@ class ConsoleAction extends AdminBaseAction {
 				echo '{"result":"false", "msg":"保存失败，可能是有非法字符！"}';
 				exit;
 			}
-
-			$chnDal->appendAttr($chnId, $attr);
+if(null==$list) logfile("list==null");
+			$chnDal->appendAttr($chnId, array('info'=>$list));
 			//var_dump($chnDal->getLastSQL());
 			/*
 			//获取attr
 			$attr = $chnDal->getAttrArray($chnId);
 			//更新attr
 			$attr['info'] = $u;
-			$save['attr'] = json_encode($attr);
+			$save['attr'] = json_encode2($attr);
 			//var_dump($save['attr']);
 			$ret = $chnDal->where(array('id' => $chnId))->save($save);
 			*/
@@ -593,7 +707,7 @@ class ConsoleAction extends AdminBaseAction {
 		$owner = $this->userId();
 		$chnDal = D('channel');
 		$r = $chnDal->field('id,name')->where(array('owner'=>$owner))->select();
-		echo json_encode($r);
+		echo json_encode2($r);
 	}
 
 	public function TypeComboxData()
@@ -642,7 +756,8 @@ class ConsoleAction extends AdminBaseAction {
 
 	public function chnAdv()
 	{
-		$webVar['chnId'] = getPara('chnId');
+		$webVar=array();
+	    $webVar['chnId'] = getPara('chnId');
 		$chnDal = new ChannelModel();
 		$chn = new ChannelAction();
 
@@ -744,7 +859,8 @@ class ConsoleAction extends AdminBaseAction {
 
 	public function chnInfo()
 	{
-		$webVar['chnId'] = getPara('chnId');
+		$webVar=array();
+	    $webVar['chnId'] = getPara('chnId');
 		$chnDal = D('channel');
 		$chn = new ChannelAction();
 		$r = $chnDal->where(array('id'=>$webVar['chnId']))->find();
@@ -755,10 +871,12 @@ class ConsoleAction extends AdminBaseAction {
 			//TODO：判断有无权
 		}
 		$attr = json_decode($r['attr'], true);
-		//var_dump($attr);
+//var_dump($attr);
 
 		$webVar['editurl'] = U('chnInfoEdit', array('chnId' => $webVar['chnId']));
-		$webVar['info'] = str_replace("\n", "", $attr['info']);
+        $webVar['info']=(is_array($attr['info']))?json_encode2($attr['info']):$attr['info']; //info是json字串，或数组
+	    $webVar['info'] = str_replace("\n", "", $webVar['info']);
+
 
 		$this->baseAssign();
 		$this->assign($webVar);
@@ -801,7 +919,7 @@ class ConsoleAction extends AdminBaseAction {
  				$webVar['chnId']=$chnList[0]['id'];
  			}
  			//dump($chnList);
- 			$chnListJson=(null==$chnList)?'[]':json_encode($chnList);
+ 			$chnListJson=(null==$chnList)?'[]':json_encode2($chnList);
  			setPara('chnListJson', $chnListJson);
  			$condTpl['chnId']=$webVar['chnId'];
  			*/
@@ -893,7 +1011,7 @@ class ConsoleAction extends AdminBaseAction {
                 }
 				//返回处理结果
 
-				echo '{"retcode":'.$retcode.',"url":"'.$url.'", "message":"'.$message.'"}';
+				echo '{"retcode":"'.$retcode.'","url":"'.$url.'", "message":"'.$message.'"}';
 				exit;
 			}
 			else if('infoimg' == $t)

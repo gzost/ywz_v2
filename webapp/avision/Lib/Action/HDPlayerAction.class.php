@@ -47,7 +47,7 @@ class HDPlayerAction extends SafeAction {
 		$attr=(null==$rec['attr'])?array():json_decode($rec['attr'],true);
 		//$attr = $chnDal->getAttrArray($chnId);
 		$this->assign('title',$rec['name']);
-		$this->assign('infojson', $attr['info']);
+		$this->assign('infojson', (is_array($attr['info']))?json_encode2($attr['info']):$attr['info']);
 		$this->display('infoPage');
 	}
 
@@ -118,6 +118,7 @@ class HDPlayerAction extends SafeAction {
 		$chnDal = new ChannelModel();
 		//判断是否在直播时段
 		$b = $chnDal->isLiving($chnInfo, $chnAttr);
+		//$b=true;
 		if(true === $b)
 		{
 			//可以观看直播

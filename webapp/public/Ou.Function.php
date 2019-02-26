@@ -549,4 +549,19 @@ function OreplaceBaseName($fileName,$newBasename){
     }
     return $newName;
 }
+
+/**
+ * 检测$str是否在$array内
+ * @param $str string
+ * @param $array array
+ * @return bool true包含在array内
+ */
+function is_inArray($str,$array){
+    foreach ($array as $v){
+        if($v==$str){
+            return ture;
+        }
+    }
+    return false;
+}
 ?>

@@ -43,10 +43,12 @@ class SafeAction extends Action {
 	 * @param string $loginURL 当用试图进入无权使用的功能时要跳转到的页面。默认Index/index若传入back会回到前一页面。
 	 */
 	function __construct($type=1,$loginURL='Index/index'){
-		parent::__construct(); 
+		parent::__construct();
+
 		$mysession=getPara('mysession');	//如果提供了session ID
 		if(null != $mysession) session_id($mysession);
-		session_start(array('cookie_lifetime'=>2400));//40分生命周期,因为要上传500M录像
+		//session_start(array('cookie_lifetime'=>2400));//40分生命周期,因为要上传500M录像
+        session_start();//生命周期直至浏览器关闭
 		
 		if(APP_NAME!=getPara('lastApp') || MODULE_NAME!=getPara('lastModule') || ACTION_NAME!=getPara('lastAction'))
 		{
@@ -56,8 +58,15 @@ class SafeAction extends Action {
 		setPara('lastApp',APP_NAME);
 		setPara('lastModule', MODULE_NAME);
 		setPara('lastAction', ACTION_NAME);
-		$expiredPeriod=($type==1)?C('OVERTIME'):null;
 //echo 	MODULE_NAME,'/',ACTION_NAME;
+		$rt=$this->checkReferer();    //检查是否来源于可信主机的跳转
+        if(false==$rt){
+            logfile("从非信任主机调用：".parse_url($_SERVER['HTTP_REFERER'],PHP_URL_HOST), LogLevel::WARN);
+            exit;   //若是调试模块可注释此句
+        }
+
+		$expiredPeriod=($type==1)?C('OVERTIME'):null;
+
 //var_dump($_SESSION[authorize::USERINFO]);
 		$this->author = new authorize();
 //var_dump($this->author->isProtectAction(MODULE_NAME,ACTION_NAME));		
@@ -173,5 +182,23 @@ class SafeAction extends Action {
 		$info= $this->author->getUserInfo();
 		return $info['userId'];
 	}
+
+    /**
+     * 检查请求的action是否来源于可信域
+     * @return bool
+     */
+    private function checkReferer(){
+        $currentAction=MODULE_NAME.'/'.ACTION_NAME;
+        if(is_inArray($currentAction, C('entry'))){
+            return true;    //若是进入点不限制
+        }
+        $serverName=$_SERVER['SERVER_NAME'];
+        $refererHost=parse_url($_SERVER['HTTP_REFERER'],PHP_URL_HOST);
+        if(null==$refererHost) return false;
+
+        $trustHost=C('trustHost');
+        $trustHost[]=$serverName;
+        return is_inArray($serverName,$trustHost);
+    }
 }
 ?>

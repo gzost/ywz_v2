@@ -23,11 +23,8 @@ class ChannelAction extends AdminBaseAction
 	protected $condAd = array('chnId'=>'');
 
 	function __construct(){
-		parent::__construct(); 
-		
-		//$mysession=getPara('mysession');	//如果提供了session ID启用 
-		//if(null != $mysession) session_id($mysession);
-		//session_start();
+		parent::__construct();
+
 	}
 
 	public function EditBaseDemo()

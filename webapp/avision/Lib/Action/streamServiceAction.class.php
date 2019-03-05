@@ -110,6 +110,7 @@ class streamServiceAction  extends Action {
 			if(false===$rt) throw new Exception($stream->message);
 			$this->successReturn($result);
 		} catch (Exception $e){
+		    sleep(5);   //验证不通过有意延时
 			$this->errorReturn($e->getMessage());
 			return;
 		}

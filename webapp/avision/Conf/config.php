@@ -36,7 +36,9 @@
 		'LOG_FILE'=>'ywz%m%.log',	//log文件路径及文件名，此文件一般是记录调试信息。特别替换变量：
 										//%y%-年，%m%-月，%d%-日
 		'LOGFILE_LEVEL'=>'9',			//数值越大记录的信息越详细。
-		
+		'entry'=>array('Home/index', 'Home/login', 'Index/index', 'HDPlayer/play'),   //项目允许的进入点（直接在浏览器输入URL访问），其它的action必须通过可信域跳转访问
+        'trustHost'=>array('live.av365.cn','www.av365.cn'),   //可信主机
+
     	//云直播相关配置
     	'adminGroup'=>1,		//系统管理员角色id
     	'bozhuGroup'=>2,		//播主角色id

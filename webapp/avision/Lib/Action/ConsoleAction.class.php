@@ -57,7 +57,8 @@ class ConsoleAction extends AdminBaseAction {
 			$attr=json_decode($rec['attr'],true);
 			$chnList[$key]['livetime'] =(isset($attr['livetime']))?substr($attr['livetime'],0,16):'未指定';
 			$chnList[$key]['livetime'].=(''!=$attr['livekeep'])?' 时长 '.$attr['livekeep'].' 分钟':'';
-			$chnList[$key]['logourl'] = $chn->getLogoImgUrl(json_decode($rec['attr'], true), $rec['id']);;
+			$chnList[$key]['logourl'] = $chn->getLogoImgUrl(json_decode($rec['attr'], true), $rec['id']);
+
 			//流信息
 	
 			$rec=$dbStreamDt->getDetailById($rec['streamid']);
@@ -392,6 +393,7 @@ class ConsoleAction extends AdminBaseAction {
 
 	public function chnEdit($chnId = 0)
 	{
+logfile("count post:".count($_POST),LogLevel::DEBUG);
 		try{
 		    if( $chnId <=0 ) throw new Exception("缺少频道ID");
 
@@ -470,7 +472,7 @@ class ConsoleAction extends AdminBaseAction {
 	{
 		$chnDal = new ChannelModel();
 		$para = $_POST;
-
+logfile("count post:".count($_POST),LogLevel::DEBUG);
 		try{
             if($chnId <= 0) throw new Exception("必须指定频道ID");
             $power = $this->IsGetRightChn($chnId);
@@ -604,6 +606,7 @@ class ConsoleAction extends AdminBaseAction {
 logfile("chnIE_data=".$u,LogLevel::DEBUG);
         if(strlen($u)<2){
             echo '{"result":"false", "msg":"数据错误无法保存！"}';
+logfile("Server:".print_r($_SERVER,true),LogLevel::SQL);
             exit;
         }
 		//判断权限

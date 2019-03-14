@@ -724,8 +724,9 @@ logfile('WhatViewer:'.$st);
 			}while(false);
 
             $userInfo=$this->author->getUserInfo();
-            $myurl = 'http://'.$_SERVER['HTTP_HOST'].U('play').'?chnId='.$chnId.'&u='.$userInfo['userId'].'&r='.$r;
-			$nowurl = 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+            $protocol=(is_https())?'https:':'http:';
+            $myurl  = $protocol.'//'.$_SERVER['HTTP_HOST'].U('play').'?chnId='.$chnId.'&u='.$userInfo['userId'].'&r='.$r;
+			$nowurl = $protocol.'//'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 
 			//检查账号的重复登录许可，超过重复登录次数时，强制使用该账号登录的播放器退出，然后跳转到登录页面
 			$dbOnline=D('Online');
@@ -839,8 +840,8 @@ logfile('WhatViewer:'.$st);
 			$secJs['title'] = $chnInfo['name'];
 			$secJs['desc'] = $chnInfo['descript'];
 			$secJs['link'] = $myurl;
-			$secJs['imgUrl'] = 'http://'.$_SERVER['HTTP_HOST'].$logoImg;
-			//$secJs['imgUrl'] = 'http://'.$_SERVER['HTTP_HOST'].$chn->getPosterImgUrl($chnAttr, $chnInfo['id']);
+			//$secJs['imgUrl'] = 'http://'.$_SERVER['HTTP_HOST'].$logoImg;
+			$secJs['imgUrl'] = 'http://'.$_SERVER['HTTP_HOST'].$chn->getLogoImgUrl($chnAttr, $chnInfo['id']);
 			$_SESSION['_WX']['jssdk'] = $secJs;
 logfile("Play:befor display.");
 			if(empty($chnAttr['tplname']))

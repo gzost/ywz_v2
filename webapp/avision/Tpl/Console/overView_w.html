@@ -95,12 +95,14 @@ function getWxBindCode()
 }
 
 function showPlayInfo(chn, imgid){
-	//console.log(chn);
+	console.log("protocol="+document.location.protocol +"host="+document.location.host);
 	var html="<div style='font-size:16px'>频道："+chn.name+"</div>";
 	html +="<div>播放地址：</div>";
 	var body=$('#w').panel('body');
 	$("#w-title").html(chn.name);
-	$("#Fcode").val("http://{$Think.server.HTTP_HOST}/r.php?i="+chn.id.toString()+"&u="+chn.owner.toString());
+	//$("#Fcode").val("http://{$Think.server.HTTP_HOST}/r.php?i="+chn.id.toString()+"&u="+chn.owner.toString());
+    $("#Fcode").val(document.location.protocol+"//"+document.location.host+"/r.php?i="+chn.id.toString()+"&u="+chn.owner.toString());
+console.log($("#Fcode").val());
 	$('#qrcode').html('');
 	$('#qrcode').qrcode({
 		text: $('#Fcode').val(),

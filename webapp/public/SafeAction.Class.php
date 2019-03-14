@@ -59,17 +59,18 @@ class SafeAction extends Action {
 		setPara('lastModule', MODULE_NAME);
 		setPara('lastAction', ACTION_NAME);
 //echo 	MODULE_NAME,'/',ACTION_NAME;
+
+        $this->author = new authorize();
+
 		$rt=$this->checkReferer();    //检查是否来源于可信主机的跳转
         if(false==$rt){
-            logfile("从非信任主机调用：".parse_url($_SERVER['HTTP_REFERER'],PHP_URL_HOST), LogLevel::WARN);
+            logfile("从非信任主机调用：".parse_url($_SERVER['HTTP_REFERER'],PHP_URL_HOST).
+                " IP:".$_SERVER['REMOTE_ADDR']." UserID:".$this->userId(), LogLevel::WARN);
             exit;   //若是调试模块可注释此句
         }
 
 		$expiredPeriod=($type==1)?C('OVERTIME'):null;
 
-//var_dump($_SESSION[authorize::USERINFO]);
-		$this->author = new authorize();
-//var_dump($this->author->isProtectAction(MODULE_NAME,ACTION_NAME));		
 		if($this->author->isLogin($expiredPeriod)) {	//已经登录
 			if('keepAlive'!= ACTION_NAME ) $this->author->keepAlive();
 			$this->operStr=$this->author->getOperStr(MODULE_NAME,ACTION_NAME);
@@ -189,8 +190,8 @@ class SafeAction extends Action {
      */
     private function checkReferer(){
         $currentAction=MODULE_NAME.'/'.ACTION_NAME;
-        if(is_inArray($currentAction, C('entry'))){
-            return true;    //若是进入点不限制
+        if(is_inArray($currentAction, C('entry')) ||$this->author->isProtectAction(MODULE_NAME,ACTION_NAME) ){
+            return true;    //若是进入点或保护Action不限制
         }
         $serverName=$_SERVER['SERVER_NAME'];
         $refererHost=parse_url($_SERVER['HTTP_REFERER'],PHP_URL_HOST);

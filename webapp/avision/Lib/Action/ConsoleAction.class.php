@@ -486,15 +486,15 @@ logfile("count post:".count($_POST),LogLevel::DEBUG);
                 else throw new Exception('频道类型错误:'.$para['type']);
             }
             //捆绑推流
-            if(!empty($para['stream'])) $record['streamid']=$para['stream'];
+            if(isset($para['stream'])) $record['streamid']=$para['stream'];
 
             //点击次数
-            if(!empty($para['entrytimes'])) $record['entrytimes'] = $para['entrytimes'];
+            if(isset($para['entrytimes'])) $record['entrytimes'] = $para['entrytimes'];
 
             //综合属性
             $attr=$chnDal->getAttrArray($chnId);
-            if(!empty($para['wxonly'])) $attr['wxonly']=$para['wxonly'];
-            if(!empty($para['userbill'])) $attr['userbill']['isbill'] = $para['userbill'];
+            $attr['wxonly']=($para['wxonly']=='true')?true:false; //$para['wxonly'];
+            if(isset($para['userbill'])) $attr['userbill']['isbill'] = $para['userbill'];
 
             if(2 == $power) {
                 $record['multiplelogin']=('on' == $para['multiplelogin']) ? 1 : 0;
@@ -502,7 +502,7 @@ logfile("count post:".count($_POST),LogLevel::DEBUG);
                 if(!empty($para['viewIncRand']) && $para['viewIncRand']>0)  $attr['viewIncRand'] = $para['viewIncRand'];
             }
             if(1 == $power)  {
-                if(!empty($para['vlimit'])) $attr['viewerlimit'] = $para['vlimit'];
+                if(isset($para['vlimit'])) $attr['viewerlimit'] = $para['vlimit'];
                 //TODO: 读频道控制，播主不能设置大于此限制
 /*
                 if(0 != $r['viewerlimit'])

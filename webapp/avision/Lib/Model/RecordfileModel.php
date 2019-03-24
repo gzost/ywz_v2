@@ -199,23 +199,62 @@ var_dump( method_exists ($this,"secreta") );
 	/**
 	 * 更新指定记录录像文件的大小信息
 	 * @param int $id 记录ID
-	 * @return 录像文件大小MB
+     * @param string $orgPath 输入文件相对路径及旧文件名，输出新的相对路径及名称
+	 * @return int 录像文件大小MB，0-失败
 	 */
-	public function updateVideoSize($id){
-		$filePath=getcwd().$this->getVideoUrl($id);
-		echo $filePath;
-		$fileSize=ceil(filesize($filePath)/1024/1024);	//转成MB
-		$this->where('id='.$id)->save(array('size'=>$fileSize));
-		return $fileSize;
+	public function updateVideoSize($id, &$orgPath=''){
+	    try{
+	        if($id<=0) throw new Exception('illegal id.');
+	        $record=array();    //准备要更新的记录数据
+            $path='';    //原文件名及相对路径
+            $oldFile=$this->getVideoUrl($id,$path);  //同时获取原文件的相对路径机文件名，
+            $filePath=getcwd().$oldFile;
+
+            if(!is_file($filePath)) throw new Exception('Cannot find file:'.$filePath);
+//echo $filePath;
+//var_dump($rename);
+            $fileSize=ceil(filesize($filePath)/1024/1024);	//转成MB
+            $record['size']=$fileSize;
+            if(''!=$orgPath){
+                $newName=uniqid($id.'_').'.';
+                $pathParts=pathinfo($path);   //相对路径
+                $basePath=(''==C(vodfile_base_path))?'/vodfile':C(vodfile_base_path);
+                $newFilePath=getcwd().$basePath.$pathParts['dirname'].'/'.$newName.$pathParts['extension'];
+logfile("updateVideoSize: newFilePath=$newFilePath", LogLevel::DEBUG);
+                $rt=rename($filePath,$newFilePath);
+                if(true==$rt){
+                    $orgPath=$pathParts['dirname'].'/'.$newName.$pathParts['extension'];
+                    $record['path']=$pathParts['dirname'].'/'.$newName.$pathParts['extension'];
+logfile("rename=".$rt,LogLevel::DEBUG);
+                    //修改视频封面图片名称
+                    $patter = "/.mp4$/";
+                    $rep = '.jpg';
+                    $oldCoverPath = preg_replace($patter, $rep, $filePath);
+                    $newCoverPath = preg_replace($patter, $rep, $newFilePath);
+                    $rt=rename($oldCoverPath,$newCoverPath);
+logfile("rename: $oldCoverPath,$newCoverPath return:$rt", LogLevel::DEBUG);
+                }
+            }
+            $this->where('id='.$id)->save($record);
+            return $fileSize;
+        }catch (Exception $e){
+	        logfile("updateVideoSize:".$e->getMessage(),LogLevel::WARN);
+	        return 0;
+        }
+
 	}
 	
 	/**
 	 * 
-	 * 取指定记录录像文件的URL路径
-	 * @param unknown_type $id
+	 * 取指定记录录像文件的URL路径，出错抛出错误
+	 * @param int $id
+     * @param string $path  数据库记录的相对路径及文件名
+     * @return string
+     * @throws Exception
 	 */
-	public function getVideoUrl($id){
+	public function getVideoUrl($id,&$path=''){
 		$path=$this->where('id='.$id)->getField('path');
+		if(false==$path || strlen($path)<3) throw new Exception('找不到录像路径。');
 		$basePath=(''==C(vodfile_base_path))?'/vodfile':C(vodfile_base_path);
 		return $basePath.$path;
 	}
@@ -248,5 +287,23 @@ var_dump( method_exists ($this,"secreta") );
         return $_SERVER["DOCUMENT_ROOT"].$baseUrlPath.$RelativePath;
     }
 
+    /**
+     * 将指定的文件改名以匹配指定的录像记录视频文件名
+     * @param $id   录像记录id
+     * @param $coverFile    封面文件及其相对路径
+     * @return string   新的文件名及相对路径
+     */
+    public function setCover($id,$coverFile){
+        $path=$this->where('id='.$id)->getField('path');
+        $basePath=(''==C(vodfile_base_path))?'/vodfile':C(vodfile_base_path);
+        $orgCoverPath=getcwd().$basePath.$coverFile;
+        $newCoverPath=getcwd().$basePath.$path;
+        $patter = "/.mp4$/";
+        $rep = '.jpg';
+        $orgCoverPath = preg_replace($patter, $rep, $orgCoverPath);
+        $newCoverPath = preg_replace($patter, $rep, $newCoverPath);
+        $rt=rename($orgCoverPath,$newCoverPath);
+        return preg_replace($patter, $rep, $path);
+    }
 }
 ?>

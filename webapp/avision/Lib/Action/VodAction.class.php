@@ -287,6 +287,7 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 	 * 文件上传的后台处理程序
 	 */
 	public function endpoint() {
+        set_time_limit(7200);
 		$uploader = new UploadHandler ();
 		
 		// Specify the list of valid extensions, ex. array("jpeg", "xml", "bmp")
@@ -341,7 +342,7 @@ logfile('call:combineChunks return:'.$result,LogLevel::DEBUG);
 				$result ["uploadName"] = $uploader->getUploadName ();
 //logfile('file:'.$result ["uploadName"],LogLevel::DEBUG);
 			}
-			
+
 			echo json_encode ( $result );
 		} // for delete file requests
 		else if ($method == "DELETE") {
@@ -372,8 +373,10 @@ logfile('call:combineChunks return:'.$result,LogLevel::DEBUG);
 	public function postUploadCoverAjax(){
 		logfile(json_encode($_REQUEST),LogLevel::DEBUG);
 		$dbRf=D('recordfile');
+        $filePath=$_POST['path'];
+        $filePath=$dbRf->setCover($_POST['recordId'],$filePath);
 		$arr=array();
-		$arr['imgUrl']=RecordfileModel::getImgMrl($_REQUEST['path']);
+		$arr['imgUrl']=RecordfileModel::getImgMrl($filePath);
 		Oajax::successReturn($arr);
 		logfile('end....',LogLevel::DEBUG);
 	}
@@ -384,10 +387,12 @@ logfile('call:combineChunks return:'.$result,LogLevel::DEBUG);
 	public function postUploadVideoAjax(){
 		logfile(json_encode($_REQUEST),LogLevel::DEBUG);
 		$dbRf=D('recordfile');
-		$fileSize=$dbRf->updateVideoSize($_REQUEST['recordId']);
+		$filePath=$_POST['path'];
+		$fileSize=$dbRf->updateVideoSize($_POST['recordId'],$filePath); //输入原文件相对路径及名称，输出新的相对路径及名称
 logfile('recordId='.$_REQUEST['recordId'].' size='.$fileSize,LogLevel::DEBUG);
 		$arr=array();
 		$arr['fileSize']=$fileSize;
+		$arr['path']=$filePath;
 		Oajax::successReturn($arr);
 		
 	}

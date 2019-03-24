@@ -61,12 +61,16 @@ function init_fine_upload(){
          },
         callbacks:{
         	onComplete:function(id,name,response,xhr){
+        	    console.log(response);
         		response.recordId="{$id}";
         		response.path='{$path}';
         		$.post('__APP__/Vod/postUploadVideoAjax',response,function(data){
         			var timestamp=new Date().getTime();
-        			//$("#coverimg").attr('src',data.imgUrl+'?'+timestamp.toString());
-        			$("#video-uploader ul").html('');
+        			if(typeof data['path']=='string'){
+        			    //正常时返回新的相对路径及文件名
+						$("#filePath").val(data['path']);
+					}
+        			$("#video-uploader ul").html('上传完成');
         			console.log(data);
         		},'json');
         	}
@@ -174,7 +178,7 @@ $('#coverimg').ready(function(){
 		<input type="hidden" name="new" value="{$new}" />
 		<input type="hidden" name="owner" value="{$owner}" />
 		<input type="hidden" name="id" value="{$id}" />
-		<input type="hidden" name="path" value="{$path}" />
+		<input id="filePath" type="hidden" name="path" value="{$path}" />
 		<div style="white-space:nowrap;margin:5px;" >
 			上传录像文件  <span class="OUI-warm" style="font-weight:bold;">*警告：上传新的录像文件将永久覆盖原有的录像！</span>
 			<div id="video-uploader" style="">您没上传录像的权限</div>

@@ -85,7 +85,7 @@ class HDPlayerAction extends SafeAction {
 		$rec = new RecordfileModel();
 		foreach($data as $i => $r)
 		{
-			$data[$i]['imgpath'] = $rec->getImgMrl($r['path']);
+			$data[$i]['imgpath'] = $rec->getImgMrl($r['path']).'?'.time();
 		}
 //dump($data);
 		//取频道的皮肤模板, 支持播放器皮肤定义 2019-01-16 outao
@@ -629,6 +629,9 @@ logfile('WhatViewer:'.$st);
 
 	/*
 	 * 播放页面
+	 * 页面主框架：play，分上下2部分，根据不同状态动态装入
+	 * 	- 框架上半部：直播,可收看：showVideoPage，不可收看(没信号或没到时间)：showImgPage
+	 * 	- 下半部：频道介绍infoPage
 	 * $chnId 频道ID
 	 * $account
 	 * $u 传播的userId

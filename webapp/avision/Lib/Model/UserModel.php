@@ -21,13 +21,14 @@ class UserModel extends Model {
 		'maxChannel'=>array('name'=>'maxChannel','txt'=>'最大频道数'),
 		'viewersPerChannel'=>array('name'=>'viewersPerChannel','txt'=>'每频道最大观众数'),
 		'bozhuDiscount'=>array('name'=>'bozhuDiscount','txt'=>'播主消费折扣'),
-		'themeAdmin'=>array('name'=>'themeAdmin','txt'=>'管理界面主题','val'=>'default'),
-		'themePlayer'=>array('name'=>'themePlayer','txt'=>'播放界面主题','val'=>'default'),
+		//'themeAdmin'=>array('name'=>'themeAdmin','txt'=>'管理界面主题','val'=>'default'),
+		//'themePlayer'=>array('name'=>'themePlayer','txt'=>'播放界面主题','val'=>'default'),
 		'commKey'=>array('name'=>'commKey','txt'=>'SI通信密钥'),
-		'SIdomain'=>array('name'=>'SIdomain','txt'=>'SI请求域名'),
+		//'SIdomain'=>array('name'=>'SIdomain','txt'=>'SI请求域名'),
 		'refCode'=>array('name'=>'refCode','txt'=>'推荐码'),
 		'refCodeId'=>array('name'=>'refCodeId','txt'=>'推荐人ID'),
-		'refGift'=>array('name'=>'ref','txt'=>'是否已经获取1元赠送','val'=>'false'),
+		//'refGift'=>array('name'=>'ref','txt'=>'是否已经获取1元赠送','val'=>'false'),
+        'multiLogin'=>array('name'=>'multiLogin','txt'=>'并发登录数(0=无限)','val'=>1),
 	);
 	
 	const userExtAttr='userExtAttr';	//用户扩展属性的JSON属性名称

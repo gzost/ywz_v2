@@ -190,12 +190,22 @@ function HeartBeat()
 		//action:通知前端的动作，不定义或none则前端无需处理，reject-退出登录，sopt-停止播放
         console.log('proc online');
         console.log(data);
+        /*
         for(let row of data){
         	console.log((row.action));
         	if('string'!=typeof(row.action)) continue;
 			if('reject'==row.action || 'stop'==row.action) {
 				var msg=('string'==typeof(row.msg))?row.msg:'';
 				window.location.replace(_this.showForceOutUrl+"?msg="+msg);
+            }	//被强制退出的跳转
+        }
+        */
+        for(var j = 0,len = data.length; j < len; j++){
+            console.log(data[j]);
+            if('string'!=typeof(data[j].action)) continue;
+            if('reject'==data[j].action || 'stop'==data[j].action) {
+                var msg=('string'==typeof(data[j].msg))?data[j].msg:'';
+                window.location.replace(_this.showForceOutUrl+"?msg="+msg);
             }	//被强制退出的跳转
         }
     });

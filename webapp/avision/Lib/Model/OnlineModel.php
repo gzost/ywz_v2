@@ -253,7 +253,10 @@ class OnlineModel extends Model {
 	    $loginTimes=$this->where($cond)->count();
 	    if(0==$loginTimes) return 0;  //没在线记录可继续登录
         //读用户的重复登录设定
-        $multiLogin=getExtAttr(D('User'),array('id'=>$uid),'multiLogin');
+        //$multiLogin=getExtAttr(D('User'),array('id'=>$uid),'multiLogin');
+        $userExtAttr=getExtAttr(D('User'),array('id'=>$uid),'userExtAttr');
+        $multiLogin=(is_array($userExtAttr)) ? $userExtAttr['multiLogin']: null;
+
         if(null===$multiLogin) $multiLogin=1;   //不定义默认不能重复登录
 
         if(0==$multiLogin || intval($loginTimes)<intval($multiLogin))   return 0;

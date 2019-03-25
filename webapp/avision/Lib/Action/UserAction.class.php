@@ -258,7 +258,7 @@ class UserAction extends AdminBaseAction{
 		//取当前用户扩展属性数组
 		$extAttr=$this->dbUser->getExtAttr($userid);
 		$legalAttr=UserModel::$ExtAttrList;
-var_dump($extAttr);
+
 		if('save'==$work){
 			//读取页面提交过来的属性，忽略不在处理列表中的属性
 			$newAttr=$this->getRec($legalAttr,true);

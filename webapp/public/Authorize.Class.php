@@ -160,7 +160,7 @@ class authorize {
     /**
      * 清除与用户账号相关的cookie
      */
-    private function clearAccountCookies(){
+    public function clearAccountCookies(){
         $appid= $this->getAppId();
         $accountName='user_'.$appid;
         $secrName='secr_'.$appid;

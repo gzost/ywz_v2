@@ -21,6 +21,7 @@ require_once APP_PATH.'../public/Authorize.Class.php';
 //require_once LIB_PATH.'Action/HDPlayerAction.class.php';
 
 class SIAction  extends Action {
+    const   CallFromSI='CallFromSI';    //从SI调用标准session变量名
 	protected $author=null;	//授权对象
 	protected $operStr=null;
 	
@@ -69,7 +70,7 @@ class SIAction  extends Action {
 			if(''==$this->operStr) throw new Exception('没有操作权限。');
 
 			$this->author->setJustViewer();
-			
+			$_SESSION[self::CallFromSI]=true;   //设置从SI接口调用标志
 		}catch (Exception $e){
 			logfile($e->getMessage(),LogLevel::ERR);
 //echo $e->getMessage();			

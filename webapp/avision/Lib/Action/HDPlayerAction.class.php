@@ -661,8 +661,10 @@ logfile('WhatViewer:'.$st);
 			$wxOpenid = $this->getWxOpenId('key', $key);
 		}
 */
-//dump($_SESSION['userinfo']);
+//dump($_SESSION['CallFromSI']);
 		$this->author->autoIssue();		//用cookie自动登录. 2018-08-26 outao
+		if($_SESSION["CallFromSI"]) $this->author->clearAccountCookies();	//如果从SI登录不保存cookie
+
 //dump($_SESSION['userinfo']); die('ggg');
 		try{
 			$chn = new ChannelAction();	//TODO: 把相应的功能移到module中

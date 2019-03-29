@@ -65,7 +65,7 @@ function vodfunction(work){
 	$.post(url,para,function(data){
 		$("#detail").html(data);
 		$.parser.parse($('#detail'));
-		//$("#dg").datagrid("reload");
+        if(work !='modify') $("#dg").datagrid("reload");
 	},'html');
 }
 

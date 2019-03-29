@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh">
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width">
@@ -14,10 +14,10 @@
 <load href="__PUBLIC__/jeasyui/jquery.min.js" />
 <load href="__PUBLIC__/jeasyui/jquery.easyui.min.js" />
 <load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
-	<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />
+<load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />
 
-<link rel="stylesheet" type="text/css" href="__PUBLIC__/jeasyui/themes/mobile.css">
-<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.easyui.mobile.js"></script>
+<link rel="stylesheet"  href="__PUBLIC__/jeasyui/themes/mobile.css">
+<script src="__PUBLIC__/jeasyui/jquery.easyui.mobile.js"></script>
 <load href="__PUBLIC__/js/publicFunction.js"/>
 
 <script type="text/javascript">
@@ -67,11 +67,13 @@
 </style>
 </head>
 <body>
-
 <equal name="showCond" value="true" >
 	<div class="easyui-navpanel" >
 		<header>
 			<div class="m-toolbar">
+				<div class="m-left">
+					<a href="javascript:void(0)" class="easyui-linkbutton m-back" plain="true" outline="true" onclick="$.mobile.back()">返回</a>
+				</div>
 				<span class="m-title">频道综合管理-查找频道</span>
 			</div>
 		</header>
@@ -107,6 +109,7 @@
 	</header>
 	{$channelListHtml}
 </div>
+
 <div id="settingList" class="easyui-navpanel" >
 	<header>
 		<div class="m-toolbar">
@@ -136,7 +139,6 @@
 	</header>
 	修改设置页面
 </div>
-
 
 </body>
 </html>

@@ -11,8 +11,12 @@ require_once(LIB_PATH.'Model/ChannelModel.php');
 class MG_ChannelAction extends AdminBaseAction
 {
     public function main(){
-        $this->baseAssign();
-        $this->display();
+        if(IsMobile()) $this->setting();
+        else{
+            $this->baseAssign();
+            $this->display();
+        }
+
     }
 
     /**

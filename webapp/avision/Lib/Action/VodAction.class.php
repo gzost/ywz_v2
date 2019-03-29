@@ -55,9 +55,10 @@ class VodAction extends AdminBaseAction {
 		$rt=$this->betweenDate($webVar['beginTime'], $webVar['endTime']);
 		if(null!=$rt) $cond['createtime']=$rt;
 //dump($cond);
-		$db=D('RecordfileDetailView');
-		$result=$db->getIdList($cond);
-		pagination::setData(self::VODFILEINDEX, $result);
+        condition::save($cond,'VODfilelist');
+		//$db=D('RecordfileDetailView');
+		//$result=$db->getIdList($cond);
+		//pagination::setData(self::VODFILEINDEX, $result);
 		
 		$this->assign($webVar);
     	$this->show('fileList');
@@ -81,14 +82,18 @@ class VodAction extends AdminBaseAction {
 	
 	public function getFileListAjax($page=1,$rows=10){
 		//提取记录数据
-		$index=pagination::getData(self::VODFILEINDEX,$page,$rows);
+		//$index=pagination::getData(self::VODFILEINDEX,$page,$rows);
 //var_dump($index);
-		if(1>$rows) { echo '[]'; return; }
+		//if(1>$rows) { echo '[]'; return; }
 		
 		$db=D('RecordfileDetailView');
-		$data=pagination::getRecDetail($db,$index);
-		
-//echo $db->getLastSql();		
+		//$data=pagination::getRecDetail($db,$index);
+		$cond=condition::get('VODfilelist');
+//var_dump($cond);
+		$data=$db->where($cond)->order('id desc')->page($page,$rows)->select();
+//var_dump($data);
+//echo $db->getLastSql();
+        $rows=$db->where($cond)->count();
 		$result=array();
 		$result["rows"]=$data;
 		$result["total"]=$rows;
@@ -152,6 +157,7 @@ class VodAction extends AdminBaseAction {
 		$rec['path']=$dbRecord->createSubDir($owner);
 		$rec['path'] .='/'.$owner.'_'.$this->number2Text().'.mp4';
 		$rec['name']='新录像'.date('Y-m-d H:i:s');
+		$rec['size']=0; //size=0作为没有录像文件标志
 		$id=$dbRecord->add($rec);
 		$rec['id']=$id;
 		$rec['account']=$account;
@@ -259,10 +265,11 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 		$dbRf=D('recordfile');
 		try{
 			if(1>$id) throw new Exception('参数错误！');
-			$rt=$dbRf->where('id='.$id)->delete();
-			if(false===$rt) throw new Exception('无法删除！');
+			$rt=$dbRf->where(array('id'=>$id,'size'=>0))->delete(); //只能删除新建而没有录像文件的记录
+
+			if(false==$rt) throw new Exception('无法删除！');
 			//删除视频文件及图片
-			$rt=$dbRf->where(array('path'=>$path.'tt'))->count();
+			$rt=$dbRf->where(array('path'=>$path))->count();
 			if('0'===$rt){
 				//已经没有其他记录引用此视频文件
 				$path=substr($path,0,strrpos($path,'.')+1);

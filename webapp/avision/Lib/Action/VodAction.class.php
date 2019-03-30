@@ -220,7 +220,7 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 			$webVar['account']=$rec['account'];
 			$webVar['size']=$rec['size'];
 		}
-
+//dump($webVar);
 		$this->assign($webVar);
 		$this->display('showDetail');
 	}

@@ -37,17 +37,18 @@ function init_fine_upload() {
     var endpointUrl = "__APP__/Vod/endpoint";
     //上传视频
     var size = {$size};
-    if (0 == size){
+    console.log("size="+size);
+	if(0 == size) {
         var videoUploader = new qq.FineUploader({
             element: document.getElementById("video-uploader"),
             debug: true,
             multiple: false,
-            request: {endpoint: endpointUrl + "?path={$path}&type=video"},
-            deleteFile: {enabled: false, endpoint: endpointUrl + "?path={$path}&type=video&"},
+            request: { endpoint: endpointUrl + "?path={$path}&type=video" },
+            deleteFile: { enabled: false, endpoint: endpointUrl + "?path={$path}&type=video&" },
             chunking: {
                 enabled: true,
                 concurrent: {enabled: true},
-                success: {endpoint: endpointUrl + "?done&path={$path}&type=video"}
+                success: { endpoint: endpointUrl + "?done&path={$path}&type=video" }
             },
             resume: {enabled: true},
             retry: {enableAuto: true, showButton: true},
@@ -74,11 +75,12 @@ function init_fine_upload() {
                         }
                         $("#video-uploader ul").html('上传完成');
                         console.log(data);
+                        $("#dg").datagrid("reload");
                     }, 'json');
                 }
             }
         });	// var videoUploader
-	}
+    }
  	//上传封面
 	var videoUploader=new qq.FineUploader({
 		element: document.getElementById("cover-uploader"),

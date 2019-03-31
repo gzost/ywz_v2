@@ -467,9 +467,12 @@ class stream {
 	public function videoInfo($file){
 		$ffmpeg="/opt/ffmpeg/bin/ffmpeg";
 		ob_start();
-	    passthru(sprintf($ffmpeg.' -i "%s" 2>&1', $file));
+		$cmd=sprintf("%s -i %s 2>&1", $ffmpeg,$file);
+logfile("videoInfo:".$cmd, LogLevel::DEBUG);
+	    passthru($cmd);
 	    $info = ob_get_contents();
 	    ob_end_clean();
+logfile("videoInfo:".$info,LogLevel::DEBUG);
 	  // 通过使用输出缓冲，获取到ffmpeg所有输出的内容。
 	   $ret = array();
 	    // Duration: 01:24:12.73, start: 0.000000, bitrate: 456 kb/s

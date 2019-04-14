@@ -155,7 +155,7 @@ class MonitorAction extends AdminBaseAction{
 		//计算汇总
 		$total=array('stattime'=>'合计');
 		foreach ($rec as $key=>$val){
-			//$total['users'] += $val['users'];
+			$total['users'] += $val['users'];
 			$rec[$key]['objtype']=$db->code2cname($val['objtype']);
 			$total['newusers'] += $val['newusers'];
 			$total['qty'] += $val['qty'];

@@ -25,7 +25,7 @@
     	'URL_CASE_INSENSITIVE' => false,
 		////////////网站配置
 		'NEED_LOGON'=> 0,//是否需要登录
-        'OVERTIME'=>18000,//判断掉线时间  单位秒。此变量在SafeAction类中使用
+        'OVERTIME'=>360000,//判断掉线时间  单位秒。此变量在SafeAction类中使用
         'ISANYONE'=>1,//是否允许匿名登录
         'APP_ID'=>'ywz_adv',   //应用名称，用户cookies名称用到
 
@@ -65,6 +65,7 @@
 		'webdomain'=>'http://localhost:8003/',
 
         // ...
+        'PHPExeclPath'=>'D:/MyProject/WebLib/PHPExcel/',
         'SESSION_AUTO_START' =>false			//thinkphp默认是true的
     );
 ?>

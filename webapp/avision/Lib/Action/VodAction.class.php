@@ -90,13 +90,16 @@ class VodAction extends AdminBaseAction {
 		//$data=pagination::getRecDetail($db,$index);
 		$cond=condition::get('VODfilelist');
 //var_dump($cond);
-		$data=$db->where($cond)->order('id desc')->page($page,$rows)->select();
-//var_dump($data);
-//echo $db->getLastSql();
-        $rows=$db->where($cond)->count();
-		$result=array();
-		$result["rows"]=$data;
-		$result["total"]=$rows;
+		if(isset($cond)){   //必须要有条件变量才进行查询
+            $data=$db->where($cond)->order('id desc')->page($page,$rows)->select();
+            $rows=$db->where($cond)->count();
+            $result=array();
+            $result["rows"]=$data;
+            $result["total"]=$rows;
+        }else
+            $result=null;
+
+
 		//$result["footer"][]=$total;
 		if(null==$result)	echo '[]';
 		else echo json_encode($result);

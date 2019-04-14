@@ -20,7 +20,7 @@ class AdminBaseAction extends SafeAction {
 	protected function setIdentity(){
 		//用户是否已登录
 		$this->auth=new authorize();
-		if( $this->auth->isLogin(C('OVERTIME')) && $this->auth->getUserInfo('account')!='anonymous' ){	
+		if( $this->auth->isLogin() && $this->auth->getUserInfo('account')!='anonymous' ){	//服务端不主动超时
 			$this->isLogin='true';
 			$userExtAttr=$this->auth->getUserInfo(UserModel::userExtAttr);
 //dump($userExtAttr);	

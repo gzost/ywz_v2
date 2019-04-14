@@ -165,6 +165,8 @@ class UserModel extends Model {
 		//if(!$isMatch) throw new Exception('用户昵称要6个或更多可显示字符');
 		
 		$result=$this->add($rec);
+//echo $this->getLastSql();
+//var_dump($result);
 		if(1>$result) {
 		    logfile("UserModel:新增用户失败:".$this->getLastSql(),LogLevel::WARN);
             throw new Exception('新增用户失败，可能是账号重复。');
@@ -329,5 +331,112 @@ class UserModel extends Model {
 		}
 		return null;
 	}
+
+	// ======= append 2019-04-02 by outao ====
+
+    //数据表字段名称表，key为数据库字段名，值为显示字串
+    public static $fieldName = array(
+        'id'=>'用户号',    'account'=>'账号',    'username'=>'昵称', 'password'=>'密码', 'status'=>'状态',
+        'credit'=>'信用额',   'bozhu'=>'播主等级',    'createdate'=>'建立日期',   'phone'=>'手机号码',    'userlevel'=>'用户等级',
+        'viplevel'=>'VIP等级', 'vipexpire'=>'VIP有效期',    'experience'=>'经验值',   'agentname'=>'代理商',
+        'idcard'=>'证件号',   'company'=>'工作单位',  'realname'=>'姓名', 'udef1'=>'自定义1', 'groups'=>'分组'
+    );
+    //可导入的字段列表
+	public static $importTableFields=array('account'=>'账号',    'username'=>'昵称', 'password'=>'密码',
+        'phone'=>'手机号码',    'userlevel'=>'用户等级',
+        'viplevel'=>'VIP等级', 'vipexpire'=>'VIP有效期',    'experience'=>'经验值',
+        'idcard'=>'证件号',   'company'=>'工作单位',  'realname'=>'姓名', 'udef1'=>'自定义1', 'groups'=>'分组');
+
+    /**
+     * 返回符合条件记录的数组，支持分页显示
+     * @param array $cond 符合thinkphp规范的条件数组
+     * @param string $fields    需要输出的字段，不提供输出默认的
+     * @param int $page 显示第几页，首页=1
+     * @param int $rows 每页行数
+     * @return mixed    符合条件的记录数组，false--失败, null-无符号条件的数组
+     */
+	public function getList($cond,$order='',$fields='',$page=1,$rows=99999){
+	    if(''==$fields) $fields='u.id,account,username,status,createdate,phone,agent,a.name as agentname,idcard,company,realname,groups';
+	    $recs=$this->alias('u')->field($fields)->where($cond)->join("__AGENT__ a on agent=a.id")->order($order)
+            ->page($page,$rows)->select();
+//echo $this->getLastSql();
+logfile($this->getLastSql(),LogLevel::SQL);
+	    return $recs;
+    }
+
+    /**
+     * @param $cond
+     * @return mixed    符合条件的记录总数
+     */
+    public function numbers($cond){
+	    $count=$this->where($cond)->count();
+	    return $count;
+    }
+
+    /**
+     * 校验输入字串是否符合密码要求，若符合返回加密后的字串，否则抛出错误
+     * @param $password
+     * @return string 加密后的密码
+     * @throws Exception
+     */
+    public function encryptPassword($password){
+        $isMatch=preg_match('/^\S{6,}$/i', $password);
+        if(0==$isMatch) throw new Exception('密码要6个或更多可显示字符');
+        return md5($password);
+    }
+
+    /**
+     * 校验用户记录是否符合要求，不检查password
+     * @param $rec
+     * @throws Exception    不符合要求抛出错误
+     */
+    public function validate($rec){
+        $isMatch=preg_match('/^[a-zA-Z][a-zA-Z0-9_]{5,15}$/i', $rec['account']);
+        if(!$isMatch) throw new Exception('账号应字母开头，允许6-16个字母、数字及下划线');
+
+        $txtFields=array("refCode","phone","idcard","company","realname","udef1","groups"); //只允许可显示字符的字段
+        foreach ($txtFields as $field){
+            if( preg_match('/\s/i', $rec[$field])) throw new Exception($field." 含有非显示字符");
+        }
+    }
+
+    /**
+     * 删除用户及相关数据
+     * @param $id
+     * @return bool
+     * @throws Exception
+     */
+    public function deleteUser($id){
+        $this->startTrans();
+        try{
+            $cond=array("id"=>$id);
+            //判断用户是否允许删除，例如播主
+            if($id<100) throw new Exception("系统账号不可删除。");
+            $bozhu=$this->where($cond)->getField("bozhu");
+            if(!empty($bozhu) && $bozhu!="no") throw new Exception("播主不可删除。");
+            $extAttr=$this->getExtAttr($id);
+            if(!empty($extAttr["bozhu"]) && "no"!=$extAttr["bozhu"]) throw new Exception("播主不可删除。");
+
+            //Online中的用户不能删除
+            //TODO:删除userrelrole
+            //TODO:删除userpass
+            //TODO:删除webchat
+            //TODO:删除cashflow
+            //TODO:删除channelnochat
+            //TODO:删除channelreluser
+            //TODO:删除chnsump
+            //TODO:删除onlinelog
+            //TODO:删除package
+            //TODO:删除photo
+            //TODO:删除prepay
+            //TODO:删除thirdpartyuser
+
+        }catch (Exception $ex){
+            $this->rollback();
+            throw new Exception($ex->getMessage());
+        }
+        $this->commit();
+        return false;   //此功能还未完全实现，故先永远返回失败
+    }
 }
 ?>

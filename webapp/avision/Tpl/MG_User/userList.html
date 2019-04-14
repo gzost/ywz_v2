@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+    <link rel="stylesheet" href="__PUBLIC__/jeasyui/themes/material/easyui.css" >
+    <link rel="stylesheet" href="__PUBLIC__/jeasyui/themes/icon.css" >
+    <link rel="stylesheet" href="__PUBLIC__/jeasyui/themes/color.css" >
+
+    <script src="__PUBLIC__/jeasyui/jquery.min.js" ></script>
+    <script src="__PUBLIC__/jeasyui/jquery.easyui.min.js" ></script>
+    <script src="__PUBLIC__/jeasyui/jquery.edatagrid.js" ></script>
+    <script src="__PUBLIC__/js/jeasyui_formatter_ext.js" ></script>
+    <script src="__PUBLIC__/js/jquery.form.js"></script>
+    <script src="__PUBLIC__/js/adv-uploadprogress.js"></script>
+
+    <link rel="stylesheet"  href="__PUBLIC__/jeasyui/themes/mobile.css" >
+    <script src="__PUBLIC__/jeasyui/jquery.easyui.mobile.js"></script>
+    <script src="__PUBLIC__/js/publicFunction.js" ></script>
+
+    <style>
+        body{ font-size: 11px;}
+        .cond-item{ display:inline-block; white-space: nowrap; margin-right: 1em; line-height: 35px; vertical-align: center;}
+    </style>
+
+</head>
+<body>
+<div class="easyui-navpanel" >
+    <header>
+        <div class="m-toolbar">
+            <div class="m-left">
+                <a href="javascript:void(0)" class="easyui-linkbutton m-back" plain="true" outline="true" onclick="$.mobile.back()">返回</a>
+            </div>
+            <span class="m-title">用户管理</span>
+            <div class="m-right"><img src="__PUBLIC__/images/ywz.png" ></div>
+        </div>
+    </header>
+    <div style="padding:5px;">
+        <table id="dg">
+            <thead><tr>
+                <eq name="fixOrg" value="false">
+                    <th field="agentname" >{$fieldName.agentname}</th>
+                </eq>
+                <th field="account" data-options="halign:'center',sortable:true">{$fieldName.account}</th>
+                <th field="username" >{$fieldName.username}</th>
+                <th field="status" width="60" editor="{type:'combobox',options:{valueField:'label',textField:'value', data:[{label:'正常',value:'正常'},{label:'锁定',value:'锁定'}]}}">{$fieldName.status}</th>
+                <th field="phone" editor="{type:'text'}">{$fieldName.phone}</th>
+                <th field="idcard" editor="{type:'text'}">{$fieldName.idcard}</th>
+                <th field="company" editor="{type:'text'}">{$fieldName.company}</th>
+                <th field="realname" editor="{type:'text'}">{$fieldName.realname}</th>
+                <th field="groups" editor="{type:'text'}">{$fieldName.groups}</th>
+            </tr></thead>
+        </table>
+    </div>
+    <div id="tb" style="padding:5px;">
+        <form id="ff" method="post" style="display: inline-block;">
+            <span class="cond-item">机构:
+                <input class="easyui-combobox" name="agent" value="{$agent}" style=""
+                       data-options="width:100, height:24,
+                       readonly:{$fixOrg},
+                       valueField:'id',textField:'name',data:{$agentList}
+                " >
+            </span>
+            <span class="cond-item" >{$fieldName.account}: <input class="easyui-textbox" name="account" value="{$account}" style="" data-options="width:80, height:24" ></span>
+            <span class="cond-item">{$fieldName.realname}: <input class="easyui-textbox" name="realname" value="{$realname}" style="" data-options="width:80, height:24" ></span>
+            <span class="cond-item">{$fieldName.phone}: <input class="easyui-textbox" name="phone" value="{$phone}" style="" data-options="width:80, height:24" ></span>
+            <span class="cond-item">{$fieldName.company}: <input class="easyui-textbox" name="company" value="{$company}" style="" data-options="width:80, height:24" ></span>
+            <span class="cond-item">{$fieldName.groups}: <input class="easyui-textbox" name="groups" value="{$groups}" style="" data-options="width:80, height:24" ></span>
+        </form>
+        <span class="cond-item" style="margin-right: 4em;"><a href="javascript:void(0)" class="easyui-linkbutton c8" onclick="$('#ff').submit();" style="width:80px; height: 22px;">查找</a></span>
+        <span class="cond-item"><a href="javascript:void(0)" class="easyui-linkbutton c7" onclick="$('#win-upload').window('open');" style="width:110px; height: 22px;">批量导入账号</a></span>
+        <div  style="display:inline-block; padding: 0 1em; border: 1px solid #ccc; border-radius: 5px ">
+            <eq name="canCreate" value="true">
+                <a id="Append" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true"
+                    onclick="$('#dg').edatagrid('addRow');">增加</a>
+            </eq>
+            <eq name="canDestroy" value="true">
+                <a id="Remove" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true"
+                    onclick="$('#dg').edatagrid('destroyRow');">删除</a>
+            </eq>
+            <a id="Save" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true"
+               onclick="$('#dg').edatagrid('saveRow')">保存</a>
+            <a  href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true"
+                onclick="$('#dg').edatagrid('cancelRow')">取消</a>
+        </div>
+    </div>
+
+</div>
+
+<!-- 文件上传弹出窗口 -->
+<div id="win-upload" class="easyui-dialog" title="批量导入用户账号" style="width:90%;height:400px"
+    data-options="iconCls:'icon-add',modal:true, toolbar: '#dlg-toolbar', closed:true,
+        buttons:[{text:'关闭', handler:function(){$('#win-upload').window('close')}}]">
+    <div id="upload-result" style="margin: 5px;">
+        用户账号不允许删除，请谨慎导入。停用的账号可把账号状态设为锁定。<br>
+       导入账号的文件必须是符合规定格式的excel文件，文件内容应严格遵守如下规定：
+        <ul>
+            <li>文件第一行作为导入机构的标识：{"id":平台分配的机构编号, "name":"平台分配的机构名称"}</li>
+            <li>文件第二行是字段名称，其中：账号、密码，这两个字段是必须的。可导入的字段有：</li>
+            <li><foreach  name="importableFields" item="vo">
+                {$key}，
+            </foreach ></li>
+            <li>以上字段名称可以在“机构中心”内更改，但不能重复也不能与平台的保留名称相同，更改的名称尽量保持原有的意义。</li>
+            <li>第三行开始就是需要导入的用户数据</li>
+            <li>账号只能由字母、数字及下划线组成，长度6~15；密码由字母、数字及可显示符号组成，长度6~15</li>
+        </ul>
+    </div>
+</div>
+<div id="dlg-toolbar" style="padding: 5px 10px;">
+    <!--
+    <form id="upload" method="post" enctype="multipart/form-data" action="__URL__/upload" style="display:inline">
+			<input id="ffFile" class="easyui-filebox" name="importFile" data-options="prompt:'*.xls;*.xlsx;', buttonText:'选择文件',buttonAlign:'left',width:260 " >
+			<a id="ffBtn" href="javascript:;" class="easyui-linkbutton c7" onclick="$('#upload').submit();" style="width:60px; margin-left:10px;">导入</a>
+    </form>
+    -->
+    <input class="adv-uploadprogress" type="file" name="users" data-options='"url":"__ACTION__/work/upload","pgWidth":"200","success":"postUpload"'>
+</div>
+<script>
+    //var agentList=eval('('+'{$agentList}'+')');
+    $('#dg').edatagrid({
+        url:"__ACTION__/work/getList",
+        toolbar:'#tb',
+        width:'100%',
+        pagination:true,  pageSize:10,
+        sortName:'account', sortOrder:'asc',
+        onSortColumn:function(sort,order){
+            console.log(sort+order);
+            $.post("__ACTION__/work/sort",{field:sort,order:order},function (data) {
+
+            },"JSON");
+        },
+        saveUrl:'__ACTION__/work/save',
+        updateUrl:'__ACTION__/work/update', //后台返回被更新行的记录数据，前端会刷新
+        destroyUrl:'__ACTION__/work/destroy',
+        destroyMsg:{
+            norecord:{title:'提示',msg:'请先选择要删除的记录'},
+            confirm:{title:'<span style="font-size: 1.2em; color: red; font-weight: bolder">!!!最后警告!!!</span>',msg:'被删除用户的相关资料将永久性丢失！包括：消费记录、收入记录、订购记录等。真的要删除此记录吗？'}
+        },
+        onBeforeEdit:function(){
+            var c='{$canUpdate}';
+            if(c=='true') return true;
+            else return false;
+        },
+        onBeforeSave:function(){
+            var rt=confirm('要保存更改吗？');
+            return rt;
+        },
+        //当后台返回{"isError" :true }时跳触发
+        onError:function(index,row){
+            alert(row.msg);
+            $('#dg').edatagrid('load');
+        }
+        });
+    (function () {
+
+        var str="{'name':123+5}";
+        console.log(eval('('+str+')'));
+    })();
+
+    $(document).ready(function(){
+        cn_Pagination($("#dg").datagrid('getPager'));
+    });
+
+    function postUpload(para) {
+        $.post(para,function(data){
+            $("#upload-result").html("<pre>"+data+"</pre>");
+        },"html");
+
+    }
+</script>
+
+</body>
+</html>

@@ -1254,7 +1254,9 @@ class ChannelAction extends AdminBaseAction
 
 	public function TplComboxData()
 	{
-		echo '[{"value":"play","name":"默认模板"},{"value":"playPay","name":"娱乐类"}]';
+		//暂不使用娱乐类
+		//echo '[{"value":"play","name":"默认模板"},{"value":"playPay","name":"娱乐类"}]';
+        echo '[{"value":"play","name":"默认模板"}]';
 	}
 
 	public function PlayTypeComboxData()

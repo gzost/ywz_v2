@@ -376,6 +376,7 @@ class ConsoleAction extends AdminBaseAction {
 		if(empty($attr['tplname']))
 			$attr['tplname'] = 'play';
 		$webVar['tplname'] = $attr['tplname'];
+        $webVar['playertheme']=empty($attr['theme'])?'default':$attr['theme'];
 
 		$webVar['EditBaseClearDis'] = U('EditBaseClearDis');
 		$webVar['viewurl'] = C('webdomain').'r.php?i='.$webVar['chnId'].'&u='.$r['owner'];
@@ -439,6 +440,7 @@ logfile("count post:".count($_POST),LogLevel::DEBUG);
             if(isset($para['livetime'])) $attr['livetime'] = $para['livetime'];
             if(isset($para['livekeep'])) $attr['livekeep'] = $para['livekeep'];
             if(isset($para['tplname'])) $attr['tplname'] = $para['tplname'];
+            if(isset($para['playertheme'])) $attr['theme'] = $para['playertheme'];
             $record['attr'] = json_encode2($attr);
             $ret = $chnDal->where(array('id'=>$chnId))->save($record);
             logfile("ret= $ret, SQL_chnE=".$chnDal->getLastSql(), LogLevel::SQL);

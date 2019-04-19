@@ -245,9 +245,16 @@ function jumpChn(chnId)
 				</div>
 			</div>
 			<div class="flex-contStart">
-				<div class="itemName">模板：</div>
+				<div class="itemName">显示模板：</div>
 				<div class="itemCont">
 					<input class="easyui-combobox" name="tplname" style="width:100px;" value='{$tplname}' data-options="editable:false,valueField:'value',textField:'name',url:'__APP__/Channel/TplComboxData'"/>
+				</div>
+			</div>
+			<div class="flex-contStart">
+				<div class="itemName">显示主题：</div>
+				<div class="itemCont">
+					<input class="easyui-combobox" name="playertheme" style="width:100px;" value='{$playertheme}'
+						   data-options="editable:false,valueField:'value',textField:'name',data:[{value:'default',name:'默认主题'},{value:'winter',name:'冰雪童话'}] "/>
 				</div>
 			</div>
 			<div class="flex-contStart">

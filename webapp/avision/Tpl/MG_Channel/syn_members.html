@@ -1,0 +1,84 @@
+<style>
+    .cond-item{ display:inline-block; white-space: nowrap; margin-right: 1em; line-height: 35px; vertical-align: center;}
+</style>
+<div style="text-align: center; margin: 0px 0px;padding: 5px;box-sizing:border-box;">
+    <div class="chn-header">
+        当前频道：{$chnName}({$chnId})
+    </div>
+    <div class="easyui-panel" style="width:100%;height:300px"
+         title="从其它频道同步会员" data-options="iconCls:'icon-reload',collapsible:true,">
+        <div style="width:100%; background-color: #eee; padding:5px;box-sizing:border-box;">
+            <form id="fm-sync" method="post">
+                <span class="cond-item">
+                    选择源频道：<input class="easyui-combobox" name="soureChnId"  value="{$soureChnId}"  data-options="width:300,valueField:'id',textField:'name',data:{$chnList}">
+                </span>
+                <span class="cond-item"><input type="checkbox" name="sync2source">双向同步</span>
+                <input type="hidden" name="work" value="sync">
+                <span class="cond-item" ><a id="btn-sync" href="javascript:void(0)" class="easyui-linkbutton c7"  style="width:80px; height: 22px;">开始同步</a></span>
+            </form>
+        </div>
+        <div id="sync-result" style="padding:5px; overflow: auto;">
+            <ul>
+                <li>默认从源频道单向同步到当前频道</li>
+                <li>非“正常”状态的会员不会被同步</li>
+                <li>目标频道已经有的会员无论状态都会阻止从源复制此会员</li>
+            </ul>
+        </div>
+    </div>
+
+    <div style="margin-top: 20px;"></div>
+
+    <div class="easyui-panel" style="width:100%;height:300px"
+         title="批量导入会员" data-options="iconCls:'icon-redo',collapsible:true,">
+        <div style="width:100%; background-color: #eee; padding:5px;box-sizing:border-box;">
+            <input class="adv-uploadprogress" type="file" name="users" data-options='"url":"__SELF__/func/syn_members/work/import","pgWidth":"300","success":"postMembersUpload"'>
+        </div>
+        <div id="import-result" style="padding:10px 5px; overflow: auto;">
+            只能导入微软xls,xlsx格式文件，文件内容做以下规定：
+            <ul>
+                <li>文件第一行[A1]格的内容作为导入频道的标识：{"id":"频道编号", "name":"频道名称"}</li>
+                <li>注意：第一行标识中的 <span style="background-color: #ddd; font-family: Courier, monospace;"> { " : , </span> 等符号必须原样输入</li>
+                <li>文件第二行是字段名称：账号、分组、说明、提问。其中账号字段是必须的，“提问”字段可记录该账号会员注册时的问及答案，必须严格遵循JSON的语法规定，例如：
+                    [{"quest":"所在学校","answer":"中心幼儿园"},{"quest":"真实姓名","answer":"陈一"},{"quest":"身份证号码","answer":"441224199704123456"}]</li>
+                <li>导入的会员账号必须是系统中已经存在的用户账号</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script src="__PUBLIC__/js/jquery.form.js"></script>
+<script src="__PUBLIC__/js/adv-uploadprogress.js"></script>
+<script>
+    function postMembersUpload(para) {
+        $.post(para,function(data){
+            $("#import-result").html("<pre>"+data+"</pre>");
+        },"html");
+    }
+
+    (function () {
+        //序列化表单字段为json对象
+        $.fn.serializeFormToJson = function(){
+            var arr = $(this).serializeArray();//form表单数据 name：value
+            var param = {};
+            $.each(arr,function(i,obj){ //将form表单数据封装成json对象
+                param[obj.name] = obj.value;
+            })
+            return param;
+        }
+
+        //开始同步按钮
+        $("#btn-sync").on("click",function (event) {
+            $("#btn-sync").linkbutton('disable');   //防止重复按键
+            var data=$("#fm-sync").serializeFormToJson();
+            console.log(data);
+            $.extend(data,chnRec);  //将后面的对象合并到第一个对象中
+            //data.func="do_synmMembers"; //修改调用的内部方法名，此方法执行同步并显示结果
+            console.log(data);
+            console.log("__SELF__");
+            $("#sync-result").html("<img src='__ROOT__/Public/images/timg.gif' style='width: 4em'>");
+            DivLoadHtmlPost("__SELF__","sync-result",data,function(){
+                $("#btn-sync").linkbutton('enable');
+            });
+        });
+    })();
+</script>

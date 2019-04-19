@@ -2,23 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c373e6b3-2af5-4bab-bede-a2195dffe403" name="默认更改列表" comment="">
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_UserAction.class.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/ProgressAction.class.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Lib/Model/AgentModel.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Tpl/MG_User/userList.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Tpl/MG_User/userList_w.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/syn_members.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/document/YWZ修改记录及TODO.docx" beforeDir="false" afterPath="$PROJECT_DIR$/document/YWZ修改记录及TODO.docx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/计费设计.docx" beforeDir="false" afterPath="$PROJECT_DIR$/document/计费设计.docx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Common/AdminBaseAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Common/AdminBaseAction.class.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Conf/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Conf/config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/MonitorAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/MonitorAction.class.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Model/UserModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Model/UserModel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/HDPlayer/showVideoPage.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/HDPlayer/showVideoPage.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_ChannelAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_ChannelAction.class.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_UserAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_UserAction.class.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Model/ChannelreluserModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Model/ChannelreluserModel.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/channelList.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/channelList.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/setting.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/setting.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webroot/p_hls.html" beforeDir="false" afterPath="$PROJECT_DIR$/webroot/p_hls.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webroot/p_video.html" beforeDir="false" afterPath="$PROJECT_DIR$/webroot/p_video.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -38,20 +29,17 @@
       <file leaf-file-name="MG_UserAction.class.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/MG_UserAction.class.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="446">
-              <caret line="178" column="52" selection-start-line="178" selection-start-column="52" selection-end-line="178" selection-end-column="52" />
+            <state relative-caret-position="224">
+              <caret line="176" column="40" selection-start-line="176" selection-start-column="12" selection-end-line="176" selection-end-column="40" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="showVideoPage.html" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/HDPlayer/showVideoPage.html">
+      <file leaf-file-name="AgentModel.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/AgentModel.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="46" column="4" selection-start-line="46" selection-start-column="4" selection-end-line="46" selection-end-column="4" />
-              <folding>
-                <element signature="n#style#0;n#div#0;n#if#1;n#!!top" expanded="true" />
-              </folding>
+            <state relative-caret-position="550">
+              <caret line="34" column="58" selection-start-line="29" selection-start-column="1" selection-end-line="34" selection-end-column="58" />
             </state>
           </provider>
         </entry>
@@ -59,8 +47,8 @@
       <file leaf-file-name="userList.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_User/userList.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1786">
-              <caret line="98" column="44" selection-start-line="98" selection-start-column="44" selection-end-line="98" selection-end-column="44" />
+            <state relative-caret-position="510">
+              <caret line="102" column="59" selection-start-line="101" selection-start-column="12" selection-end-line="102" selection-end-column="59" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -78,41 +66,60 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="chnBase_w.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Console/chnBase_w.html">
+      <file leaf-file-name="MG_ChannelAction.class.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/MG_ChannelAction.class.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="290">
-              <caret line="274" column="177" selection-start-line="274" selection-start-column="166" selection-end-line="274" selection-end-column="177" />
+            <state relative-caret-position="550">
+              <caret line="318" column="2" selection-start-line="318" selection-start-column="2" selection-end-line="318" selection-end-column="2" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="adv-uploadprogress.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webroot/Public/js/adv-uploadprogress.js">
+      <file leaf-file-name="syn_members.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/syn_members.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1500">
-              <caret line="60" column="41" selection-start-line="60" selection-start-column="34" selection-end-line="60" selection-end-column="41" />
+            <state relative-caret-position="582">
+              <caret line="51" column="38" selection-start-line="51" selection-start-column="38" selection-end-line="51" selection-end-column="38" />
               <folding>
-                <element signature="n#!!doc" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#a#0;n#span#2;n#form#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#div#1;n#div#3;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#span#0;n#li#1;n#ul#0;n#div#1;n#div#3;n#div#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#img#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="stream_w.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Console/stream_w.html">
+      <file leaf-file-name="ChannelreluserModel.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/ChannelreluserModel.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1175">
-              <caret line="86" column="10" selection-start-line="83" selection-start-column="8" selection-end-line="86" selection-end-column="10" />
+            <state relative-caret-position="625">
+              <caret line="246" column="51" selection-start-line="246" selection-start-column="51" selection-end-line="246" selection-end-column="51" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ConsoleAction.class.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/ConsoleAction.class.php">
+      <file leaf-file-name="Ou.Function.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/webapp/public/Ou.Function.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="375">
-              <caret line="329" column="72" selection-start-line="329" selection-start-column="8" selection-end-line="329" selection-end-column="72" />
+            <state relative-caret-position="300">
+              <caret line="558" column="19" selection-start-line="558" selection-start-column="9" selection-end-line="558" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="setting.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/setting.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1275">
+              <caret line="51" column="21" selection-start-line="51" selection-start-column="12" selection-end-line="51" selection-end-column="27" />
             </state>
           </provider>
         </entry>
@@ -120,17 +127,20 @@
       <file leaf-file-name="UserModel.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/UserModel.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="675">
-              <caret line="438" column="44" selection-start-line="438" selection-start-column="44" selection-end-line="438" selection-end-column="44" />
+            <state relative-caret-position="300">
+              <caret line="135" column="29" selection-start-line="135" selection-start-column="20" selection-end-line="135" selection-end-column="29" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ExcelImpAction.class.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../reform/approot/mdcflow/Lib/Action/ExcelImpAction.class.php">
+      <file leaf-file-name="set_registe.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/set_registe.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="276">
-              <caret line="344" column="9" selection-start-line="343" selection-start-column="8" selection-end-line="344" selection-end-column="9" />
+            <state relative-caret-position="850">
+              <caret line="65" column="57" selection-start-line="65" selection-start-column="8" selection-end-line="65" selection-end-column="57" />
+              <folding>
+                <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -147,11 +157,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>chnInfoEdit</find>
-      <find>Action</find>
-      <find>rechargepay</find>
-      <find>getMrl</find>
-      <find>srclink</find>
       <find>REMOTE_ADDR</find>
       <find>jweixin</find>
       <find>myurl</find>
@@ -177,15 +182,18 @@
       <find>ffFile</find>
       <find>logoSuccess</find>
       <find>getList(</find>
+      <find>an</find>
+      <find>DivLoadHtmlPost</find>
+      <find>其它用户</find>
+      <find>cc</find>
+      <find>importResultLog</find>
     </findStrings>
     <dirStrings>
       <dir>D:\MyProject\ywz\webapp\avision\Lib\Model</dir>
       <dir>D:\MyProject\reform\approot\mdcflow</dir>
-      <dir>D:\MyProject\reform\approot\mdcflow\Tpl</dir>
       <dir>D:\MyProject\ywz\webroot\player\js</dir>
       <dir>D:\MyProject\reform\approot\mdcflow\Lib\Model</dir>
       <dir>D:\MyProject\reform\approot\mdcflow\Common</dir>
-      <dir>D:\MyProject\reform\approot\mdcflow\Lib\Action</dir>
       <dir>D:\MyProject\ywz\webapp\avision\Lib</dir>
       <dir>D:\MyProject\ywz</dir>
       <dir>D:\MyProject\ywz\webroot</dir>
@@ -196,6 +204,8 @@
       <dir>D:\MyProject\ywz\webapp\avision</dir>
       <dir>D:\MyProject\ywz\webapp\avision\Tpl</dir>
       <dir>D:\MyProject\ywz\webapp\avision\Tpl\HDPlayer</dir>
+      <dir>D:\MyProject\reform\approot\mdcflow\Tpl</dir>
+      <dir>D:\MyProject\reform\approot\mdcflow\Lib\Action</dir>
     </dirStrings>
   </component>
   <component name="Git.Settings">
@@ -204,12 +214,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/WeixinCallAction.class.php" />
-        <option value="$PROJECT_DIR$/webapp/avision/Tpl/My/chnRegiste.html" />
-        <option value="$PROJECT_DIR$/webapp/avision/Tpl/HDPlayer/base_m.css" />
-        <option value="$PROJECT_DIR$/webapp/avision/Tpl/HDPlayer/recordPage.html" />
-        <option value="$PROJECT_DIR$/webroot/player/winter/css/base_m.css" />
-        <option value="$PROJECT_DIR$/webroot/player/winter/css/recordPage.css" />
         <option value="$PROJECT_DIR$/webroot/player/default/css/base_m.css" />
         <option value="$PROJECT_DIR$/webroot/t/p.html" />
         <option value="$PROJECT_DIR$/webapp/public/FileUpload.Class.php" />
@@ -236,10 +240,8 @@
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Model/RecordfileModel.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/HDPlayerAction.class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/UserAction.class.php" />
-        <option value="$PROJECT_DIR$/webapp/public/Ou.Function.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Model/OnlineModel.php" />
         <option value="$PROJECT_DIR$/webroot/player/js/keepAlive.js" />
-        <option value="$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/setting.html" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/MG_User/userList_w.html" />
         <option value="$PROJECT_DIR$/../reform/approot/public/SafeAction.Class.php" />
         <option value="$PROJECT_DIR$/../reform/approot/mdcflow/Conf/config.php" />
@@ -253,8 +255,16 @@
         <option value="$PROJECT_DIR$/webroot/p_video.html" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Model/UserModel.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/MG_User/userList.html" />
-        <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_UserAction.class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/HDPlayer/showVideoPage.html" />
+        <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/SubscriberAction.class.php" />
+        <option value="$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/adm_members.html" />
+        <option value="$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/setting.html" />
+        <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_UserAction.class.php" />
+        <option value="$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/channelList.html" />
+        <option value="$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/syn_members.html" />
+        <option value="$PROJECT_DIR$/webapp/public/Ou.Function.php" />
+        <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_ChannelAction.class.php" />
+        <option value="$PROJECT_DIR$/webapp/avision/Lib/Model/ChannelreluserModel.php" />
       </list>
     </option>
   </component>
@@ -345,6 +355,15 @@
               <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Lib" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Model" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
+              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="Tpl" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
@@ -354,7 +373,16 @@
               <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="Tpl" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="HDPlayer" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="MG_Channel" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
+              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Tpl" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Subscriber" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
               <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
@@ -383,56 +411,6 @@
               <item name="webroot" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="Public" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="js" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="reform" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="reform" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="approot" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="reform" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="approot" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="mdcflow" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="reform" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="approot" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="mdcflow" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Common" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="reform" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="approot" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="mdcflow" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Lib" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="reform" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="approot" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="mdcflow" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Lib" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Action" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="reform" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="approot" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="public" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
           </expand>
           <select />
@@ -557,12 +535,14 @@
       <workItem from="1554037053421" duration="48984000" />
       <workItem from="1554606743015" duration="18648000" />
       <workItem from="1554729167175" duration="13677000" />
-      <workItem from="1554903201408" duration="47406000" />
+      <workItem from="1554903201408" duration="48583000" />
+      <workItem from="1555315128700" duration="6047000" />
+      <workItem from="1555507786565" duration="38726000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="987446000" />
+    <option name="totallyTimeSpent" value="1033396000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
@@ -575,11 +555,11 @@
       <window_info anchor="bottom" id="Version Control" order="11" />
       <window_info anchor="bottom" id="Run" order="2" weight="0.32937366" />
       <window_info anchor="bottom" id="Terminal" order="9" />
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.41789475" visible="true" weight="0.17110874" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.41578948" visible="true" weight="0.17430703" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.23434125" />
-      <window_info id="Structure" order="1" sideWeight="0.5821053" side_tool="true" visible="true" weight="0.17110874" />
+      <window_info active="true" id="Structure" order="1" sideWeight="0.5842105" side_tool="true" visible="true" weight="0.17430703" />
       <window_info id="Favorites" order="2" sideWeight="0.5507559" side_tool="true" weight="0.17697228" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -630,81 +610,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Common/platform.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="121" column="31" lean-forward="true" selection-start-line="121" selection-start-column="31" selection-end-line="121" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/SIAction.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="292">
-          <caret line="100" column="20" selection-start-line="100" selection-start-column="20" selection-end-line="100" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../reform/approot/public/Ou.Function.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="301">
-          <caret line="579" column="21" lean-forward="true" selection-start-line="579" selection-start-column="21" selection-end-line="579" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/HDPlayer/vod_m.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-11588" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/HDPlayer/recordPage.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="69" selection-start-column="69" selection-end-column="69" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/RecordfileModel.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="542">
-          <caret line="26" column="2" selection-start-line="26" selection-start-column="2" selection-end-line="26" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/OnlineModel.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="492">
-          <caret line="257" column="79" selection-start-line="257" selection-start-column="79" selection-end-line="257" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/HDPlayerAction.class_OLD.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1743">
-          <caret line="575" column="20" selection-start-line="575" selection-start-column="20" selection-end-line="575" selection-end-column="20" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/HDPlayerAction.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="426">
-          <caret line="87" column="67" selection-start-line="87" selection-start-column="67" selection-end-line="87" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/RecordfileModel.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="542">
-          <caret line="26" column="2" selection-start-line="26" selection-start-column="2" selection-end-line="26" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/OnlineModel.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6425">
-          <caret line="257" column="79" selection-start-line="257" selection-start-column="79" selection-end-line="257" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webroot/player/js/keepAlive.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="25">
@@ -745,20 +650,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="425">
           <caret line="17" column="85" selection-start-line="17" selection-start-column="4" selection-end-line="17" selection-end-column="85" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/setting.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="9" column="72" selection-start-line="9" selection-start-column="59" selection-end-line="9" selection-end-column="72" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/MG_ChannelAction.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
-          <caret line="15" column="32" selection-start-line="15" selection-start-column="12" selection-end-line="15" selection-end-column="32" />
         </state>
       </provider>
     </entry>
@@ -819,20 +710,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="92" column="11" selection-start-line="92" selection-start-column="11" selection-end-line="92" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/AgentModel.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="34" column="47" selection-start-line="34" selection-start-column="20" selection-end-line="34" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../reform/approot/mdcflow/Lib/Action/ProgressAction.class.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1050" />
@@ -861,7 +738,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/../reform/approot/mdcflow/Lib/Action/ExcelImpAction.class.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
+        <state relative-caret-position="8600">
           <caret line="344" column="9" selection-start-line="343" selection-start-column="8" selection-end-line="344" selection-end-column="9" />
         </state>
       </provider>
@@ -872,9 +749,6 @@
           <caret line="157" column="12" selection-start-line="157" selection-start-column="12" selection-end-line="157" selection-end-column="12" />
         </state>
       </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/HDPlayer/play.html">
-      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/webroot/p_hls.html">
       <provider selected="true" editor-type-id="text-editor">
@@ -887,11 +761,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="725">
           <caret line="116" column="21" lean-forward="true" selection-start-line="116" selection-start-column="21" selection-end-line="116" selection-end-column="21" />
-          <folding>
-            <element signature="n#style#0;n#div#1;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#2;n#body#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#3;n#body#0;n#!!top" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -904,29 +773,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Console/stream_w.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1175">
+        <state relative-caret-position="2150">
           <caret line="86" column="10" selection-start-line="83" selection-start-column="8" selection-end-line="86" selection-end-column="10" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/ConsoleAction.class.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="375">
+        <state relative-caret-position="8175">
           <caret line="329" column="72" selection-start-line="329" selection-start-column="8" selection-end-line="329" selection-end-column="72" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/UserModel.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="675">
-          <caret line="438" column="44" selection-start-line="438" selection-start-column="44" selection-end-line="438" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/public/Ou.Function.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="236" column="63" selection-start-line="236" selection-start-column="9" selection-end-line="236" selection-end-column="63" />
         </state>
       </provider>
     </entry>
@@ -937,10 +792,113 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/HDPlayer/showVideoPage.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-3950">
+          <caret line="46" column="4" selection-start-line="46" selection-start-column="4" selection-end-line="46" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Console/chnBase_w.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25">
+          <caret line="274" column="177" selection-start-line="274" selection-start-column="166" selection-end-line="274" selection-end-column="177" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Subscriber/authorize.html">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="270" column="84" selection-start-line="270" selection-start-column="70" selection-end-line="270" selection-end-column="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/SubscriberAction.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="850">
+          <caret line="143" column="36" selection-start-line="143" selection-start-column="36" selection-end-line="143" selection-end-column="36" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/HDPlayer/play_m.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="16" column="4" selection-start-line="16" selection-start-column="4" selection-end-line="16" selection-end-column="75" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webroot/Public/css/OUI.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="175">
+          <caret line="20" column="8" selection-start-line="20" selection-start-column="1" selection-end-line="20" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/set_registe.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="850">
+          <caret line="65" column="57" selection-start-line="65" selection-start-column="8" selection-end-line="65" selection-end-column="57" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../ylh/webroot/Public/js/publicFunction.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="102" column="9" selection-start-line="102" selection-start-column="9" selection-end-line="102" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reform/webroot/Public/js/publicFunction.js">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webroot/Public/js/publicFunction.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="100">
+          <caret line="112" column="9" selection-start-line="112" selection-start-column="9" selection-end-line="112" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/setting.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1275">
+          <caret line="51" column="21" selection-start-line="51" selection-start-column="12" selection-end-line="51" selection-end-column="27" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../reform/approot/mdcflow/Lib/Action/StatMonthAction.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="187" column="71" selection-start-line="187" selection-start-column="71" selection-end-line="187" selection-end-column="71" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webroot/Public/js/adv-uploadprogress.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1250">
+          <caret line="50" column="16" selection-start-line="50" selection-start-column="8" selection-end-line="50" selection-end-column="16" />
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/channelList.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="75">
+          <caret line="3" column="163" selection-start-line="3" selection-start-column="163" selection-end-line="3" selection-end-column="163" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_User/userList.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1786">
-          <caret line="98" column="44" selection-start-line="98" selection-start-column="44" selection-end-line="98" selection-end-column="44" />
+        <state relative-caret-position="510">
+          <caret line="102" column="59" selection-start-line="101" selection-start-column="12" selection-end-line="102" selection-end-column="59" />
           <folding>
             <element signature="n#style#0;n#div#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#1;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
@@ -957,37 +915,65 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Console/chnBase_w.html">
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/syn_members.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="290">
-          <caret line="274" column="177" selection-start-line="274" selection-start-column="166" selection-end-line="274" selection-end-column="177" />
+        <state relative-caret-position="582">
+          <caret line="51" column="38" selection-start-line="51" selection-start-column="38" selection-end-line="51" selection-end-column="38" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#a#0;n#span#2;n#form#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#1;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#1;n#div#3;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#li#1;n#ul#0;n#div#1;n#div#3;n#div#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#img#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webroot/Public/js/adv-uploadprogress.js">
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/AgentModel.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1500">
-          <caret line="60" column="41" selection-start-line="60" selection-start-column="34" selection-end-line="60" selection-end-column="41" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
+        <state relative-caret-position="550">
+          <caret line="34" column="58" selection-start-line="29" selection-start-column="1" selection-end-line="34" selection-end-column="58" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/MG_UserAction.class.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="446">
-          <caret line="178" column="52" selection-start-line="178" selection-start-column="52" selection-end-line="178" selection-end-column="52" />
+        <state relative-caret-position="224">
+          <caret line="176" column="40" selection-start-line="176" selection-start-column="12" selection-end-line="176" selection-end-column="40" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/HDPlayer/showVideoPage.html">
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/UserModel.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="46" column="4" selection-start-line="46" selection-start-column="4" selection-end-line="46" selection-end-column="4" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#if#1;n#!!top" expanded="true" />
-          </folding>
+        <state relative-caret-position="300">
+          <caret line="135" column="29" selection-start-line="135" selection-start-column="20" selection-end-line="135" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/public/Ou.Function.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="300">
+          <caret line="558" column="19" selection-start-line="558" selection-start-column="9" selection-end-line="558" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/MG_ChannelAction.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="550">
+          <caret line="318" column="2" selection-start-line="318" selection-start-column="2" selection-end-line="318" selection-end-column="2" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/ChannelreluserModel.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="625">
+          <caret line="246" column="51" selection-start-line="246" selection-start-column="51" selection-end-line="246" selection-end-column="51" />
         </state>
       </provider>
     </entry>

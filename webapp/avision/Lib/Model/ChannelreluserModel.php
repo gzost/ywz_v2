@@ -221,5 +221,38 @@ class ChannelreluserModel extends Model {
         }
         return $rt;
     }
+
+    /**
+     * 取可导入字段显示串索引表
+     * @param $agentid
+     * @return array|null "显示字串"=>"字段名"
+     */
+    public function getImportableFieldsName(){
+        return array("用户号"=>"uid","分组"=>"classify","说明"=>"note2","提问"=>"note");
+    }
+
+    /**
+     * 插入一条记录
+     * @param $record
+     * @return mixed
+     * @throws Exception
+     */
+    public function insertRec($record){
+        //数据合理性检查
+        $record["chnid"]=intval($record["chnid"]);
+        if($record["chnid"] < 1 ) throw new Exception("缺少频道ID");
+        $record["uid"]=intval($record["uid"]);
+        if($record["uid"] < 1 ) throw new Exception("缺少用户ID");
+        if(!empty($record["type"]) && !is_inArray($record["type"],array("关注","会员","订购"))) throw new Exception("类型错误");
+        if(!empty($record["status"]) && !is_inArray($record["status"],array("正常","禁用"))) throw new Exception("状态错误");
+        if(!empty($record["note"])){
+            $json=json_decode($record["note"],true);
+            $record["note"]=(is_array($json))? json_encode2($json):"[]";
+        }
+
+        $result=$this->add($record);
+//echo $this->getLastSql();
+        return $result;
+    }
 }
 ?>

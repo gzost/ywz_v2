@@ -7,9 +7,9 @@
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
 
-	<link rel="stylesheet" href="__PUBLIC__/jeasyui/themes/material-teal/easyui.css" >
+	<link rel="stylesheet" href="__PUBLIC__/jeasyui/themes/material/easyui.css" >
 	<link rel="stylesheet" href="__PUBLIC__/jeasyui/themes/icon.css" >
-
+	<link rel="stylesheet" href="__PUBLIC__/jeasyui/themes/color.css" >
 
 	<script src="__PUBLIC__/jeasyui/jquery.min.js" ></script>
 <load href="__PUBLIC__/jeasyui/jquery.easyui.min.js" />
@@ -20,6 +20,9 @@
 <script src="__PUBLIC__/jeasyui/jquery.easyui.mobile.js"></script>
 <load href="__PUBLIC__/js/publicFunction.js"/>
 
+	<style>
+		.chn-header { text-align:left; color:#555; font-size: 1em; font-weight: bolder; }
+	</style>
 <script type="text/javascript">
 	var chnRec=null;	//当前频道属性对象：{ chnId:'{$chn.id}', chnName:'{$chn.name}', owner:'{$chn.owner}'
 	$(document).ready(function(){
@@ -121,9 +124,8 @@
 	</header>
 	<ul class="m-list" style="margin:0 20px;">
 		<li><a href="javascript:void(0)"  func="set_module" class="chnSettingLink">功能模块设置</a></li>
-		<li><a href="javascript:void(0)"  func="set_registe" class="chnSettingLink">认证注册设置</a></li>
-		<li><a href="javascript:void(0)"  func="set_module" class="chnSettingLink">可用礼物选择(TODO)</a></li>
-		<li><a href="javascript:void(0)"  func="set_module" class="chnSettingLink">观众注册信息设置(TODO)</a></li>
+		<li><a href="javascript:void(0)"  func="set_registe" class="chnSettingLink">会员注册信息设置</a></li>
+		<li><a href="javascript:void(0)"  func="syn_members" class="chnSettingLink">批量导入/同步频道会员</a></li>
 
 	</ul>
 </div>

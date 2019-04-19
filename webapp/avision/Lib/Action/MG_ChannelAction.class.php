@@ -7,6 +7,11 @@
  */
 require_once COMMON_PATH.'AdminBaseAction.class.php';
 require_once(LIB_PATH.'Model/ChannelModel.php');
+require_once(LIB_PATH.'Model/ChannelreluserModel.php');
+require_once APP_PATH.'../public/FileUpload.Class.php';
+require_once LIB_PATH."Action/ProgressAction.class.php";
+/** Include PHPExcel */
+require_once C('PHPExeclPath').'PHPExcel.php';
 
 class MG_ChannelAction extends AdminBaseAction
 {
@@ -141,6 +146,7 @@ class MG_ChannelAction extends AdminBaseAction
         return;
     }
 
+    //在播放模块需要注册会员时会调用，需要设成public
     public function set_registe(&$webVar){
         //读频道信息
         $chnid=$webVar['chnId'];
@@ -174,5 +180,157 @@ class MG_ChannelAction extends AdminBaseAction
         $webVar['tabJson']=json_encode2($qna);
 //dump($webVar);
         return;
+    }
+
+    //从其它频道同步会员或批量导入
+    private function syn_members(&$webVar){
+        //dump($webVar);
+        $work=$_REQUEST['work'];    //上传文件只能get过来
+        //执行同步操作
+        if("sync"==$work){
+            $this->syn_members_doSync($webVar); //执行同步操作
+            exit;
+        }elseif ("import"==$work){
+            $this->syn_members_doImport($webVar);
+            exit;
+        }
+
+        //初始页面，选择源频道
+        //保存当前频道资料，共文件导入使用
+        setPara("CURRENT_CHANNEL_INFO",$webVar);
+        //取与当前频道相同owner的频道列表
+        $dbChannel=D('channel');
+        $cond=array("owner"=>$webVar["owner"]);
+        $chnList=$dbChannel->where($cond)->field('id,name')->order('name')->select();
+        $chnList=(null==$chnList)?array():$chnList;
+        $webVar['chnList']=str_replace('"',"'",json_encode2($chnList));
+        $webVar['soureChnId']=$chnList[0]['id'];
+        //dump($webVar);
+        return;
+    }
+
+    private function syn_members_doSync($webVar){
+        $dbChannel=D('channel');
+        $dbChnRelUsr=D("Channelreluser");
+        try{
+            $soureChnId=$_POST['soureChnId'];   //源频道ID
+            if(1>$soureChnId) throw new Exception("缺少源频道参数");
+            $sync2source=(empty($_POST["sync2source"]))?false:true; //是否同步到源频道
+            $chnId=$_POST["chnId"];
+            if(1>$chnId) throw new Exception("缺少当前频道参数");
+            $owner=$_POST["owner"];
+            if(1>$owner) throw new Exception("缺少频道主参数");
+            if($soureChnId == $chnId) throw new Exception("相同频道无需同步。");
+
+            //取源频道主
+            $sourceOwner=$dbChannel->where("id=".$soureChnId)->getField("owner");
+            if($owner != $sourceOwner) throw new Exception("只能同步相同播主的频道！");
+
+            //开始从源频道同步会员
+            //echo "开始从源频道同步会员<br>";
+            $cond=array("chnid"=>$chnId);
+            $targetMaxId=$dbChnRelUsr->where($cond)->Max("id");   //目标频道当前最大记录ID，目的是反向同步时，不用考虑之后的记录
+            $sql = "insert into __PREFIX__channelreluser(chnid,uid,`type`,status,begindate,enddate,note,classify,note2) ";
+            $sql.= "select $chnId,A.uid,A.`type`,status,A.begindate,A.enddate,A.note,A.classify,A.note2 from __PREFIX__channelreluser A left join";
+            $sql.= " (select uid  from __PREFIX__channelreluser where chnid= $chnId and `type`='会员') as B";
+            $sql.= " on A.uid=B.uid where A.chnid=$soureChnId and B.uid is NULL and A.`type`='会员' and A.status='正常' ";
+            $sql=str_replace("__PREFIX__",C("DB_PREFIX"),$sql);
+            $db=new Model();
+            $result=$db->execute($sql);
+            //echo $db->getLastSql();
+            echo "从选择的频道中同步了 $result 条会员记录到当前频道中。<br>";
+            if($sync2source){
+                //echo "同步会员到源频道<br>";
+                $sql = "insert into __PREFIX__channelreluser(chnid,uid,`type`,status,begindate,enddate,note,classify,note2) ";
+                $sql.= "select $soureChnId,A.uid,A.`type`,status,A.begindate,A.enddate,A.note,A.classify,A.note2 from __PREFIX__channelreluser A left join";
+                $sql.= " (select uid  from __PREFIX__channelreluser where chnid= $soureChnId and `type`='会员') as B";
+                $sql.= " on A.uid=B.uid where A.chnid=$chnId and A.id<=$targetMaxId and B.uid is NULL and A.`type`='会员' and A.status='正常' ";
+                $sql=str_replace("__PREFIX__",C("DB_PREFIX"),$sql);
+                $db=new Model();
+                $result=$db->execute($sql);
+                echo "从当前频道同步了 $result 条会员记录到选择的频道中。<br>";
+            }
+            echo "<br>同步完成<br>";
+        }catch (Exception $e){
+            echo $e->getMessage();
+        }
+        exit;
+    }
+
+    private function syn_members_doImport(){
+        $webVar=getPara("CURRENT_CHANNEL_INFO");    //读入当前的频道信息
+        //dump($webVar);
+        $dbChnUsr=D("channelreluser");
+        $dbUser=D("user");
+        $upload = new FileUpload();
+        try{
+            if($webVar["chnId"] < 1 || strlen($webVar["chnName"])<3 || $webVar["owner"]<1) throw new Exception("缺少当前频道信息");
+            if($this->userId()!=$webVar['owner'] && true!=$webVar['mgrAll']) throw new Exception("您无权导入此频道的数据。");
+
+            $uparray = $upload->BeginUpload2("users", array('xls','xlsx','txt'),500*1024);
+            //var_dump($uparray);
+            $tmpFile=$uparray[0]['tmp_name'];   //上传到服务端的文件及路径
+            $orgFileName=$uparray[0]['name'];   //被上传源文件名
+            $objExcel = PHPExcel_IOFactory::load($tmpFile);
+            //$objPHPExcel->setActiveSheetIndex(0);
+            $sheetData = $objExcel->getSheet(0)->toArray(null,true,true,true);
+
+            //分析第一行
+            $chnInfo=json_decode($sheetData[1]['A'],true);
+            $chnid=$chnInfo["id"];
+            if(count($chnInfo)!=2||$chnid<1 || strlen($chnInfo["name"])<3 ) throw new Exception("第一行数据格式错误！");
+            if($chnid != $webVar["chnId"] || $chnInfo["name"]!=$webVar["chnName"]) throw new Exception("文件的频道信息与当前频道不匹配");
+
+            //分析第二行获取上传字段表
+            $importableFields=$dbChnUsr->getImportableFieldsName();
+            $importableFields["账号"]="account";
+            $importFields=array();  //文件头中读到的导入字段，key为字段名，value为xls文件的列号
+            foreach ($sheetData[2] as $col=>$name){
+                if(!empty($importableFields[$name])) $importFields[$importableFields[$name]]=$col;
+            }
+//var_dump($importableFields,$importFields);
+            if(empty($importFields["account"] ) ) throw new Exception("用户账号必须导入");
+
+            //逐行处理导入的数据
+            $prg=new ProgressAction();
+            $prg->clearMsg();
+            $prg->putMsg("导入文件：".$orgFileName);
+            $prg->putMsg("频道信息：".$sheetData[1]['A']);
+
+//var_dump($importFields);
+            $maxRow = count($sheetData);    //excel的行数
+            $imported=0;    //记录成功导入的记录数
+            $falseCounter=0;
+            for($row = 3; $row <= $maxRow; $row++) {
+                unset($record);
+                $record=array("chnid"=>$chnid,"type"=>"会员","status"=>"正常");
+                foreach ($importFields as $field=>$col){
+                    $record[$field]=trim($sheetData[$row][$col]);
+                }
+                //对读入的一条记录进行处理
+                try{
+                    $account=$record['account'];
+                    if(empty($record['account'])) throw new Exception("账号错误");
+                    unset($record["account"]);
+                    $uid=$dbUser->getUserId($account);
+                    if($uid<1) throw new Exception("系统无此账号");
+                    $record["uid"]=$uid;
+
+//var_dump($tt,$record["type"]);
+                    $rt=$dbChnUsr->insertRec($record);
+                    if($rt<1) throw new Exception("会员已经存在");
+                    $imported++;
+                }catch (Exception $ex){
+                    $prg->putMsg(sprintf("%4d行：账号=%s, 出错：%s",$row,$account,$ex->getMessage()));
+                    $falseCounter++;
+                }
+            }
+            $prg->putMsg(sprintf("成功导入 %d 条记录，失败 %d 条。",$imported,$falseCounter));
+        }catch (Exception $e){
+            echo '{"retcode":"false", "message":"'.$e->getMessage().'"}';
+            exit;
+        }
+        $data=array("retcode"=>"true","url"=>U("Progress/getMsgAjax"));
+        echo json_encode2($data);
     }
 }

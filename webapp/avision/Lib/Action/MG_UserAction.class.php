@@ -233,7 +233,7 @@ class MG_UserAction extends AdminBaseAction{
     }
 
     /**
-     * 向记录导入结果的session变量增加一行数据
+     * 向记录导入结果的session变量增加一行数据---作废
      * @param $msg
      * @param bool $newline
      */

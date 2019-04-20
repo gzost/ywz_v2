@@ -10,7 +10,7 @@ class RecordfileDetailViewModel extends ViewModel {
 	);
 	
 	public static $fieldTpl=array('id'=>0,'owner'=>0,'channelid'=>0,'size'=>0,'length'=>'','viewers'=>0,
-		'createtime'=>'','path'=>'','name'=>'','descript'=>'','account'=>'','channelname'=>'');
+		'createtime'=>'','path'=>'','name'=>'','descript'=>'','account'=>'','channelname'=>'','seq'=>0);
 	public function getIdList($cond){
 		$result=$this->where($cond)->field('id')->order('id desc')->select();
 //echo $this->getLastSql();		

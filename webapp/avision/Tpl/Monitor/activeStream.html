@@ -6,7 +6,11 @@
 </block>
 
 <block name="bl_main">
-<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+	<link rel="stylesheet" href="__PUBLIC__/jeasyui/themes/color.css" >
+	<load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+
+	<style type="text/css">
+	</style>
 
 <script type="text/javascript">
 	//刷新活跃推流
@@ -32,10 +36,32 @@
 			});
 		}
 	}
+
+	//对应本页面的JS对象，以后每个页面只一个这样的对象，把所有JS函数封装在内最大限度减少冲突
+    var activeStream=function () {
+	    //控制服务端录像启停
+		this.record=function (action,container) {
+            var row=$("#dg").datagrid('getSelected');
+            console.log(row);
+            if(null==row){
+                alert('请先选中要断流的记录。')
+            }else {
+                var url='__SELF__';
+				var para={work:'recCtrl',act:action,stream:row.name};
+
+
+                console.log(url);
+                console.log(para);
+                $("#"+container).html("*");
+				$("#"+container).load(url,para);
+            }
+
+        }
+        //这里可以插入构造语句，在页面调入时会执行
+		return this;
+    }();
 </script>
 
-<style type="text/css"> 
-</style>
 
 <table id="dg" class="easyui-datagrid"  style="width:99%"
 	data-options="url:'__URL__/activeStreamData?r={$rand}',rownumbers:true,singleSelect:true,
@@ -57,6 +83,10 @@
 <div id='tb'>
 	<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-reload'" onclick="reflashActiveStream();">刷新</a>
 	<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cut'" onclick="cutActiveStream();">强制断流</a>
-</div>
 
+	<a href="#" class="easyui-linkbutton c2" style="margin-left:30px;" data-options="iconCls:'icon-record'" onclick="activeStream.record('start','rec-control');">开始录像 </a>
+	<a href="#" class="easyui-linkbutton c2" data-options="iconCls:'icon-recstop'" onclick="activeStream.record('stop','rec-control');">结束录像 </a>
+
+</div>
+<div id="rec-control"></div>
 </block>

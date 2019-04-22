@@ -194,16 +194,37 @@ class MonitorAction extends AdminBaseAction{
 	
 	//////////////////////////////////////////////////////////////////
 	public function activeStream(){
+	    $work=$_POST["work"];
+	    if('recCtrl'==$work){
+	        $this->recordCtrl();
+	        return;
+        }
 		//显示菜单
-//		$menu=new AdminMenu();
-//		$menuStr=$menu->Menu(1);
-// 		$this->assign('menuStr',$menuStr);
-// 		$this->assign('mainTitle','活跃推流');
-// 		$this->assign('userName',$this->userName());
  		$this->baseAssign();
  		$this->assign('mainTitle','活跃推流');
  		$this->display();
 	}
+
+    /**
+     * 录像控制
+     */
+	private function recordCtrl(){
+	    //dump($_POST);
+	    $act=$_POST["act"];
+	    if("stop"==$act)
+            $url="http://tel.av365.cn:8011/control/record/stop?app=live&rec=rec1&name=".$_POST["stream"];
+	    elseif ("start"==$act)
+            $url="http://tel.av365.cn:8011/control/record/start?app=live&rec=rec1&name=".$_POST["stream"];
+	    else{
+	        echo "控制指令错误";
+	        return;
+        }
+        echo "正在发送指令...";
+        $html = file_get_contents($url);
+        if(strlen($html)>5) echo "成功";
+        else echo "失败。<br>注意：对正在录像的流开始录像，或未录像的流结束录像，都会导致失败。";
+
+    }
 
 	public function activeStreamData()
 	{

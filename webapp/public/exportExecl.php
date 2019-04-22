@@ -44,6 +44,7 @@ require_once  '../../WebLib/PHPExcel/PHPExcel.php';
  */
 function exportExecl($data) {
 	ob_clean ();
+    ini_set('memory_limit', '1024M');
     $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_in_memory_serialized;
     PHPExcel_Settings::setCacheStorageMethod($cacheMethod);
 

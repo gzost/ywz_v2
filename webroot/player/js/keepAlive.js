@@ -84,14 +84,14 @@ function HeartBeat()
 	 * 					回调的data参数可能为空。
 	 * @returns 成功或失败分别调用回调函数
 	 */
-	_this.startOnline = function (objType,objId,onSuccess,onError){
+	_this.startOnline = function (objType,objId,onSuccess,onError,chnId){
 			console.log('startOnline:'+objType);
 			console.log(typeof onSuccess);
 
 			$.ajax({
 				url: startOnlineUrl,
 				type: 'post',
-				data: {"objType":objType, "objId":objId},
+				data: {"objType":objType, "objId":objId, "chnId":chnId},
 				cache:false,
 				dataType: 'json',
 				success:function(data){

@@ -459,13 +459,17 @@ class MonitorAction extends AdminBaseAction{
      * 把当前观众列表的查询结果输出为xls格式并下载
      */
 	public function viewerListSaveExcel(){
+        $rt=ini_set('memory_limit', '1024M');
+logfile("ini_set:memory_limit return:".$rt,LogLevel::DEBUG);
         $cond=condition::get('viewerList');
         $cond=arrayZip($cond,array(null,0,'不限','0','','全部','--'));	//清除实际上不限制的条件
 	    $fileData=array();
-        $fileData['rows']=$this->viewerListFillData(pagination::getData('viewerList'),$cond['chnId']);	//取全部数据
+	    $data=pagination::getData('viewerList');
+logfile("data rows:".count($data),LogLevel::DEBUG);
+        $fileData['rows']=$this->viewerListFillData($data,$cond['chnId']);	//取全部数据
         $fileData['header'][]=getPara('MonitorViewerListHeader');
         $fileData["footer"][]=pagination::getData('viewerList'.'Total');
-
+logfile("filedata rows:".count($fileData['rows']),LogLevel::DEBUG);
 
 //dump($cond); dump($fileData);
         $fileData['title'][]=array('text'=>$cond['beginTime'].'至'.$cond['endTime'].'观众列表及观看时长统计','size'=>16);

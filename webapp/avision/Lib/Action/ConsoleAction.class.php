@@ -185,7 +185,7 @@ class ConsoleAction extends AdminBaseAction {
 	}
 	public function getPkgListAjax(){
 		$pkg=new package();
-		$result=$pkg->pkgList($this->userId(),true);	//取可用消费包列表数组
+		$result=$pkg->pkgList($this->userId(),false);	//取可用消费包列表数组
 		if(null!=$result) echo json_encode2($result);
 		else echo '[]';
 	}

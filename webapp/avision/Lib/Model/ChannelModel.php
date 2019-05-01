@@ -884,7 +884,7 @@ class ChannelModel extends Model {
 
 		if('json' == $fmt)
 		{
-			$rs = json_encode($rs);
+			$rs = json_encode2($rs);
 		}
 
 		return $rs;

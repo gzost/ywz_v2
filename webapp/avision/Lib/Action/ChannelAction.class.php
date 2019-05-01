@@ -882,6 +882,8 @@ class ChannelAction extends AdminBaseAction
 
 	public function GetChnFload($chnId = '', $isCheck = true)
 	{
+		$int_chnid=intval($chnId);
+		if($int_chnid<1 || strlen($int_chnid)!=strlen($chnId)) logfile("BAD chnId:".$chnId,LogLevel::ALERT);
 		$fd1 = '000/';
 		$fd2 = '00/';
 		$len = strlen($chnId);

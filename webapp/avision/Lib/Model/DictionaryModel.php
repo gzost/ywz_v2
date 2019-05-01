@@ -93,5 +93,23 @@ class DictionaryModel extends Model {
 		if(is_numeric($attr['feerate']['duration'])) return $attr['feerate']['duration'];
 		return null;
 	}
+
+    /**
+     * @return mixed 返回最后统计onlinelog处理的记录ID, 出错返回 false
+     */
+	public function getChnViewLastId(){
+	    $cond=array("category"=>"channelView","ditem"=>"lastId");
+	    return $this->where($cond)->getField("dvalue");
+    }
+
+    /**
+     * 设置新的最后统计onlinelog处理的记录ID，出错返回 false
+     * @param $newId
+     * @return mixed
+     */
+    public function setChnViewLastId($newId){
+        $cond=array("category"=>"channelView","ditem"=>"lastId");
+        return $this->where($cond)->save(array("dvalue"=>$newId));
+    }
 }
 ?>

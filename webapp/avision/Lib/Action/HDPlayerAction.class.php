@@ -1020,7 +1020,7 @@ var_dump($location);
 		//outao 2018-01-30
 		$userId=$this->author->getUserInfo('userId');
 		if($userId==0) return false;
-		
+//logfile("newOnline chnId=".print_r($_SESSION['OuPara'],true)." objtype=".$objType." objId=".$objId,3);
 		$onlineId=$this->dbOnline->newOnline($objType,$objId,$userId, $this->author->getUserInfo('userName') );
 		if(false!=$onlineId) {
 			$this->onlineArr[]=array("onlineId"=>$onlineId, "objType"=>$objType, "objId"=>$objId);

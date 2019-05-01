@@ -357,7 +357,7 @@ function onPlayEven()
 	heart.startOnline($('#h5Player').attr('filetype')
 						,$('#h5Player').attr('innerId')
 						,onlineSuccess
-						,onlineError);
+						,onlineError,"{$chnId}");
 }
 
 function onStopEven()
@@ -416,7 +416,52 @@ function showMsgAni(msg)
 </div>
 <div class="msgFlow" id="msgShow">
 </div>
-<div class="flex-row">
+
+
+
+<style>
+	.menubar {
+		display:flex;
+		justify-content:space-between;
+	}
+	.menubar > .item{
+		background-color: #00ee00;
+		text-align: center;
+		flex-grow:1;
+	}
+</style>
+<!--
+<div class="menubar" style="width: 100%;">
+	<div class="item">aaaa</div>
+	<div class="item">bbbbbb</div>
+	<div class="item" style="flex-grow:0;">cccc</div>
+</div>
+<div id="tt" class="easyui-tabs" style="width:100%;height:250px" data-options="justified:false,tools:'#tab-tools'">
+	<div title="About" style="padding:10px">
+		<p style="font-size:14px">jQuery EasyUI framework helps you build your web pages easily.</p>
+		<ul>
+			<li>easyui is a collection of user-interface plugin based on jQuery.</li>
+			<li>easyui provides essential functionality for building modem, interactive, javascript applications.</li>
+			<li>using easyui you don't need to write many javascript code, you usually defines user-interface by writing some HTML markup.</li>
+			<li>complete framework for HTML5 web page.</li>
+			<li>easyui save your time and scales while developing your products.</li>
+			<li>easyui is very easy but powerful.</li>
+		</ul>
+	</div>
+	<div title="My Documents" style="padding:10px">
+		<ul class="easyui-tree" data-options="url:'tree_data1.json',method:'get',animate:true"></ul>
+	</div>
+	<div title="Help"  style="padding:10px">
+		This is the help content.
+	</div>
+</div>
+<div id="tab-tools">
+	<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'" onclick="addPanel()"></a>
+	<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-remove'" onclick="removePanel()"></a>
+</div>
+-->
+
+<div class="flex1-row">
 	<div class="contRow1" style="height:0.9em;font-size:0.8em;">
 		<div class="statcell" id="tbEntrytimes"><img src="/player/{$theme|default='default'}/images/bofan.png" src-sel="/player/{$theme|default='default'}/images/bofan_s.png" src-org="/player/{$theme|default='default'}/images/bofan.png"/><span id="entrytimes">{$entrytimes}</span> </div>
 		<div class="statcell" id="tbBillPay">

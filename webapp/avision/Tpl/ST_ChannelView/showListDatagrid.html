@@ -1,0 +1,25 @@
+<!-- ST_ChannelView/showListDatagrid 显示观看统计，通过ajax装入 -->
+<table id="dg" class="easyui-datagrid"  style="width:100%"
+       data-options="url:'__SELF__/work/getList',rownumbers:true,singleSelect:true, showFooter: true,
+		pagination:true,  pageSize:10 "
+>
+    <thead>
+    <tr>
+
+        <foreach name="header" item="col">
+            <th  data-options="field:'{$col.name}',{$col.data-options}" >{$col.text}</th>
+        </foreach>
+    </tr>
+    </thead>
+
+</table>
+
+
+<script>
+    $(window).off("loaded_listDatagrid");
+    $(window).on("loaded_listDatagrid",function(){
+        console.log("loaded_listDatagrid");
+        cn_Pagination($("#dg").datagrid('getPager'));
+    });
+
+</script>

@@ -1,0 +1,42 @@
+<!-- ST_ChannelView/showListSearch 显示观看统计，通过ajax装入 -->
+<div style="box-sizing:border-box; padding:2px 5px; margin-bottom: 5px; border: 1px solid #DDD; border-radius: 5px;">
+    <form id='cond' method='post' style="display:inline">
+        <span class="cond-item" >选择频道：<input class='easyui-combobox' name='chnId' value='{$chnId}'  style='width:200px'
+                                             data-options="valueField:'id',textField:'name', data:{$chnListJson}, height:26,
+                  editable:{$editable|default='false'}  " >
+        </span>
+
+        <span class="cond-item" >观众账号：<input class='easyui-textbox' name='viewerAccount' value='{$viewerAccount}'  style='width:120px; height: 26px;'></span>
+        <span class="cond-item" >时间范围：
+        从<input class="easyui-datebox" name="beginTime" value="{$beginTime}" style="width:120px; height: 26px;"
+                data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+        至<input class="easyui-datebox" name="endTime" value="{$endTime}" style="width:120px; height: 26px;"
+                data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+        </span>
+        <input name='work' value='listSearch' style="display:none" />
+        <div id="btn_searchList" class="easyui-linkbutton" iconCls="icon-search" >查询</div>
+        <if condition="$work eq 'search'">
+            <a href="__URL__/viewerListSaveExcel" class="easyui-linkbutton" iconCls="icon-down" data-options="plain:true">另存为Excel</a>
+        </if>
+
+    </form>
+</div>
+<div id="box_datagrid">请选择频道及查询条件</div>
+<script>
+    $(window).off("loaded_listSearch"); //先清除上一次的绑定，否则多次绑定会执行多次
+    $(window).on("loaded_listSearch",function(){
+        console.log("loaded_listSearch");
+        //cn_Pagination($("#dg").datagrid('getPager'));
+
+        //查询按钮事件
+        $("#btn_searchList").on("click",function () {
+            var data=$("#cond").serializeArray();
+            console.log(data);
+            $("#box_datagrid").load("__SELF__",data,function () {
+                $.parser.parse("#box_datagrid");
+                $(window).trigger("loaded_listDatagrid");
+            });
+        });
+    });
+
+</script>

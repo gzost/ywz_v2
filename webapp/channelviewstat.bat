@@ -1,0 +1,1 @@
+d:\xampp\php\php.exe -c d:\xampp\php D:\MyProject\ywz\webapp\cmd.php ChannelViewStat/statistics/account/system/password/admin@135

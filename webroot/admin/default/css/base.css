@@ -226,3 +226,4 @@ body{
 	margin:5px;
 }
 .nowrap{white-space:nowrap;}
+.cond-item{ display:inline-block; white-space: nowrap; margin-right: 1em; line-height: 35px; vertical-align: center;}

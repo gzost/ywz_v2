@@ -95,7 +95,7 @@ class package{
 			$cond['expiry']=array('EGT',date('Y-m-d H:i'));
 			$cond['total']=array('EXP','>used');	
 		}
-		$ret=$dbPackage->where($cond)->field($fields)->order('purchase')->select();
+		$ret=$dbPackage->where($cond)->field($fields)->order('purchase desc')->select();
 		foreach($ret as $key=>$line){
 			$ret[$key]['typename']=self::$pkgtype[$line['type']];
 		}

@@ -15,9 +15,8 @@
         </span>
         <input name='work' value='listSearch' style="display:none" />
         <div id="btn_searchList" class="easyui-linkbutton" iconCls="icon-search" >查询</div>
-        <if condition="$work eq 'search'">
-            <a href="__URL__/viewerListSaveExcel" class="easyui-linkbutton" iconCls="icon-down" data-options="plain:true">另存为Excel</a>
-        </if>
+        <div id="btn_saveExcel" class="easyui-linkbutton" iconCls="icon-down" data-options="plain:true">另存为Excel</div>
+
 
     </form>
 </div>
@@ -30,12 +29,19 @@
 
         //查询按钮事件
         $("#btn_searchList").on("click",function () {
+            $("#cond input[name='work']").val("listSearch");
             var data=$("#cond").serializeArray();
             console.log(data);
             $("#box_datagrid").load("__SELF__",data,function () {
                 $.parser.parse("#box_datagrid");
                 $(window).trigger("loaded_listDatagrid");
             });
+        });
+
+        //另存为Excel按钮事件
+        $("#btn_saveExcel").on("click",function () {
+            $("#cond input[name='work']").val("saveExcel");
+            $("#cond").submit();
         });
     });
 

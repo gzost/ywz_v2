@@ -1,7 +1,11 @@
 <!-- ST_ChannelView/showListDatagrid 显示观看统计，通过ajax装入 -->
 <table id="dg" class="easyui-datagrid"  style="width:100%"
        data-options="url:'__SELF__/work/getList',rownumbers:true,singleSelect:true, showFooter: true,
-		pagination:true,  pageSize:10 "
+		pagination:true,  pageSize:20,sortName:'duration',sortOrder:'desc',
+        onSortColumn:function(sort,order){
+          console.log(sort+order);
+          $.post('__SELF__', { work:'sort', sort:sort, order:order });
+        } "
 >
     <thead>
     <tr>

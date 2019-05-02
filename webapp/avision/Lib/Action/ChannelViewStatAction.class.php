@@ -11,6 +11,7 @@ require_once APP_PATH.'../public/Authorize.Class.php';
 require_once(LIB_PATH.'Model/DictionaryModel.php');
 require_once(LIB_PATH.'Model/OnlinelogModel.php');
 require_once(LIB_PATH.'Model/StatchannelviewsModel.php');
+require_once APP_PATH.'../public/Mutex.class.php';
 
 class ChannelViewStatAction extends Action{
     protected $opStr='';    //当前用户的可操作字串
@@ -51,8 +52,13 @@ class ChannelViewStatAction extends Action{
      * 
      */
     public function statistics(){
+        //排它锁定
+		if(false==mutex::lock("chnViewStat")){
+		    logfile("mutex::lock false.",LogLevel::ALERT);
+		    return;
+        }
         set_time_limit(7200);
-        ini_set('memory_limit', '2048M');
+        ini_set('memory_limit', '4096M');
         //1、取上次处理onlinelog的最后记录ID
         $dbDict=D("dictionary");
         $lastLogId=$dbDict->getChnViewLastId(); //上次统计onlinelog最后的
@@ -76,7 +82,7 @@ echo "befor query:".memory_get_usage();
             $sql="select L.userid,activetime,beginview,".
                 " case objtype when 'live' then L.refid ".
                 "  when 'vod' then R.channelid  else 0 end as chnid, ".
-                " activetime-beginview as duration from __PEEFIX__onlinelog L ".
+                " ceil((activetime-beginview)/60) as duration from __PEEFIX__onlinelog L ".
                 " left join __PEEFIX__recordfile R on refid=R.id and R.channelid>0".
                 " where L.id>=$beginProcId and L.id<=$maxProId ";
             $sql=str_replace("__PEEFIX__",C("DB_PREFIX"),$sql);
@@ -111,7 +117,7 @@ echo " unseted row:".memory_get_usage();
 echo " unset:".memory_get_usage()."\n";
             sleep(1);   //让服务器喘会气
         }
-
+        mutex::unlock("chnViewStat");
         logfile("=== Statistics END ====",LogLevel::NOTICE);
     }
 }

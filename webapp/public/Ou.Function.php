@@ -269,6 +269,67 @@ function updateExtAttr($model,$cond,$attrArr,$attrName=null,$field='attr'){
 }
 
 /**
+ *
+ * 读取数据模型中的扩展属性。规定：扩展属性以Json字串方式存放在attr字段中
+ * @param object $model	ThinkPHP的数据表模型
+ * @param array $cond	查询属性的条件，该条件只能返回1条记录
+ * @param string $attrArr	要读出的属性名称数组。每行提供以下属性：
+ *      key-属性名称
+ *      name-属性的显示字串
+ *      gkey-属性的上级属性名称
+ *      group-属性的分组显示
+ *      value-属性值
+ *      当gkey=''时，读入key对应的的属性值填入value属性中;否则key为gkey的子属性，即：gkey:{key:value ...}
+ * @param string $field 存储扩展属性的字段名
+ * @return bool true找到记录，null找不到记录，false出错
+ *
+ */
+function fillExtAttr($model,$cond,&$attrArr,$field='attr'){
+    $attr=$model->where($cond)->getField($field);
+    try{
+        if(null == $attr) throw new Exception("no data found.");
+        $ar=json_decode($attr,true);
+        foreach ($attrArr as $index=>$row){
+            if(!empty($row['gkey'])){
+                if(isset($ar[$row['gkey']][$row['key']])) $attrArr[$index]['value']=$ar[$row['gkey']][$row['key']];
+            }else{
+                if(isset($ar[$row['key']])) $attrArr[$index]['value']=$ar[$row['key']];
+            }
+        }
+    }catch (Exception $ex){
+        return null;
+    }
+    return true;
+}
+
+/**
+ * 线程安全更新模型中的扩展属性
+ * @param object $model	ThinkPHP的数据表模型
+ * @param array $cond	查询属性的条件，该条件只能返回1条记录
+ * @param $attrArr  需要更新的属性，结构参考 funciton fillExtAttr
+ * @param string $field
+ * @return mixed 成功返回1，无更新null, 失败false
+ */
+function updateAttributes($model,$cond,$attrArr,$field='attr'){
+    $model->startTrans();
+    $attr=$model->lock(true)->where($cond)->getField($field);   //防止交错更新
+//echo $model->getLastSql();
+    $ar=(null==$attr)?array():json_decode($attr,true);
+    foreach ($attrArr as $index=>$row){
+        if(!empty($row['gkey'])){
+            $ar[$row['gkey']][$row['key']]=$row['value'];
+        }else{
+            $ar[$row['key']]=$row['value'];
+        }
+    }
+    $str=json_encode2($ar);
+    $rt=$model->where($cond)->setField($field,$str);
+//echo $model->getLastSql();
+    $model->commit();
+    return $rt;
+}
+
+/**
  * 
  * 从数据表$dbname中读取id=$key的field字段
  * @param string $dbname	表名

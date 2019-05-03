@@ -333,4 +333,51 @@ class MG_ChannelAction extends AdminBaseAction
         $data=array("retcode"=>"true","url"=>U("Progress/getMsgAjax"));
         echo json_encode2($data);
     }
+
+    /**
+     *
+     * @param $webVar 由上层函数传入包括：
+     *  ["chnId"] => string(4) "1098"
+     *  ["chnName"] => string(15) "admin的频道1"
+     *  ["owner"] => string(1) "1"
+     *  ["mgrAll"] => bool(true)
+     *  ["platformOpt"] => bool(true)
+     * 从web前端传入：
+     *  work: =="save" 保存修改过的属性
+     *  rows：被修改过的数据记录数组，每记录包括以下字段
+     *      key-属性名称
+     *      name-属性的显示字串
+     *      gkey-属性的上级属性名称
+     *      group-属性的分组显示
+     *      value-属性值
+     */
+    private function set_attribute(&$webVar){
+        $dbChannel=D("channel");
+        $work=$_POST["work"];
+//dump($webVar);
+        if("save"==$work){
+            if(is_array($_POST['rows'])){
+                $rt=updateAttributes($dbChannel,array("id"=>$webVar["chnId"]),$_POST['rows']);
+                if(false===$rt) Oajax::errorReturn('更新失败');
+                else Oajax::successReturn();
+            } else Oajax::errorReturn('没有数据需要更新');
+            exit;
+        }
+
+        $attrib=array(
+            array("key"=>"livetime", "name"=>"开播时间", "gkey"=>"", "group"=>"播出设置", "value"=>"", "editor"=>array("type"=>"datetimebox")),
+            array("key"=>"livekeep", "name"=>"播出时长(分钟)", "gkey"=>"", "group"=>"播出设置", "value"=>"", "editor"=>array("type"=>"numberbox")),
+            array("key"=>"termBeginDate", "name"=>"开始日期", "gkey"=>"", "group"=>"学习周期", "value"=>"", "editor"=>array("type"=>"datebox")),
+            array("key"=>"termEndDate", "name"=>"结束日期", "gkey"=>"", "group"=>"学习周期", "value"=>"", "editor"=>array("type"=>"datebox")),
+            array("key"=>"isbill", "name"=>"是否收费", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"text")),
+            array("key"=>"billday24", "name"=>"单日费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2))),
+            array("key"=>"billmonth", "name"=>"包月费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2))),
+            array("key"=>"billday7", "name"=>"周费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2)))
+        );
+        $rt=fillExtAttr($dbChannel,array("id"=>$webVar["chnId"]),$attrib);
+//var_dump($rt);
+        $propertyData=str_replace('"',"'",json_encode2(array_values($attrib)));
+        $webVar["propertyData"]=$propertyData;
+        return;
+    }
 }

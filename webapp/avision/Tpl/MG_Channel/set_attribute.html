@@ -1,0 +1,36 @@
+<div style="box-sizing: border-box; padding: 5px; text-align: center; max-width: 600px;">
+    <table id="pg" class="easyui-propertygrid" style="width:100%" data-options="
+                data:{$propertyData},
+                method:'post',
+                showGroup:true,
+                scrollbarSize:0,
+                columns:[[{field:'name',title:'属性', width:200 },  {field:'value',title:'值', width:200}]]
+            ">
+    </table>
+    <div id="btn-saveProperty" class="easyui-linkbutton c6" style="margin-top: 10px; width: 80px;"> 保存</div>
+</div>
+<script src="__ROOT__/Public/jeasyui/locale/easyui-lang-zh_CN.js" ></script>
+<script>
+    $("#btn-saveProperty").on("click",function(){
+        //console.log("btn-saveProperty");
+        var rows=$("#pg").propertygrid("getChanges");
+        if(rows.length==0){
+            $.messager.alert('','没有数据需要更新');
+            return;
+        }
+        var chnId="{$chnId}";
+        console.log(rows);
+        var url="__SELF__";
+        $.post(url,{func:"set_attribute",work:"save",rows:rows, chnId:chnId,owner:"{$owner}"},function (data) {
+            console.log(data);
+            if("true"==data.success){
+                $.messager.alert('','更新成功');
+                $("#pg").propertygrid("acceptChanges");
+            }else{
+                if(data.msg.length>1) $.messager.alert('警告',data.msg)
+            }
+        },"json");
+
+
+    });
+</script>

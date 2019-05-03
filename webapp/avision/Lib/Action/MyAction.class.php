@@ -75,6 +75,17 @@ class MyAction extends SafeAction
 
             $webVar['rel']=$rel;
 
+            //读取观看时长统计
+            $year=date("Y");
+            $attr=array(
+                array("key"=>"termBeginDate", "name"=>"开始日期",  "value"=>$year."-01-01"),
+                array("key"=>"termEndDate", "name"=>"结束日期",  "value"=>$year."-12-31")
+            );
+            fillExtAttr($dbchn,array("id"=>$chnid),$attr);  //若频道无定义学期范围，默认时今年
+            $cond=array("chnid"=>$chnid,"userid"=>$uid, "rq"=>array("between",array($attr[0]["value"],$attr[1]["value"])));
+            $dbStat=D("statchannelviews");
+            $webVar["duration"]=$dbStat->where($cond)->Sum("duration");
+//echo $dbStat->getLastSql();
         } catch (Exception $e){
             $webVar['msg']=$e->getMessage();
             $webVar['show']='none';

@@ -26,9 +26,17 @@ class MonitorAction extends AdminBaseAction{
 	 * 
 	 * 在线用户列表及管理
 	 */
-	const PGDATA_ONLINEUSER=pgdata_onlineuser;	//分页索引数据存储变量名
-	const MAX_ONLINEUSER_LINES=200;	//为保证平台效率设置的最大返回记录数
+    const COND_PGDATA_ONLINEUSER="COND_PGDATA_ONLINEUSER";  //查询条件session变量名
 	public function onlineUser(){
+
+	    //2019-05-08 outao
+	    if('getList'==$_REQUEST["work"]){
+	        //datagrid取分页数据
+            $this->onlineUserGetList();
+            return;
+        }
+        //end 2019-05-08
+
  		$this->baseAssign();
  		$this->assign('mainTitle','在线用户');
  		
@@ -72,16 +80,11 @@ class MonitorAction extends AdminBaseAction{
 		
 		//执行查询
 		$dbOnline=D('online');
-		$result=$dbOnline->getList4Show($TPcond,self::MAX_ONLINEUSER_LINES);
-		$totalRecs=count($result);
-		if($totalRecs==self::MAX_ONLINEUSER_LINES){
-			//可能有更多符合条件的记录
-			$allOnlines=$dbOnline->where($TPcond)->count();
-			$webVar['msg']="共有符合条件的记录 $allOnlines 条，为保证访问速度只显示最新登录的 ".self::MAX_ONLINEUSER_LINES." 条。";
-		}
- 		pagination::setData(self::PGDATA_ONLINEUSER,$result);
- 		//pagination::setData(self::PGDATA_ONLINEUSER.'_total',$totalRecs);
- 		
+		$totalRecords=$dbOnline->where($TPcond)->Count("*");   //取总符合条件记录数
+        setPara(COND_PGDATA_ONLINEUSER,$TPcond);    //将查询条件写到session变量
+        setPara(COND_PGDATA_ONLINEUSER."total",$totalRecords);
+        if(0==$totalRecords) $webVar['msg']="没有符合条件的记录";
+
  		$this->assign($webVar);
  		$this->display();
 	}
@@ -92,17 +95,26 @@ class MonitorAction extends AdminBaseAction{
 	 */
 	
 	public function onlineUserGetList($page=1,$rows=1){
-		
-		$data=pagination::getData(self::PGDATA_ONLINEUSER,$page,$rows);
-//		foreach ($data as $key=>$rec){
-//			$data[$key]['logintime']=date('m-d H:i:s',$rec['logintime']);
-//			$data[$key]['chnname'].='('.$rec['chnid'].')';
-//			$data[$key]['duration']=ceil(($rec['activetime']-$rec['logintime'])/60.0);
-//		}
-		$result["rows"]=$data;
-		$result["total"]=$rows;
-		if(null==$result)	echo '[]';
-		else echo json_encode($result);
+        $totalRecords=getPara(COND_PGDATA_ONLINEUSER."total");
+        if(empty($totalRecords)){   //没有命中记录
+            echo "[]";
+            return;
+        }
+        $cond=getPara(COND_PGDATA_ONLINEUSER);
+        $page=(!empty($_POST['page']))? intval($_POST['page']):1;
+        $rows=(!empty($_POST['rows']))? intval($_POST['rows']):20;
+        $dbOnline=D('online');
+        $field='id,from_unixtime(logintime,"%m-%d %H:%i") logintime, ceil((activetime-logintime)/60) minutes ';
+        $field .=',objtype,account,clientip,name,location';
+        $data=$dbOnline->where($cond)->field($field)->order('logintime desc')->page($page,$rows)->select();
+
+        if(null==$data){
+            echo "[]";
+        }else{
+            $result=array("rows"=>$data, "total"=>$totalRecords);
+            echo json_encode($result);
+        }
+
 	}
 	/*
 	public function onlineUserGetChnPulldown(){

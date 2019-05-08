@@ -85,7 +85,8 @@ class HDPlayerAction extends SafeAction {
 		$rec = new RecordfileModel();
 		foreach($data as $i => $r)
 		{
-			$data[$i]['imgpath'] = $rec->getImgMrl($r['path']).'?'.time();
+			//$data[$i]['imgpath'] = $rec->getImgMrl($r['path']).'?'.time();
+            $data[$i]['imgpath'] = $rec->getImgMrl($r['path']);	//由于每次上传图片都会更换名称，因此没必要增加随机链接。 2019-05-08 outao
 		}
 //dump($data);
 		//取频道的皮肤模板, 支持播放器皮肤定义 2019-01-16 outao

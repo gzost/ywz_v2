@@ -24,7 +24,17 @@ require_once APP_PUBLIC.'aliyun/Sms.Class.php';
 
 class TestAction extends Action
 {
-
+    public function db(){
+        echo "db".date("H:i:s")."<br>";
+        C('DB_HOST', 'localhost');
+        C('DB_USER','ywzdbu'); // 用户名
+        C('DB_PWD', 'ywz*2016'); // 密码
+        C('DB_PORT', 3860); // 端口
+        $db=D('user');
+        $name=$db->where("id=20")->getField("account");
+        var_dump($name);
+        echo "sql=".$db->getLastSql()."<br>";
+    }
 	function Ip2()
 	{
 		$mod = new Ip2addrModel();

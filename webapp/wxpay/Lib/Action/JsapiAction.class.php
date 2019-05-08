@@ -418,7 +418,7 @@ logfile("gotoPay:".$rul);
 		$t = I('get.t', '');
 		if(empty($t))
 		{
-			echo '参数传入错误';
+			echo '参数传入错误www';
 			exit;
 		}
 		$msgDal = new MessageModel();

@@ -31,10 +31,10 @@
 
 		/* 本例子css */
 		.slideTxtBox{ width:450px; border:1px solid #ddd; text-align:left;  }
-		.slideTxtBox .hd{ height:30px; line-height:30px; background:#f4f4f4; padding:0 10px 0 20px;   border-bottom:1px solid #ddd;  position:relative; }
+		.slideTxtBox .hd{ height:30px; line-height:30px; background:#fff; padding:0 10px 0 20px;   border-bottom:0px solid #ddd;  position:relative; }
 		.slideTxtBox .hd ul{ float:left;  position:absolute; left:20px; top:-1px; height:32px;   }
 		.slideTxtBox .hd ul li{ float:left; padding:0 15px; cursor:pointer;  }
-		.slideTxtBox .hd ul li.on{ height:30px;  background:#fff; border:1px solid #ddd; border-bottom:2px solid #fff; }
+		.slideTxtBox .hd ul li.on{ height:30px;  background:#fff; border:0px solid #ddd; border-bottom:2px solid #f3f; }
 		.slideTxtBox .bd ul{ padding:15px;  zoom:1;  }
 		.slideTxtBox .bd li{ height:24px; line-height:24px;   }
 		.slideTxtBox .bd li .date{ float:right; color:#999;  }
@@ -56,7 +56,7 @@
 				<!-- 下面是前/后按钮代码，如果不需要删除即可 -->
 				<span class="arrow"><a class="next"></a><a class="prev"></a></span>
 
-				<ul><li>教育</li><li>培训</li><li>出国</li></ul>
+				<ul><li>教育</li><li>培训</li><li>出国</li><li>出国qqqqqqqqqq</li><li>出国ttttt</li><li>出国ttttttt</li></ul>
 			</div>
 			<div class="bd">
 				<ul>
@@ -88,7 +88,7 @@
 				</ul>
 			</div>
 		</div>
-		<script type="text/javascript">jQuery(".slideTxtBox").slide();</script>
+		<script type="text/javascript">jQuery(".slideTxtBox").slide({effect:"left"});</script>
 
 
 

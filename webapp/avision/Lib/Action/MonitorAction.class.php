@@ -94,7 +94,7 @@ class MonitorAction extends AdminBaseAction{
 	 * 按session变量中存储的查询条件，查找在线用户并以edatagrid数据格式(json数组)输出
 	 */
 	
-	public function onlineUserGetList($page=1,$rows=1){
+	private function onlineUserGetList(){
         $totalRecords=getPara(COND_PGDATA_ONLINEUSER."total");
         if(empty($totalRecords)){   //没有命中记录
             echo "[]";
@@ -127,8 +127,13 @@ class MonitorAction extends AdminBaseAction{
 	 * 
 	 * 观众统计
 	 */
-	const PGDATA_VIEWERS=pgdata_viewers;	//分页索引数据存储变量名
+	const COND_VIEWERS="cond_viewers";	//分页索引数据存储变量名
 	public function viewers(){
+        //ini_set('memory_limit', '2048M');
+        if("getList"==$_REQUEST["work"]){
+            $this->viewersGetList();
+            return;
+        }
 		//显示菜单
 		$this->baseAssign();
  		$this->assign('mainTitle','观众数量统计');
@@ -161,9 +166,12 @@ class MonitorAction extends AdminBaseAction{
  			$cond['objtype']=array('IN','110,111');
  		}
 		$db=D('Consump');
-		$rec=$db->getStatList($cond);
-//dump($cond);		
-//echo $db->getLastSql();		
+		$totalRecs=$db->getStatList($cond,-1);  //计算命中记录总数
+        setPara(COND_VIEWERS,$cond);
+        setPara(COND_VIEWERS."total",$totalRecs);
+//dump($totalRecs);
+//echo $db->getLastSql();
+        /*
 		//计算汇总
 		$total=array('stattime'=>'合计');
 		foreach ($rec as $key=>$val){
@@ -172,22 +180,34 @@ class MonitorAction extends AdminBaseAction{
 			$total['newusers'] += $val['newusers'];
 			$total['qty'] += $val['qty'];
 		}
-		pagination::setData(self::PGDATA_VIEWERS, $rec);
-		pagination::setData(self::PGDATA_VIEWERS.'Total', $total);
-			
- 		$this->assignB($webVar);
+*/
+ 		$this->assign($webVar);
  		$this->display();
 	}
 	
-	public function viewersGetList($page=1,$rows=1){
+	private function viewersGetList(){
+        $totalRecords=getPara(COND_VIEWERS."total");
+        if(empty($totalRecords) || $totalRecords['total']<1){   //没有命中记录
+            echo "[]";
+            return;
+        }
+        $cond=getPara(COND_VIEWERS);
+        $page=(!empty($_POST['page']))? intval($_POST['page']):1;
+        $rows=(!empty($_POST['rows']))? intval($_POST['rows']):20;
+
+        $db=D('Consump');
+        $recs=$db->getStatList($cond,0,$page,$rows);
+        //汇总
+        $total=array('name'=>'合计','users'=>$totalRecords['users'],'qty'=>$totalRecords['qty']);
+        //填写分类名称
+        foreach ($recs as $key=>$val){
+            $recs[$key]['objtype']=$db->code2cname($val['objtype']);
+        }
 
 		$result=array();
-		
-		$data=pagination::getData(self::PGDATA_VIEWERS,$page,$rows);
-
-		$result["rows"]=$data;
-		$result["total"]=$rows;
-		$result["footer"][]=pagination::getData(self::PGDATA_VIEWERS.'Total');
+		$result["rows"]=$recs;
+		$result["total"]=$totalRecords['total'];
+		$result["footer"][]=$total;
 		if(null==$result)	echo '[]';
 		else echo json_encode($result);
 	}

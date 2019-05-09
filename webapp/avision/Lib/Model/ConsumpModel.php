@@ -186,8 +186,12 @@ class ConsumpModel extends Model {
 	 * 
 	 * 取消费统计列表
 	 * @param array $cond	查询条件
+     * @param int   $limit 返回的记录条数，0-不限制，<0以数组形式返回命中的记录总数及需要统计字段的统计值不返回具体记录
+     * @param int $page 当$page>0 and $rows>0时 忽略limit参数
+     * @param int $rows
+     * @return mixed
 	 */
-	public function getStatList($cond,$limit=0){
+	public function getStatList($cond,$limit=0,$page=0,$rows=0){
 		//$c=array();
 		if(isset($cond['name'])){
 			$name=$cond['name'];
@@ -202,9 +206,11 @@ class ConsumpModel extends Model {
 			unset($cond['beginTime']); unset($cond['endTime']);
 			$cond['happen']=array($b,$e,'and');
 		}
-		if(0==$limit) $result= $this->where($cond)->order('happen desc')->select();
-		else $result= $this->where($cond)->order('happen desc')->limit($limit)->select();
-		
+		if($page>0 && $rows>0) $result=$this->where($cond)->order('happen desc')->page($page,$rows)->select();
+		elseif(0==$limit) $result= $this->where($cond)->order('happen desc')->select();
+		elseif ($limit>0) $result= $this->where($cond)->order('happen desc')->limit($limit)->select();
+		else $result=$this->field("count('*') as total,sum(users) as users,sum(qty) as qty")->where($cond)->find();
+//echo $this->getLastSql();
 		logfile($this->getLastSql(),8);
 		return $result;
 	}

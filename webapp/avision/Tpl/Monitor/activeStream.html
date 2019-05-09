@@ -18,12 +18,12 @@
 		//调用刷新方法刷新数据库
 		$.post("__APP__/CheckAlive/updateStreamStat",function(){
 			//刷新显示
-			$('#dg').datagrid('load');
+			$('#dg').edatagrid('load');
 		});
 	}
 	//强制断流
 	function cutActiveStream(){
-		var row=$("#dg").datagrid('getSelected');
+		var row=$("#dg").edatagrid('getSelected');
 		if(null==row){
 			alert('请先选中要断流的记录。')
 		}else {

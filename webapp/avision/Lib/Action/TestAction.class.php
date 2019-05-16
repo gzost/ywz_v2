@@ -39,6 +39,7 @@ class TestAction extends Action
 	{
 		$mod = new Ip2addrModel();
 		$addr = $mod->get($_SERVER["REMOTE_ADDR"]);
+        $addr=$mod->getFromNet($_SERVER["REMOTE_ADDR"]);
 		var_dump($addr);
 	}
 

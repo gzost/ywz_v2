@@ -493,6 +493,9 @@ logfile("count post:".count($_POST),LogLevel::DEBUG);
             //点击次数
             if(isset($para['entrytimes'])) $record['entrytimes'] = $para['entrytimes'];
 
+            //点赞次数
+            if(isset($para['votetimes'])) $record['votetimes'] = $para['votetimes'];
+
             //综合属性
             $attr=$chnDal->getAttrArray($chnId);
             $attr['wxonly']=($para['wxonly']=='true')?true:false; //$para['wxonly'];
@@ -781,6 +784,7 @@ if(null==$list) logfile("list==null");
 		$webVar['viewIncRand'] = $attr['viewIncRand'];
 		$webVar['vlimit'] = $attr['viewerlimit'];
 		$webVar['entrytimes'] = $r['entrytimes'];
+        $webVar['votetimes'] = $r['votetimes'];
 
 		//视频流
 		$webVar['stream'] = $r['streamid'];

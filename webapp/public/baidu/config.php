@@ -11,7 +11,8 @@
 
 class LbsyunConf
 {
-	const _LbsKey = 'fZm3dpRfzGTCeZwoNp3sXkby1po4NYN9';
+	//const _LbsKey = 'fZm3dpRfzGTCeZwoNp3sXkby1po4NYN9';
+    const _LbsKey = 't3jNliKDwO9cMNq8t5CMXDBfQN64uvQP';
 	const _LbsUrl = 'http://api.map.baidu.com/location/ip';
 }
 

@@ -278,7 +278,7 @@ class ConsumpAction extends AdminBaseAction{
 		$dbPackage=D('Package');
 		$fields='id,purchase,expiry,total,used,name';
 		$cond=array('userid'=>getPara('userid'));
-		$result=$dbPackage->where($cond)->field($fields)->order('purchase')->select();
+		$result=$dbPackage->where($cond)->field($fields)->order('purchase desc')->select();
 //echo 		$dbPackage->getLastSql();
 		if(unll!=$result) echo json_encode($result);
 		else echo '[]';

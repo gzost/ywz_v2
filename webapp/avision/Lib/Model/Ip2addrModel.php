@@ -48,10 +48,11 @@ class Ip2addrModel extends Model
 	/*
 	 * 从网络接口获取地址
 	 */
-	protected function getFromNet($ip)
+	public function getFromNet($ip)
 	{
 		$baidu = new Lbsyun();
 		$ret = $baidu->Ip2Address($ip);
+//dump($rt);
 		$ret = explode('|', $ret['address']);
 		$addr = $ret[0].'|'.$ret[1].'|'.$ret[2];
 		$this->addRec($ip, $addr);
@@ -60,6 +61,7 @@ class Ip2addrModel extends Model
 
 	protected function addRec($ip, $addr)
 	{
+        if(strlen($addr)<5) return; //找不到地址不记录
 		$d = array();
 		$d['ip'] = $ip;
 		$d['addr'] = $addr;

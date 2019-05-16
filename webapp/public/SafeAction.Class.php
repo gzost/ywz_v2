@@ -66,7 +66,7 @@ class SafeAction extends Action {
         if(false==$rt){
             logfile("从非信任主机调用：".parse_url($_SERVER['HTTP_REFERER'],PHP_URL_HOST).
                 " IP:".$_SERVER['REMOTE_ADDR']." UserID:".$this->userId(), LogLevel::WARN);
-            exit;   //若是调试模块可注释此句
+            //exit;   //若是调试模块可注释此句
         }
 
 		$expiredPeriod=($type==1)?C('OVERTIME'):null;

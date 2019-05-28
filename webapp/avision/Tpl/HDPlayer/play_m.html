@@ -103,8 +103,9 @@ function onlineSuccess(onlineId,data){
 }
 
 function onlineError(msg,data){
-	//alert(msg)
-	showMsgAni(msg);
+	alert(msg);
+	//showMsgAni(msg);
+    window.location.replace("{$myurl}");
 }
 
 function offlineCallback(result,data){

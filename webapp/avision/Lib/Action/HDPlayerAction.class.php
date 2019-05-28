@@ -28,7 +28,8 @@ class HDPlayerAction extends SafeAction {
 	protected $task = 'HDPlayer';
 	//url是客户端访问的url，link是分享时中转的地址
 	protected $secJs = array('url'=>'', 'title'=>'', 'desc'=>'', 'link'=>'', 'imgUrl'=>'');
-	
+	protected  $multiOnline=0;	//连接超过限制标志，0-未超，1-以达到默认值1，2-超过设置上限
+
 //public function tlog(){
 //	logfile("log lever is:".C('LOGFILE_LEVEL'));
 //}
@@ -1022,7 +1023,16 @@ var_dump($location);
 		$userId=$this->author->getUserInfo('userId');
 		if($userId==0) return false;
 //logfile("newOnline chnId=".print_r($_SESSION['OuPara'],true)." objtype=".$objType." objId=".$objId,3);
+        $this->multiOnline=$this->dbOnline->checkMultiLogin($userId,$objType);
+
+		//超限连接，照样建立在线记录，但返回错误
 		$onlineId=$this->dbOnline->newOnline($objType,$objId,$userId, $this->author->getUserInfo('userName') );
+
+        if($this->multiOnline>0) {
+            logfile("超限多重连接：uid=".$userId." objtype=".$objType." objId=".$objId.print_r($_SESSION['OuPara'],true),LogLevel::CRIT);
+            //return false;
+        }
+
 		if(false!=$onlineId) {
 			$this->onlineArr[]=array("onlineId"=>$onlineId, "objType"=>$objType, "objId"=>$objId);
 		}			
@@ -1142,7 +1152,7 @@ var_dump($location);
 		Oajax::needAttr($para,'objType,objId');	//检查必须的参数，不满足直接出错返回
 		$onlineId=$this->newOnline($para['objType'], $para['objId']);
 		if(false != $onlineId)
-			Oajax::successReturn(array("onlineId"=>$onlineId));
+			Oajax::successReturn(array("onlineId"=>$onlineId,"multiOnline"=>$this->multiOnline));
 		else 
 			Oajax::errorReturn('Can not create online record.');
 	}

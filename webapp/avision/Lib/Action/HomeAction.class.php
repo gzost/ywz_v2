@@ -183,6 +183,10 @@ class HomeAction extends SafeAction {
     	$chnArr=array();	//存储要显示的频道信息
 		$cond=array('status'=>'normal');	//只取出正常状态的记录
 		$chndb=D('Channel');
+		if($searchStr=="我的频道"){
+            $searchStr="";
+            $type=1;
+        }
 //var_dump($_REQUEST); echo 	$scrType,'ss=',$searchStr;
     	if (''!=$searchStr){
     		//按频道名称或关键词查询频道
@@ -202,10 +206,13 @@ class HomeAction extends SafeAction {
     			return;
     		}
     		//TODO: 这里要优化，先查询uid列表
-    		//$cond['_string']="id in(select chnid from ".C('DB_PREFIX')."channelreluser where uid=".$userId.")";
-			$cond['_string']=" owner = $userId";
-    		//$chnList=$chndb->field($fields)->where($cond)->select();
-//echo $chndb->getLastSql();    		
+            $dbChnUser=D("channelreluser");
+    		$recs=$dbChnUser->field("distinct chnid")->where("uid=$userId and status='正常'")->select();
+            //$recs=$dbChnUser->where("uid=$userId and status='正常'")->getField("id, chnid");
+            $recs=result2string($recs,'chnid');
+//var_dump($recs);
+			$cond['id']=array("in",$recs);
+
     	}else{
     		//查找推荐频道
     		$cond['adpush']=array('GT',0);

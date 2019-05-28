@@ -208,6 +208,7 @@ class MG_UserAction extends AdminBaseAction{
                 $record=array("agent"=>$agentid);   //这里已经验证了agentID是存在的
                 foreach ($importFields as $field=>$col){
                     $record[$field]=$sheetData[$row][$col];
+                    if(null===$record[$field]) $record[$field]="";
                 }
                 //对读入的一条记录进行处理
                 try{

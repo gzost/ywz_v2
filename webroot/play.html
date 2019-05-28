@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="n">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <title>Title</title>
+    <link rel="stylesheet" href="https://g.alicdn.com/de/prismplayer/2.8.2/skins/default/aliplayer-min.css" />
+
+    <script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/de/prismplayer/2.8.2/aliplayer-h5-min.js" ></script>
+    <script src="/public/jeasyui/jquery.min.js" ></script>
+    <style>
+        body { padding: 0; margin: 0}
+        video {
+            width:100%; height:800px !important;  object-fit: contain !important; object-position: 0 50% !important;
+        }
+
+    </style>
+</head>
+<body>
+<div>TOP,,,,TOP</div>
+<div  class="prism-player" id="J_prismPlayer"
+style="height: 400px;"
+></div>
+<script>
+    var player = new Aliplayer({"id": "J_prismPlayer",
+        "source": "http://www.av365.cn/ts/dfhc.mp4",
+        "width": "100%",
+
+        "autoplay": true,
+        "isLive": false,
+        "rePlay": false,
+        "playsinline": true,
+        "preload": true,
+        "controlBarVisibility": "always",//控制面板的实现 ‘click’ 点击出现、‘hover’ 浮动出现、‘always’ 一直在
+        "useH5Prism": true,
+        "x5_type":"h5",
+        "x5_video_position":"top"
+    },function (player) {
+        console.log('player ready!');
+    });
+    var setLayout = function()
+    {
+        //设置播放器容器的高度
+        var height=800 ; //根据实际情况设置高度
+        //player.el().style.height = height;
+//alert($("body").offset().top);
+        console.log("height="+height);
+    }
+    window.onresize = function(){
+        setLayout();
+    }
+    player.on("requestFullScreen", function(){
+        setLayout();
+    });
+</script>
+<div>11111AAA</div>
+<div id="msg" style="overflow: scroll">
+    ==
+</div>
+<div style="position: fixed; top:20px; background-color:#00ee00;z-index: 99;">TTTPPP</div>
+</body>
+</html>

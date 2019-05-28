@@ -34,6 +34,8 @@ class MonitorAction extends AdminBaseAction{
 	        //datagrid取分页数据
             $this->onlineUserGetList();
             return;
+        }elseif (null==$_REQUEST["work"]){
+	        unsetPara("account");
         }
         //end 2019-05-08
 
@@ -50,9 +52,10 @@ class MonitorAction extends AdminBaseAction{
  			$webVarTpl['viewSelf']='true';
  			$webVarTpl['objAccount']=$this->getUserInfo('account');	//默认只查找当前用户所属频道/VOD的用户
  		}
- 		//$webVarTpl['viewSelf']=($this->isOpPermit('A'))?'false':'true';	
+ 		//$webVarTpl['viewSelf']=($this->isOpPermit('A'))?'false':'true';
+
  		$webVar=$this->getRec($webVarTpl,false);
-//dump($webVar); 		
+
  		
  		$cond=$this->getRec($webVarTpl,false);
  		$cond=arrayZip($cond,array(null,0,'不限','0','','全部'));	//清除没意义的条件

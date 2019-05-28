@@ -303,7 +303,7 @@ class MG_ChannelAction extends AdminBaseAction
             $falseCounter=0;
             for($row = 3; $row <= $maxRow; $row++) {
                 unset($record);
-                $record=array("chnid"=>$chnid,"type"=>"会员","status"=>"正常");
+                $record=array("chnid"=>$chnid,"type"=>"会员","status"=>"正常","enddate"=>"6999-12-31");
                 foreach ($importFields as $field=>$col){
                     $record[$field]=trim($sheetData[$row][$col]);
                 }
@@ -372,7 +372,9 @@ class MG_ChannelAction extends AdminBaseAction
             array("key"=>"isbill", "name"=>"是否收费", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"text")),
             array("key"=>"billday24", "name"=>"单日费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2))),
             array("key"=>"billmonth", "name"=>"包月费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2))),
-            array("key"=>"billday7", "name"=>"周费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2)))
+            array("key"=>"billday7", "name"=>"周费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2))),
+            array("key"=>"billday30", "name"=>"30天费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2)))
+
         );
         $rt=fillExtAttr($dbChannel,array("id"=>$webVar["chnId"]),$attrib);
 //var_dump($rt);

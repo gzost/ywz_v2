@@ -41,6 +41,8 @@ class TestAction extends Action
 		$addr = $mod->get($_SERVER["REMOTE_ADDR"]);
         $addr=$mod->getFromNet($_SERVER["REMOTE_ADDR"]);
 		var_dump($addr);
+		var_dump($_SERVER);
+		echo "HTTP_X_FORWARDED_FOR=".$_SERVER["HTTP_X_FORWARDED_FOR"].getenv("HTTP_X_FORWARDED_FOR");
 	}
 
 	function Ip()

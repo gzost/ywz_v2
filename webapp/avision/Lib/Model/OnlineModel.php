@@ -247,9 +247,9 @@ class OnlineModel extends Model {
      * @param int $uid 用户ID
      * @return int  0:可继续登录, 1：重复登录（默认，最多登录次数为1，且已经有一条在线记录），2：账号已到达最大同时登录次数。
      */
-	public function checkMultiLogin($uid){
+	public function checkMultiLogin($uid,$objtype='web'){
 	    //统计在线记录
-	    $cond=array('userid'=>$uid, 'objtype'=>'web', 'isonline'=>'true');
+	    $cond=array('userid'=>$uid, 'objtype'=>$objtype, 'isonline'=>'true');
 	    $loginTimes=$this->where($cond)->count();
 	    if(0==$loginTimes) return 0;  //没在线记录可继续登录
         //读用户的重复登录设定

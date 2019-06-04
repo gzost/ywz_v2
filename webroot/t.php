@@ -1,4 +1,5 @@
 <?php
+phpinfo();
 error_reporting(E_ALL ^ E_NOTICE);
 ob_implicit_flush();
 

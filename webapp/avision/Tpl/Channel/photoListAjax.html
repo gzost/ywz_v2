@@ -87,11 +87,12 @@
                              str +="</div>";
                          console.log(str);
                          $("#album").append(str);
-                         $("#cover-uploader ul").html('');
+                        // $("#cover-uploader ul").html('');
                          console.log(data);
                      },'json');
-
-
+                },   //onComplete
+                onAllComplete:function () {
+                    $("#cover-uploader ul").html('');
                 }
             }
         });	// var videoUploader

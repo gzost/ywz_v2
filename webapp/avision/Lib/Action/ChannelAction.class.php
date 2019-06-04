@@ -1675,7 +1675,6 @@ class ChannelAction extends AdminBaseAction
         // Specify the list of valid extensions, ex. array("jpeg", "xml", "bmp")
         $uploader->allowedExtensions = array (); // all files types allowed by default
 
-
         // Specify max file size in bytes.
         $uploader->sizeLimit = null;
 

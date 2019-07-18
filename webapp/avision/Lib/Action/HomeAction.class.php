@@ -253,6 +253,7 @@ class HomeAction extends SafeAction {
         $webVar=array('chnId'=>$chnId, 'bozhu'=>$bozhu, 'acceptUrl'=>$acceptUrl, 'rejectUrl'=>$rejectUrl, 'errorMsg'=>'',
             'title'=>'', 'coverImg'=>'');
         $webVar=getRec($webVar,false);
+        unsetPara('errorMsg');
         //若提供了频道ID而未提供$acceptUrl
         if(''==$webVar['acceptUrl'] && 0<$chnId)  $webVar['acceptUrl']=U('HDPlayer/play',array('chnId'=>$chnId));
         //if(''!=$webVar['acceptUrl']) $webVar['acceptUrl']=urlencode($webVar['acceptUrl']);
@@ -268,8 +269,8 @@ class HomeAction extends SafeAction {
 
 
 		$wxLoginHelp = false;
-        $this->author->logout();
-    	session_start();
+        //$this->author->logout();
+    	//session_start();
     	$this->baseAssign();
 
 		if($wxonly){
@@ -328,6 +329,10 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
     public function register($bozhu=0){
     	$scrType=$this->getScreenType();
     	$this->baseAssign();
+        $webVar=array('chnId'=>$chnId, 'bozhu'=>$bozhu, 'acceptUrl'=>$acceptUrl, 'rejectUrl'=>$rejectUrl, 'errorMsg'=>'',
+            'title'=>'', 'coverImg'=>'');
+        $webVar=getRec($webVar,false);
+        $this->assign($webVar);
 		$this->assign('bozhu', $bozhu);
 		if(1 == $bozhu)
 			$this->assign('regtype', 'bozhu');

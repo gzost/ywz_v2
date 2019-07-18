@@ -324,8 +324,8 @@ class UserAction extends AdminBaseAction{
 		}
 		//dump($rec);
 		$rec[work]='save';
-		$this->assignB($rec);
-		$this->display();
+		$this->assign($rec);
+		$this->display("user/password");
 	}
 
 	/**
@@ -343,6 +343,43 @@ class UserAction extends AdminBaseAction{
 		return null;
 	}
 
+	//2019-07-18添加by outao
+
+    /**
+     * 提供修改密码的控件, 由于需要交互不能放到widget中
+     */
+    public function WD_changePws(){
+	    try{
+	        if(!$this->author->isLogin()) throw new Exception('请先登录');
+	        $work=$_POST['work'];
+	        if('save'==$work){
+	            //从form提交
+                $rec=array('newPsw'=>$_POST['newPsw'],
+                    'newPsw2'=>$_POST['newPsw2'],
+                    'oldPsw'=>$_POST['oldPsw']
+                    );
+                if(strlen($rec['newPsw'])<6) throw new Exception('密码长度至少6位');
+                if($rec['newPsw']!=$rec['newPsw2']) throw new Exception('两次输入的密码不相同!');
+                $userInfo=$this->getUserInfo();
+
+                if($userInfo['password']!=authorize::cryptPassword($rec['oldPsw'])){
+                    throw new Exception('原密码不匹配');
+                }
+                $dbUser = D( 'User' );
+                $cond =array('id'=> $userInfo['userId']);
+                $data =array('password'=>authorize::cryptPassword($rec['newPsw']));
+                if(false===$dbUser->where($cond)->save($data)) throw new Exception('修改密码失败');
+                echo('密码修改成功。');
+
+            }else {
+                $this->show('User/WD_changePws');
+            }
+
+        }catch (Exception $e){
+	        echo $e->getMessage();
+	        return;
+        }
+    }
 
 }
 ?>

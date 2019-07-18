@@ -1,9 +1,9 @@
 
 <div id="album" >
     <foreach name="photos" item="pt">
-        <!--<div class="'masonryItem">-->
+
             <img data-name="{$pt.imgName}" class="photo ccc masonry-item" src="{$pt.imgsrc}" >
-        <!--</div>-->
+
     </foreach>
 
 </div>
@@ -19,9 +19,9 @@
 
 <style type="text/css">
     #album, #album * { box-sizing: border-box; }
-    #album { margin:0 auto; border: 5px solid #333;  }
+    #album { margin:0 auto; border: 5px solid #333; position: relative; }
     #album,#photoDetail{
-        border:0px solid #0fbad6; padding:0px; min-height: 200px; text-align: center;/*display: flex; flex-warp:wrap;*/
+        border:0px solid #0fbad6; padding:0px; min-height: 150px; text-align: center;/*display: flex; flex-warp:wrap;*/
     }
 
     #album div{
@@ -108,6 +108,17 @@
             console.log("滑动检测!");
             //alert('fffss');
         });
+
+        autoPage=new OUautopage({ container:"#album",scroll:"#divMore",url:"__SELF__",
+        //autoPage=new OUautopage({ container:"#album",scroll:"document",url:"__SELF__",
+            para:{ chnId: {$chnId}, work:"loadPage" },
+
+            postLoad:function (data) {
+                console.log("callback");
+                var $content=$(data);
+                $album.append( $content ).masonry('appended',$content);
+            }
+        });
     });
     /*
     用了瀑布流显示，这就不需要了。
@@ -117,4 +128,94 @@
         $("#album div").height(width*4/7);
     }
     */
+
+
+
+
+    /**
+     * 注意：
+     *  - continer,scroll等摄及DOM的参数按jquery选择器格式
+     *  - 滚动区域若是全文档滚动可设为document，这时容器可以是body或随内容生长的DIV。
+     *  - 滚动区域为DIV时，container一般与scroll相同。只要拉动到DIV底部就会触发装入新页，而忽略是否在显示区域内
+     * @param opt
+     * @constructor
+     */
+    function OUautopage(opt) {
+        console.log(opt);
+        var _this=this;
+        //默认属性
+        var option={ container:"body",scroll:"document",url:"#", pagingTxt:"-- 分页线 --", loaddingTxt:"-- 正在读取数据 --", lastpageTxt:"-- 没更多数据了 --",
+            postLoad:null,  //页面载入后回调函数
+            rows:10, //每页行数或元素个数
+            page:1, //当前的页面，首页为1
+            para:{}    //发送到页面输出后台的附加参数
+        };
+
+        var isLastPage=false;   //后台是否已经输出了最后页面
+
+        //用设置的属性覆盖默认属性
+        var _setOption=function(opt){
+            for(key in option){
+                if(key in opt) option[key]=opt[key];
+                //console.log(option[key]);
+            }
+        }
+        _setOption(opt);    //设置初始化属性
+
+        var _loadPage=function(){
+            $.ajaxSettings.async = false;   //设置为同步调用
+
+            var para=option.para;
+            para.rows=option.rows;
+            para.page=option.page;
+            $.post(option.url,para,function(data){
+                option.page++;
+                if(typeof(option.postLoad)== "function") option.postLoad(data);
+                else $(option.container).append(data);
+            },"html");
+
+            $.ajaxSettings.async = true;
+        }
+
+        if(option.scroll=="document"){
+            //滚动时判断是否到达页面底部
+            $(document).on("scroll",function () {
+                var viewHeight=Math.max(document.documentElement.clientHeight, window.innerHeight); //获取当前浏览器的视口高度，不包括工具栏和滚动条
+                //console.log("viewHeight="+viewHeight);
+                var scrollHeight=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);    //内容的总高度
+                var scrollTop=$(document).scrollTop();
+                console.log("scrollTop="+scrollTop+"**"+(scrollHeight-scrollTop-viewHeight));
+                if(scrollHeight<=scrollTop+viewHeight){
+
+                    console.log("next page!!!!")
+                    _loadPage(option);    //载入页面
+                    //viewHeight=Math.max(document.documentElement.clientHeight, window.innerHeight);
+                }
+            });
+        }else{
+            //DIV内滚动
+            $(option.scroll).on("scroll",function () {
+                var viewHeight=$(option.scroll).innerHeight();  //容器高度，这里无法减去滚动条的高度
+                console.log("viewHeight="+viewHeight);
+                var scrollHeight=$(option.scroll)[0].scrollHeight;   //内容的总高度
+                var scrollTop=$(option.scroll).scrollTop();
+                console.log("scrollTop="+scrollTop+"**"+(scrollHeight-scrollTop-viewHeight));
+
+                if(scrollHeight<=scrollTop+viewHeight){
+                    //底部区域可见
+                    console.log("next page----!!!!")
+                    _loadPage(option);
+
+                }
+            });
+        }
+
+
+        _this.setOption=function(opt){
+            return _setOption(opt);
+        }
+
+
+
+    }
 </script>    

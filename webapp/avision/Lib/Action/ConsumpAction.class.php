@@ -188,7 +188,7 @@ class ConsumpAction extends AdminBaseAction{
  			'point'=>0,'credit'=>0,'username'=>'', 'pkgTypeListJson'=>'[]',
  			'pkgType'=>'stream', 'amount'=>0, 'total'=>0, 'expiry'=>'', 'pkgnote'=>'');
 		$webVar=$this->getRec($webVarTpl,false);
-
+//dump($webVar);
  //die('www');			
 		include_once(LIB_PATH.'Model/UserModel.php');
 		include_once(LIB_PATH.'Model/GoodsModel.php');

@@ -1,0 +1,34 @@
+<!-- 按课程样式输出的频道信息 -->
+
+<foreach name="chnList" item="chn">
+    <div class="channel-list1" chnid="{$chn.chnid}">
+        <div class="left-box">
+            <!-- <img src="__ROOT__/home/default/images/adimg110.jpg" /> -->
+            <div class="channel-img" style="background-image: url( {$chn.poster} ); background-size:cover; background-position: center center;"></div>
+        </div>
+        <div class="right-box">
+            <div class="channel-desc">
+                {$chn.chnname}
+            </div>
+            <gt name="chn.classHours" value="0">
+            <div class="progress">
+                学习进度：
+                <meter min="0" max="{$chn.classHours}" value="{$chn.finishHours}"></meter>
+                {$chn.finishHours}/{$chn.classHours}
+            </div>
+            </gt>
+        </div>
+
+    </div>
+</foreach>
+<script>
+    $(".channel-list1").on("click",function (event) {
+       var obj=event.delegateTarget;
+       var chnid=$(obj).attr('chnid');
+        console.log(chnid);
+       if(0==chnid) $.messager.alert('提示','此课程已完成学习');
+       else{
+           window.location.href="__APP__/HDPlayer/play/chnId/"+chnid;
+       }
+    });
+</script>

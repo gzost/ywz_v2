@@ -1,0 +1,44 @@
+<!--
+输出用户基本信息，左侧用户头像，右侧用户信息
+-->
+
+<style>
+    .user-baseinfo{
+        box-sizing: border-box;
+        width:100%;
+        padding: 5px 2px;
+        vertical-align: top;
+    }
+    .user-baseinfo .left-box{
+        display: inline-block;
+        width: 100px;
+        text-align: center;
+    }
+    .user-baseinfo .right-box{
+        display: inline-block;
+        vertical-align: top;
+    }
+    .user-baseinfo .right-box ul{
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+    .round-icon{
+        width:64px;
+        height:64px;
+        border-radius:50%;
+    }
+</style>
+
+<div class="user-baseinfo">
+    <div class="left-box">
+        <img class="round-icon" src="__PUBLIC__/images/my.png">
+    </div>
+    <div class="right-box">
+        <ul>
+            <li>{$user.account}</li>
+            <li>昵称：{$user.username}</li>
+        </ul>
+    </div>
+
+</div>

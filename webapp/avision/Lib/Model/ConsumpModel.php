@@ -133,7 +133,7 @@ class ConsumpModel extends Model {
 		$nfields=array('userid','receipt','payment','objtype','objid','qty','users','newusers','prepayid');	//数值型字段
 		$sfields=array('happen','operator','attr','name','note');	//字串型字段
 		$tableName=C('DB_PREFIX').'consump';
-		
+//dump($record);
 		//所有字段的字串
 		$fields='';
 		foreach ($nfields as $field) $fields .=$field.',';
@@ -152,15 +152,15 @@ class ConsumpModel extends Model {
 		foreach ($sfields as $f){
 			$values .=(isset($record[$f])?"'".$record[$f]."'":'""').',';
 		}
+//dump($record);
 		$values .=$cu.' +balance ';
 //		$lastBalance=$this->lock(true)->where(array('userid'=>$record['userid']))->order('happen desc')
 //				->limit(1)->getField('balance');
-		$sql="INSERT INTO $tableName ( $fields ) SELECT $values from $tableName where id=
-			 ifnull((select max(id) from $tableName where userid=".$record['userid']."),0)";
+		$sql="INSERT INTO $tableName ( $fields ) SELECT $values from $tableName where id= ifnull((select max(id) from $tableName where userid=".$record['userid']."),0)";
 		$result=$this->execute($sql);
-
+logfile("ConsumpModel:".$this->getLastSql(),LogLevel::SQL);
 //echo $sql; 		
-		if(false===$result) throw new Exception('Insert consump failure:'.$this->getLastSql());
+		if(1 != $result) throw new Exception('Insert consump failure:'.$this->getLastSql());
 
 		return $result;
 	}

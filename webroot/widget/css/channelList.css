@@ -1,0 +1,49 @@
+@charset "utf-8";
+/**
+ * channel list 页面控件相关样式定义
+ * create: outao 2019-07-17
+ */
+
+/* *******************************************
+ 每行1个频道，图片说明左右排列的频道信息块
+********************************************* */
+/* 一个信息块的容器 */
+.channel-list1 {
+    display: block;
+    border-bottom: 1px solid #e2e2e2;
+    padding: 2px;
+    width:100%;
+    position: relative;
+}
+/* 左侧显示块 */
+.channel-list1 .left-box{
+    width: 40%; display: inline-block;
+}
+/* 右侧显示块 */
+.channel-list1 .right-box{
+    position: relative;
+    display: inline-block;
+    width:calc(60% - 5px);
+    vertical-align: top;
+    text-align: left;
+}
+/* 以底图方式等比例显示图片，保证图片充满DIV同时等比例缩放，发生裁剪时保证显示图片中部内容 */
+.channel-list1 .left-box .channel-img{
+    width: 100%;
+    height: 0;
+    padding-top: 56%;   /* 显示长宽比控制：(图片高度/图片宽度)*100 */
+    overflow: hidden;
+    background-color: #3f3f3f;
+}
+.channel-list1 .right-box .channel-desc{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    text-align: justify;
+}
+.channel-list1 .right-box .progress{
+    margin-top: 5px;
+    font-size: 0.8em;
+    color: #4f5f6f;
+}

@@ -1004,5 +1004,74 @@ class ChannelModel extends Model {
 		}
         return $info;
 	}
+
+	// 以下为2019-07-15 添加
+
+    /**
+     * 频道图片相关文件路径，查询及建立。
+     * 频道图片存储规则为：
+     *  -   存储在webroot下的子路径中，基础URL路径默认为 /room，可通过配置文件中roomImgView参数修改
+     *  -   当频道ID5位数以内时，相对路径为：/abc/de   其中abcde为前部补0的频道ID
+     *  -   当频道ID大于5位时，相对路径为：/abc/def/ghi/jk
+     *  !注意：整个路径不支持中文
+     * @param int    $chnid 频道ID
+     * @param string $base  返回路径类型：u-URL，p-物理路径，r-频道ID本身相关的相对路径
+     * @param bool $make    当目录不存在时是否建立目录
+     *
+     * @return string
+     * @throws Exception    会抛出错误需外部处理
+     */
+    static  private $defaultImgUrl="/room";     //频道图片基础存储路径
+    public function imgFilePath($chnid,$base='u',$make=false){
+	    $chnid=intval($chnid);
+	    if($chnid<1 || $chnid>99999999999) throw new Exception('频道ID越界');
+
+	    $relativePath=($chnid>99999)?sprintf("%011d",$chnid):sprintf("%05d",$chnid);
+	    for($pos=3; $pos<strlen($relativePath); $pos+=3){
+            $relativePath=substr_replace($relativePath,'/',$pos,0);
+            ++$pos;
+        }
+        $relativePath ='/'.$relativePath;
+        $pre=empty(C('roomImgView'))?self::$defaultImgUrl:rtrim(C('roomImgView'),'/');
+        $urlPath=$pre.$relativePath;
+        $physicalPath=$_SERVER['DOCUMENT_ROOT'].$urlPath;
+        if(strcasecmp($base,'r')==0 ) {
+            $returnPath = $relativePath;
+        }elseif (strcasecmp($base,'u')==0) {
+            $returnPath = $urlPath;
+        }elseif (strcasecmp($base,'p')==0) {
+            $returnPath = $physicalPath;
+        }else throw new Exception('路径类型参数错误');
+
+        //目录不存在则建立
+        if(true===$make && !is_dir($physicalPath)){
+            if(!mkdir($physicalPath,0774,true)) throw new Exception('目录创建失败');
+            if(!mkdir($physicalPath.'/photoOrg',0774,true)) throw new Exception('目录O创建失败');
+            if(!mkdir($physicalPath.'/photoL',0774,true)) throw new Exception('目录L创建失败');
+            if(!mkdir($physicalPath.'/photoM',0774,true)) throw new Exception('目录M创建失败');
+        }
+        return $returnPath;
+    }
+
+
+    static  private $defaultPosterUrl="/player/default/images/videobg.jpg"; //默认视频封面图片URL
+    /**
+     * 取视频海报图片文件URL
+     * @param int $chnid    频道id
+     * @param array $chnAttr    频道属性数组，若为null在方法内部重新读取
+     * @return string
+     * @throws Exception
+     */
+    public function getPosterUrl($chnid, $chnAttr=null){
+        $chnid=intval($chnid);
+        if($chnid<1 || $chnid>99999999999) throw new Exception('频道ID越界');
+
+        $attr = (null == $chnAttr)? $this->getAttrArray($chnid):$chnAttr;
+//dump($attr['poster']);
+        if(empty($attr['poster'])) return self::$defaultPosterUrl;
+        $path = $this->imgFilePath($chnid,'u',false).'/'.$attr['poster'];   //取视频海报图片文件URL
+//dump($path);
+        return (is_file($_SERVER['DOCUMENT_ROOT'].$path))?$path:self::$defaultPosterUrl;
+    }
 }
 ?>

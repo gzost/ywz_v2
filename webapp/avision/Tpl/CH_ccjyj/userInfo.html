@@ -1,0 +1,65 @@
+<!--
+    显示用户信息网页控件模板
+    本页面适用手机单页应用
+-->
+<style>
+.userInfo-cmdlist{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color:#001122;
+    font-size: 1.2em;
+    line-height: 2.5em;
+}
+.userInfo-cmdlist li{
+    padding: 0 10px;
+    background-color: #f6f6ff;
+    border-color: #ddd;
+    border-style: solid;
+    border-width:1px 0 0 0;
+}
+.userInfo-cmdlist li:hover{
+    background-color: #f8f6f6;
+}
+.userInfo-cmdlist li:last-child{
+    border-bottom-width:1px;
+}
+.userInfo-cmdlist li:before{
+    content: "▷ ";
+}
+</style>
+{:R('WD_UserInfo/baseInfo',array( $uid ),'Widget')}
+<div style="text-align: right; padding: 5px;">
+    <a href="__URL__/logout" class="easyui-linkbutton " plain="true" outline="true" style="width:80px">登 出</a>
+</div>
+<div id="userInfo-cmd">
+    <ul class="userInfo-cmdlist">
+        <li func="cwd">修改密码</li>
+    </ul>
+</div>
+<div id="win1" class="easyui-dialog" style="padding:5px 6px;width:80%;"
+     data-options="inline:true,modal:true,closed:true,title:'Loding...',closable:true, toolbar:'#bb' ">
+</div>
+<div id="bb" style="text-align: right; border: 0; background-color: transparent;">
+    <a href="#" class="easyui-linkbutton" data-options="{ width:80 }" onclick="$('#win1').dialog('close');"> 关闭 </a>
+</div>
+
+<script>
+    $(".userInfo-cmdlist").off("click");
+    $(".userInfo-cmdlist").on("click",function (event) {
+        console.log(event.target);
+        var obj=event.target;
+        var func=$(obj).attr('func');
+
+        switch (func){
+            case 'cwd': //修改密码
+                console.log('cwd');
+                $("#win1").dialog('open');
+                $("#win1").panel({title:"修改密码"});
+                $("#win1").window('refresh','__APP__/User/WD_changePws');
+                $("#win1").window('center');
+                break;
+
+        }
+    });
+</script>

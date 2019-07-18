@@ -2,16 +2,16 @@
 require_once APP_PATH.'../public/SafeAction.Class.php';
 require_once APP_PATH.'../public/AdminMenu.class.php';
 
-class AdminBaseAction extends SafeAction {
+class ChomeBaseAction extends SafeAction {
 	protected $isLogin='false';	//是否已登录标志，anonymous用户被排除
 	protected $isBoZhu='false';	//播主标志
 	protected $isAdmin='false';	//平台管理员标志
 	protected $themeAdmin='default';	//管理界面主题
 	protected $auth=null;	//授权对象
-	
+	protected $isMobile='true'; //是否由手机请求页面
+
 	function __construct(){
-		parent::__construct(1,'Home/index');
-		//setPara('scrType', 'w');	//目前仅支持宽屏模板
+		parent::__construct(1,'index');
 		$this->setIdentity();
     		
 	}
@@ -49,11 +49,8 @@ class AdminBaseAction extends SafeAction {
     		$webVar['isBoZhu']=$this->isBoZhu;
     	}
     	$webVar['themeAdmin']=$this->themeAdmin;
-    	//$isMobile=IsMobile()?'true':'false';
-    	$webVar['isMobile']=IsMobile()?'true':'false';
-    	$menu=new AdminMenu();
-		$webVar['menuStr']=$menu->Menu(1,authorize::getMenu());
-//dump($webVar['menuStr']);	die();	 		
+    	$this->isMobile=$webVar['isMobile']=IsMobile()?'true':'false';
+
     	$this->assign($webVar);
 		
 	}
@@ -72,8 +69,8 @@ class AdminBaseAction extends SafeAction {
     	if('w'==$scrType) $name .='_w';		//调用宽屏模板
 
 		if(!file_exists_case(T($name)))	{
-			//找不到宽屏模板，调用默认的
-			$name = $name_org;
+            //找不到宽屏模板，调用默认的
+            $name = $name_org;
 		}
     	$this->display($name);
     }

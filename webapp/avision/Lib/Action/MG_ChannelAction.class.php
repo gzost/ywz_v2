@@ -369,6 +369,7 @@ class MG_ChannelAction extends AdminBaseAction
             array("key"=>"livekeep", "name"=>"播出时长(分钟)", "gkey"=>"", "group"=>"播出设置", "value"=>"", "editor"=>array("type"=>"numberbox")),
             array("key"=>"termBeginDate", "name"=>"开始日期", "gkey"=>"", "group"=>"学习周期", "value"=>"", "editor"=>array("type"=>"datebox")),
             array("key"=>"termEndDate", "name"=>"结束日期", "gkey"=>"", "group"=>"学习周期", "value"=>"", "editor"=>array("type"=>"datebox")),
+            array("key"=>"classHours", "name"=>"学时(分钟)", "gkey"=>"", "group"=>"学习周期", "value"=>"", "editor"=>array("type"=>"numberbox")),
             array("key"=>"isbill", "name"=>"是否收费", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"text")),
             array("key"=>"billday24", "name"=>"单日费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2))),
             array("key"=>"billmonth", "name"=>"包月费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2))),

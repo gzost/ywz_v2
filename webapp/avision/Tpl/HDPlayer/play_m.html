@@ -425,8 +425,8 @@ function showMsgAni(msg)
 		<neq name="noShare" value="yes">
 		<div class="statcell" id="tbShare"><img src="/player/{$theme|default='default'}/images/zhuanfa.png" src-sel="/player/{$theme|default='default'}/images/zhuanfa_s.png" src-org="/player/{$theme|default='default'}/images/zhuanfa.png"/>分享</div>
 		</neq>
-		<!-- 增加个人信息显示  1315是临时补丁-->
-		<neq name="chnId" value="1315">
+
+		<neq name="chnId" value="1245">	 <!-- 眼科中心的临时补丁 -->
 		<div style="float: right; font-size:0.8em; margin-right: 0.5em;" onclick="loadSubscriberInfo();"><img src="/player/{$theme|default='default'}/images/my.png" height="14" style="vertical-align:text-bottom" >会员</div>
 		</neq>
 	</div>
@@ -443,6 +443,7 @@ function showMsgAni(msg)
 		<div class="imgSp"></div>
 		<div class="statcell" id="photo"><img src="/player/{$theme|default='default'}/images/album_w32.png" src-sel="/player/{$theme|default='default'}/images/album_o32.png" src-org="/player/{$theme|default='default'}/images/album_w32.png"/>相册</div>
 		</notempty>
+
 	</div>
 </div>
 

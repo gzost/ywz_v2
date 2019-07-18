@@ -256,6 +256,7 @@ class MonitorAction extends AdminBaseAction{
         }
         echo "正在发送指令...";
         $html = file_get_contents($url);
+        logfile("recordCtrl=".$url." result=".$html,LogLevel::INFO);
         if(strlen($html)>5) echo "成功";
         else echo "失败。<br>注意：对正在录像的流开始录像，或未录像的流结束录像，都会导致失败。";
 

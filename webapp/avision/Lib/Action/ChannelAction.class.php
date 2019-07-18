@@ -1606,12 +1606,21 @@ class ChannelAction extends AdminBaseAction
 	}
 
 	public function showPhoto($chnId){
-		$photos=$this->getPhotoList($chnId);
-		$webVar['photos']=$photos;
-		$webVar['chnId']=$chnId;
-		$this->assign($webVar);
-		$this->display("showPhoto_m");
-
+		//dump($_POST);
+		$work=$_POST['work'];
+		if("loadPage"==$work) {
+            $photos = $this->getPhotoList($chnId);
+            $webVar=array("photos"=>$photos);
+            $this->assign($webVar);
+            $this->display("showPhotoPage");
+        }
+		else{
+            $photos=$this->getPhotoList($chnId);
+            $webVar['photos']=$photos;
+            $webVar['chnId']=$chnId;
+            $this->assign($webVar);
+            $this->display("showPhoto_m");
+		}
 	}
 
 	//显示指定图片的原图及相关信息

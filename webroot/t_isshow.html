@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<!-- 测试元素是否在显示区域 -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+</head>
+
+<style type="text/css">
+    .box {
+        width: 100%;
+        height: 200px;
+        background: #ff0000;
+        margin-bottom: 10px;
+        text-align: center;
+        color: #fff;
+        line-height: 200px;
+        font-family: microsoft yahei;
+        font-size: 40px;
+
+    }
+    .animate{
+        animation: showText 1s;
+    }
+    @keyframes showText
+    {
+        from {
+            font-size: 20px;
+        }
+        to {
+            font-size: 40px;
+        }
+    }
+</style>
+<body>
+<div style="height: 100px;"></div>
+<div id="cont" style="height: 400px; overflow: scroll;position3: relative;">
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+    <div id="pageTag">loading...</div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+</div>
+
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+<div class="box"></div>
+</body>
+<script src="/Public/jeasyui/jquery.min.js" ></script>
+<script type="text/javascript">
+
+    var box = document.getElementsByClassName('box');
+     elm=document.getElementById('pageTag');
+     rect=elm.getBoundingClientRect();
+    console.log(rect);
+
+    var container=$("#pageTag").parent();
+    console.log("height="+container.height());
+    console.log(container);
+    container.on('scroll1',function(){
+       //console.log("sss");
+        rect=elm.getBoundingClientRect();
+        //console.log(rect);
+        var visibleBottom = container.scrollTop() ;
+        //console.log("visibleBottom="+visibleBottom);
+        var top=$("#pageTag").offset().top;
+        //console.log("top="+top);
+        var potition_top=$("#pageTag").position().top;
+        //console.log("potition_top="+potition_top);
+        var elm2=$("#pageTag");
+        var scrollTop=elm2.scrollTop() ;
+        //console.log("scrollTop="+scrollTop);
+        //滚动条高度+视窗高度 = 可见区域底部高度
+        var visibleBottom = container.scrollTop()  + container.innerHeight();
+        //可见区域顶部高度
+        var visibleTop = container.scrollTop() ;
+        //console.log("visibleTop="+visibleTop);
+
+        for (var i = 0; i < box.length; i++) {
+            var centerY = box[i].offsetTop+(box[i].offsetHeight/2);
+            if(centerY>visibleTop && centerY<visibleBottom){
+                box[i].innerHTML = i+'区域可见';
+                box[i].setAttribute("class",'box animate');
+                //console.log('第'+i+'个区域可见');
+            }else{
+                box[i].innerHTML = '';
+                box[i].setAttribute("class",'box');
+                //console.log('第'+i+'个区域不可见');
+            }
+        }
+    });
+    document.addEventListener('scroll1',function(){
+
+        //滚动条高度+视窗高度 = 可见区域底部高度
+        var visibleBottom = window.scrollY + document.documentElement.clientHeight;
+        //可见区域顶部高度
+        var visibleTop = window.scrollY;
+        //console.log("visibleTop="+visibleTop);
+         potition_top=$("#pageTag").position().top;
+        //console.log("potition_top="+potition_top);
+        for (var i = 0; i < box.length; i++) {
+            var centerY = box[i].offsetTop+(box[i].offsetHeight/2);
+            if(centerY>visibleTop && centerY<visibleBottom){
+                box[i].innerHTML = i+'区域可见';
+                box[i].setAttribute("class",'box animate');
+                //console.log('第'+i+'个区域可见');
+            }else{
+                box[i].innerHTML = '';
+                box[i].setAttribute("class",'box');
+                //console.log('第'+i+'个区域不可见');
+            }
+        }
+    });
+
+    autoPage=new OUautopage({container:"#cont",scroll:"#cont",url:"uuuu",
+    //autoPage=new OUautopage({container:"body",scroll:"document",url:"uuuu",
+        postLoad:function (opt) {
+            console.log("callback");
+            console.log(opt);
+        }
+    });
+    autoPage.setOption({url:"myurl"});
+
+    /**
+     * 注意：
+     *  - continer,scroll等摄及DOM的参数按jquery选择器格式
+     *  - 滚动区域若是全文档滚动可设为document，这时容器可以是body或随内容生长的DIV。
+     *  - 滚动区域为DIV时，container一般与scroll相同，这时DIV必须是可定位属性，如：position:relative。只要拉动到DIV底部就会触发装入新页，而忽略是否在显示区域内
+     * @param opt
+     * @constructor
+     */
+    function OUautopage(opt) {
+        console.log(opt);
+        var _this=this;
+        //默认属性
+        var option={container:"body",scroll:"document",url:"#", pagingTxt:"-- 分页线 --", loaddingTxt:"-- 正在读取数据 --", lastpageTxt:"-- 没更多数据了 --",
+            postLoad:null,  //页面载入后回调函数
+            rows:10, //每页行数或元素个数
+            page:1, //当前的页面，首页为1
+            para:{}    //发送到页面输出后台的附加参数
+        };
+
+        var isLastPage=false;   //后台是否已经输出了最后页面
+
+        //用设置的属性覆盖默认属性
+        var _setOption=function(opt){
+            for(key in option){
+                if(key in opt) option[key]=opt[key];
+                //console.log(option[key]);
+            }
+        }
+        _setOption(opt);    //设置初始化属性
+        //插入分页标志
+        var tagUUID="OUpgtag"+Math.floor((Math.random()*1000000000)+1).toString(16);
+        console.log(tagUUID);
+        var tagDom="<div id="+tagUUID+">"+option.pagingTxt+"</div>";
+        //$(option.container).append(tagDom);
+
+        var _loadPage=function(){
+            $.ajaxSettings.async = false;   //设置为同步调用
+            var data="<div class='box'> page "+option.page+"</div>";
+            $(option.container).append(data);
+            option.page++;
+            if(typeof(option.postLoad)== "function") option.postLoad(option);
+            $.ajaxSettings.async = true;
+        }
+
+        if(option.scroll=="document"){
+            //var tagOffset=$("#"+tagUUID).offset().top;  //匹配元素在当前视口的相对偏移
+            //console.log("tagOffset="+tagOffset);
+            var viewHeight=Math.max(document.documentElement.clientHeight, window.innerHeight); //获取当前浏览器的视口高度，不包括工具栏和滚动条
+            console.log("viewHeight="+viewHeight);
+            var scrollHeight=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);
+            //滚动时判断tag是否可见。
+            $(document).on("scroll",function () {
+
+                console.log("scrollHeight="+scrollHeight);
+                var scrollTop=$(document).scrollTop();
+                var i=0;
+                console.log("scrollTop="+scrollTop+"**"+(scrollHeight-scrollTop-viewHeight));
+
+                while(scrollHeight<=scrollTop+viewHeight && i++<5){ //一次最多载入5页内容
+                    console.log("next page!!!!")
+                    _loadPage(option);    //载入页面
+                    //tagOffset=$("#"+tagUUID).offset().top;  //重新计算匹配元素在当前视口的相对偏移
+                    scrollHeight=Math.max(document.documentElement.scrollHeight,document.body.scrollHeight);
+                }
+            });
+        }else{
+            //DIV内滚动
+            var viewHeight=$(option.container).innerHeight();  //容器高度，这里无法减去滚动条的高度
+            console.log("viewHeight="+viewHeight);
+            var scrollHeight=$(option.container)[0].scrollHeight;   //内容的总高度
+            $(option.scroll).on("scroll",function () {
+                var scrollTop=$(option.container).scrollTop();
+                console.log("scrollTop="+scrollTop+"**"+(scrollHeight-scrollTop-viewHeight));
+                //var tagPosition=$("#"+tagUUID).position().top;  //匹配元素相对父元素的偏移
+                //console.log("tagPosition="+tagPosition);
+                if(scrollHeight<=scrollTop+viewHeight){
+                    //底部区域可见
+                    console.log("next page----!!!!")
+                    _loadPage(option);
+                    scrollHeight=$(option.container)[0].scrollHeight;   //可能装入了内容，重新计算高度
+                }
+            });
+        }
+
+
+        _this.setOption=function(opt){
+            return _setOption(opt);
+        }
+
+
+
+    }
+</script>
+</html>

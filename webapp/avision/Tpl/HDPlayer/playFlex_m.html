@@ -12,9 +12,8 @@
 
 <load href="__PUBLIC__/NivoSlider/nivo-slider.css" />
 <load href="__PUBLIC__/NivoSlider/themes/default/default.css" />
-	<load href="__ROOT__/player/{$theme|default='default'}/css/base_m.css" />
+	<load href="__ROOT__/player/{$theme|default='default'}/css/playFlex_m.css" />
 	<load href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" />
-	<load href="__ROOT__/player/{$theme|default='default'}/css/info.css" />
 
 <load href="__PUBLIC__/jeasyui/jquery.min.js"/>
 
@@ -22,7 +21,7 @@
 <load href="__PUBLIC__/js/jquery.json.min.js"/>
 <load href="__PUBLIC__/js/publicFunction.js"/>
 <script type="text/javascript" src="/player/js/webChat.js?t={$time}"></script>
-<load href="__PUBLIC__/NivoSlider/jquery.nivo.slider.pack.js"/>
+
 <load href="__PUBLIC__/js/qrcode.js" />
 <load href="__PUBLIC__/js/jquery.qrcode.js" />
 <load href="__ROOT__/player/js/video.js" />
@@ -124,7 +123,7 @@ function selImgChange(idName)
 
 function recPlayLoad(recId)
 {
-	location.href = "{$myurl}" + "&r=" + recId;
+    location.href = "{$myurl}" + "&r=" + recId+"&tab=104";	//加上tab参数通知下一页，用tab值覆盖默认tab配置值
 }
 
 function recPlay(recId)
@@ -237,47 +236,98 @@ $(document).ready(function(){
 	if('' == rId)
 	{
 		//直播模式
-		tbInfoClick();
+		//tbInfoClick();
+        livePlayerLoad();
 	}
 	else
 	{
 		//录像模式
-		tbRePlayClick();
+		//tbRePlayClick();
 		recPlay(rId);
 	}
 
 	//$('#tbInfo').click(tbInfoClick);
+	/*
     $('#tbInfo').click(function(){
         location.href = "__ACTION__"+"/chnId/{$chnId}";
 	});
+*/
+	//$('#tbRePlay').click(tbRePlayClick);
 
-	$('#tbRePlay').click(tbRePlayClick);
-
-	$('#tbDiscu').click(tbDiscuClick);
+	//$('#tbDiscu').click(tbDiscuClick);
 
 	$('#tbVote').click(tbVoteClick);
-
 	$('#tbBillPay').click(tbBillPayClick);
-
-	$('#tbShare').click(tbShareClick);
-
 	$('#tbEntrytimes').click(tbEntrytimesClick);
-
-	$('#msgShow').click(hidenMsg);
-	$('#photo').click(function(){
-        selImgChange('photo');
-	    DivLoadHtml('__APP__/Channel/showPhoto/chnId/{$chnId}', 'divMore','',function(status){
-			console.log('callback:'+status);
+    /*
+        //$('#msgShow').click(hidenMsg);
+        $('#photo').click(function(){
+            selImgChange('photo');
+            DivLoadHtml('__APP__/Channel/showPhoto/chnId/{$chnId}', 'divMore','',function(status){
+                console.log('callback:'+status);
+            });
         });
-        DivMoreFit(false);
+     */
+        $(window).on('HeartBeatSuccess',function (event,data) {
+            //console.log('proc HeartBeatSuccess');
+            //console.log(data);
+        });
+
+
+
+	//响应导航条上的click消息
+	$(".func-tabs").on("click",function (event) {
+	    var obj=event.target;
+		console.log(obj);
+		var tabid=$(obj).attr("tabid");
+		switch (tabid){
+			case "101":		//介绍
+				if(rId !='')
+                	location.href = "__ACTION__"+"/chnId/{$chnId}"+"/tab/101";
+                else{
+                    livePlayerLoad();
+                    DivLoadHtml('__APP__/HDPlayer/infoPage/chnId/{$chnId}', 'divMore');
+				}
+			    break;
+			case "102":	//讨论
+                tbDiscuClick();
+                break;
+			case "103":		//排行榜
+				break;
+			case "104":		//点播
+                tbRePlayClick();
+                break;
+			case "105":		//图片直播
+                DivLoadHtml('__APP__/Channel/showPhoto/chnId/{$chnId}', 'divMore','',function(status){
+                    console.log('callback:'+status);
+                });
+                DivMoreFit(false);
+				break;
+			case "106":		//会员
+                loadSubscriberInfo();
+                break;
+			case "107":		//分享
+                tbShareClick();
+                tabid=activtab;		//保持原激活的tab不变
+				break;
+			case "menu":	//扩展菜单
+                $("#more-menu").dialog('open');
+				break;
+		}
+        $(".tab-list>div[tabid='"+activtab+"']").removeClass('tab-selected');
+		activtab=tabid;
+        $(".tab-list>div[tabid='"+activtab+"']").addClass('tab-selected');
+
     });
-
-	$(window).on('HeartBeatSuccess',function (event,data) {
-		console.log('proc HeartBeatSuccess');
-		console.log(data);
-    });
-
-
+    //设置当前活跃tab，必须要在设了Onclick之后
+//console.log("refurl="+document.referrer);
+    var activtab="{$activetab}";
+    //alert(activtab);
+    if(activtab!=""){
+        console.log("setactive!!"+activtab);
+        //$(".tab-list>div[tabid='"+activtab+"']").addClass('tab-selected');
+        $(".tab-list>div[tabid='"+activtab+"']").click();
+    }
 });
 
 function genQrcode()
@@ -414,36 +464,119 @@ function showMsgAni(msg)
 </div>
 <div class="msgFlow" id="msgShow">
 </div>
-<div class="flex-row">
-	<div class="contRow1" style="height:0.9em;font-size:0.8em;">
-		<div class="statcell" id="tbEntrytimes"><img src="/player/{$theme|default='default'}/images/bofan.png" src-sel="/player/{$theme|default='default'}/images/bofan_s.png" src-org="/player/{$theme|default='default'}/images/bofan.png"/><span id="entrytimes">{$entrytimes}</span> </div>
-		<div class="statcell" id="tbBillPay">
-		<!--
-		<img src="/player/{$theme|default='default'}/images/dianzhang.png" src-sel="/player/{$theme|default='default'}/images/dianzhang_s.png" src-org="/player/{$theme|default='default'}/images/dianzhang.png"/><span id="billpay"></span>订阅/打赏--></div>
-		<neq name="noShare" value="yes">
-		<div class="statcell" id="tbShare"><img src="/player/{$theme|default='default'}/images/zhuanfa.png" src-sel="/player/{$theme|default='default'}/images/zhuanfa_s.png" src-org="/player/{$theme|default='default'}/images/zhuanfa.png"/>分享</div>
-		</neq>
 
-		<neq name="chnId" value="1245">	 <!-- 眼科中心的临时补丁 -->
-		<div style="float: right; font-size:0.8em; margin-right: 0.5em;" onclick="loadSubscriberInfo();"><img src="/player/{$theme|default='default'}/images/my.png" height="14" style="vertical-align:text-bottom" >会员</div>
-		</neq>
+
+<style>
+	/**	 中部导航栏的样式定义  */
+	.func-tabs{
+		/* 导航条容器 */
+		position: relative;
+		box-sizing: border-box;
+		white-space: nowrap;
+		overflow: hidden;
+		padding:0;
+		margin: 4px 0;	/* 拉开距离是为了显示阴影效果*/
+		box-shadow: 0 1px 3px 3px #eee;
+		border-bottom: 1px solid #e5e6e7;
+		width: 100%;
+		font-size: 13px;
+		color: #3a3a3a;
+		line-height: 24px;
+		background-color: #fcfdfe;
+		height: 26px;
+	}
+	.tab-list{
+		display:inline-flex;
+		width: calc(100% - 37px);
+		flex-flow:row nowrap;
+		white-space: nowrap;
+		justify-content:space-around;
+		overflow-x: scroll;
+	}
+	.more-menu{
+		display: inline-block;
+		width: 36px;
+		text-align: center;
+		border-left: 1px solid #eee;
+		border-bottom: 1px solid #f1f2f3;
+	}
+	.tab-list div{
+		flex-grow: 1;
+		padding: 0 0.6em;
+		text-align: center;
+		border-bottom: 1px solid #f1f2f3;
+
+	}
+	.tab-list .tab-selected{
+		border-color: #02aaf1;
+		color:#02aaf1;
+	}
+
+	/* 综合功能选择菜单内部样式定义 */
+	.boxmenu{
+		/*菜单容器*/
+		box-sizing: border-box;width: 100%;
+		display: flex; flex-flow: row wrap;
+		background-color: #fafbfd;
+	}
+	.boxmenu .menu-item{
+		/* 菜单块 */
+		box-sizing: border-box;
+		display:inline-block;
+		width:25%; 	/* 每行显示4块 */
+		padding-bottom: 25%; height: 0;	/* 实现高度跟随宽度变化 */
+		border: 1px solid #eee;
+		text-align: center;
+	}
+
+	.boxmenu .menu-item .menu-img{
+		margin-top: 5px;
+		line-height: 36px;
+		font-size: 32px;
+	}
+	.boxmenu .menu-item .menu-txt{
+		margin-top: 10px;
+	}
+</style>
+	<div class="func-tabs">
+		<div class="tab-list">
+			<foreach name="tabs" key="tabid" item="tabtext">
+				<div tabid="{$tabid}">{$tabtext}</div>
+			</foreach>
+
+		</div>
+		<div class="more-menu" tabid="menu">∇</div>
 	</div>
 
-	<div class="contRow2" style="height:1em;">
-		<div class="statcell" id="tbInfo"><img src="/player/{$theme|default='default'}/images/renxian.png" src-sel="/player/{$theme|default='default'}/images/renxian_s.png" src-org="/player/{$theme|default='default'}/images/renxian.png"/>
-			介绍
+<div id="more-menu" class="easyui-dialog" style="padding:0;width:90%;"
+	 data-options="modal:true,closed:true,title:'综合功能选择',closable:true ">
+	<div class="boxmenu" >
+		<div class="menu-item" func="share">
+			<div class="menu-img">👍</div>
+			<div class="menu-txt">分享</div>
 		</div>
-		<div class="imgSp"></div>
-		<div class="statcell" id="tbRePlay"><img src="/player/{$theme|default='default'}/images/huifan.png" src-sel="/player/{$theme|default='default'}/images/huifan_s.png" src-org="/player/{$theme|default='default'}/images/huifan.png"/>回放</div>
-		<div class="imgSp"></div>
-		<div class="chatCell{$CanChat}" id="tbDiscu"><img src="/player/{$theme|default='default'}/images/pinglun.png" src-sel="/player/{$theme|default='default'}/images/pinglun_s.png" src-org="/player/{$theme|default='default'}/images/pinglun.png"/>讨论</div>
-		<notempty name="tabs['105']">
-		<div class="imgSp"></div>
-		<div class="statcell" id="photo"><img src="/player/{$theme|default='default'}/images/album_w32.png" src-sel="/player/{$theme|default='default'}/images/album_o32.png" src-org="/player/{$theme|default='default'}/images/album_w32.png"/>相册</div>
-		</notempty>
-
+		<div class="menu-item" func="member">
+			<div class="menu-img">🤝</div>
+			<div class="menu-txt">会员</div>
+		</div>
+		<div class="menu-item"></div>
+		<div class="menu-item"></div>
 	</div>
 </div>
+<script>
+	$(".boxmenu .menu-item").on("click",function (event) {
+        $("#more-menu").dialog('close');
+	    var obj=event.delegateTarget;
+		console.log(obj);
+		var func=$("obj").attr('func');
+		switch (func){
+			case "share":
+			    break;
+			case "member":
+			    break;
+		}
+    });
+</script>
 
 	<!--下部可变内容，宣传介绍，-->
 	<div id="divMore"  style="min-height:200px;">
@@ -466,6 +599,8 @@ function showMsgAni(msg)
 	<div id="divLayer" class="divLayer" style="display:none;">
 	</div>
 <img id="logoimg" src="{$logoImg}" style="display:none;"/>
+
+
 </body>
 
 </html>

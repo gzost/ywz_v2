@@ -1,6 +1,6 @@
 @CHARSET "UTF-8";
 #chatMsg{
-	*position: relative;
+	position: relative;
 	top:0px;
 	left:0px;
 	padding: 0px 0px;
@@ -29,13 +29,13 @@
 }
 
 .msgContent{
-	padding:0.4em;
-	border-radius:0.4em;
+	padding:5px;
+	border-radius:5px;
 	border:1px solid #f0f0f0;
 	background:#fff;
 	color: #3a3a3a;
 	font-family:"微软雅黑","宋体",Courier, "Courier New", monospace ;
-	font-size: 0.7em; line-height:1em;
+	font-size: 12px; line-height:14px;
 	white-space:pre-line;
 	overflow-wrap: break-word;
 	word-wrap:break-word;

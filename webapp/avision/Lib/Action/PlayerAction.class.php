@@ -19,7 +19,7 @@ require_once(LIB_PATH.'Model/CashFlowModel.php');
 require_once(LIB_PATH.'Model/UserPassModel.php');
 require_once(LIB_PATH.'Model/UserModel.php');
 
-class HDPlayerAction extends SafeAction {
+class PlayerAction extends SafeAction {
 
 	const ONLINEID='onlineId';		//在线ID变量名
 	//protected $author=null;	//授权对象
@@ -638,7 +638,6 @@ logfile('WhatViewer:'.$st);
 	 * $account
 	 * $u 传播的userId
 	 * $r	视频点播记录ID
-	 * $tab	从前端传入的默认tab编号，这将覆盖频道配置的默认tab
 	 */
 	protected $playingChannel=0;
 	protected $playingFile=0;
@@ -839,9 +838,7 @@ logfile('WhatViewer:'.$st);
 			$tabs[$row['val']]=$row['text'];
 		}
         $this->assign('tabs',$tabs);
-		$activetab=getPara('tab');	//从前端传入的默认tab编号，这将覆盖频道配置的默认tab
-		if(empty($activetab)) $activetab=(empty($tabArr['activetab']))?'':$tabArr['activetab'];
-		$this->assign('activetab',$activetab);
+		$this->assign('activetab',$tabArr['activetab']);
 //dump($tabs);
 		if(IsMobile())
 		{

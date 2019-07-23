@@ -1,19 +1,27 @@
 @CHARSET "UTF-8";
+#infoShow{
+	width:100%;background-color:#fff;
+}
 #infoShow div{
 	width:100%;
-	margin: 0px;
+	margin: 0;
 	padding: 0;
 }
-
-#infoShow p{
-    display: block;
-	word-wrap:break-word;
+#infoShow img{
+	display:block;
+	width:100%;
 }
 
-.txtIndent{
-	font-size:16px;
-	line-height:24px;
-	padding-top:5px;
-	padding-bottom:5px;
-	color:chocolate;
+#infoShow .txtIndent{
+	box-sizing: border-box;
+	word-wrap:break-word;
+	font-size:14px;
+	line-height:20px;
+	padding:3px 5px;
+	color:#313131;
+}
+#infoShow a{
+	text-decoration:none ;
+	color: #446;
+	font-weight: 600;
 }

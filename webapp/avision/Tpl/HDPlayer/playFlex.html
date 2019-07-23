@@ -21,17 +21,16 @@
 <script type="text/javascript" src="__PUBLIC__/js/qrcode.js"></script>
 <script type="text/javascript" src="__PUBLIC__/js/jquery.qrcode.js"></script>
 <script type="text/javascript" src="__PUBLIC__/js/publicFunction.js"></script>
-<script type="text/javascript" src="/player/js/keepAlive.js?t={$time}"></script>
 <script type="text/javascript" src="/player/js/webChat.js?t={$time}"></script>
 <script type="text/javascript" src="__ROOT__/player/js/video.js"></script>
-
+	<script type="text/javascript" src="/player/js/keepAlive.js?t={$time}"></script>
 
 <style type="text/css">
 
 div{
 	position:relative;
 	margin:0 auto;
-	display:inline-block;
+	/*display:inline-block;*/
 	vertical-align:top;
 	text-align:left;
 	overflow:hidden;
@@ -43,6 +42,7 @@ div{
 
 .bodyLeftCanChat{
 	width:865px;
+	display: inline-block;
 }
 
 .bodyLeft{
@@ -52,6 +52,7 @@ div{
 .bodyRightCanChat{
 	width:320px;
 	margin-left:4px;
+	display:inline-block;
 }
 
 .bodyRight{
@@ -104,7 +105,7 @@ div{
 .bodyChat{
 	width:320px;
 	#height:380px;
-	height:560px;
+	height:568px;
 	text-align:left;
 }
 
@@ -125,21 +126,6 @@ div{
 	color:#FFF;
 }
 
-.msgFlow{
-	display:none;
-	position:absolute;
-	margin:auto;
-	left:0;
-	right:0;
-	top:178px;
-	background-color:#333;
-	line-height:1.2em;
-	font-size:1.2em;
-	z-index:98;
-	color:#F00;
-	height:1.2em;
-	overflow:hidden;
-}
 
 #divGuaidShare{
 	position:fixed;
@@ -159,7 +145,7 @@ div{
 .contRow{
 	color:#FFF;
 	display:block;
-	padding:0.3em 0.1em 0.3em 0.1em;
+	padding:0.3em 0em 0.3em 0em;
 }
 
 .contRow img{
@@ -289,8 +275,36 @@ div{
 	opacity:1;
 	padding:5px;
 }
+.msgFlow{
+	/*
+        position:absolute;
+        margin:auto;
+        left:0;
+        right:0;
+        top:178px;
+        */
+	display: none;
+	background-color:#333;
+	line-height:1.2em;
+	font-size:1.2em;
+	/*z-index:98;*/
+	color:#F00;
+	height:1.2em;
+	overflow:hidden;
+}
 
-
+.scroll-left{
+	box-sizing: border-box;
+	animation:move-left 10s ease-in;
+	/*-webkit-animation:move-left 15s ; Safari and Chrome*/
+	animation-fill-mode:forwards;
+}
+@keyframes move-left{
+	50%   {padding-left:0px;}
+	70%	{padding-left:40px;;}
+	80%  {padding-left:10px;opacity: 1;}
+	100% {padding-left:10px; opacity: 0;}
+}
 </style>
 
 <script type="text/javascript">
@@ -302,6 +316,7 @@ var nowPlayType = '';
 var nowVodId = '';
 
 ////心跳设置的变量////
+var heart = new HeartBeat();
 var aliveTime={$aliveTime};	//心跳间隔秒数
 var onlineId={$onlineId};	//在线ID
 //在线对象列表，列表属性：
@@ -310,30 +325,11 @@ var keepAliveUrl="__APP__/HDPlayer/keepAlive";
 var startOnlineUrl="__APP__/HDPlayer/startOnline";
 var stopOnlineUrl="__APP__/HDPlayer/stopOnline";
 var logoutUrl="__APP__/Home/logout";
+heart.keepAlive();	//开始发送心跳
 /////////
 
 var jsCanChat = '{$CanChat}';
 
-//创建心跳管理对象
-var heart = new HeartBeat();
-
-heart.onMsgExit = heartMsgExit;
-
-function heartMsgExit(msg)
-{
-	try
-	{
-		//停止播放
-		StopVideo();
-	}
-	catch (e)
-	{
-	}
-	var url = '/';
-	//显示消息，确认后跳转
-	$('#divLayer').show();
-	DivLoadHtml('/home.php/Console/fullMsg', 'divLayer', 'msg='+msg+'&jump='+url);
-}
 
 //Demo用活动计费对象ID
 var viewId=0;
@@ -342,7 +338,8 @@ function onlineSuccess(onlineId,data){
 }
 
 function onlineError(msg,data){
-	//alert(msg)
+	alert(msg);
+    window.location.replace("{$myurl}");
 }
 
 function offlineCallback(result,data){
@@ -414,7 +411,9 @@ function tbInfoClickEx()
 function tbRePlayClick()
 {
 	//DivMoreFit(true);
-	DivLoadHtml('__APP__/HDPlayer/recordPage/chnId/{$chnId}', 'divMore');
+	//DivLoadHtml('__APP__/HDPlayer/recordPage/chnId/{$chnId}', 'divMore');
+    var para={ chnId:{$chnId}, rId: "{$rId}" };
+    DivLoadHtmlPost('__APP__/HDPlayer/recordPage', 'divMore', para);
 	selImgChange('tbRePlay');
 	//DivMoreFit(true);
 }
@@ -486,6 +485,10 @@ function onVideoClick()
 
 var chat = null;
 $(document).ready(function(){
+    //设置当前URL
+    var nowURL="{$myurl}";
+    console.log("myurl:"+nowURL);
+    history.replaceState(null,null,nowURL);
 
 	//创建交流实例，并设置基本参数
 	if('CanChat' == jsCanChat)
@@ -500,10 +503,6 @@ $(document).ready(function(){
 		chat.init();
 	}
 	
-	//定时发送心跳
-	heart.keepAlive();
-	//keepAlive();
-
 	if('' == rId || '0' == rId)
 	{
 		//直播模式
@@ -538,8 +537,12 @@ function hidenMsg()
 
 function showMsgAni(msg)
 {
+    return;
 	if(0 < msg.length)
 	{
+        $('#msgShow').text(msg);
+        $('#msgShow').show();
+        return;
 		$('#msgShow').text(msg);
 		//$('#msgShow').css('width', $('.contRow').css('width'));
 		$('#msgShow').css('width', '200px');
@@ -579,7 +582,8 @@ function onPlayEven()
 	heart.startOnline($('#h5Player').attr('filetype')
 						,$('#h5Player').attr('innerId')
 						,onlineSuccess
-						,onlineError);
+						,onlineError,"{$chnId}"
+	);
 }
 
 function onStopEven()
@@ -595,7 +599,10 @@ function onResizeEven()
 {
 	//DivMoreFit(moreFit);
 }
-
+//append by outao 2018-10-13
+function loadSubscriberInfo() {
+    DivLoadHtml('__APP__/My/showMyInfo/chnid/{$chnId}', 'divMore');
+}
 </script>
 </head>
 <body style="background-color:#FFF;font-size:24px;line-height:24px;text-align:center;padding:0;margin-top:1em;background-image: url(/player/{$theme|default='default'}/images/bg.jpg);background-repeat: no-repeat;">
@@ -605,8 +612,17 @@ function onResizeEven()
 			<div>
 				<img id="logoImg" src="{$logoImg}" width="64" height="64"/>
 			</div>
-			<div class="bodyTitle">
+			<div class="bodyTitle" style="width:500px; display: inline-block;">
 				{$title}
+			</div>
+			<!-- 增加个人信息显示 1315是临时补丁-->
+			<neq name="chnId" value="1315">
+			<div style="float: right; font-size:0.8em; margin-right: 1em;" onclick="loadSubscriberInfo();">
+				<img src="/player/{$theme|default='default'}/images/renxian_s.png" height="18" style="vertical-align:middle" >
+			</div>
+			</neq>
+			<div style="float: right; text-align:right; width:10em; font-size:0.8rem; overflow: hidden">
+				{$username}
 			</div>
 			<div class="btnLink">
 				<div id="tbEntrytimes" style="cursor:pointer;">
@@ -651,13 +667,12 @@ function onResizeEven()
 	</div>
 </div>
 
-	<div class="msgFlow" id="msgShow">
-	</div>
-
 	<div class="contRow" style="width:1200px;height:1em;background-color:#333333">
-		<div class="statcell" id="tbInfo"><img src="/player/{$theme|default='default'}/images/renxian.png" src-sel="/player/{$theme|default='default'}/images/renxian_s.png" src-org="/player/{$theme|default='default'}/images/renxian.png"/>介绍</div>
+		<div class="statcell" id="tbInfo"><img src="/player/{$theme|default='default'}/images/renxian.png" src-sel="/player/{$theme|default='default'}/images/renxian_s.png" src-org="/player/{$theme|default='default'}/images/renxian.png"/>直播</div>
 		<div class="imgSp"></div>
-		<div class="statcell" id="tbRePlay"><img src="/player/{$theme|default='default'}/images/huifan.png" src-sel="/player/{$theme|default='default'}/images/huifan_s.png" src-org="/player/{$theme|default='default'}/images/huifan.png"/>回看</div>
+		<div class="statcell" id="tbRePlay"><img src="/player/{$theme|default='default'}/images/huifan.png" src-sel="/player/{$theme|default='default'}/images/huifan_s.png" src-org="/player/{$theme|default='default'}/images/huifan.png"/>录像</div>
+		<div id="msgShow" class="scroll-left msgFlow" style="position: relative; top:-34px; width:100%;   padding-left: 80%;"></div>
+
 	</div>
 
 	<!--下部可变内容，宣传介绍，-->

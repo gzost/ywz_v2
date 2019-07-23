@@ -1258,7 +1258,7 @@ class ChannelAction extends AdminBaseAction
 	{
 		//暂不使用娱乐类
 		//echo '[{"value":"play","name":"默认模板"},{"value":"playPay","name":"娱乐类"}]';
-        echo '[{"value":"play","name":"默认模板"}]';
+        echo '[{"value":"play","name":"默认模板"},{"value":"playFlex","name":"弹性模板"}]';
 	}
 
 	public function PlayTypeComboxData()

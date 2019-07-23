@@ -68,10 +68,10 @@ class ChomeBaseAction extends SafeAction {
 		$name_org = $name;
     	if('w'==$scrType) $name .='_w';		//调用宽屏模板
 
-		if(!file_exists_case(T($name)))	{
-            //找不到宽屏模板，调用默认的
-            $name = $name_org;
-		}
+        if(!file_exists_case(T($name)))	{
+            //找不到模板，交换宽、竖屏
+            $name = ('w'==$scrType)? $name_org: $name.'_w';
+        }
     	$this->display($name);
     }
 }

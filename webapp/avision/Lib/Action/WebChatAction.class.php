@@ -26,7 +26,7 @@ class WebChatAction extends SafeAction {
 	public function IsAdmin($chnId = 0)
 	{
 		$userInfo=authorize::getUserInfo();
-
+//var_dump($userInfo);
 		if(isset($_SESSION["WebChat"]['IsAdmin']))
 		{
 			return $_SESSION["WebChat"]['IsAdmin'];
@@ -107,7 +107,7 @@ class WebChatAction extends SafeAction {
 	public function webChat($channelId=0){
 		//获取角色，是否主播或管理员
 		$isAdmin = $this->IsAdmin($channelId);
-
+//var_dump($isAdmin,$channelId);
 		//echo json_encode(array('success'=>'true', 'html'=>'hhhkkk')); 		return;
 //var_dump($webvar);
 		$eliminate=date('Y-m-d',strtotime("-2 month")); //删除2个月前的聊天记录

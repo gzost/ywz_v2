@@ -3,6 +3,7 @@
 	set_time_limit(180);
     return array(
         /////////////数据库配置信息
+        'DB_CHARSET'=> 'utf8mb4',
         'DB_TYPE'   => 'mysql', // 数据库类型
         'DB_HOST'   => 'localhost', // 服务器地址
         'DB_NAME'   => 'ywz', // 数据库名

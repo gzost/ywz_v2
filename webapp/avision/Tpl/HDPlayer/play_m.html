@@ -13,7 +13,8 @@
 <load href="__PUBLIC__/NivoSlider/nivo-slider.css" />
 <load href="__PUBLIC__/NivoSlider/themes/default/default.css" />
 	<load href="__ROOT__/player/{$theme|default='default'}/css/base_m.css" />
-	<load href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" />
+<!--	<load href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" /> -->
+<link href="__ROOT__/player/{$theme|default='default'}/css/webChat.css?t={$time}" rel="stylesheet" type="text/css" >
 	<load href="__ROOT__/player/{$theme|default='default'}/css/info.css" />
 
 <load href="__PUBLIC__/jeasyui/jquery.min.js"/>
@@ -420,23 +421,26 @@ function showMsgAni(msg)
 		<div class="statcell" id="tbBillPay">
 		<!--
 		<img src="/player/{$theme|default='default'}/images/dianzhang.png" src-sel="/player/{$theme|default='default'}/images/dianzhang_s.png" src-org="/player/{$theme|default='default'}/images/dianzhang.png"/><span id="billpay"></span>订阅/打赏--></div>
-		<neq name="noShare" value="yes">
-		<div class="statcell" id="tbShare"><img src="/player/{$theme|default='default'}/images/zhuanfa.png" src-sel="/player/{$theme|default='default'}/images/zhuanfa_s.png" src-org="/player/{$theme|default='default'}/images/zhuanfa.png"/>分享</div>
-		</neq>
-
-		<neq name="chnId" value="1245">	 <!-- 眼科中心的临时补丁 -->
-		<div style="float: right; font-size:0.8em; margin-right: 0.5em;" onclick="loadSubscriberInfo();"><img src="/player/{$theme|default='default'}/images/my.png" height="14" style="vertical-align:text-bottom" >会员</div>
-		</neq>
+		<notempty name="tabs['107']">
+			<div class="statcell" id="tbShare"><img src="/player/{$theme|default='default'}/images/zhuanfa.png" src-sel="/player/{$theme|default='default'}/images/zhuanfa_s.png" src-org="/player/{$theme|default='default'}/images/zhuanfa.png"/>分享</div>
+		</notempty>
+		<notempty name="tabs['106']">
+			<div style="float: right; font-size:0.8em; margin-right: 0.5em;" onclick="loadSubscriberInfo();"><img src="/player/{$theme|default='default'}/images/my.png" height="14" style="vertical-align:text-bottom" >会员</div>
+		</notempty>
 	</div>
 
 	<div class="contRow2" style="height:1em;">
 		<div class="statcell" id="tbInfo"><img src="/player/{$theme|default='default'}/images/renxian.png" src-sel="/player/{$theme|default='default'}/images/renxian_s.png" src-org="/player/{$theme|default='default'}/images/renxian.png"/>
 			介绍
 		</div>
-		<div class="imgSp"></div>
-		<div class="statcell" id="tbRePlay"><img src="/player/{$theme|default='default'}/images/huifan.png" src-sel="/player/{$theme|default='default'}/images/huifan_s.png" src-org="/player/{$theme|default='default'}/images/huifan.png"/>回放</div>
-		<div class="imgSp"></div>
-		<div class="chatCell{$CanChat}" id="tbDiscu"><img src="/player/{$theme|default='default'}/images/pinglun.png" src-sel="/player/{$theme|default='default'}/images/pinglun_s.png" src-org="/player/{$theme|default='default'}/images/pinglun.png"/>讨论</div>
+		<notempty name="tabs['104']">
+			<div class="imgSp"></div>
+			<div class="statcell" id="tbRePlay"><img src="/player/{$theme|default='default'}/images/huifan.png" src-sel="/player/{$theme|default='default'}/images/huifan_s.png" src-org="/player/{$theme|default='default'}/images/huifan.png"/>回放</div>
+		</notempty>
+		<notempty name="tabs['102']">
+			<div class="imgSp"></div>
+			<div class="chatCellCanChat" id="tbDiscu"><img src="/player/{$theme|default='default'}/images/pinglun.png" src-sel="/player/{$theme|default='default'}/images/pinglun_s.png" src-org="/player/{$theme|default='default'}/images/pinglun.png"/>讨论</div>
+		</notempty>
 		<notempty name="tabs['105']">
 		<div class="imgSp"></div>
 		<div class="statcell" id="photo"><img src="/player/{$theme|default='default'}/images/album_w32.png" src-sel="/player/{$theme|default='default'}/images/album_o32.png" src-org="/player/{$theme|default='default'}/images/album_w32.png"/>相册</div>

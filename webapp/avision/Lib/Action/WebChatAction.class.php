@@ -25,8 +25,11 @@ class WebChatAction extends SafeAction {
 
 	public function IsAdmin($chnId = 0)
 	{
-		$userInfo=authorize::getUserInfo();
-//var_dump($userInfo);
+		//$userInfo=authorize::getUserInfo();
+
+//var_dump($_SESSION["WebChat"]['IsAdmin'],isset($_SESSION["WebChat"]['IsAdmin']));
+//var_dump($this->isOpPermit('F'));
+        /*
 		if(isset($_SESSION["WebChat"]['IsAdmin']))
 		{
 			return $_SESSION["WebChat"]['IsAdmin'];
@@ -36,7 +39,7 @@ class WebChatAction extends SafeAction {
 		{
 			//return $_SESSION["WebChat"]['IsAdmin'];
 		}
-
+*/
 		$_SESSION["WebChat"]['IsAdmin'] = false;
 		//哪些人有权禁言？
 		//管理员或监督员
@@ -47,7 +50,7 @@ class WebChatAction extends SafeAction {
 
 		//是否主播
 		$model = new ChannelModel();
-		$isMaster = $model->isMaster($chnId, $userInfo['userId']);
+		$isMaster = $model->isMaster($chnId, $this->userId());//$userInfo['userId']
 		//var_dump($anchorId);
 		//var_dump($userInfo['userId']);
 		if($isMaster)
@@ -108,6 +111,8 @@ class WebChatAction extends SafeAction {
 		//获取角色，是否主播或管理员
 		$isAdmin = $this->IsAdmin($channelId);
 //var_dump($isAdmin,$channelId);
+//dump($_SESSION['userinfo']);
+
 		//echo json_encode(array('success'=>'true', 'html'=>'hhhkkk')); 		return;
 //var_dump($webvar);
 		$eliminate=date('Y-m-d',strtotime("-2 month")); //删除2个月前的聊天记录
@@ -123,8 +128,9 @@ class WebChatAction extends SafeAction {
 		{
 			$this->assign('showfullurl', '');
 		}
+		$this->assign("isAdmin",$isAdmin);
 		$this->assign('messageList',$this->getChat());
-		$this->assignB($this->webvar);
+		$this->assign($this->webvar);
 
 		$html=$this->fetch('WebChat:webChat');
 		$result=array('success'=>'true', 'html'=>$html, 'lastMsgId'=>$this->webvar['lastMsgId'], 'isCanChat'=>$this->IsCanChat($this->webvar['channelId']));
@@ -187,8 +193,13 @@ class WebChatAction extends SafeAction {
 		if(null==$result) return '';	//出错或没有新数据返回此信息
 		else {
 			$this->webvar['lastMsgId']=$result[0][id];
-//echo $result[0][id];			
+            $result=array_reverse($result); //反转为时间顺序
+			$webVar=array('isAdmin'=>$this->IsAdmin(), 'msgList'=>$result);
+			$this->assign($webVar);
 			$htmlStr='';
+            $htmlStr=$this->fetch("WebChat:getChat");
+            return $htmlStr;
+
 			foreach ($result as $rec){
 				$htmlStr=$this->genMsgItem($rec).$htmlStr;
 				//echo $htmlStr; echo "<p>=====<p>";

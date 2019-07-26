@@ -1,0 +1,15 @@
+<!--
+    渲染新的聊天信息
+-->
+<foreach name="msgList" item="msg">
+    <div class="chat-item">
+        <div class="left-box" sender="{$msg.senderid}">
+            <div class="bg-img" style="background-image: url(__PUBLIC__/images/user.jpg)"></div>
+        </div>
+        <div class="right-box">
+            <div class="msg-info">{$msg.sendername}</div>
+            <div class="msg-text">{$msg.message}</div>
+        </div>
+    </div>
+
+</foreach>

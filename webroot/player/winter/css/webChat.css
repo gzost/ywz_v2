@@ -1,6 +1,18 @@
 @CHARSET "UTF-8";
-#chatMsg{
+/* 互动聊天区样式 */
+
+.wechat-container{
+	/* 聊天区总容器，垂直弹性布局，通过聊天信息区自动伸缩，自动适应底部功能区高度的变化 */
+	display: flex;
+	flex-flow: column nowrap;
 	position: relative;
+	height:100%;width: 100%;"
+}
+#chatMsg{
+	/*聊天信息容器*/
+	position: relative;
+	box-sizing: border-box;
+	flex-shrink:2;
 	top:0px;
 	left:0px;
 	padding: 0px 0px;
@@ -8,60 +20,140 @@
 	overflow-x:hidden;
 	overflow-y:auto;
 	width:100%;
+	height: 100%;
 }
-#chatFunction{
-	padding: 1px 10px;
-	margin: 1px 0px;
-	background:#ccc;
+.chat-item, .chat-item div{
+	position: relative;
+	box-sizing: border-box;
+}
+.chat-item{
+	/* 一条聊天信息容器*/
+	display: flex;
+	flex-flow: row nowrap;
+	justify-content: flex-start;
+	width: 100%;
+	padding: 5px 10px;
+
+}
+.chat-item .left-box{
+	/*聊天左侧块*/
+	display: inline-block;
+	width: 10%;
+}
+.chat-item .right-box{
+	/*聊天右侧块*/
+	display: inline-block;
+	margin-left:5px;
+	width: 90%;
+	line-height: 12px;
+}
+
+.chat-item .left-box .bg-img{
+	width: 100%;
+	padding-top: 100%;
+	height:0;
+	background-size: cover;
+	background-position: center;
+	background-color: #0b89ca;
+	border-radius: 5px;
+}
+.chat-item .right-box .msg-info{
+	/*信息发送者，时间等附加信息*/
+	font-size: 8px;
+	color: #aaa;
+}
+.chat-item .right-box .msg-text{
+	/*聊天信息文本*/
+	display:inline-block;
+	margin-top: 2px;
+	padding: 5px 8px;
+	border-radius: 5px;
+	font-size: 14px;
+	line-height: 16px;
+	white-space: pre-wrap;
+	color: #3f3f3f;
+	background-color: #fff;
+}
+
+#chat-bottom, #newMsg, #newMsg div{
+	box-sizing: border-box;
+}
+#chat-bottom{
+	/*聊天窗口底部内容*/
+	display:block;
+	---position:fixed;
+	flex-shrink:0;
+	width: 100%;
+	bottom:0;
+	z-index:99;
+
 }
 #newMsg{
-	#padding: 1px 10px;
-	background:#eee;
-	display:table;
+	/*新信息输入相关*/
+	display:flex;
+	flex-flow: row nowrap;
+	justify-content: flex-start;
+	width: 100%;
+	background:#f3f4f5;
+	padding: 5px 5px 8px 6px;
+	border-top: 1px solid #ddd;
+	font-size: 14px;
 }
 
-#newMsg a{
-	margin:3px;
+#newMsg .func-btn{
+	/* 功能按钮 */
+	flex-shrink:0;
+	align-items: flex-start;
+	margin: 0 4px;
+	font-size: 20px;
 }
 
-#newMsg a span{
+#newMsg .input-box{
+	/* 输入框 */
+	display:block;
+	width:90%;
+	margin: 0 6px;
+	padding: 5px 10px;
+	max-height: 48px;
+	overflow-y: auto;
+
+	flex-shrink:2;
+	background-color: #fff;
 	line-height:30px;
-}
-
-.msgContent{
-	padding:5px;
-	border-radius:5px;
-	border:1px solid #f0f0f0;
-	background:#fff;
-	color: #3a3a3a;
-	font-family:"微软雅黑","宋体",Courier, "Courier New", monospace ;
-	font-size: 12px; line-height:14px;
-	white-space:pre-line;
-	overflow-wrap: break-word;
-	word-wrap:break-word;
-	word-break:break-all;
-	display:block;
-	text-indent:1em;
+	user-modify: read-write-plaintext-only;
+	-webkit-user-modify: read-write-plaintext-only;
+	line-height: 16px;
 
 }
+#newMsg .input-box:focus{ outline: none; }
 
-.msgContent::before{
+#newMsg .txt-btn{
+	height: 26px;
+	font-size: 14px;
+	color: #fff;
+	padding: 3px 8px;
+	border-radius: 3px;
+	background-color: #00ba00;
 }
 
-.msgTitle{
-	padding:0.4em;
-	font-family:"宋体",Courier, "Courier New", monospace ;
-	font-size: 0.5em;
-	line-height:0.7em;
-	vertical-align:middle;
-	display:block;
+#chat-bottom .popup-box {
+	display: none;
+
 }
-
-.msgTitle img{
-	vertical-align:sub;
+#emoji ul{
+	/*---display: flex;
+	-flex-flow: row wrap;
+	-justify-content: space-around;*/
+	margin:0;
+	padding: 10px 15px;
+	list-style: none;
+	font-size: 0;
 }
-
-.msgTitle::before{
-
+#emoji li{
+	display: inline-block;
+	font-size: 20px;
+	width: 26px;
+	text-align: center;
+	margin:5px;
 }
 

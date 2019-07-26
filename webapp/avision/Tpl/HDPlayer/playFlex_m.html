@@ -13,8 +13,8 @@
 <load href="__PUBLIC__/NivoSlider/nivo-slider.css" />
 <load href="__PUBLIC__/NivoSlider/themes/default/default.css" />
 	<load href="__ROOT__/player/{$theme|default='default'}/css/playFlex_m.css" />
-	<load href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" />
-
+	<!--<load href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" /> -->
+<link href="__ROOT__/player/{$theme|default='default'}/css/webChat.css?t={$time}" rel="stylesheet" type="text/css">
 <load href="__PUBLIC__/jeasyui/jquery.min.js"/>
 
 <load href="__PUBLIC__/jeasyui/jquery.easyui.min.js"/>
@@ -487,7 +487,8 @@ function showMsgAni(msg)
 	}
 	.tab-list{
 		display:inline-flex;
-		width: calc(100% - 37px);
+		/* width: calc(100% - 37px); 有more菜单 */
+		width: calc(100% - 1px);
 		flex-flow:row nowrap;
 		white-space: nowrap;
 		justify-content:space-around;
@@ -545,7 +546,7 @@ function showMsgAni(msg)
 			</foreach>
 
 		</div>
-		<div class="more-menu" tabid="menu">∇</div>
+		<!-- <div class="more-menu" tabid="menu">∇</div> 扩展菜单暂时用不上-->
 	</div>
 
 <div id="more-menu" class="easyui-dialog" style="padding:0;width:90%;"

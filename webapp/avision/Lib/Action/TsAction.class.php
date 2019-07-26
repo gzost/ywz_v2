@@ -3,9 +3,12 @@ require_once (LIB_PATH.'Model/ChannelModel.php');
 class TsAction extends Action{
 
 public function test(){
-	echo 'test....';
-	$db=D("channel");
-	var_dump($db->getTabs(1098));
+
+	echo 'test....😂11<br>';
+	$db=D("mutex");
+	$rec=$db->find();
+	echo $rec['note'];
+	dump($rec);
 }
 }
 ?>

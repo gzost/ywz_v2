@@ -58,7 +58,9 @@ body{
 .contRow1 img, .contRow2 img{
     margin:0.2em;
 }
-
+.tab-item{
+    flex-grow:1;
+}
 .statcell{
     float:left;
     width:32%;

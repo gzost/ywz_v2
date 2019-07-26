@@ -1,131 +1,216 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-<script type="text/javascript" src="/Public/js/jquery.min.js"></script>
+    <meta charset="UTF-8">
+    <title></title>
+    <style>#edit{height:500px;width:500px;border:1px solid red;}</style>
+    <script type="text/javascript" src="/Public/js/jquery.min.js"></script>
+    <style>
+        *{
+            margin:0;padding:0;
+        }
+        .im-message-area{
+            width:98%;
+            padding:2px;
+            height:75px;
+            border:#000 solid 1px;
+            background:#fff;
+            font:12px/20px arial,"5b8b4f53";
+            word-wrap:break-word;
+            overflow-y:auto;
+            line-height:1;
+        }
+        .ul{display:none;}
+        .ul li{
+            background-color:#CCC;
+            width:50px;
+        }
+    </style>
+    <script language="javascript" type="text/javascript">
+        function inimage(text){
+            var obj= $(".im-message-area")[0];
+            var range, node;
+            if(!obj.hasfocus) {
+                obj.focus();
+            }
+            if (window.getSelection && window.getSelection().getRangeAt) {
+                range = window.getSelection().getRangeAt(0);
+                range.collapse(false);
+                node = range.createContextualFragment(text);
+                var c = node.lastChild;
+                range.insertNode(node);
+                if(c){
+                    range.setEndAfter(c);
+                    range.setStartAfter(c)
+                }
+                var j = window.getSelection();
+                j.removeAllRanges();
+                j.addRange(range);
 
-<script type="text/javascript" src="/Public/fine-uploader/fine-uploader.core.js"></script>
-<script type="text/javascript" src="/Public/fine-uploader/fine-uploader.js"></script>
-<script type="text/javascript" src="/Public/fine-uploader/fine-uploader.core.js.map"></script>
-<script type="text/javascript" src="/Public/fine-uploader/fine-uploader.js.map"></script>
-
-<link href="/Public/fine-uploader/fine-uploader-single.css" rel="stylesheet" type="text/css"/>
-<script type="text/template" id="qq-template">
-        <div class="qq-uploader-selector qq-uploader" qq-drop-area-text="Drop files here">
-            <div class="qq-total-progress-bar-container-selector qq-total-progress-bar-container">
-                <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-total-progress-bar-selector qq-progress-bar qq-total-progress-bar"></div>
-            </div>
-            <div class="qq-upload-drop-area-selector qq-upload-drop-area" qq-hide-dropzone>
-                <span class="qq-upload-drop-area-text-selector"></span>
-            </div>
-            <div class="qq-upload-button-selector qq-upload-button">
-                <div>选择文件</div>
-            </div>
-            <span class="qq-drop-processing-selector qq-drop-processing">
-                <span>Processing dropped files...</span>
-                <span class="qq-drop-processing-spinner-selector qq-drop-processing-spinner"></span>
-            </span>
-            <ul class="qq-upload-list-selector qq-upload-list" aria-live="polite" aria-relevant="additions removals">
-                <li>
-                    <div class="qq-progress-bar-container-selector">
-                        <div role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" class="qq-progress-bar-selector qq-progress-bar"></div>
-                    </div>
-                    <span class="qq-upload-spinner-selector qq-upload-spinner"></span>
-                    <img class="qq-thumbnail-selector" qq-max-size="100" qq-server-scale>
-                    <span class="qq-upload-file-selector qq-upload-file"></span>
-                    <span class="qq-edit-filename-icon-selector qq-edit-filename-icon" aria-label="Edit filename"></span>
-                    <input class="qq-edit-filename-selector qq-edit-filename" tabindex="0" type="text">
-                    <span class="qq-upload-size-selector qq-upload-size"></span>
-                    <button type="button" class="qq-btn qq-upload-cancel-selector qq-upload-cancel">Cancel</button>
-                    <button type="button" class="qq-btn qq-upload-retry-selector qq-upload-retry">Retry</button>
-                    <button type="button" class="qq-btn qq-upload-delete-selector qq-upload-delete">Delete</button>
-                    <span role="status" class="qq-upload-status-text-selector qq-upload-status-text"></span>
-                </li>
-            </ul>
-
-            <dialog class="qq-alert-dialog-selector">
-                <div class="qq-dialog-message-selector"></div>
-                <div class="qq-dialog-buttons">
-                    <button type="button" class="qq-cancel-button-selector">Close</button>
-                </div>
-            </dialog>
-
-            <dialog class="qq-confirm-dialog-selector">
-                <div class="qq-dialog-message-selector"></div>
-                <div class="qq-dialog-buttons">
-                    <button type="button" class="qq-cancel-button-selector">No</button>
-                    <button type="button" class="qq-ok-button-selector">Yes</button>
-                </div>
-            </dialog>
-
-            <dialog class="qq-prompt-dialog-selector">
-                <div class="qq-dialog-message-selector"></div>
-                <input type="text">
-                <div class="qq-dialog-buttons">
-                    <button type="button" class="qq-cancel-button-selector">Cancel</button>
-                    <button type="button" class="qq-ok-button-selector">Ok</button>
-                </div>
-            </dialog>
-        </div>
+            } else if (document.selection && document.selection.createRange) {
+                document.selection.createRange().pasteHTML(text);
+            }
+        }
+        $(document).ready(function(){
+            $('#button').click(function(){
+                $('.ul').show();
+            })
+            $('.ul li').each(function(){
+                $(this).click(function(){
+                    inimage($(this).text());
+                })
+            })
+        });
     </script>
-
-
-<script type="text/javascript">
-	$(document).ready(function(){
-		 var manualUploader = new qq.FineUploader({
-		        element: document.getElementById("fine-uploader"),
-		        debug: true,
-		        multiple:false,
-		        //button: document.getElementById("select"),
-		        request: {
-		            endpoint: "/admin.php/Vod/endpoint"
-		        },
-		        deleteFile: {
-		            enabled: true,
-		            endpoint: "/admin.php/Vod/endpoint"
-		        },
-		        chunking: {
-		            enabled: true,
-		            concurrent: {
-		                enabled: true
-		            },
-		            success: {
-		                endpoint: "/admin.php/Vod/endpoint?done"
-		            }
-		        },
-		        resume: {
-		            enabled: true
-		        },
-		        retry: {
-		            enableAuto: true,
-		            showButton: true
-		        },
-		        callbacks:{
-		        	onAllComplete:function(a,b){
-		        		alert('compp');
-		        		var myDiv, qqMyDiv;
-		        		myDiv = document.getElementById("myDiv");
-		        		qqMyDiv = qq(myDiv);
-		        		var n=$("#fine-uploader .qq-upload-list").html('kke');
-		        		alert(n);
-		        		console.log(n);
-		        	}
-		        }
-		    });
-
-	});
-</script>
-<style type="text/css"> 
-
-</style>
 </head>
 <body>
-<!-- The element where Fine Uploader will exist. -->
-    <div id="fine-uploader" style="width:200px; height:40px;">    </div>
-    <div id="select">selet file</div>
+<div contenteditable="true" id="im_message_area" class="im-message-area"><br></div>
+<a href="javascript:void(0)" id="button">按钮</a>
+<ul class="ul">
+    <li>(笑)</li>
+    <li>(哭)</li>
+    <li>(乐)</li>
+</ul>
+<div style="height:20px;"></div>
+<button type="button" onclick="document.getElementById('test').focus(); insertHtmlAtCaret('<b>INSERTED</b>');">插入字符</button>
+<div contentEditable="true" style="min-height:50px; border:2px solid red;" id="test" style="user-modify: read-write-plaintext-only;
+	-webkit-user-modify: read-write-plaintext-only;"> </div>
+<script>
+    function insertHtmlAtCaret(html) {
+        var sel, range;
+        if (window.getSelection) {
+// IE9 and non-IE
+            sel = window.getSelection();
+            if (sel.getRangeAt && sel.rangeCount) {
+                range = sel.getRangeAt(0);
+                range.deleteContents();
+console.log(range);
+// Range.createContextualFragment() would be useful here but is
+// non-standard and not supported in all browsers (IE9, for one)
+                var el = document.createElement("div");
+                el.innerHTML = html;
+                var frag = document.createDocumentFragment(), node, lastNode;
+                while ( (node = el.firstChild) ) {
+                    lastNode = frag.appendChild(node);
+                }
+                range.insertNode(frag);
+// Preserve the selection
+                if (lastNode) {
+                    range = range.cloneRange();
+                    range.setStartAfter(lastNode);
+                    range.collapse(true);
+                    sel.removeAllRanges();
+                    sel.addRange(range);
+                }
+            }
+        } else if (document.selection && document.selection.type != "Control") {
+// IE < 9
+            document.selection.createRange().pasteHTML(html);
+        }
+    }
+</script>
 
+<div>======</div>
+<div id="edit" contenteditable style="user-modify: read-write-plaintext-only;
+	-webkit-user-modify: read-write-plaintext-only;"></div>
+<input type="text" id="emojiInput">
+<button id="sendEmoji">添加字符串</button>
 
+<script>
+    var editbox = document.getElementById('edit')
+    //var emojiInput = document.getElementById('emojiInput')
+    var sendEmoji = document.getElementById('sendEmoji')
+
+    // 定义最后光标对象
+    var lastEditRange;
+console.log(edit);
+    // 编辑框点击事件
+    edit.onclick = function() {
+        // 获取选定对象
+        var selection = getSelection()
+        // 设置最后光标对象
+        lastEditRange = selection.getRangeAt(0)
+console.log("===selection=") ;
+console.log(selection);
+    }
+
+    // 编辑框按键弹起事件
+    edit.onkeyup =  function() {
+        // 获取选定对象
+        var selection = getSelection()
+        // 设置最后光标对象
+        lastEditRange = selection.getRangeAt(0)
+    }
+
+    // 表情点击事件
+    sendEmoji.onclick = function() { insertText("@",editbox);}
+    function insertText(text, edit){
+        var emojiInput={value:text};
+        // 编辑框设置焦点
+        edit.focus()
+        // 获取选定对象
+        var selection = getSelection()
+        // 判断是否有最后光标对象存在
+        if (lastEditRange) {
+            // 存在最后光标对象，选定对象清除所有光标并添加最后光标还原之前的状态
+            selection.removeAllRanges()
+            selection.addRange(lastEditRange)
+        }
+        // 判断选定对象范围是编辑框还是文本节点
+        console.log(selection.anchorNode);
+        if (selection.anchorNode.nodeName != '#text') {
+            console.log("no text");
+            // 如果是编辑框范围。则创建表情文本节点进行插入
+            var emojiText = document.createTextNode(emojiInput.value)
+console.log(edit.childNodes.length);
+console.log(edit.childNodes);
+console.log(selection.anchorOffset);
+            if (edit.childNodes.length > 0) {
+                // 如果文本框的子元素大于0，则表示有其他元素，则按照位置插入表情节点
+                for (var i = 0; i < edit.childNodes.length; i++) {
+                    if (i == selection.anchorOffset) {
+                        edit.insertBefore(emojiText, edit.childNodes[i])
+                    }
+                }
+            } else {
+                // 否则直接插入一个表情元素
+                edit.appendChild(emojiText)
+            }
+            // 创建新的光标对象
+            var range = document.createRange()
+            // 光标对象的范围界定为新建的表情节点
+            range.selectNodeContents(emojiText)
+            // 光标位置定位在表情节点的最大长度
+            range.setStart(emojiText, emojiText.length)
+            // 使光标开始和光标结束重叠
+            range.collapse(true)
+            // 清除选定对象的所有光标对象
+            selection.removeAllRanges()
+            // 插入新的光标对象
+            selection.addRange(range)
+        } else {
+            console.log("text");
+            // 如果是文本节点则先获取光标对象
+            var range = selection.getRangeAt(0)
+            // 获取光标对象的范围界定对象，一般就是textNode对象
+            var textNode = range.startContainer;
+            // 获取光标位置
+            var rangeStartOffset = range.startOffset;
+            // 文本节点在光标位置处插入新的表情内容
+            textNode.insertData(rangeStartOffset, emojiInput.value)
+            // 光标移动到到原来的位置加上新内容的长度
+            range.setStart(textNode, rangeStartOffset + emojiInput.value.length)
+            // 光标开始和光标结束重叠
+            range.collapse(true)
+            // 清除选定对象的所有光标对象
+            selection.removeAllRanges()
+            // 插入新的光标对象
+            selection.addRange(range)
+        }
+        // 无论如何都要记录最后光标对象
+        lastEditRange = selection.getRangeAt(0)
+    }
+</script>
 
 </body>
 </html>

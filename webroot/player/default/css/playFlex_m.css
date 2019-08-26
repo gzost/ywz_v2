@@ -1,8 +1,8 @@
+@CHARSET "UTF-8";
 /*
-    base_m.css
-    播放器手机基础样式
+    playFlex_m.css
+    播放器手机Flex模板，winter皮肤样式
  */
-
 
 body{
     width:100%; height:100%;
@@ -168,4 +168,34 @@ body{
     padding:5px;
 }
 
+/* *********
+    频道介绍相关样式
+*/
+#infoShow{
+    /*容器*/
+    width:100%;background-color:#fff;
+}
+#infoShow div{
+    width:100%;
+    margin: 0;
+    padding: 0;
+}
+#infoShow img{
+    display:block;
+    width:100%;
+}
+
+#infoShow .txtIndent{
+    box-sizing: border-box;
+    word-wrap:break-word;
+    font-size:14px;
+    line-height:20px;
+    padding:3px 5px;
+    color:#313131;
+}
+#infoShow a{
+    text-decoration:none ;
+    color: #446;
+    font-weight: 600;
+}
 

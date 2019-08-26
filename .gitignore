@@ -1,5 +1,6 @@
 素材/
 webapp/avision/Runtime/
+webapp/public/wxpay/cert/
 logs/
 webroot/vodfile/
 webroot/room/

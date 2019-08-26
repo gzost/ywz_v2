@@ -1,9 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <title></title>
-    <style>#edit{height:500px;width:500px;border:1px solid red;}</style>
+    <style>#edit{height:500px;width:90%;border:1px solid red;}</style>
     <script type="text/javascript" src="/Public/js/jquery.min.js"></script>
     <style>
         *{
@@ -112,7 +115,7 @@ console.log(range);
 
 <div>======</div>
 <div id="edit" contenteditable style="user-modify: read-write-plaintext-only;
-	-webkit-user-modify: read-write-plaintext-only;"></div>
+	-webkit-user-modify: read-write-plaintext-only; height: 50px;"></div>
 <input type="text" id="emojiInput">
 <button id="sendEmoji">添加字符串</button>
 
@@ -211,6 +214,12 @@ console.log(selection.anchorOffset);
         lastEditRange = selection.getRangeAt(0)
     }
 </script>
+<div style="width:100vw; height:50vh;background-color: silver;position: relative;overflow-x: hidden;">
+    <div onclick="$('.pg').css({'z-index':0}); $('#bb').css({left:'100vw','z-index':10});$('#bb').show(); $('#bb').animate({left: '0'},'fast');" style= "display:inline-block;width: 8em;">show B</div>
+    <div onclick="$('.pg').css({'z-index':0}); $('#cc').css({left:'100vw','z-index':10});$('#cc').show(); $('#cc').animate({left: '0'},'fast');" style= "display:inline-block;width: 8em;">show C</div>
 
+    <div id="bb" class="pg" style="position: absolute; display:none; height:100px; width:100vw;background-color: #00ee00;">bbbbbbb</div>
+    <div id="cc" class="pg" style="position: absolute; display:none; height:100px; width:100vw;background-color: #00eeF0;">cccccc</div>
+</div>
 </body>
 </html>

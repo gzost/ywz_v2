@@ -15,7 +15,7 @@ class WebChatAction extends SafeAction {
 	 */
 	const CHATINFO='chatinfo';
 	const MAXRECORD=100;	//一次返回的最大记录数
-	protected $webvarTpl=array('channelId'=>0, 'userId'=>0, 'userName'=>'', 'lastMsgId'=>0, 'objName'=>'', 'message'=>'');
+	protected $webvarTpl=array('channelId'=>0, 'userId'=>0, 'userName'=>'', 'lastMsgId'=>0, 'objName'=>'', 'message'=>'', 'firstMsgId'=>0);
 	protected $webvar;
 	
 	function __construct(){
@@ -110,15 +110,11 @@ class WebChatAction extends SafeAction {
 	public function webChat($channelId=0){
 		//获取角色，是否主播或管理员
 		$isAdmin = $this->IsAdmin($channelId);
-//var_dump($isAdmin,$channelId);
-//dump($_SESSION['userinfo']);
 
-		//echo json_encode(array('success'=>'true', 'html'=>'hhhkkk')); 		return;
-//var_dump($webvar);
-		$eliminate=date('Y-m-d',strtotime("-2 month")); //删除2个月前的聊天记录
+		$eliminate=date('Y-m-d',strtotime("-6 month")); //删除6个月前的聊天记录
 		$webchat=D('webchat');
 		$cond=array('sendtime'=>array('LT',$eliminate));
-		$webchat->where($cond)->delete();
+		$webchat->where($cond)->delete(); 
 		
 		if($isAdmin && isWindows())
 		{
@@ -133,7 +129,8 @@ class WebChatAction extends SafeAction {
 		$this->assign($this->webvar);
 
 		$html=$this->fetch('WebChat:webChat');
-		$result=array('success'=>'true', 'html'=>$html, 'lastMsgId'=>$this->webvar['lastMsgId'], 'isCanChat'=>$this->IsCanChat($this->webvar['channelId']));
+		$result=array('success'=>'true', 'html'=>$html, 'lastMsgId'=>$this->webvar['lastMsgId'],
+            'firstMsgId'=>$this->webvar['firstMsgId'],'isCanChat'=>$this->IsCanChat($this->webvar['channelId']));
 		echo json_encode($result);
 	}
 
@@ -164,8 +161,9 @@ class WebChatAction extends SafeAction {
 		$this->updateChatMsg();
 	}
 	public function updateChatMsg(){
-		//echo $this->getChat();
-		$result=array('success'=>'true', 'html'=>$this->getChat(), 'lastMsgId'=>$this->webvar['lastMsgId'], 'isCanChat'=>$this->IsCanChat($this->webvar['channelId']));
+		$result=array('success'=>'true', 'html'=>$this->getChat(), 'lastMsgId'=>$this->webvar['lastMsgId'],
+            'firstMsgId'=>$this->webvar['firstMsgId'],'isCanChat'=>$this->IsCanChat($this->webvar['channelId']));
+//var_dump($this->webvar);
 		echo json_encode($result);
 		
 	}
@@ -187,48 +185,54 @@ class WebChatAction extends SafeAction {
 		}
 		
 		$result=$webchat->where($cond)->order('id desc')->limit($maxRecords)->select();
-		//echo '****'.$_SESSION[self::CHATINFO]['channelId'];
 //logfile($webchat->getLastSql());
 		
 		if(null==$result) return '';	//出错或没有新数据返回此信息
 		else {
-			$this->webvar['lastMsgId']=$result[0][id];
+			$this->webvar['lastMsgId']=$result[0]['id'];
             $result=array_reverse($result); //反转为时间顺序
+            $this->webvar['firstMsgId']=$result[0]['id'];
+
 			$webVar=array('isAdmin'=>$this->IsAdmin(), 'msgList'=>$result);
 			$this->assign($webVar);
 			$htmlStr='';
             $htmlStr=$this->fetch("WebChat:getChat");
             return $htmlStr;
 
-			foreach ($result as $rec){
-				$htmlStr=$this->genMsgItem($rec).$htmlStr;
-				//echo $htmlStr; echo "<p>=====<p>";
-			}
-			if(''==$htmlStr) return '';
-			else return $htmlStr;
 		}
 	}
-	
-	/**
-	 * @brief 根据聊天数据生成一条对话信息的HTML内容
-	 * 
-	 * @param array $rec	聊天数据
-	 */
-	protected function genMsgItem($rec){
-		$isAdmin = $this->IsAdmin();
 
-		//['HDPlayer']['chnId']
-		//$rec['senderid']
+    /**
+     * 取上一页聊天记录
+     */
+	public function getPrePageJson(){
+        $webchat=D('webchat');
+        $maxRecords=20; //每页读20条记录
+        //读入过滤条件
+        $cond=array(isshow=>'true');
+        $cond['chnid']=$this->webvar['channelId'];
 
-		$htmlStr="<div class='msgTitle'>".substr($rec[sendtime],11,5)."&nbsp;".$rec[sendername];
-		if($isAdmin)
-		{
-			$htmlStr.='<img src="/player/default/images/nochat.png" border="0" width="20" onclick="chat.noChat(\''.$rec['senderid'].'\')"/>';
-		}
-		$htmlStr.='</div>';
-		$htmlStr .="<div class='msgContent'>".htmlspecialchars($rec[message])."</div>";
-		//echo $htmlStr;
-		return $htmlStr;
-	}
+        if($this->webvar['firstMsgId']>0){
+            $cond['id']=array('LT',$this->webvar['firstMsgId']);
+        }
+        $result=$webchat->where($cond)->order('id desc')->limit($maxRecords)->select();
+        if(null==$result){
+            $html='';
+            $firstPageLoaded=true;
+        }else{
+            $firstPageLoaded=false;
+            $result=array_reverse($result); //反转为时间顺序
+            $this->webvar['firstMsgId']=$result[0]['id'];
+
+            $webVar=array('isAdmin'=>$this->IsAdmin(), 'msgList'=>$result);
+            $this->assign($webVar);
+            $html=$this->fetch("WebChat:getChat");
+        }
+        $result=array('firstPageLoaded'=>$firstPageLoaded,'html'=>$html, 'firstMsgId'=>$this->webvar['firstMsgId']);
+        //var_dump($this->webvar);
+        Oajax::successReturn($result);
+    }
+
+
 }
 ?>

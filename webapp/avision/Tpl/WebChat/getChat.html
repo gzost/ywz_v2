@@ -2,7 +2,7 @@
     渲染新的聊天信息
 -->
 <foreach name="msgList" item="msg">
-    <div class="chat-item">
+    <div class="chat-item"  msgid="{$msg.id}">
         <div class="left-box" sender="{$msg.senderid}">
             <div class="bg-img" style="background-image: url(__PUBLIC__/images/user.jpg)"></div>
         </div>

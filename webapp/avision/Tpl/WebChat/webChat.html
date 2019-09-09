@@ -56,6 +56,7 @@
 </div>
 </div>
 <script type="text/javascript">
+
 	/* 新消息相关功能按钮 */
 	$("#newMsg").on("click",function (event) {
 		var obj=event.target;
@@ -75,8 +76,14 @@
                 $("#chat-bottom .popup-box").not("#emoji").hide();
 			    $("#emoji").toggle('normal');
                 $("#newMsg .input-box").focus();
+
                 var selection = getSelection()
                 // 判断是否有最后光标对象存在
+				if(typeof(lastEditRange)=='undefined'){
+                    //console.log('uuu');
+                    {$objName}.setLastEditRange();
+				}
+
                 if (lastEditRange) {
                     // 存在最后光标对象，选定对象清除所有光标并添加最后光标还原之前的状态
                     selection.removeAllRanges()
@@ -95,6 +102,7 @@
     // 编辑框点击事件,编辑框按键弹起事件
     $("#newMsg .input-box").on("click keyup",function () {
         {$objName}.setLastEditRange();
+        $("#emoji").hide('fast');
             return;
         // 获取选定对象
         //var selection = getSelection()
@@ -178,7 +186,7 @@
         //console.log(obj);
         //console.log(event.delegateTarget);
         if(obj==event.delegateTarget){
-            $("#emoji").hide('fast');
+            //$("#emoji").hide('fast');
         }else {
             var str=$(obj).html();
             var inputBox=$("#newMsg .input-box")[0];

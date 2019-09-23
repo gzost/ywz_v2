@@ -83,7 +83,7 @@ class SubscriberAction extends AdminBaseAction{
 		foreach ($r as $key=>$rec){
 			$data[]=array('id'=>$rec['classify'],'name'=>$rec['classify']);
 		}
- 		$webVar['classifyListJson']=json_encode($data);
+ 		$webVar['classifyListJson']=urlencode(json_encode($data,JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP|JSON_UNESCAPED_UNICODE));
 //var_dump($webVar);
  		$webVar['work']='search';
  		$this->assign($webVar);
@@ -122,14 +122,14 @@ class SubscriberAction extends AdminBaseAction{
 		else echo json_encode2($result);
 	}
 	public function authorizeUpdateAjax(){
-		$recTPL=array('chnid'=>0,'uid'=>0,'status'=>'','note2'=>'','classify'=>'');
+		$recTPL=array('id'=>0,'chnid'=>0,'uid'=>0,'status'=>'','note2'=>'','classify'=>'');
 		$rec=$this->getRec($recTPL);
 		//删除输入可能存在的HTML标签
         $rec['note2']=strip_tags($rec['note2']);
         $rec['classify']=strip_tags($rec['classify']);
 		try{
 			if($rec['chnid']==0 || $rec['uid']==0) throw new Exception('必须提供频道ID及用户ID');
-			$cond=array('chnid'=>$rec['chnid'],'uid'=>$rec['uid']);
+			$cond=(isset($rec['id']))? array('id'=>$rec['id']):array('chnid'=>$rec['chnid'],'uid'=>$rec['uid']);
 			unset($rec['uid']); unset($rec['chnid']);
 			$db=D('Channelreluser');
 			$result=$db->where($cond)->save($rec);

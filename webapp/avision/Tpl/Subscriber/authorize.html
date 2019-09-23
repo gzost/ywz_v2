@@ -11,8 +11,9 @@
 <load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />
 <load href="__PUBLIC__/js/jquery.json.min.js" />
 <script type="text/javascript">
-var classifyData=eval('{$classifyListJson}');
-//alert(classifyData);
+//var classifyData=eval('{$classifyListJson}');
+var classifyData=$.parseJSON(decodeURIComponent('{$classifyListJson}'));
+console.log(classifyData);
 
 $(document).ready(function(){
 	//$("#dg").edatagrid('getPager').pagination({displayMsg:"正在显示 {from} 到 {to} 行，共 {total} 行"});

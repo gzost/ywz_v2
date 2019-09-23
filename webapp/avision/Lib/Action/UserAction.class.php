@@ -325,7 +325,7 @@ class UserAction extends AdminBaseAction{
 		//dump($rec);
 		$rec[work]='save';
 		$this->assign($rec);
-		$this->display("user/password");
+		$this->display("User/password");
 	}
 
 	/**

@@ -43,146 +43,152 @@ function heartMsgExit(msg)
 <if condition="$useH5 eq 'false'">
 
 <script type="text/javascript" src="__ROOT__/player/js/aodianplay.js"></script>
-	<!--	<script type="text/javascript" src="https://cdn.aodianyun.com/lss/aodianplays/player.js"></script>
-	-->
+	<!--	<script type="text/javascript" src="https://cdn.aodianyun.com/lss/aodianplays/player.js"></script> -->
     <script type="text/javascript">
 
-    function playerInit(liveurl)
-    {
-        aodianPlayer({
-            container:'h5Player',
-            //rtmpUrl: '{$rtmpmrl}',//控制台开通的APP rtmp地址，必要参数
-            hlsUrl: liveurl,//控制台开通的APP hls地址，必要参数
-            name:'flashPlayer',
-            width: '865',
-            height: '486',
-            <if condition="$poster">
-                adveReAddr:'{$poster}',
-            <else/>
-            adveReAddr:'',
-            </if>
-            controlbardisplay: 'enable',
-            autostart: true,	//是否自动播放，默认为false
-            listencallback: setListen
-        });
+function playerInit(liveurl)
+{  console.log("=======playerInit");
+	//var playerHeight=$("#h5Player").height();
+	//console.log(playerHeight);
+	var showHeight=$("#divShow").height();
+    var showWidth=$("#divShow").width();
+    console.log(showHeight);
+    console.log(showWidth);
+    $("#h5Player").height(showHeight);
+    $("#h5Player").width(showWidth);
+	aodianPlayer({
+		container:'h5Player',
+		//rtmpUrl: '{$rtmpmrl}',//控制台开通的APP rtmp地址，必要参数
+	    hlsUrl: liveurl,//控制台开通的APP hls地址，必要参数
+		name:'flashPlayer',
+		width: showWidth,	//865
+		height: showHeight,	//486
+		<if condition="$poster">
+			adveReAddr:'{$poster}',
+		<else/>
+		adveReAddr:'',
+		</if>
+		controlbardisplay: 'enable',
+		autostart: true,	//是否自动播放，默认为false
+		listencallback: setListen
+	});
 
-        /*
-        var hslPlayer = null;
-        hlsplayerRun.call(hslPlayer,
-            {
-                container:'h5Player',
-                //rtmpUrl: '{$rtmpmrl}',//控制台开通的APP rtmp地址，必要参数
-                hlsUrl: liveurl,//控制台开通的APP hls地址，必要参数
-                name:'flashPlayer',
-                width: '865',
-                height: '486',
-                <if condition="$poster">
-                    adveReAddr:'{$poster}',
-                <else/>
-                adveReAddr:'',
-                </if>
-                controlbardisplay: 'enable',
-                autostart: true,//是否自动播放，默认为false
-            }
-        );
-        */
+	/*
+	var hslPlayer = null;
+	hlsplayerRun.call(hslPlayer,
+		{
+			container:'h5Player',
+			//rtmpUrl: '{$rtmpmrl}',//控制台开通的APP rtmp地址，必要参数
+			hlsUrl: liveurl,//控制台开通的APP hls地址，必要参数
+			name:'flashPlayer',
+			width: '865',
+			height: '486',
+			<if condition="$poster">
+				adveReAddr:'{$poster}',
+			<else/>
+			adveReAddr:'',
+			</if>
+			controlbardisplay: 'enable',
+			autostart: true,//是否自动播放，默认为false
+		}
+	);
+	*/
 
-        onPlayEven();
+	onPlayEven();
 
-    }
+}
 
-    function setListen(info){
-        console.log('setListen > ' + info);
-        switch(info){
-            case 'hlsmedia.error':
-                heart.forceLogout('媒体格式错误!');
-            break;
-            case 'NetStream.Buffer.Full':
-                hlsEmptyResume();
-            break;
-            case 'NetStream.Buffer.Empty':
-                _hlsEptExit = setInterval(hlsEmptyExit,1000 * 30);
-            break;
-            case 'hlsCloseStream':
-                heart.forceLogout('媒体已关闭!');
-            break;
-            case 'NetStream.Unpause.Notify':
-                hlsEmptyResume();
-            break;
-            case 'hlsNetStream.resume':
-                hlsEmptyResume();
-            break;
-            case 'hlsNetStream.pause':
-            break;
-        }
-    }
+function setListen(info){
+	console.log('setListen > ' + info);
+	switch(info){
+		case 'hlsmedia.error':
+			heart.forceLogout('媒体格式错误!');
+		break;
+		case 'NetStream.Buffer.Full':
+			hlsEmptyResume();
+		break;
+		case 'NetStream.Buffer.Empty':
+			_hlsEptExit = setInterval(hlsEmptyExit,1000 * 30);
+		break;
+		case 'hlsCloseStream':
+			heart.forceLogout('媒体已关闭!');
+		break;
+		case 'NetStream.Unpause.Notify':
+			hlsEmptyResume();
+		break;
+		case 'hlsNetStream.resume':
+			hlsEmptyResume();
+		break;
+		case 'hlsNetStream.pause':
+		break;
+	}
+}
 
-    function hlsEmptyExit(){
-        heart.forceLogout('获取视频信号超时，退出观看!');
-    }
+function hlsEmptyExit(){
+	heart.forceLogout('获取视频信号超时，退出观看!');
+}
 
-    function hlsEmptyResume(){
-        if(_hlsEptExit)
-        {
-            clearInterval(_hlsEptExit);
-            _hlsEptExit = null;
-        }
-    }
+function hlsEmptyResume(){
+	if(_hlsEptExit)
+	{
+		clearInterval(_hlsEptExit);
+		_hlsEptExit = null;
+	}
+}
 
-    function StopVideo()
-    {
-        $('#h5Player').html('');
-        onStopEven();
-    }
+function StopVideo()
+{
+	$('#h5Player').html('');
+	onStopEven();
+}
 
-    $("#h5Player").ready(function(){
-        getmrl();
+$("#h5Player").ready(function(){
+	getmrl();
 
-    });
+});
 
-    function getmrl()
-    {
-        $.ajax({
-            url: '{$srclink}',
-            type: 'post',
-            data: 't=show',
-            cache: false,
-            timeout:5000,
-            dataType: 'text',
-            success:function(text){
-                try{
-                    text = text.replace(' ', '');
-                    playerInit(text);
-                }
-                catch(e){
-                    alert(e);
-                }
-            },
-            complete:function(){	//无论是否成功都会调用
-            },
-            error:function(){
-                alert('网络或服务中断！');
-            }
-        });
-    }
-    </script>
-    <div id="h5Player" filetype="{$filetype}" innerId="{$innerId}" style="
-        width: 865px;
-        height: 486px;
-        <if condition="$poster">
-        background-image: url({$poster});
-        </if>
-        background-size: 100% 100%;
-    ">
-    </div>
+function getmrl()
+{
+	$.ajax({
+		url: '{$srclink}',
+		type: 'post',
+		data: 't=show',
+		cache: false,
+		timeout:5000,
+		dataType: 'text',
+		success:function(text){
+			try{
+				text = text.replace(' ', '');
+				playerInit(text);
+			}
+			catch(e){
+				alert(e);
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			alert('网络或服务中断！');
+		}
+	});
+}
+</script>
+<div id="h5Player" filetype="{$filetype}" innerId="{$innerId}" style="
+    width: 865px;
+    height: 486px;
+	<if condition="$poster">
+    background-image: url({$poster});
+	</if>
+    background-size: 100% 100%;
+">
+</div>
 
-    <else/>
-    <!--o-player-fullscreen="false"-->
+<else/>
+<!--o-player-fullscreen="false"-->
 
 <!-- 2018-10-23 之前
 <video id="h5Player" controls="controls"   poster="{$poster}" x5-vide playsinline="playsinline"
-	   webkit-playsinline="true" x-webkit-airplay="false" style="position:relative;width:100%;margin:0;max-height:100%"
-	   filetype="{$filetype}" innerId="{$innerId}" src="" type="video/mp4">
+	   webkit-playsinline="true" x-webkit-airplay="false" style="position:relative;width:100%;margin:0;max-height:100%" filetype="{$filetype}" innerId="{$innerId}" src="" type="video/mp4">
 </video>
 -->
 <!--
@@ -243,7 +249,7 @@ $("#h5Player").ready(function(){
 	{
 	}
 
-	$("#h5Player").bind('contextmenu',function() { return false; }); 
+	$("#h5Player").bind('contextmenu',function() { return false; });
 	getmrl();
 });
 
@@ -297,18 +303,3 @@ function getmrl()
 </script>
 
 </if>
-<!--
-<div style="position: absolute;bottom: 0px; left:100px;z-index: 22; width:300px; height:2em;overflow:scroll ;
-background-color: #bbb; white-space: nowrap;
-">
-	sldkjf lkdjffdks lsdjfsldj 999999999999 98888888888<br>
-	2223445 555<br>
-	9988<br>
-	00llskjd
-</div>
-<div style="position: absolute;bottom: 0px; z-index: 22; width:30px; height:1em;overflow:scroll ;
-background-color: #c1e2b3; white-space: nowrap;
-">
-	00llskjd
-</div>
--->

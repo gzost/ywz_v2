@@ -71,4 +71,35 @@ class WD_ChannelListWidget extends Action
         }
 
     }
+
+    /**
+     * 列出指定机构的频道
+     * @param $agent
+     * @param bool $viewall 是否列出非正常状态的频道
+     */
+    public function agentChannel($agent=0,$viewall=true){
+        $webVar=array();
+        try {
+            $dalChn=D("channel");
+            $cond=array('agent'=>$agent);
+            if(!$viewall) $cond['status']='normal';
+            $chnList=$dalChn->where($cond)->field("id,name,attr")->select();
+//dump($chnList);
+            foreach ($chnList as $key=>$chn) {
+                if ($chn['name'] == null) $chnList[$key]['name'] = '无名频道';
+                $attr = json_decode($chn['attr'], true);
+                unset($chnList[$key]['attr']);
+                $chnList[$key]['poster'] = $dalChn->getPosterUrl($chn['id'], $attr);
+            }
+//dump($chnList);
+            $webVar['chnList']=$chnList;
+            $this->assign($webVar);
+            $this->display('WD_ChannelList:agentChannel');
+        }catch (Exception $e){
+            $webVar['msg']=$e->getMessage();
+            $this->assign($webVar);
+            $this->display('WD_ChannelList:agentChannel_error');
+            return;
+        }
+    }
 }

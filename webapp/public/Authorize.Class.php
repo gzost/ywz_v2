@@ -71,7 +71,8 @@ class authorize {
 
 			//推荐码
 			$_SESSION[self::USERINFO]['refCode']=$record['refCode'];
-			
+			//所属机构 2019-10-20
+            $_SESSION[self::USERINFO]['agent']=$record['agent'];
 			//插入在线用户表
 			//$this->newOnline();
 /*

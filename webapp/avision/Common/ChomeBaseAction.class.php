@@ -1,6 +1,6 @@
 <?php
 require_once APP_PATH.'../public/SafeAction.Class.php';
-require_once APP_PATH.'../public/AdminMenu.class.php';
+//require_once APP_PATH.'../public/AdminMenu.class.php';
 
 class ChomeBaseAction extends SafeAction {
 	protected $isLogin='false';	//是否已登录标志，anonymous用户被排除
@@ -58,6 +58,8 @@ class ChomeBaseAction extends SafeAction {
 	/**
 	 * 
 	 * 按是否手机决定调用竖屏（默认）还是宽屏显示模板
+     * 宽屏模板：模板名称_w
+     * 竖屏模板：模板名称
 	 * @param string $name
 	 */
     public function show($name){

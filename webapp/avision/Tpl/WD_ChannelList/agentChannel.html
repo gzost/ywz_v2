@@ -1,0 +1,24 @@
+<!-- 按课程样式输出的频道信息 -->
+<div class="channel-list3">
+
+    <foreach name="chnList" item="chn">
+        <div class="item" chnid="{$chn.id}">
+            <div class="channel-img" style="background-image: url( {$chn.poster} ); background-size: cover; background-position: center center;"></div>
+            <div class="channel-desc">
+                {$chn.name}
+            </div>
+        </div>
+    </foreach>
+</div>
+<script>
+    $(".channel-list3 .item").on("click",function (event) {
+       var obj=event.delegateTarget ;
+       console.log(obj);
+       var chnid=$(obj).attr('chnid');
+        console.log(chnid);
+       if(0==chnid) $.messager.alert('提示','此课程已关闭');
+       else{
+           window.location.href="__APP__/HDPlayer/play/chnId/"+chnid;
+       }
+    });
+</script>

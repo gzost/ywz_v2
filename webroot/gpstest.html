@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>GPS Test</title>
+</head>
+<body>
+    GPS test...
+    <script>
+        alert('gggg');
+        function getLocation(){
+            if(navigator.geolocation){
+                //判断是否有这个对象
+                navigator.geolocation.getCurrentPosition(function(pos){
+                    console.log("经度："+pos.coords.longitude+"纬度："+pos.coords.latitude);
+                    alert("经度："+pos.coords.longitude+"纬度："+pos.coords.latitude);
+                })
+            }else{
+                console.log("当前系统不支持GPS API");
+                alert("当前系统不支持GPS API");
+            }
+        }
+        getLocation();
+
+    </script>
+</body>
+</html>

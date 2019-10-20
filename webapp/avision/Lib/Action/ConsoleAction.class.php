@@ -1105,8 +1105,8 @@ if(null==$list) logfile("list==null");
 				exit;
 			}
 			//初始化频道记录
-			$newId = $chnDal->CreateNew($userInfo['userId'], 0, $userInfo['userName'].rand(1000,9999), $bozhuLimit['viewersPerChannel']);
-
+			$newId = $chnDal->CreateNew($userInfo['userId'], 0, $userInfo['userName'].rand(1000,9999), $bozhuLimit['viewersPerChannel'],$userInfo['agent']);
+//var_dump($userInfo);
 			if(0 < $newId)
 			{
 				echo '{"result":"true", "jump":"'.U('Console/overView').'"}';

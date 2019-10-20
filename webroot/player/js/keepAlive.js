@@ -109,7 +109,7 @@ function HeartBeat()
 							if(onlineId==onlineList[i].onlineId) throw new Error("duplicated onlineId !");
 						}
 						onlineList.push({"onlineId":onlineId,"objType":objType, "objId":objId});
-						if(null!= data.multiOnline && data.multiOnline>0) throw new Error("在线记录超限！");
+						if(null!= data.multiOnline && data.multiOnline>1 ) throw new Error("您同时的登录次数超过了预设值！");
 						if(typeof(onSuccess)=="function"){
 							onSuccess(onlineId, data);	//回调成功处理
 						}

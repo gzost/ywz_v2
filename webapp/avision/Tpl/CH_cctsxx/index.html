@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+
+<!--
+    佛山禅城教育局特殊教育学校定制首页
+
+    create: 2019-07-04 by outao
+-->
+
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+    <meta charset="UTF-8">
+    <title>禅城区教师再教育平台</title>
+    <load href="__PUBLIC__/jeasyui/themes/material/easyui.css" />
+    <load href="__PUBLIC__/jeasyui/themes/icon.css" />
+    <load href="__PUBLIC__/jeasyui/themes/color.css" />
+    <link rel="stylesheet"  href="__PUBLIC__/jeasyui/themes/mobile.css">
+
+    <load href="__ROOT__/widget/css/channelList.css" />
+    <load href="__PUBLIC__/jeasyui/jquery.min.js" />
+    <load href="__PUBLIC__/jeasyui/jquery.easyui.min.js" />
+    <script src="__PUBLIC__/jeasyui/jquery.easyui.mobile.js"></script>
+
+    <style>
+
+        * { box-sizing: border-box; }
+        body{
+            position: absolute;
+            background-color: #f6f7f8;
+            margin: 0px auto;
+            width:100%; height: 100%;
+            text-align: center;vertical-align:middle;
+            /* font-family: "微软雅黑","宋体",verdana,helvetica,arial,sans-serif; */
+            font-size:12px;
+            font-family: "Microsoft YaHei",Arial;
+            color: #353535;
+        }
+        a {	text-decoration:none;}
+        a:link, a:visited, a:active{ color: #353535;}
+
+        #container{
+            position:relative;
+            margin: 0 auto;
+            height:100%;
+            /*min-width:1024px;*/
+            /*min-height: 680px;*/
+            max-width: 800px;
+            text-align: center;
+            /*background: url("../images/home_bg.png") no-repeat center top;*/
+            background-size: 100% 100%;
+            background-color: #f3f4f5;
+        }
+
+        #title {
+            height: 36px;
+            padding:10px 0 0 10px;
+            text-align: left;
+            background-color: #02aaf1;
+        }
+
+        #nav_box{
+            display:flex;
+            padding: 1em;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: flex-start;
+            align-content: flex-start;
+            background-color: #02aaf1;
+        }
+
+        #nav_box .nav_ico{
+            color:white;
+            width: 5em;
+        }
+        #nav_box .nav_ico .ico_img{
+            font-size: 2.5em;
+        }
+
+        #my-course{
+            /*display:flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+            align-items: flex-start;
+            align-content: flex-start;*/
+            padding: 2px 1px;
+        }
+        .subhead{
+            color: #02aaf1;
+            font-size: 1.2em;
+            margin: 5px 0;
+            text-align: left;
+        }
+
+        .layer10{
+            position: absolute;
+            z-index: 10;
+        }
+        .my-logo{
+            top:10px;
+            right:10px;
+            width:24px;
+        }
+    </style>
+</head>
+<body>
+<div id="container" class="easyui-navpanel">
+    <div style="width: 100%">
+        <img src="__ROOT__/home/CH_cctsxx/images/userbanner.jpg" style="width:100%;object-fit:cover;">
+    </div>
+    <img  id="my-logo" class="layer10 my-logo" src="__ROOT__/home/CH_cctsxx/images/my_w.png"  >
+<!--
+    <div id="title">
+        <img src="__ROOT__/home/CH_cctsxx/images/logo.png"  >
+    </div>
+
+    <div id="nav_box">
+        <div class="nav_ico" func="uinfo">
+            <div class="ico_img">Ⓢ</div>
+            <div class="ico_txt">用户服务</div>
+        </div>
+        <div class="nav_ico" url="#">
+            <div class="ico_img">Ⓜ</div>
+            <div class="ico_txt">未解锁</div>
+        </div>
+        <div class="nav_ico" url="#">
+            <div class="ico_img">Ⓔ</div>
+            <div class="ico_txt">未解锁</div>
+        </div>
+        <div class="nav_ico" func="login">
+            <div class="ico_img">Ⓛ</div>
+            <div class="ico_txt">登录</div>
+        </div>
+    </div>
+-->
+    <div id="my-course">
+        <div class="subhead">📑 <div style="display: inline-block; border-bottom: 1px dotted #66e; width: 50%;">我的课程</div></div>
+        {:R('WD_ChannelList/courseList',array( $uid,$agentid,false),'Widget')}
+    </div>
+    <div style="margin-top: 15px;">
+        <div class="subhead">📑 <div style="display: inline-block; border-bottom: 1px dotted #66e; width: 50%;">全部课程</div></div>
+        {:R('WD_ChannelList/agentChannel',array( $agentid,false),'Widget')}
+    </div>
+</div>
+
+<div id="userinfo" class="easyui-navpanel">
+    <header>
+        <div class="m-toolbar">
+            <span id="info_title" class="m-title">__</span>
+            <div class="m-left">
+                <a href="javascript:void(0)" class="easyui-linkbutton m-back" plain="true" outline="true" onclick="$.mobile.back()">返回</a>
+            </div>
+        </div>
+    </header>
+    userinfo
+</div>
+
+<script>
+    $(".nav_ico").on('click',function(event){
+        var obj=event.delegateTarget;
+        var func=$(obj).attr('func');
+        console.log(func);
+        switch(func) {
+            case 'login':
+                window.location.href="__URL__/login";
+                break;
+            case 'uinfo':   //显示用户信息，及用户服务
+                $("#userinfo").load('__URL__/userInfo',function () {
+                    $.parser.parse($('#userinfo'));
+                });
+                $("#info_title").html('用户服务');
+                $.mobile.go('#userinfo');
+                break;
+        }
+        console.log(event.delegateTarget);
+
+    });
+
+    $("#my-logo").on('click',function(event){
+        $("#userinfo").load('__URL__/userInfo',function () {
+            $.parser.parse($('#userinfo'));
+        });
+        $("#info_title").html('用户服务');
+        $.mobile.go('#userinfo');
+    });
+</script>
+</body>
+</html>

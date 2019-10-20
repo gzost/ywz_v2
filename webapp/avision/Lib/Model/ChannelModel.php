@@ -354,7 +354,7 @@ class ChannelModel extends Model {
 	 * $viewerlimit 限制直播在线人数
 	 * 成功返回记录ID 失败返回false
 	 */
-	public function CreateNew($masterId = 0, $streamId = 0, $name = 'New Channel', $viewerlimit = 0)
+	public function CreateNew($masterId = 0, $streamId = 0, $name = 'New Channel', $viewerlimit = 0,$agent=0)
 	{
 		$add['name'] = $name;
 		$add['descript'] = $name;
@@ -382,6 +382,7 @@ class ChannelModel extends Model {
 		$attr['viewIncRand'] = 1;
 		$add['attr'] = json_encode($attr);
 
+		$add['agent']=$agent;	//2019-10-20 频道自动属于开设频道所属机构
 		$newId = $this->add($add);
 		return $newId;
 	}

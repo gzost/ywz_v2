@@ -39,6 +39,7 @@ class WD_ChannelListWidget extends Action
             $firstDay=$year."-01-01";
             $lastDay=$year."-12-31";
 
+            $totalClassHours=$totalFinishHours=0;   //总课时，及总完成课时
             foreach ($chnList as $key=>$chn){
                 if($chn['chnname']==null) $chnList[$key]['chnname']='无名频道';
                 $attr=json_decode($chn['attr'],true);
@@ -48,18 +49,24 @@ class WD_ChannelListWidget extends Action
                 //若定义了学时数则显示学习进度
                 if(!empty($attr['classHours'])){
                     $chnList[$key]['classHours']=$attr['classHours'];
+                    $totalClassHours += $attr['classHours'];
                     $cond=array('chnid'=>$chn['chnid'], 'userid'=>$uid,
                         'rq'=>array('between',array(empty($attr['termBeginDate'])?$firstDay:$attr['termBeginDate'],empty($attr['termEndDate'])?$lastDay:$attr['termEndDate'])
                         )
                     );
                     $finishHours=$dalChnView->where($cond)->sum('duration');
+                    if(null==$finishHours) $finishHours=0;
                     //var_dump($finishHours);
                     //echo $dalChnView->getLastSql();
                     $chnList[$key]['finishHours']=$finishHours;
+                    $totalFinishHours += $finishHours;
                 }
             }
 //dump($chnList);
             $webVar['chnList']=$chnList;
+            $webVar['totalClassHours']=$totalClassHours;
+            $webVar['totalFinishHours']=$totalFinishHours;
+//dump($webVar);
             $this->assign($webVar);
             $this->display('WD_ChannelList:courseList');
             return;

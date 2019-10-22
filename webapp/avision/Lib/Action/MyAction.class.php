@@ -16,8 +16,11 @@ class MyAction extends SafeAction
      * 显示当前用户的相关信息
      */
     public function showMyInfo($chnid=0){
-        $this->Subscriber($chnid);
         $this->display('showMyInfo');
+        $uid=$this->userId();
+        if($uid>0) $this->userInfo($uid,$chnid);
+        if($chnid>0)  $this->Subscriber($chnid);
+
     }
 
     /**
@@ -92,7 +95,7 @@ class MyAction extends SafeAction
         }
 //dump($webVar); dump($uid);
         $this->assign($webVar);
-        $this->display("Subscriber");
+        $this->display("My:Subscriber");
     }
 
     /**
@@ -143,9 +146,15 @@ class MyAction extends SafeAction
         $webVar=array("continerid"=>SUBSCRIBER_CONTNER,"msg"=>$_REQUEST['msg']);
         $webVar['backUrl']=urldecode($_REQUEST['backUrl']);
         $this->assign($webVar);
-        $this->display('extFunction');
+        $this->display('My:extFunction');
     }
 
+    public function chnRegisteU($chnid=0,$msg='',$continerid='',$mode=''){
+        $this->display('showMyInfo');
+        $uid=$this->userId();
+        $this->userInfo($uid);
+        if($chnid>0)  $this->chnRegiste($chnid,$msg,$continerid,$mode);
+    }
     /**
      * 显示及修改会员信息
      * @param int $chnid    频道ID
@@ -239,6 +248,62 @@ class MyAction extends SafeAction
         }
 //dump($webVar);
         $this->assign($webVar);
-        $this->display('chnRegiste');
+        $this->display('My:chnRegiste');
+    }
+
+    /**
+     * 显示用户基本信息
+     */
+    public function userInfo($uid=0,$chnid=0){
+        try{
+            if($uid==0 || $uid==C('anonymousUserId') ) throw new Exception('您还未登录！');
+            $webVar=array('continerid'=>'userinfo-continer');
+
+            //若有频道参数取频道所属ageng为显示专属首页
+            if($chnid>0){
+                $dbChannel=D("channel");
+                $agent=$dbChannel->where("id=".$chnid)->getField('agent');
+                if(!empty($agent)) $webVar['agent']=$agent;
+            }
+
+            //取用户基本信息
+            $dblUser=D('user');
+            $user=$dblUser->field("id,account,username,phone,idcard,company,realname,userlevel,viplevel,experience,agent")->where("id=$uid")->find();
+            $user['idcard']=(strlen($user['idcard'])==18)?substr($user['idcard'],0,4).'***'.substr($user['idcard'],-1):"***";
+            $webVar['user']=$user;
+            if(empty($agent)) $webVar['agent']=$user['agent'];
+
+            $this->assign($webVar);
+            $this->display('My:userInfo');
+        }catch (Exception $e){
+            echo $e->getMessage();
+            return;
+        }
+    }
+
+    /**
+     * 更新当前用户信息，必须POST用户ID:uid，并且该ID与当前用户相同，否则不能更新
+     * 接收POST字段：username
+     *
+     * 输出：更新结果字串
+     */
+    public function updateUserInfoAjax(){
+        $uid=$_POST['uid'];
+        try{
+            if($uid<1 || $uid!= $this->userId() ) throw new Exception('参数错误');
+            $dbUser=D('user');
+            $newRecord=array();
+            //更新昵称
+            if(!empty($_POST['username'])) $newRecord['username']=$_POST['username'];
+            $rt=$dbUser->where(array('username'=>$_POST['username']))->field('id')->find();  //是否有重名
+            if(null!==$rt && $rt['id']!=$uid ) throw new Exception('此昵称已经被别人使用了，更新失败！');
+
+            //更新数据
+            $rt=$dbUser->where('id='.$uid)->save($newRecord);
+            if(false===$rt) throw new Exception('数据无法更新，稍后再试。');
+            echo "更新成功";
+        }catch (Exception $ex){
+            echo $ex->getMessage();
+        }
     }
 }

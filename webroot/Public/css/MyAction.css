@@ -1,0 +1,39 @@
+/* MyAction的公共样式 */
+
+/*显示模块，相关公共配置*/
+/*显示块样式容器，一个页面可以有多个容器*/
+.mycontiner{
+    padding: 5px;
+    color: #001122;
+    font-size: 12px;
+    background-color: #eee;
+    /* min-height: 400px; */
+    text-align: left;
+    border-bottom: 4px solid white;
+}
+
+.block-title{
+    text-align: left;
+    font-size: 1.1em;
+    color: #557;
+    font-weight: bold;
+    margin: 5px 5px 5px 25px;
+    padding-left: 5px;
+    /*background-color: #ddd;*/
+    line-height: 20px;
+    overflow: visible;
+}
+.block-title:before{
+    content:'';
+    position: absolute;
+    width:0px;
+    height:0px;
+    margin-left:-20px;
+    line-height: 20px;
+    border-width:8px;
+    border-style:solid dashed dashed dashed;
+    border-color:transparent transparent transparent #e66161;
+}
+.block-contain{
+    margin-left:2em;
+}

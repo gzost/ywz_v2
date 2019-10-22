@@ -1,5 +1,9 @@
 <!-- 按课程样式输出的频道信息 -->
-
+<div style="text-align: left; font-size: 0.8em; color: #4f5f6f; margin: 5px;">
+    总学习进度：
+    <meter min="0" max="{$totalcClassHours}" value="{$totalFinishHours}"></meter>{$totalFinishHours}/{$totalClassHours}
+    <div style="font-size: 8px;color: #9f9faf;">学习进度2小时更新一次</div>
+</div>
 <foreach name="chnList" item="chn">
     <div class="channel-list1" chnid="{$chn.chnid}">
         <div class="left-box">

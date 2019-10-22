@@ -372,7 +372,7 @@ class UserAction extends AdminBaseAction{
                 echo('密码修改成功。');
 
             }else {
-                $this->show('User/WD_changePws');
+                $this->show('User:WD_changePws');
             }
 
         }catch (Exception $e){

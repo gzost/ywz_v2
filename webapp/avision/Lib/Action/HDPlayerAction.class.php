@@ -829,6 +829,7 @@ logfile('WhatViewer:'.$st);
 		$this->assign('xu', $_SESSION['HDPlayer']['xu']);
 		//$this->assign('myurl','http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'].$_SERVER['QUERY_STRING']);
 		$this->assign('myurl',$myurl);
+        $this->assign('agent', (empty( $chnInfo['agent']))?0:$chnInfo['agent']);
 
 		//不同频道可以定义播放器皮肤
 		$theme=(is_string($chnAttr['theme']))?$chnAttr['theme']:"default";

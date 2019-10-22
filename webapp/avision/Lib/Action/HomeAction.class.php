@@ -295,13 +295,20 @@ class HomeAction extends SafeAction {
      	$this->assign($webVar);
     	$this->show('login');
     }
-    public function logout(){
+    public function logout($agent=0){
 		$scrType=$this->getScreenType();
 
     	$auth=new authorize();
+    	unsetPara('errorMsg');
     	$auth->logout();
+    	//若提供了agent检查此agent是否定义了客户化首页
+        $dbAgent=D('agent');
+        $homeName=getExtAttr($dbAgent,array('id'=>$agent),'home','config');
+        $module=(empty($homeName))?'Home':'CH_'.$homeName;
+//echo $dbAgent->getLastSql();
+//var_dump($homeName);
 //echo "out!"; die;
-		$this->redirect('index');
+		$this->redirect($module.'/index');
 
     }
     public function authen($account='',$password='',$chnId=0){
@@ -1222,6 +1229,24 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
     	);
     	$this->assign('doc',$doc);
     	$this->show('help');
+    }
+
+    /**
+     * 根据Agent配置决定跳转到定制首页还是默认首页
+     * @param int $agent
+     */
+    public function goHome($agent=0){
+	    if($agent>0){
+            $dbAgent=D('agent');
+            $homeName=getExtAttr($dbAgent,array('id'=>$agent),'home','config');
+        }else{
+            $homeName=null;
+        }
+        $module=(empty($homeName))?'Home':'CH_'.$homeName;
+//echo $dbAgent->getLastSql();
+//var_dump($homeName);
+//echo "out!"; die;
+        $this->redirect($module.'/index');
     }
 }
 ?>

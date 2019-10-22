@@ -1,0 +1,116 @@
+<!--
+输出用户基本信息，左侧用户头像，右侧用户信息
+依赖外部导入 jqueryUI, publicFunction.js
+参考showMyInfo.html
+-->
+<div id="{$continerid}" class="mycontiner">
+<style>
+    .user-baseinfo{
+        box-sizing: border-box;
+        width:100%;
+        padding: 5px 2px;
+        vertical-align: top;
+        position: relative;
+    }
+    .user-baseinfo .left-box{
+        display: inline-block;
+        padding: 0 5px;
+        width: 50px;
+        text-align: center;
+    }
+    .user-baseinfo .right-box{
+        display: inline-block;
+        vertical-align: top;
+    }
+    .user-baseinfo .right-box ul{
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        line-height: 22px;
+    }
+    .round-icon{
+        width:64px;
+        height:64px;
+        border-radius:50%;
+    }
+
+    .user-baseinfo .left-box .head-img{
+        width: 100%;
+        height: 0;
+        padding-top: 100%;   /* 显示长宽比控制：(图片高度/图片宽度)*100 */
+        overflow: hidden;
+
+    }
+
+    .userInfo-cmdlist{
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        color:#001122;
+        font-size: 1.2em;
+        line-height: 2.5em;
+    }
+    .userInfo-cmdlist li{
+        padding: 0 10px;
+        background-color: #f6f6ff;
+        border-color: #ddd;
+        border-style: solid;
+        border-width:1px 0 0 0;
+    }
+    .userInfo-cmdlist li:hover{
+        background-color: #f8f6f6;
+    }
+    .userInfo-cmdlist li:last-child{
+        border-bottom-width:1px;
+    }
+    .userInfo-cmdlist li:before{
+        content: "▷ ";
+    }
+</style>
+
+<div class="user-baseinfo">
+    <div class="left-box">
+        <div class="head-img" style="background-image: url(__PUBLIC__/images/my.png); background-size: cover;background-position: center center;"></div>
+
+    </div>
+    <div class="right-box">
+        <ul>
+            <li>{$user.account}</li>
+            <li>昵称：<input class="easyui-textbox" value="{$user.username}" style="width:150px;height: 22px;"
+                             data-options="onChange:function(newVal,oldVal){
+                                console.log(newVal,oldVal);
+                                //$(this).textbox('setValue',oldVal);   //这样会循环触发
+                                var _this=this;
+                                $.post('__APP__/My/updateUserInfoAjax',{ uid:'{$user.id}', username:newVal },function(data){
+                                    console.log(data);
+                                    $.messager.alert('更新结果',data,'info');
+                                },'html');
+                             }"></li>
+            <li>姓名：{$user.realname}</li>
+            <li>证件：{$user.idcard}</li>
+            <li>单位：{$user.company}</li>
+        </ul>
+    </div>
+
+</div>
+<div style="text-align: right; padding: 5px;">
+    <a id="cwd" href="javascript:void(0);" class="easyui-linkbutton" plain="true" outline="true" style="width:80px;height: 22px;">修改密码</a>
+    <a href="__APP__/Home/logout/agent/{$agent}" class="easyui-linkbutton " plain="true" outline="true" style="width:80px;height: 22px;">登 出</a>
+</div>
+    <div id="win1" class="easyui-dialog" style="padding:5px 6px;width:80%;"
+         data-options="inline:true,modal:true,closed:true,title:'Loding...',closable:true, toolbar:'#bb' ">
+    </div>
+    <div id="bb" style="text-align: right; border: 0; background-color: transparent;">
+        <a href="#" class="easyui-linkbutton" data-options="{ width:80,height:22 }" onclick="$('#win1').dialog('close');"> 关闭 </a>
+    </div>
+<script>
+    $("#cwd").off("click");
+    $("#cwd").on("click",function (event) {
+        console.log(event.target);
+        $("#win1").dialog('open');
+        $("#win1").panel({title:"修改密码"});
+        $("#win1").window('refresh','__APP__/User/WD_changePws');
+        $("#win1").window('center');
+    });
+</script>
+</div>

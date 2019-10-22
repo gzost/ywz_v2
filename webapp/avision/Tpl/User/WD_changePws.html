@@ -1,0 +1,44 @@
+<!--
+修改密码控件
+-->
+<style>
+    #changePsw{
+        text-align: center;
+        line-height: 50px;
+    }
+    #changePsw input{
+        width:60%;
+    }
+    #changePsw .textbox-label{
+        width:30%;
+        text-align: right;
+        padding-right: 5px;
+    }
+    #changePsw-msg{
+        margin-bottom: 10px;
+        line-height: 30px;
+    }
+</style>
+<div id="WDchangePwd-box">
+    <form id="changePsw" method="post">
+        <span class="textbox-label">输入原密码</span> <input class="easyui-textbox" type="password" name="oldPsw"  prompt="输入原密码" style="height:30px;">
+        <span class="textbox-label">输入新密码</span><input class="easyui-textbox" type="password" name="newPsw" prompt="输入新密码" style="height:30px;">
+        <span class="textbox-label">再输入新密码</span><input class="easyui-textbox" type="password" name="newPsw2" prompt="再次输入新密码" style="height:30px;">
+        <input type="hidden" name="work" value="save" >
+        <div id="changePsw-msg"></div>
+        <a href="javascript:void(0)" class="easyui-linkbutton c7" style="width:40%;height:28px" onclick="$('#changePsw').submit()">修改密码</a>
+
+    </form>
+
+</div>
+<script>
+    $("#changePsw").form({
+        url:"__APP__/User/WD_changePws",
+        onSubmit:function () {
+            console.log('submit!');
+        },
+        success:function (data) {
+            $("#changePsw-msg").html(data);
+        }
+    });
+</script>

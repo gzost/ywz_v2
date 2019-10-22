@@ -28,38 +28,4 @@
     content: "▷ ";
 }
 </style>
-{:R('WD_UserInfo/baseInfo',array( $uid ),'Widget')}
-<div style="text-align: right; padding: 5px;">
-    <a href="__URL__/logout" class="easyui-linkbutton " plain="true" outline="true" style="width:80px">登 出</a>
-</div>
-<div id="userInfo-cmd">
-    <ul class="userInfo-cmdlist">
-        <li func="cwd">修改密码</li>
-    </ul>
-</div>
-<div id="win1" class="easyui-dialog" style="padding:5px 6px;width:80%;"
-     data-options="inline:true,modal:true,closed:true,title:'Loding...',closable:true, toolbar:'#bb' ">
-</div>
-<div id="bb" style="text-align: right; border: 0; background-color: transparent;">
-    <a href="#" class="easyui-linkbutton" data-options="{ width:80 }" onclick="$('#win1').dialog('close');"> 关闭 </a>
-</div>
-
-<script>
-    $(".userInfo-cmdlist").off("click");
-    $(".userInfo-cmdlist").on("click",function (event) {
-        console.log(event.target);
-        var obj=event.target;
-        var func=$(obj).attr('func');
-
-        switch (func){
-            case 'cwd': //修改密码
-                console.log('cwd');
-                $("#win1").dialog('open');
-                $("#win1").panel({title:"修改密码"});
-                $("#win1").window('refresh','__APP__/User/WD_changePws');
-                $("#win1").window('center');
-                break;
-
-        }
-    });
-</script>
+{:R('My/userInfo',array( $uid ))}

@@ -316,6 +316,10 @@ $(document).ready(function(){
 			case "menu":	//扩展菜单
                 $("#more-menu").dialog('open');
 				break;
+			case "108":		//首页
+                location.href = "__APP__/Home/goHome"+"/agent/{$agent}"+"/tab/108";
+                $("#divMore").html("<div style='font-size: 14px;'>Lodding...</div>");
+			    break;
 		}
         $(".tab-list>div[tabid='"+activtab+"']").removeClass('tab-selected');
 		activtab=tabid;

@@ -7,7 +7,7 @@
 class ChannelRelUserViewModel extends ViewModel {
 	public $viewFields=array(
 		'channelreluser'=>array('id','chnid','uid','status','type','note','classify','note2','_type'=>'LEFT'),
-		'Channel'=>array('name'=>'chnname','attr','agent','_on'=>'chnid=Channel.id','_type'=>'LEFT'),
+		'Channel'=>array('name'=>'chnname','attr','agent','owner','_on'=>'chnid=Channel.id','_type'=>'LEFT'),
 		'User'=>array('account','username','idcard','company','realname','_on'=>'uid=User.id')
 	);
 	
@@ -17,7 +17,7 @@ class ChannelRelUserViewModel extends ViewModel {
 	 * @param array $cond	条件数组
 	 */
 	public function getList($cond,$fields=''){
-		$result= $this->field($fields)->where($cond)->select();
+		$result= $this->field($fields)->where($cond)->order('uid')->select();
 
 //echo $this->getLastSql();
 		return $result;

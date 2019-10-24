@@ -12,57 +12,73 @@ require_once(LIB_PATH.'Model/UserrelroleModel.php');
 require_once(LIB_PATH.'Model/ChannelModel.php');
 require_once(LIB_PATH.'Model/ChannelreluserModel.php');
 require_once(LIB_PATH.'Model/ChannelRelUserViewModel.php');
+require_once(LIB_PATH.'Model/AgentModel.php');
+require_once(LIB_PATH.'Model/UserModel.php');
 
 class SubscriberAction extends AdminBaseAction{
 	/**
 	 * 
 	 * 查看注册了私有频道的用户并管理观看授权
+     * 权限：{"operation":[{"text":"允许","val":"R"},{"text":"管理所有","val":"A"}]}
 	 */
 	public function authorize(){
  		$this->baseAssign();
  		$this->assign('mainTitle','观众管理');
  		$this->assign('userName',$this->userName());
  		//网页传递的变量模板
- 		$webVarTpl=array('work'=>'init','chnId'=>-1,'classify'=>0,'type'=>'0','classifyListJson'=>'[]','status'=>'0','note'=>'');
- 		$condTpl=array('chnId'=>0,'classify'=>0,'type'=>'0','status'=>'0','note'=>'');
- 		 		
+ 		$webVarTpl=array('work'=>'init','chnId'=>0,'classify'=>'','type'=>'0','classifyListJson'=>'[]','status'=>'0','note'=>'','agent'=>0, 'owner'=>$this->getUserInfo('account'));
+ 		$condTpl=array('chnId'=>0,'classify'=>'','type'=>'0','status'=>'0','note'=>'','agent'=>0, 'ownerid'=>$this->userId());
+ //var_dump(array_diff_key($webVarTpl,$condTpl));
   		condition::clear(ACTION_NAME);
  		pagination::clear(ACTION_NAME);
- 		$webVar=$this->getRec($webVarTpl,false);
-        $dbChannel=D(channel);
- 		if('init'==$webVar['work']){
- 			
- 			//取下拉频道数据
- 			$userInfo=authorize::getUserInfo();
- 			//$userInfo['userId']=22;
- 			$db=D('userrelrole');
- 			$isAdmin=$db->isInRole($userInfo['userId'],C('adminGroup'));
-//var_dump($isAdmin);
+ 		//$webVar=$this->getRec($webVarTpl,false);
+        $webVar=ouArrayReplace($webVarTpl,$_POST,'org');    //只从POST读入查询条件
+//dump($webVar);
+        //权限处理
+        $webVar['ownerReadonly']=($this->isAdmin || $this->isOpPermit('A'))? 'false':'true';
 
- 			$chnList=($isAdmin)?$dbChannel->getPulldownList(0,''):$dbChannel->getPulldownList($userInfo['userId'],'');
-//echo $db->getLastSql();
+        //取机构列表
+        $dbAgent=D("agent");
+        $agentList=$dbAgent->getNameList();
+        $empItem=array('id'=>0, 'name'=>' ');
+        if(is_array($agentList)) array_unshift($agentList,$empItem);
+        else $agentList=array($empItem);
+        $agentListJson=str_replace('"',"'",json_encode2($agentList));
+//var_dump($agentListJson);
+        $webVar['agentListJson']=$agentListJson;
+
+        //设置频道属主ID
+        if(!empty($webVar['owner'])){
+            $dbUser=D('user');
+            $webVar['ownerid']=$dbUser->getUserId($webVar['owner']);
+        }else $webVar['ownerid']=0;
+
+
+ 		if('init'==$webVar['work']){
+/*
  			if(count($chnList)<1){
  				//没有任何频道的管理权限
  				$this->assign('msg','您还没有开设[会员]类型的频道，您可以在 【频道管理】-【高级设置】中设定。');
  				$this->display('common:noRight');
  				return;
  			}
- 			$webVar['chnId']=$chnList[0]['id'];
+*/
+ 			//$webVar['chnId']=1330;//$chnList[0]['id'];
  			//dump($chnList);
- 			$chnListJson=(null==$chnList)?'[]':json_encode($chnList);
- 			setPara('chnListJson', $chnListJson);
+ 			//$chnListJson=(null==$chnList)?'[]':json_encode($chnList);
+ 			//setPara('chnListJson', $chnListJson);
  			$condTpl['chnId']=$webVar['chnId'];
- 			condition::save($condTpl,ACTION_NAME);	//更新并存储最新的查询条件
+ 			condition::save($webVar,ACTION_NAME);	//更新并存储最新的查询条件
  		} else {
- 			condition::update($condTpl,ACTION_NAME);
+ 			condition::update($webVar,ACTION_NAME);
  		}
 
  		//取频道信息
-        $header=array();
+        $dbChannel=D(channel);
         $chnId=$webVar['chnId'];
- 		if(1>$chnId){
- 		    $webVar['msg']="必须选择一个频道。";
-        }else{
+        $header=array();
+ 		if(!empty($chnId)){
+ 		    //指定唯一频道ID
  		    $chnName=$dbChannel->getName($chnId);
             $webVar['msg']="当前频道：[$chnId]$chnName";
             //取频道会员问题
@@ -72,10 +88,15 @@ class SubscriberAction extends AdminBaseAction{
             foreach ($quest as $v){
                 $header[]=array('name'=>$v,'text'=>htmlspecialchars($v));
             }
+            $webVar['multiChn']='0';
+        }else{
+ 		    //没选择唯一频道
+            $webVar['multiChn']='1';
         }
+
         setPara('ExtHeader',$header);
         $webVar['header']=$header;
-
+/*
  		//取用户分组数据
  		$chm=D('Channelreluser');
 		$r=$chm->getClassifyList($webVar['chnId']);
@@ -84,8 +105,9 @@ class SubscriberAction extends AdminBaseAction{
 			$data[]=array('id'=>$rec['classify'],'name'=>$rec['classify']);
 		}
  		$webVar['classifyListJson']=urlencode(json_encode($data,JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_QUOT|JSON_HEX_AMP|JSON_UNESCAPED_UNICODE));
+*/
 //var_dump($webVar);
- 		$webVar['work']='search';
+ 		//$webVar['work']='search';
  		$this->assign($webVar);
 		$this->display('authorize');
 	}
@@ -94,12 +116,19 @@ class SubscriberAction extends AdminBaseAction{
 	public function authorizeGetList($page=1,$rows=1,$renew='false'){
 	    if('true'==$renew || !pagination::isAvailable('authorize')){
 			//新的查询
-			$cond=condition::get('authorize');
-			$cond=arrayZip($cond,array(null,0,'不限','0','','全部'));
+            $c=condition::get('authorize');
+            $c=arrayZip($c,array(null,0,'不限','0','','全部'));
+			$cond=array();
+			if(!empty($c['agent'])) $cond['agent']=$c['agent'];
+            if(!empty($c['ownerid'])) $cond['owner']=$c['ownerid'];
+            if(!empty($c['chnId'])) $cond['chnid']=$c['chnId'];
 			if(isset($cond['note']) && '' != $cond['note']){
 			    $cond['note']=array('like','%'.$cond['note'].'%');
             }
-//dump($cond);
+            if(!empty($c['classify'])) $cond['classify']=$c['classify'];
+            if(!empty($c['type'])) $cond['type']=$c['type'];
+            if(!empty($c['status'])) $cond['status']=$c['status'];
+//var_dump($cond);
 			$db=D('ChannelRelUserView');
 			$rec=$db->getList($cond);
 //echo $db->getLastSql();
@@ -139,9 +168,33 @@ class SubscriberAction extends AdminBaseAction{
 			echo json_encode(array(	'isError' => true,	'msg' => $e->getMessage()));
 		}
 	}
-	
-	public function onlineUserGetChnPulldown(){
-		echo getPara('chnListJson');
+
+    /**
+     * 取下拉频道数据
+     * @param int $agent   频道机构id
+     * @param int $owner   频道属主账号
+     */
+	public function onlineUserGetChnPulldown($agent=0,$owner=''){
+        if(!empty($owner)){
+            $dbUser=D('user');
+            $ownerid=$dbUser->getUserId($owner);
+        }else $ownerid=0;
+
+        $dbChannel=D(channel);
+        //$userInfo=authorize::getUserInfo();
+        //$userInfo['userId']=22;
+        //$db=D('userrelrole');
+        //$isAdmin=$db->isInRole($userInfo['userId'],C('adminGroup'));
+//var_dump($this->isAdmin);
+        $chnList=($this->isAdmin)?$dbChannel->getPulldownList($ownerid,'','',null,$agent):$dbChannel->getPulldownList($ownerid,'','',null,$agent);
+        $empItem=array('id'=>0, 'name'=>' ');
+        if(is_array($chnList)) array_unshift($chnList,$empItem);
+        else $chnList=array($empItem);
+        $chnListJson=json_encode2($chnList);
+        //$chnListJson=str_replace('"',"'",$chnListJson);
+//echo $dbChannel->getLastSql();
+//var_dump($chnListJson);
+		echo $chnListJson;
 	}
 	
 	/**

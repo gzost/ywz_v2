@@ -20,6 +20,7 @@ $(document).ready(function(){
 	
 	
 	 $('#dg').datagrid({
+         url:'__URL__/authorizeGetList',
          view: detailview,
          detailFormatter: function(index, row){
 				return '<div style="padding:2px"><table class="ddv"></table></div>';
@@ -47,7 +48,7 @@ $(document).ready(function(){
 				]]
 			});
 			$('#dg').datagrid('fixDetailRowHeight',index);
-
+			if( typeof(row.note)!='string') row.note='[]';
 			ddv.datagrid('loadData',eval(row.note));
 		}
 	});
@@ -80,23 +81,38 @@ function setUserStatus(status){
 	}
 	//alert($.toJSON(submitData));
 }
+	/*
+		更新频道选择列表
+	 */
+	var channelListLoaded=false;
+	function updateChannelList(agent,owner) {
+        console.log("updateChannelList a:"+agent+"  o:"+owner);
+        if(owner==null) owner=$("#cond-owner").textbox('getText');	//播主账号
+        if(agent==null) agent=$("#cond-agent").combobox('getValue');
+		console.log("updateChannelList a:"+agent+"  o:"+owner);
+		if(channelListLoaded){
+            $("#cchannel-list").combobox('reload','__URL__/onlineUserGetChnPulldown/agent/'+agent+'/owner/'+owner);
+            $("#cchannel-list").combobox('select',0);
+		}
 
+    }
 </script>
 
-<style type="text/css"> 
+<style type="text/css">
+	.cond-item { white-space: nowrap; line-height: 1em; margin-top:5px;}
 </style>
 
 <table id="dg" class="easyui-edatagrid"  style="width:99%"
-	data-options="url:'__URL__/authorizeGetList',rownumbers:true,singleSelect:false,checkOnSelect:true,
+	data-options="rownumbers:true,singleSelect:false,checkOnSelect:true,
 		toolbar:'#tb',pagination:true,  pageSize:20,
 		updateUrl:'__URL__/authorizeUpdateAjax' "
 >
 	<thead>
 		<tr>
 			<th data-options="field:'ck',checkbox:true"></th>
-			<!--
-			<th data-options="field:'chnname', width:200,align:'left', halign:'center' ">频道名称</th>
-			-->
+			<neq name="multiChn" value="0">
+				<th data-options="field:'chnname', width:200,align:'left', halign:'center' ">频道名称</th>
+			</neq>
 			<th data-options="field:'account', width:150,align:'left', halign:'center' ">观众账号</th>
 			<th data-options="field:'username', width:150,align:'left', halign:'center'">观众名称</th>
 			<th data-options="field:'realname', width:100,align:'left', halign:'center'">真实姓名</th>
@@ -125,6 +141,9 @@ function setUserStatus(status){
 			<th data-options="field:'note2', width:160,align:'left', halign:'center',
 				editor:{type:'textbox'}
 			">备注</th>
+			<neq name="multiChn" value="0">
+				<th data-options="field:'note', width:200,align:'left', halign:'center' ">会员信息</th>
+			</neq>
 			<foreach name="header" item="col">
 				<th  data-options="field:'{$col.name}',{$col.data-options}" >{$col.text}</th>
 			</foreach>
@@ -137,22 +156,42 @@ function setUserStatus(status){
 <div id="tb" style="padding:2px 5px;">
 	<form id='cond' method='post' style="display:inline">
 		查询条件：　
-
-		频道：<input class='easyui-combobox' name='chnId' value='{$chnId}'  style='width:180px'
+		<span class="cond-item">机构：<input class="easyui-combobox" id="cond-agent" name="agent" value="{$agent}" style="width: 150px; height: 25px;"
+			data-options="valueField:'id',textField:'name', data: {$agentListJson},
+				onSelect:function(rec){
+					//console.log(this);
+					//console.log(rec);
+					updateChannelList(rec.id,null);
+				}
+			"
+		></span>
+		<span class="cond-item">播主账号：<input class="easyui-textbox" id="cond-owner" name="owner" value="{$owner}" style="width:60px; height: 25px;"
+			data-options="
+				readonly: {$ownerReadonly},
+				onChange:function(newVal,oldVal){
+					updateChannelList(null,newVal);
+				}
+			" >
+		</span>
+		<span class="cond-item">频道：<input class='easyui-combobox' id="cchannel-list" name='chnId' value='{$chnId}'  style='width:180px; height: 25px;'
 				data-options="valueField:'id',textField:'name', editable:true,
-					url:'__URL__/onlineUserGetChnPulldown' " />
-		会员信息：<input class="easyui-textbox" name="note" value="{$note}" data-options="width:150" >
-		分组：<input class='easyui-combobox' name='classify' value='{$classify}'  style='width:100px'
-				data-options="valueField:'id',textField:'name', editable:false,
-					data: classifyData " />
-		类型：<input class='easyui-combobox' name='type' value='{$type}'  style='width:100px'
+					url: '__URL__/onlineUserGetChnPulldown/agent/{$agent}/owner/{$owner}',
+					onLoadSuccess:function(){ channelListLoaded=true }
+				" />
+		</span>
+		<!-- url:'__URL__/onlineUserGetChnPulldown' -->
+		<span class="cond-item">会员信息：<input class="easyui-textbox" name="note" value="{$note}" style="width:150px; height: 25px;" ></span>
+		<span class="cond-item">分组：<input class='easyui-textbox' name='classify' value='{$classify}'  style='width:100px; height: 25px;' /></span>
+		<span class="cond-item">类型：<input class='easyui-combobox' name='type' value='{$type}'  style='width:100px; height: 25px;'
 				  data-options="valueField:'id',textField:'name', editable:false,
 					data: [{id:'0',name:'全部'},{id:'关注',name:'关注'},{id:'会员',name:'会员'},{id:'订购',name:'订购'}] " />
-		状态：<input class='easyui-combobox' name='status' value='{$status}'  style='width:100px'
+		</span>
+		<span class="cond-item">状态：<input class='easyui-combobox' name='status' value='{$status}'  style='width:100px; height: 25px;'
 				  data-options="valueField:'id',textField:'name', editable:false,
 					data: [{id:'0',name:'全部'},{id:'正常',name:'正常'},{id:'禁用',name:'禁用'}] " />
-		<input name='work' value='{$work}' style="display:none" />
-		<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
+		</span>
+		<input name='work' value='search' style="display:none" />
+		<div class="easyui-linkbutton" iconCls="icon-search" style="height: 25px" onclick="$('#cond').submit();">查询</div>
 	</form>
 	
 	

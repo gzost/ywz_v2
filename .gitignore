@@ -5,6 +5,7 @@ logs/
 webroot/vodfile/
 webroot/room/
 webroot/doc/
+webroot/t/
 sslkeys/
 webroot/chunks/
 webroot/Public/jeasyui/

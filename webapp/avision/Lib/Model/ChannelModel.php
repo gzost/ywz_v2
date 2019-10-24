@@ -93,11 +93,12 @@ class ChannelModel extends Model {
 	 * 
 	 * @return array
 	 */
-	public function getPulldownList($userId=0,$type='',$status='normal',$name=null){
+	public function getPulldownList($userId=0,$type='',$status='normal',$name=null,$agent=0){
 		$cond=array();
 		if($status!='') $cond['status']=$status;
-		if($userId!=0) $cond['owner|anchor']=$userId;
+		if(!empty($userId)) $cond['owner|anchor']=$userId;
 		if($type!='') $cond['type']=$type;
+		if(!empty($agent)) $cond['agent']=$agent;
 		if(null !=$name) $cond['name']=array('like','%'.$name.'%');
 		$rec=$this->field('id,name')->where($cond)->select();
 //echo $this->getLastSql();

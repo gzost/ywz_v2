@@ -55,7 +55,29 @@
 	function unsetPara($name){
 		unset($_SESSION[OUPARA][$name]);
 	}
-	
+
+/**
+ * 用data中相同key的内容替换$tpl的内容，$data有$tpl中没有的key忽略，对$tpl有$data没有的key根据$diff的值处理
+ * $diff值：org-保持$tpl原有值，unset-删除，其它-替换成$diff的值
+ * @param $tpl
+ * @param $data
+ * @param string $diff
+ * @return array
+ */
+function ouArrayReplace($tpl,$data,$diff='org'){
+    $rt=array();    //返回的数组
+    foreach ($tpl as $k=>$v){
+        if(isset($data[$k])){
+            $rt[$k]=$data[$k];
+        }else{
+            if($diff=='org') $rt[$k]=$v;
+            elseif($diff=='unset'){}
+            else $rt[$k]=$diff;
+        }
+    }
+    return $rt;
+}
+
 	/**
 	 * 
 	 * 压缩数组，把内容在filter中的元素删除,filter中的内容为精确匹配

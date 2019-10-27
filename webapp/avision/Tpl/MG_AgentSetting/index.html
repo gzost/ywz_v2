@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+    <link rel="stylesheet" href="__PUBLIC__/jeasyui/themes/material/easyui.css" >
+    <link rel="stylesheet" href="__PUBLIC__/jeasyui/themes/icon.css" >
+    <link rel="stylesheet" href="__PUBLIC__/jeasyui/themes/color.css" >
+
+    <script src="__PUBLIC__/jeasyui/jquery.min.js" ></script>
+    <script src="__PUBLIC__/jeasyui/jquery.easyui.min.js" ></script>
+    <script src="__PUBLIC__/jeasyui/jquery.edatagrid.js" ></script>
+    <script src="__PUBLIC__/js/jeasyui_formatter_ext.js" ></script>
+    <script src="__PUBLIC__/js/jquery.form.js"></script>
+    <script src="__PUBLIC__/js/adv-uploadprogress.js"></script>
+
+    <link rel="stylesheet"  href="__PUBLIC__/jeasyui/themes/mobile.css" >
+    <script src="__PUBLIC__/jeasyui/jquery.easyui.mobile.js"></script>
+    <script src="__PUBLIC__/js/publicFunction.js" ></script>
+
+    <style>
+        body{ font-size: 11px;}
+        .cond-item{ display:inline-block; white-space: nowrap; margin-right: 1em; line-height: 35px; vertical-align: center;}
+        .block-contain{
+            margin-left:2em;
+        }
+        .block-title{
+            text-align: left;
+            font-size: 1.1em;
+            color: #557;
+            font-weight: bold;
+            margin: 20px 10px 5px 25px;
+            padding-left: 5px;
+            /*background-color: #ddd;*/
+            line-height: 20px;
+            overflow: visible;
+        }
+        .block-title:before{
+            content:'';
+            position: absolute;
+            width:0px;
+            height:0px;
+            margin-left:-20px;
+            line-height: 20px;
+            border-width:8px;
+            border-style:solid dashed dashed dashed;
+            border-color:transparent transparent transparent #e66161;
+        }
+    </style>
+
+</head>
+<body>
+<div class="easyui-navpanel" >
+    <header>
+        <div class="m-toolbar">
+            <div class="m-left">
+                <a href="javascript:void(0)" class="easyui-linkbutton m-back" plain="true" outline="true" onclick="$.mobile.back()">返回</a>
+            </div>
+            <span class="m-title">机构用户管理</span>
+            <div class="m-right"><img src="__PUBLIC__/images/ywz.png" ></div>
+        </div>
+    </header>
+
+    <div id="tb" style="padding:5px; box-shadow: 0 1px 3px 1px #DDD;">
+        <form id="ff" method="post" style="display: inline-block;">
+            <span class="cond-item">选择机构:
+                <input class="easyui-combobox" name="agent" value="{$agent}" style=""
+                       data-options="width:200, height:24,
+                       readonly:{$fixOrg},
+                       valueField:'id',textField:'name',data:{$agentList}
+                " >
+            </span>
+        </form>
+        <span class="cond-item" style="margin-right: 4em;"><a href="javascript:void(0)" class="easyui-linkbutton c8" onclick="$('#ff').submit();" style="width:80px; height: 22px;">查找</a></span>
+    </div>
+
+    <div class="block-title">机构管理员配置的参数</div>
+    <div class="block-contain" id="blk-agentpara">
+        {:R('MG_AgentSetting/index',array("agentPara","blk-agentpara"))}
+    </div>
+
+    <div class="block-title">平台管理员配置的参数</div>
+    <div class="block-contain" id="blk-platformPara">
+        {:R('MG_AgentSetting/index',array("platformPara","blk-platformPara"))}
+    </div>
+
+</div>
+<script src="__ROOT__/Public/jeasyui/locale/easyui-lang-zh_CN.js" ></script>
+</body>
+</html>

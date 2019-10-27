@@ -4,6 +4,7 @@
  * User: outao
  * Date: 2019/4/2
  * Time: 19:01
+ * 机构用户管理，提供面向机构的用户批量导入及增删改功能
  */
 require_once COMMON_PATH.'AdminBaseAction.class.php';
 require_once LIB_PATH.'Model/AgentModel.php';

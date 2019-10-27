@@ -1,0 +1,30 @@
+<div style="box-sizing: border-box; padding: 5px; text-align: center; max-width: 1200px;">
+    <table id="pg-platform" class="easyui-propertygrid" style="width:100%" data-options="
+                data:{$platformData},
+                method:'post',
+                showGroup:true,
+                scrollbarSize:0,
+                columns:[[{field:'name',title:'属性', width:200 },  {field:'value',title:'值', width:400}]]
+            ">
+    </table>
+
+    <div id="btn-savePlatform" class="easyui-linkbutton c6 " style="margin-top: 10px; width: 80px;"> 保存</div> {$msg}
+
+</div>
+<script>
+    (function () {
+    })();
+    $(document).ready(function () {
+        $("#btn-savePlatform").on('click',function () {
+            var rows=$("#pg-platform").propertygrid("getChanges");
+            if(rows.length==0){
+                $.messager.alert('','没有数据需要更新');
+                return;
+            }
+            var para= { work:"platformPara",container:"blk-platformPara",agent: "{$agent}",rows: rows };
+            $("#"+"{$container}").load("__APP__/MG_AgentSetting/index",para,function () {
+                $.parser.parse("#"+"{$container}");
+            });
+        });
+    });
+</script>

@@ -104,9 +104,13 @@ class CH_cctsxxAction extends ChomeBaseAction
 //var_dump($this->agent);
         //取机构表定义的工作单位列表
         $listfield=json_decode($this->agent['attr'],true);
+
         if(!empty($listfield) && !empty($listfield['listfield']['company'])){
+            $listfield['listfield']['company']=explode(",",$listfield['listfield']['company']);
             $companyList=array();
+            //$companyArr=explode(",",$listfield['listfield']['company']);
             foreach ($listfield['listfield']['company'] as $key=>$val) $companyList[]=array('id'=>$key,'txt'=>$val);
+            //foreach ($companyArr as $key=>$val) $companyList[]=array('id'=>$key,'txt'=>$val);
             $companyListJson=json_encode2($companyList);
         }else $companyListJson="[]";
         $companyListJson=str_replace('"',"'",$companyListJson);

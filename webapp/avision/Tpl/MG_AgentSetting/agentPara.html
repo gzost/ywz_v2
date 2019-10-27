@@ -1,0 +1,34 @@
+<div style="box-sizing: border-box; padding: 5px; text-align: center; max-width: 1200px;">
+    <table id="pg-agent" class="easyui-propertygrid" style="width:100%" data-options="
+                data:{$propertyData},
+                method:'post',
+                showGroup:true,
+                scrollbarSize:0,
+                columns:[[{field:'name',title:'属性', width:200 },  {field:'value',title:'值', width:400}]]
+            ">
+    </table>
+    <ul style="text-align: left">
+        <li>可选择字段列表定义，各列表项用逗号分隔(注意是英文的逗号)</li>
+        <li>列表项只允许：中文、字母、数字、下划线。出现其它字符包括回车、制表符等都可能导致不可预知的错误</li>
+    </ul>
+
+    <div id="btn-saveProperty" class="easyui-linkbutton c6 " style="margin-top: 10px; width: 80px;"> 保存</div> {$msg}
+
+</div>
+<script>
+    (function () {
+    })();
+    $(document).ready(function () {
+        $("#btn-saveProperty").on('click',function () {
+            var rows=$("#pg-agent").propertygrid("getChanges");
+            if(rows.length==0){
+                $.messager.alert('','没有数据需要更新');
+                return;
+            }
+           var para= { work:"agentPara",container:"blk-agentpara",agent: "{$agent}",rows: rows };
+           $("#"+"{$container}").load("__APP__/MG_AgentSetting/index",para,function () {
+               $.parser.parse("#"+"{$container}");
+           });
+        });
+    });
+</script>

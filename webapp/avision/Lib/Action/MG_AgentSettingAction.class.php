@@ -133,6 +133,10 @@ class MG_AgentSettingAction extends AdminBaseAction{
 
 
     private function platformPara(){
+        if(!$this->isOpPermit('P')){
+            echo "权限不足。";
+            return;
+        }
         $agent=$this->agent;
         if(1>$agent) { echo "参数错误。"; return; }
         $webVar=array('agent'=>$this->agent,'container'=>$this->container);  //前端显示数据数组//装载此输出的外部容器

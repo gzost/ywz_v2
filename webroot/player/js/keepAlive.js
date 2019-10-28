@@ -1,16 +1,36 @@
 /**
  * 保持心跳相关功能
+ * @param obj para	传入参数的json对象,支持属性：
+ * 	- operatorIdleInt	播放终端最长不操作时间(秒)
+ * 	- netBrokenInt	网络中断最长时间(秒)
  */
 
-function HeartBeat()
+function HeartBeat(para)
 {
 	var _this = this;	//私有属性，指向当前实例
 
 	//定义public属性
 
+	//私有属性
+	var enableHeartBeat=true;	//允许心跳
+	//看门狗相关属性
+     var netBrokenInt=6*10;	//网络中断最长时间，默认值，10分钟
+     var operatorIdleInt=6*30;	//播放终端最长不操作时间，默认值30分钟
+	//处理传入参数
+	if('object'==typeof(para)){
+		console.log(para);
+		var tmpInt=parseInt(para.operatorIdleInt)/10;
+		if(tmpInt>2) operatorIdleInt=tmpInt;	//要长于20秒
+
+        tmpInt=parseInt(para.netBrokenInt)/10;
+        if(tmpInt>2) netBrokenInt=tmpInt;	//要长于20秒
+	}
+    //netBrokenInt=1;
+	//console.log("operatorIdleInt="+operatorIdleInt);
 	//维持心跳
 	_this.keepAlive = function ()
 		{
+			if(!enableHeartBeat) return;
 			//var status=eval('({ onlineId:'+onlineId.toString()+'}) ');
 			var status={ "onlineList":onlineList };
 			console.log(status);
@@ -212,9 +232,9 @@ function HeartBeat()
     });
 
 	//看门狗:每10秒所有看门狗变量-1，当变量到达0时，看门狗程序发出
-	const netBrokenInt=6*2;	//网络中断最长时间，初始值，2分钟
+	//const netBrokenInt=6*2;	//网络中断最长时间，初始值，2分钟
 	var netBroken=netBrokenInt;	//网络中断计数值，此值=0时发出netBroken消息，每次心跳成功消息时把他设为初始值，这样当一段时间心跳失败时，判断为网络中断
-	const operatorIdleInt=6*60;	//播放终端最长不操作时间，初始值60分钟
+	//const operatorIdleInt=12;//6*60;	//播放终端最长不操作时间，初始值60分钟
 	var operatorIdle=operatorIdleInt;	//当终端出现键盘，鼠标，滚动等操作时，把此值设为初始值
 	var watchdogId =setInterval(function(){
 		console.log('watchdog:'+netBroken+'-'+operatorIdle);
@@ -256,20 +276,24 @@ function HeartBeat()
 
 	//连续心跳无法访问服务器，可能网络中断或被拦截心跳
 	//网络不通不能从服务器拿网页了。
+    var url = sessionStorage.getItem('HDPlayerUrl');
 	var netBrokenHtml="<div style=\"height: 100%; width: 100%; background-color: #aaa; color:#111; font-size: 24px;\">\n" +
         "    <div style=\"position:fixed; top:250px; width:100%; padding: 10px 10px; background-color: #fff;display:table-cell;vertical-align:middle;\">\n" +
         "        <div style=\"float: left; font-size: 3em; padding:20px 10px;\">\n" +
         "            ☹\n" +
         "        </div>\n" +
         "       <br>与服务器失去联系了。\n" +
+        "	 	<br><a href='"+url+"'><button style='width:10em; font-size: 18px; border-radius:5%;'>刷 新</button></a>"+
         "    </div>\n" +
+
         "</div>";
 	var netBrokenCounter=10;	//网络中断被调用若干次后，强制跳转若真的中断页面会破坏。
     $(window).on('netBroken',function () {
+        enableHeartBeat=false;
     	if(0 == --netBrokenCounter){
-            window.location.replace("http://www.av365.cn/Home.php/Home/index");
+            //window.location.replace("http://www.av365.cn/Home.php/Home/index");
 		}
-        $("html").html(netBrokenHtml);	//尽管覆盖了HTML但只是影响了显示，JS还是在运行的
+        //$("html").html(netBrokenHtml);	//尽管覆盖了HTML但只是影响了显示，JS还是在运行的
     });
 
 	return this;

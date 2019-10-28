@@ -807,7 +807,12 @@ logfile('WhatViewer:'.$st);
 		
 		$_SESSION['HDPlayer']['refId'] = $chnId;
 		$_SESSION['HDPlayer']['refType'] = 'live';
-		
+
+		//播放器属性配置
+		if(!empty($chnAttr['player'])){
+			$this->assign('operatorIdleInt',(empty($chnAttr['player']['operatorIdleInt']))?0:$chnAttr['player']['operatorIdleInt']);
+            $this->assign('netBrokenInt',(empty($chnAttr['player']['netBrokenInt']))?0:$chnAttr['player']['netBrokenInt']);
+		}
 
 		$this->assign('rId', $r);
 		$this->assign('logoImg', $logoImg);

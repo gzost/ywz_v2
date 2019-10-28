@@ -374,8 +374,9 @@ class MG_ChannelAction extends AdminBaseAction
             array("key"=>"billday24", "name"=>"单日费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2))),
             array("key"=>"billmonth", "name"=>"包月费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2))),
             array("key"=>"billday7", "name"=>"周费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2))),
-            array("key"=>"billday30", "name"=>"30天费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2)))
-
+            array("key"=>"billday30", "name"=>"30天费率", "gkey"=>"userbill", "group"=>"收费设置", "value"=>"", "editor"=>array("type"=>"numberbox","options"=>array("min"=>0,"precision"=>2))),
+            array("key"=>"operatorIdleInt", "name"=>"播放终端最长不操作时间(秒)", "gkey"=>"player", "group"=>"播放器特性", "value"=>"900", "editor"=>array("type"=>"numberbox")),
+            array("key"=>"netBrokenInt", "name"=>"网络中断最长时间(秒)", "gkey"=>"player", "group"=>"播放器特性", "value"=>"120", "editor"=>array("type"=>"numberbox"))
         );
         $rt=fillExtAttr($dbChannel,array("id"=>$webVar["chnId"]),$attrib);
 //var_dump($rt);

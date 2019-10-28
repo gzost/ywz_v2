@@ -320,7 +320,7 @@ var nowPlayType = '';
 var nowVodId = '';
 
 ////心跳设置的变量////
-var heart = new HeartBeat();
+var heart = new HeartBeat({ operatorIdleInt: {$operatorIdleInt} , netBrokenInt: {$netBrokenInt} });
 var aliveTime={$aliveTime};	//心跳间隔秒数
 var onlineId={$onlineId};	//在线ID
 //在线对象列表，列表属性：
@@ -493,7 +493,9 @@ $(document).ready(function(){
     var nowURL="{$myurl}";
     console.log("myurl:"+nowURL);
     history.replaceState(null,null,nowURL);
-
+	//sessionStorage.setItem('HDPlayerUrl',nowURL);
+var uu=sessionStorage.getItem('HDPlayerUrl');
+console.log("url="+uu);
 	//创建交流实例，并设置基本参数
 	if('CanChat' == jsCanChat)
 	{
@@ -539,6 +541,15 @@ $(document).ready(function(){
 
 		}
     })();
+
+    $(window).on('netBroken',function () {
+        console.log("netBroken");
+        var blk=$("#blk-netBroken");
+        var url = sessionStorage.getItem('HDPlayerUrl');
+        $("#blk-netBroken a").attr('href',url);
+        $("#divShow").html(blk);
+        blk.show();
+    });
 });
 
 function hidenMsg()
@@ -618,6 +629,7 @@ function loadSubscriberInfo() {
 </script>
 </head>
 <body style="background-color:#FFF;font-size:24px;line-height:24px;text-align:center;padding:0;margin-top:1em;background-image: url(/player/{$theme|default='default'}/images/bg.jpg);background-repeat: no-repeat;">
+
 <div class="bodyContain">
 	<div class="bodyLeft{$CanChat}">
 		<div class="bodyHead">
@@ -692,4 +704,9 @@ function loadSubscriberInfo() {
 	</div>
 	<div id="divLayer" class="divLayer" style="display:none;">
 	</div>
+<!-- 网络中断显示的内容 -->
+<div id="blk-netBroken" style="display:none; padding:10px 0; text-align:center;color:#dde; background: #001;">
+	<p>网络中断</p>
+	<a><button style="width:10em; font-size: 20px;">刷 新</button></a>
+</div>
 </body></html>

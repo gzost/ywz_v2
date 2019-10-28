@@ -24,7 +24,19 @@
             ☹
         </div>
        {$msg}
+        <div id="jumpUrl" style="clear: both; margin: 15px; 5px; text-align: center;">
+
+        </div>
     </div>
 </div>
+<script type="text/javascript" src="__PUBLIC__/jeasyui/jquery.min.js"></script>
+<script>
+    var url = sessionStorage.getItem('HDPlayerUrl');
+    console.log("HDPlayerUrl="+url);
+    if(typeof(url)=='string'){
+        var html="<a href='"+url+"'><button style='width:10em; font-size: 18px; border-radius:5%;'>返 回</button></a>";
+        $("#jumpUrl").html(html);
+    }
+</script>
 </body>
 </html>

@@ -64,7 +64,7 @@ var nowPlayType = '';
 var nowVodId = '';
 
 ////心跳设置的变量////
-var heart = new HeartBeat();
+var heart = new HeartBeat({ operatorIdleInt: {$operatorIdleInt} , netBrokenInt: {$netBrokenInt} });
 heart.showForceOutUrl="__APP__/HDPlayer/showForceOut";
 var aliveTime={$aliveTime};	//心跳间隔秒数
 var onlineId={$onlineId};	//在线ID
@@ -335,6 +335,15 @@ $(document).ready(function(){
         //$(".tab-list>div[tabid='"+activtab+"']").addClass('tab-selected');
         $(".tab-list>div[tabid='"+activtab+"']").click();
     }
+
+    $(window).on('netBroken',function () {
+        console.log("netBroken");
+        var blk=$("#blk-netBroken");
+        var url = sessionStorage.getItem('HDPlayerUrl');
+        $("#blk-netBroken a").attr('href',url);
+        $("#divShow").html(blk);
+        blk.show();
+    });
 });
 
 function genQrcode()
@@ -607,7 +616,11 @@ function showMsgAni(msg)
 	<div id="divLayer" class="divLayer" style="display:none;">
 	</div>
 <img id="logoimg" src="{$logoImg}" style="display:none;"/>
-
+<!-- 网络中断显示的内容 -->
+<div id="blk-netBroken" style="display:none;padding:10px 0; text-align:center;color:#dde; background: #001;">
+	<p>网络中断</p>
+	<a><button style="width:10em; font-size: 18px;">刷 新</button></a>
+</div>
 
 </body>
 

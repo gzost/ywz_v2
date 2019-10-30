@@ -7,7 +7,7 @@
  */
 
 require_once APP_PATH.'../public/SafeAction.Class.php';
-require_once APP_PATH.'../public/Ou.function.php';
+require_once APP_PATH.'../public/Ou.Function.php';
 
 class ChannelreluserAction extends SafeAction{
 

@@ -28,7 +28,7 @@ class WD_ChannelListWidget extends Action
             $db=D('ChannelRelUserView');
             $cond=array('uid'=>$uid, 'status'=>'正常','type'=>array('in','会员,订购'));
             if(!empty($agent)) $cond['agent']=$agent;
-            $fields='chnid,chnname,attr';
+            $fields='id,chnid,chnname,attr,score';
             $chnList=$db->getList($cond,$fields);
 //echo $db->getLastSql();
 //dump($chnList);
@@ -46,8 +46,15 @@ class WD_ChannelListWidget extends Action
                 unset($chnList[$key]['attr']);
                 $chnList[$key]['poster']=$dalChn->getPosterUrl($chn['chnid'],$attr);
 
+                //默认显示评分
+                $chnList[$key]['showScore']='true';
+
+                $attr['classHours']=intval($attr['classHours']);
+                $chnList[$key]['showProgess']=(empty( $attr['classHours']))?'false':'true';
+//var_dump($attr['classHours'],$chnList[$key]['showProgess'])               ;
                 //若定义了学时数则显示学习进度
                 if(!empty($attr['classHours'])){
+//echo "--===";
                     $chnList[$key]['classHours']=$attr['classHours'];
                     $totalClassHours += $attr['classHours'];
                     $cond=array('chnid'=>$chn['chnid'], 'userid'=>$uid,
@@ -55,11 +62,25 @@ class WD_ChannelListWidget extends Action
                         )
                     );
                     $finishHours=$dalChnView->where($cond)->sum('duration');
+//echo $dalChnView->getLastSql();
+//var_dump($finishHours);
                     if(null==$finishHours) $finishHours=0;
                     //var_dump($finishHours);
                     //echo $dalChnView->getLastSql();
                     $chnList[$key]['finishHours']=$finishHours;
                     $totalFinishHours += $finishHours;
+
+                    if($finishHours<$attr['classHours'] ) $chnList[$key]['showScore']='false';  //未完成学习前不能评分
+                }
+
+                //是否可修改评分
+                if(0==$chnList[$key]['score']){
+                    $chnList[$key]['scoreEditable']='true';
+                    $chnList[$key]['scoreMsg']='请评价';
+
+                }else{
+                    $chnList[$key]['scoreEditable']='false';
+                    $chnList[$key]['scoreMsg']='已评价';
                 }
             }
 //dump($chnList);
@@ -87,16 +108,28 @@ class WD_ChannelListWidget extends Action
     public function agentChannel($agent=0,$viewall=true){
         $webVar=array();
         try {
+            $dalChannelreluser=D('channelreluser');
             $dalChn=D("channel");
             $cond=array('agent'=>$agent);
             if(!$viewall) $cond['status']='normal';
-            $chnList=$dalChn->where($cond)->field("id,name,attr")->select();
+            //$chnList=$dalChn->where($cond)->field("id,name,attr")->select();
+            $chnList=$dalChn->where($cond)->getField("id,name,attr");
 //dump($chnList);
+            $chnidStr='';   //命中频道ID，字串
             foreach ($chnList as $key=>$chn) {
+                $chnidStr .=$chn['id'].',';
                 if ($chn['name'] == null) $chnList[$key]['name'] = '无名频道';
                 $attr = json_decode($chn['attr'], true);
                 unset($chnList[$key]['attr']);
                 $chnList[$key]['poster'] = $dalChn->getPosterUrl($chn['id'], $attr);
+            }
+            $chnidStr .='-1';
+            //统计命中频道的评分
+            $scoreArr=$dalChannelreluser->field("chnid, count(*) as nb, sum(score) as rate")->where("chnid in($chnidStr) and score>0")->group("chnid")->select();
+//echo $dalChannelreluser->getLastSql();
+//dump($scoreArr);
+            foreach ($scoreArr as $rate){
+                $chnList[$rate['chnid']]['score']=ceil($rate['rate']/$rate['nb']);
             }
 //dump($chnList);
             $webVar['chnList']=$chnList;

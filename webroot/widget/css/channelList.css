@@ -14,6 +14,7 @@
     padding: 2px;
     width:100%;
     position: relative;
+    text-align: left;
 }
 /* 左侧显示块 */
 .channel-list1 .left-box{
@@ -21,9 +22,11 @@
 }
 /* 右侧显示块 */
 .channel-list1 .right-box{
-    position: relative;
+    position: absolute;
     display: inline-block;
+    height:100%;
     width:calc(60% - 5px);
+    padding: 2px 7px;
     vertical-align: top;
     text-align: left;
 }

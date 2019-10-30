@@ -1,7 +1,7 @@
 <!-- 按课程样式输出的频道信息 -->
 <div style="text-align: left; font-size: 0.8em; color: #4f5f6f; margin: 5px;">
     总学习进度：
-    <meter min="0" max="{$totalcClassHours}" value="{$totalFinishHours}"></meter>{$totalFinishHours}/{$totalClassHours}
+    <meter min="0" max="{$totalClassHours}" value="{$totalFinishHours}"></meter>{$totalFinishHours}/{$totalClassHours}
     <div style="font-size: 8px;color: #9f9faf;">学习进度2小时更新一次</div>
 </div>
 <foreach name="chnList" item="chn">
@@ -14,25 +14,64 @@
             <div class="channel-desc">
                 {$chn.chnname}
             </div>
-            <gt name="chn.classHours" value="0">
+            <eq name="chn.showProgess" value="true">
             <div class="progress">
                 学习进度：
                 <meter min="0" max="{$chn.classHours}" value="{$chn.finishHours}"></meter>
                 {$chn.finishHours}/{$chn.classHours}
             </div>
-            </gt>
+            </eq>
+
+            <eq name="chn.showScore" value="true">
+                <div class="evaluate-box" style="position: relative; margin-top: 10px;">
+                    <span>课程评价：</span><span class="course-rate" data-options="{ 'score':'{$chn.score}','editable':{$chn.scoreEditable},'cruId':{$chn.id} }"></span>
+                    <span style="font-size: 0.5em; color:#dde;">{$chn.scoreMsg}</span>
+                </div>
+            </eq>
+
         </div>
 
     </div>
 </foreach>
+
+<script src="__PUBLIC__/js/jquery.rate.min.js"></script>
 <script>
+    //$(".channel-list1 .left-box, .channel-list1 .right-box .channel-desc").on("click",function (event) {
     $(".channel-list1").on("click",function (event) {
        var obj=event.delegateTarget;
+       var targetClass=$(event.target).attr('class');
+//console.log(obj); console.log(targetClass); //return;
        var chnid=$(obj).attr('chnid');
-        console.log(chnid);
-       if(0==chnid) $.messager.alert('提示','此课程已完成学习');
-       else{
-           window.location.href="__APP__/HDPlayer/play/chnId/"+chnid;
-       }
+//console.log(chnid);
+        if(targetClass=="channel-img" || targetClass=="channel-desc"){
+            if(0==chnid) $.messager.alert('提示','此课程已完成学习');
+            else{
+                window.location.href="__APP__/HDPlayer/play/chnId/"+chnid;
+            }
+        }
+
     });
+
+
+    //$("#blk-score").rate({count:5,editable:false});
+
+    //$(".rate").rate({count:6,editable:true});
+
+    $(".course-rate").rate({count:5,score:0,onSelect:function (score,target) {
+            var dataOptionStr=target.attr('data-options');
+            if(typeof(dataOptionStr)=='undefined') dataOptionStr='{}';
+            var dataOptions=eval('('+dataOptionStr+')')
+            console.log(target.next().html());
+            $.post("__APP__/Channelreluser/saveScoreJson",{score:score, cruId: dataOptions.cruId},function (data) {
+                console.log(data);
+
+                if(data.success=='true'){
+                    target.next().html('评价完成');
+                }else{
+                    target.next().html(data.msg);
+                }
+            },'json');
+            return false;
+        }});
+
 </script>

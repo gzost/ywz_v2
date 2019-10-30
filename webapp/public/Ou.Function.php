@@ -436,10 +436,8 @@ class Oajax{
 	 * 
 	 * @return	若属性数组包括全部属性返回true。否则：当$option==true 直接输出错误信息退出程序，否则返回false。
 	 */
-	public function needAttr($attr,$need,$option=true){
-
+	public static function needAttr($attr,$need,$option=true){
 		$needArr=explode(',', $need);
-
 		if(false==$needArr) return true;
 		foreach ($needArr as $name ){
 			if(!isset($attr[$name])){	//找不到属性
@@ -447,6 +445,7 @@ class Oajax{
 				else return false;
 			}
 		}
+		return true;
 	}	//class Oajax
 
     /**

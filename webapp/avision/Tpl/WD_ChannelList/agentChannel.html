@@ -3,13 +3,18 @@
 
     <foreach name="chnList" item="chn">
         <div class="item" chnid="{$chn.id}">
-            <div class="channel-img" style="background-image: url( {$chn.poster} ); background-size: cover; background-position: center center;"></div>
+            <div class="channel-img" style="background-image: url( {$chn.poster} ); background-size: cover; background-position: center center;position: relative">
+                <gt name="chn.score" value="0">
+                    <div class="agent-rate" data-options="{ 'score':{$chn.score} }" style="position: absolute; top:1px;left:5px; "></div>
+                </gt>
+            </div>
             <div class="channel-desc">
                 {$chn.name}
             </div>
         </div>
     </foreach>
 </div>
+<script src="__PUBLIC__/js/jquery.rate.min.js"></script>
 <script>
     $(".channel-list3 .item").on("click",function (event) {
        var obj=event.delegateTarget ;
@@ -21,4 +26,6 @@
            window.location.href="__APP__/HDPlayer/play/chnId/"+chnid;
        }
     });
+
+    $(".agent-rate").rate({count:5,score:0,size:"10px",color:"gold"});
 </script>

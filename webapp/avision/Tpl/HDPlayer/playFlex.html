@@ -320,7 +320,10 @@ var nowPlayType = '';
 var nowVodId = '';
 
 ////心跳设置的变量////
-var heart = new HeartBeat({ operatorIdleInt: {$operatorIdleInt} , netBrokenInt: {$netBrokenInt} });
+var operatorIdleInt= parseInt("{$operatorIdleInt}");
+var netBrokenInt= parseInt("{$netBrokenInt}");
+
+var heart = new HeartBeat({ operatorIdleInt: operatorIdleInt , netBrokenInt: netBrokenInt });
 var aliveTime={$aliveTime};	//心跳间隔秒数
 var onlineId={$onlineId};	//在线ID
 //在线对象列表，列表属性：

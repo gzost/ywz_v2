@@ -812,6 +812,9 @@ logfile('WhatViewer:'.$st);
 		if(!empty($chnAttr['player'])){
 			$this->assign('operatorIdleInt',(empty($chnAttr['player']['operatorIdleInt']))?0:$chnAttr['player']['operatorIdleInt']);
             $this->assign('netBrokenInt',(empty($chnAttr['player']['netBrokenInt']))?0:$chnAttr['player']['netBrokenInt']);
+		}else{
+            $this->assign('operatorIdleInt',0);
+            $this->assign('netBrokenInt',0);
 		}
 
 		$this->assign('rId', $r);

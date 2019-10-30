@@ -254,18 +254,22 @@ class MyAction extends SafeAction
     /**
      * 显示用户基本信息
      */
-    public function userInfo($uid=0,$chnid=0){
+    public function userInfo($uid=0,$chnid=0,$agentid=0){
+//var_dump($uid,$chnid,$agentid);// die('eee');
         try{
             if($uid==0 || $uid==C('anonymousUserId') ) throw new Exception('您还未登录！');
             $webVar=array('continerid'=>'userinfo-continer');
 
-            //若有频道参数取频道所属ageng为显示专属首页
-            if($chnid>0){
+            //确定机构，以便选择对应的首页。若有频道参数取频道所属ageng为显示专属首页
+            $agentid=intval($agentid);
+            if(!empty($agentid)){
+                $webVar['agent']=$agent=$agentid;
+            }elseif($chnid>0){
                 $dbChannel=D("channel");
                 $agent=$dbChannel->where("id=".$chnid)->getField('agent');
                 if(!empty($agent)) $webVar['agent']=$agent;
-            }
-
+            }else $webVar['agent']=0;
+//dump($webVar);
             //取用户基本信息
             $dblUser=D('user');
             $user=$dblUser->field("id,account,username,phone,idcard,company,realname,userlevel,viplevel,experience,agent")->where("id=$uid")->find();

@@ -53,7 +53,7 @@ class CH_cctsxxAction extends ChomeBaseAction
 
     public function login(){
         setPara('acceptUrl',U('index'));
-        setPara('coverImg','__ROOT__/home/CH_cctsxx/images/guestbanner.jpg');
+        setPara('coverImg','__ROOT__/home/CH_cctsxx/images/guestbanner2.jpg');
         $this->redirect("Home/login");
     }
 
@@ -104,7 +104,7 @@ class CH_cctsxxAction extends ChomeBaseAction
 //var_dump($this->agent);
         //取机构表定义的工作单位列表
         $listfield=json_decode($this->agent['attr'],true);
-
+//var_dump($listfield);
         if(!empty($listfield) && !empty($listfield['listfield']['company'])){
             $listfield['listfield']['company']=explode(",",$listfield['listfield']['company']);
             $companyList=array();

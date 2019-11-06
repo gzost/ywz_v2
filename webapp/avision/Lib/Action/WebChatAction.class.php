@@ -192,7 +192,19 @@ class WebChatAction extends SafeAction {
 			$this->webvar['lastMsgId']=$result[0]['id'];
             $result=array_reverse($result); //反转为时间顺序
             $this->webvar['firstMsgId']=$result[0]['id'];
-
+//dump($result);
+            //处理显示的日期字串
+            $now=getdate();
+//var_dump($now);
+            foreach ($result as $k=>$v) {
+                $sendtime = date_parse($v['sendtime']);
+                $dateStr = sprintf("%02d:%02d", $sendtime["hour"], $sendtime["minute"]);
+                if($sendtime["year"]!=$now["year"] || $sendtime["month"]!=$now["mon"] || $sendtime["day"]!=$now["mday"]){
+                    $dateStr = sprintf("%02d-%02d %s", $sendtime["month"], $sendtime["day"],$dateStr);
+                }
+                $result[$k]["date"]=$dateStr;
+            }
+//var_dump($result);
 			$webVar=array('isAdmin'=>$this->IsAdmin(), 'msgList'=>$result);
 			$this->assign($webVar);
 			$htmlStr='';
@@ -223,7 +235,17 @@ class WebChatAction extends SafeAction {
             $firstPageLoaded=false;
             $result=array_reverse($result); //反转为时间顺序
             $this->webvar['firstMsgId']=$result[0]['id'];
-
+//处理显示的日期字串
+            $now=getdate();
+//var_dump($now);
+            foreach ($result as $k=>$v) {
+                $sendtime = date_parse($v['sendtime']);
+                $dateStr = sprintf("%02d:%02d", $sendtime["hour"], $sendtime["minute"]);
+                if($sendtime["year"]!=$now["year"] || $sendtime["month"]!=$now["mon"] || $sendtime["day"]!=$now["mday"]){
+                    $dateStr = sprintf("%02d-%02d %s", $sendtime["month"], $sendtime["day"],$dateStr);
+                }
+                $result[$k]["date"]=$dateStr;
+            }
             $webVar=array('isAdmin'=>$this->IsAdmin(), 'msgList'=>$result);
             $this->assign($webVar);
             $html=$this->fetch("WebChat:getChat");

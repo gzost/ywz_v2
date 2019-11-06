@@ -5,7 +5,7 @@
     <div style="font-size: 8px;color: #9f9faf;">学习进度2小时更新一次</div>
 </div>
 <foreach name="chnList" item="chn">
-    <div class="channel-list1" chnid="{$chn.chnid}">
+    <div class="channel-list1" chnid="{$chn.chnid}" classFinish="{$chn.classFinish}">
         <div class="left-box">
             <!-- <img src="__ROOT__/home/default/images/adimg110.jpg" /> -->
             <div class="channel-img" style="background-image: url( {$chn.poster} ); background-size:cover; background-position: center center;"></div>
@@ -42,12 +42,27 @@
        var targetClass=$(event.target).attr('class');
 //console.log(obj); console.log(targetClass); //return;
        var chnid=$(obj).attr('chnid');
-//console.log(chnid);
+       var classFinish=$(obj).attr('classFinish');
+console.log("classFinish="+classFinish);
+console.log("chnid="+chnid);
+        var goon=true;  //默认允许跳转
         if(targetClass=="channel-img" || targetClass=="channel-desc"){
-            if(0==chnid) $.messager.alert('提示','此课程已完成学习');
-            else{
+            if(0==chnid || classFinish=='2'){
+                $.messager.alert('提示','此课程已完成学习');
+            }
+            else if(classFinish=='1'){
+                $.messager.defaults={ok:"继续学习", cancel:"不学了" };
+                $.messager.confirm('确认', '本课程您的学习任务已完成，还要继续学习吗?', function(r){
+                    if (r){
+                        console.log("jump1");
+                        window.location.href="__APP__/HDPlayer/play/chnId/"+chnid;
+                    }
+                });
+            }else{
+                console.log("jump2");
                 window.location.href="__APP__/HDPlayer/play/chnId/"+chnid;
             }
+
         }
 
     });

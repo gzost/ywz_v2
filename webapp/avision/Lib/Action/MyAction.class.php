@@ -302,6 +302,10 @@ class MyAction extends SafeAction
             $rt=$dbUser->where(array('username'=>$_POST['username']))->field('id')->find();  //是否有重名
             if(null!==$rt && $rt['id']!=$uid ) throw new Exception('此昵称已经被别人使用了，更新失败！');
 
+            if(!empty($_POST['realname'])) $newRecord['realname']=$_POST['realname'];//真实姓名
+            if(!empty($_POST['idcard'])) $newRecord['idcard']=$_POST['idcard'];//身份证
+            if(!empty($_POST['company'])) $newRecord['company']=$_POST['company'];//工作单位
+
             //更新数据
             $rt=$dbUser->where('id='.$uid)->save($newRecord);
             if(false===$rt) throw new Exception('数据无法更新，稍后再试。');

@@ -36,7 +36,7 @@ class CH_cctsxxAction extends ChomeBaseAction
         if(null==$this->user) echo "无法获取用户资料！";    //TODO：做进一步处理
 
         $msg=$this->validateUserInfo();
-        if(''!=$msg){
+        if(''!=$msg || $_REQUEST['work']=='udInf'){
             $magicId=uniqid('cui',true);
             $_SESSION['complementUserInfoMagicId']=$magicId;
             //$this->redirect("complementUserInfo",array('msg'=>$msg);

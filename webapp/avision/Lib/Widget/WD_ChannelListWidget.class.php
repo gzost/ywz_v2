@@ -48,6 +48,8 @@ class WD_ChannelListWidget extends Action
 
                 //默认显示评分
                 $chnList[$key]['showScore']='true';
+                //默认首页点击频道跳转
+                $chnList[$key]['classFinish']='0';
 
                 $attr['classHours']=intval($attr['classHours']);
                 $chnList[$key]['showProgess']=(empty( $attr['classHours']))?'false':'true';
@@ -70,7 +72,13 @@ class WD_ChannelListWidget extends Action
                     $chnList[$key]['finishHours']=$finishHours;
                     $totalFinishHours += $finishHours;
 
-                    if($finishHours<$attr['classHours'] ) $chnList[$key]['showScore']='false';  //未完成学习前不能评分
+                    if($finishHours<$attr['classHours'] ){
+                        $chnList[$key]['showScore']='false';  //未完成学习前不能评分
+                        $chnList[$key]['classFinish']='0';
+                    }
+                    else{
+                        $chnList[$key]['classFinish']=(empty($attr['classFinish']))?'0':$attr['classFinish'];
+                    }
                 }
 
                 //是否可修改评分

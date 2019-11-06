@@ -26,7 +26,10 @@
         list-style: none;
         margin: 0;
         padding: 0;
-        line-height: 22px;
+        line-height: 28px;
+    }
+    .item-userinfo {
+        border-width: 0 0 1px;
     }
     .round-icon{
         width:64px;
@@ -74,22 +77,17 @@
 
     </div>
     <div class="right-box">
-        <ul>
-            <li>{$user.account}</li>
-            <li>昵称：<input class="easyui-textbox" value="{$user.username}" style="width:150px;height: 22px;"
-                             data-options="onChange:function(newVal,oldVal){
-                                console.log(newVal,oldVal);
-                                //$(this).textbox('setValue',oldVal);   //这样会循环触发
-                                var _this=this;
-                                $.post('__APP__/My/updateUserInfoAjax',{ uid:'{$user.id}', username:newVal },function(data){
-                                    console.log(data);
-                                    $.messager.alert('更新结果',data,'info');
-                                },'html');
-                             }"></li>
-            <li>姓名：{$user.realname}</li>
-            <li>证件：{$user.idcard}</li>
-            <li>单位：{$user.company}</li>
-        </ul>
+        <form id="fmUserInfo" method="post">
+            <ul>
+                <li>{$user.account}</li>
+                <li>昵称：<input class="item-userinfo" name="username" value="{$user.username}"></li>
+                <li>姓名：<input class="item-userinfo" name="realname" value="{$user.realname}" readonly ></li>
+                <li>证件：<input class="item-userinfo" name="idcard" value="{$user.idcard}" readonly></li>
+                <li>单位：<input class="item-userinfo" name="company" value="{$user.company}" readonly></li>
+            </ul>
+        </form>
+
+        <button id="btnSaveBaseInfo" style="margin: 10px 0;">保存用户资料</button>
     </div>
 
 </div>
@@ -111,6 +109,16 @@
         $("#win1").panel({title:"修改密码"});
         $("#win1").window('refresh','__APP__/User/WD_changePws');
         $("#win1").window('center');
+    });
+    $("#btnSaveBaseInfo").click(function (event) {
+        console.log("btnSaveBaseInfo");
+        var para=$("#fmUserInfo").serializeArray();
+        para.push({ name:"uid",value:"{$user.id}" });
+console.log(para);
+        $.post('__APP__/My/updateUserInfoAjax',para,function(data){
+console.log(data);
+            $.messager.alert('更新结果',data,'info');
+        },'html');
     });
 </script>
 </div>

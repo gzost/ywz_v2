@@ -62,6 +62,7 @@ var lastSecId = '';
 var moreFit = false;
 var nowPlayType = '';
 var nowVodId = '';
+var pictxtLoaded=false;	//图文直播模块是否已经装载
 
 ////心跳设置的变量////
 var operatorIdleInt= parseInt("{$operatorIdleInt}");
@@ -286,6 +287,12 @@ $(document).ready(function(){
 	    var obj=event.target;
 		console.log(obj);
 		var tabid=$(obj).attr("tabid");
+		//var divMoreWidth=$('#divMore'). outerWidth(true);
+
+		if(activtab==109 && tabid!=109){
+		    //$("#pictxt").animate({left:divMoreWidth},200);
+            $("#pictxt").hide(200);
+		}
 		switch (tabid){
 			case "101":		//介绍
 				if(rId !='')
@@ -323,6 +330,14 @@ $(document).ready(function(){
                 location.href = "__APP__/Home/goHome"+"/agent/{$agent}"+"/tab/108";
                 $("#divMore").html("<div style='font-size: 14px;'>Lodding...</div>");
 			    break;
+			case "109":	//图文直播
+				//$("#pictxt").animate({left:0},200);
+                $("#pictxt").show(200,"swing");
+                if(!pictxtLoaded){	//模块未装载
+                    $("#pictxt").load("__APP__/FE_PicTxt/init",{chnid:chnId, programid:rId});
+                    pictxtLoaded=true;
+				}
+				break;
 		}
         $(".tab-list>div[tabid='"+activtab+"']").removeClass('tab-selected');
 		activtab=tabid;
@@ -412,6 +427,8 @@ function DivMoreFit(isFit)
 		$('#divMore').css('overflow-y', '');
 	}
 	moreFit = isFit;
+	$("#pictxt").css('top',$('#divMore').position().top);
+    //$("#pictxt").css('height',$('#divMore').height());
 }
 
 function EventTester(e, fun)
@@ -468,7 +485,8 @@ function showMsgAni(msg)
     }
 </script>
 </head>
-<body  style="">
+<body  style="position: relative; ">
+
 <if condition="$xtl neq ''">
 <div id="divNavCtrl" style="height:1em;margin-top:3px;">
 	<div style="display:inline;float:left;color:#FFF;text-align:center;width:100%;font-size:0.7em;line-height:1.2em;">{$title}</div>
@@ -583,6 +601,7 @@ function showMsgAni(msg)
 		<div class="menu-item"></div>
 	</div>
 </div>
+
 <script>
 	$(".boxmenu .menu-item").on("click",function (event) {
         $("#more-menu").dialog('close');
@@ -599,8 +618,11 @@ function showMsgAni(msg)
 </script>
 
 	<!--下部可变内容，宣传介绍，-->
-	<div id="divMore"  style="min-height:200px;">
-	</div>
+
+<div id="divMore"  style="min-height:200px;">	</div>
+<div id="pictxt" style="position: absolute; bottom:0; width:100%; z-index: 110; background-color: #FFF;display:none; overflow-x: hidden;">Loading...</div>
+
+
 
 	<!--分享指引-->
 	<div id="divGuaidShare" class="divLayer" style="display:none;">

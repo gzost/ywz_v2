@@ -1,5 +1,5 @@
 <?php
-
+ini_set('session.name',"PHPSESSID_YWZ200");
 //定义项目名称
 define('APP_NAME', 'admin');
 

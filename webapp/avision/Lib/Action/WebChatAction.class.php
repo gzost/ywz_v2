@@ -153,7 +153,7 @@ class WebChatAction extends SafeAction {
 		}
 
 		$webchat=D('webchat');
-		$data=array('message'=>($this->webvar['message']),'senderid'=>$this->webvar['userId'], 
+		$data=array('message'=>htmlspecialchars_decode($this->webvar['message']),'senderid'=>$this->webvar['userId'],
 			'sendername'=>$this->webvar['userName'], 'chnid'=>$this->webvar['channelId']);
 		$result=$webchat->add($data);
 //echo $webchat->getLastSql();		

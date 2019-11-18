@@ -1,0 +1,46 @@
+<extend name="common:AdminBase" />
+<block name="bl_north">
+    <include file="Home:header_w" />
+    <include file="Console:north_w" />
+</block>
+<block name="bl_main">
+    <link rel="stylesheet" href="__PUBLIC__/jeasyui/themes/color.css" >
+
+
+        <style type="text/css">
+        </style>
+    <div style="box-sizing:border-box; padding:5px;">
+        <div style="box-sizing:border-box; padding:2px 5px; margin-bottom: 5px; border: 1px solid #DDD; border-radius: 5px;">
+            <form id="fm_chnSearch" method="post">
+                <span class="cond-item" >播主账号: <input class="easyui-textbox" name="bozu" value="{$bozu}" style="" data-options="width:140, height:24,editable:{$viewAll},prompt:'输入完整的播主账号' " ></span>
+                <span class="cond-item" >频道名称: <input class="easyui-textbox" name="chnName" value="{$chnName}" style="" data-options="width:200, height:24,prompt:'完整或部分频道名称'" ></span>
+                <input type="hidden" name="work" value="chnList">
+                <span class="cond-item" style="margin-right: 4em;"><a id="btn_searchChannel" href="javascript:void(0)" class="easyui-linkbutton c8"  style="width:120px; height: 22px;">查找频道列表</a></span>
+            </form>
+        </div>
+        <div id="box_listSearch" >请先查询频道列表</div>
+        <div id=box_datagrid" style="display: none;">请选择频道</div>
+    </div>
+
+    <load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+    <load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />
+    <load href="__PUBLIC__/jeasyui/locale/easyui-lang-zh_CN.js" />
+
+    <link rel="stylesheet" href="__PUBLIC__/kindeditor/themes/default/default.css" />
+    <script charset="utf-8" src="__PUBLIC__/kindeditor/kindeditor-all.js"></script>
+    <script charset="utf-8" src="__PUBLIC__/kindeditor/lang/zh_CN.js"></script>
+
+        <script>
+            $(document).ready(function(){
+                //频道查询按钮事件
+                $("#btn_searchChannel").on('click',function () {
+                    var data=$("#fm_chnSearch").serializeArray();
+                    console.log(data);
+                    $("#box_listSearch").load("__SELF__",data,function () {
+                        $.parser.parse("#box_listSearch");
+                        $(window).trigger("loaded_listSearch");
+                    });
+                });
+            });
+        </script>
+</block>

@@ -1,0 +1,38 @@
+@CHARSET "UTF-8";
+/**
+  * 显示文章全文的样式 
+  * 页面显示时全文应放在类名为 article 的div里
+ **/
+
+.article {
+	color: #666;
+	font-size:1rem;
+	text-align:left;
+}
+.article img{
+	max-width:100%;
+}
+.article H1 {
+	color: #000;
+	font-size:1.4rem;
+
+}
+
+.article H2 {
+	color: #000;
+	font-size:1.3rem;
+	text-align:left;
+	
+}
+
+.article H3 {
+	color: #000;
+	font-size:1.2rem;
+
+}
+
+.article H4 {
+	color: #000;
+	font-size:1.1rem;
+
+}

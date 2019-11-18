@@ -1,0 +1,340 @@
+<!-- 图文直播后台，图文信息列表，图文信息详情页面-->
+<style>
+    #blkPicItem .item-line{
+        margin-top:10px;
+    }
+    #blkPicItem .item-line .title{
+        display: inline-block;
+        width: 6em;
+        text-align: right;
+    }
+</style>
+<div style="display: flex; flex-flow: row nowrap;">
+    <div style="flex-shrink:0; width: 435px;">
+        <table id="dgPicList" class=""  style="width:100%;"  data-options="" >
+            <thead>
+            <tr>
+                <th data-options="field:'publishtime', width:150,align:'center',editor:{ type:'textbox',options:{readonly:true}},
+                     formatter:function(value,row,index){
+                        if(value<='2000-01-01') return '未发布';
+                        return value;
+                     }
+                ">发布时间</th>
+                <th data-options="field:'title', width:250,align:'left', halign:'center',editor:{ type:'textbox',options:{readonly:true}} ">标题</th>
+            </tr>
+            </thead>
+        </table>
+        <div id="tb" style="padding:2px 5px;">
+
+            <!-- 功能按钮 -->
+            <div id="dgbutton" style=" ">
+                <a id="Append" href="javascript:void(0)" >增加</a>
+                <a id="Remove" href="javascript:void(0)" >删除</a>
+                <!--
+                <a id="Save" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true"
+                   onclick="$('#dgPicList').edatagrid('saveRow')">保存</a>
+               <a  href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true"
+                   onclick="$('#dgPicList').edatagrid('cancelRow')">取消</a>
+               -->
+            </div>
+            <div id="msg" class="errmsg" ></div>
+
+        </div>
+    </div>
+    <div id="blkPicItem" style="display:none; flex-shrink:0;margin-left:10px; width: 500px;  border: 1px solid #aae;">
+        <div style="box-sizing:border-box; height: 35px; padding: 5px 10px; background-color: #F0F0EE; border-bottom: 1px #dddddd solid;">
+            <a id="btn-recall" href="javascript:void(0)" >撤回</a>
+            <a id="btn-save" href="javascript:void(0)" >保存</a>
+            <a id="btn-publish" href="javascript:void(0)" >发布</a>
+        </div>
+        <div style="padding: 5px 10px; font-size: 14px;">
+            <form id="frm-item" method="post">
+                <div class="item-line">
+                    <span class="title">标题：</span><input name="title"  style="width:350px; border-width: 0 0 1px 0; border-color: #889; background-color: transparent;">
+                </div>
+                <div class="item-line">
+                    <span class="title">发布时间：</span><span id="data-publishtime" style="display:inline-block;width:350px;border-bottom: 1px #889 solid; "></span>
+                </div>
+                <input type="hidden" name="id" value="0"> <!-- 新建记录 id=0 -->
+                <input type="hidden" name="chnid" value="0">
+                <input type="hidden" name="programid" value="0">
+                <input type="hidden" name="html" value="">
+            </form>
+                        <div class="item-line">图文内容：</div>
+            <textarea id="editor_id" name="content" style="width:100%;height:520px;">
+				文章内容...
+            </textarea>
+        </div>
+    </div>
+    <div  style="display:block; flex:auto;margin-left:10px; min-width: 200px;  border: 0 solid #aae;">
+        <div>说明：</div>
+        <ol>
+            <li>左侧是图文直播条目列表，右侧显示条目的详细内容。</li>
+            <li>【增加】新增条目，可以进行编辑及保存，在“发布”前观众看不到此条目。</li>
+            <li>【删除】在数据库永久删除此条目，若条目已经发布，不会删除传递给观众的条目，新进入的观众看不到已删除的条目。</li>
+            <li>【保存】把修改的结果保存到数据库中，已发布的条目无论是否有修改都无法保存。</li>
+            <li>【发布】把条目发送给观众，无论观众什么时候开始观看，都可看到已经发布的条目。</li>
+            <li>【撤回】把已发布的条目退回可修改的“未发布”状态。已看到此条目的观众条目不会消失，但新进入的观众看不到已撤回的条目。</li>
+            <li>撤回的条目可以修改并重新发布，重新发布如同新发布的条目，出现在最新的位置。</li>
+            <li>强烈建议为每个条目设置好标题，以便管理，以后的版本将支持标题显示。</li>
+            <li>未发布的条目永远显示在条目列表中，若不需要可及时删除。</li>
+        </ol>
+    </div>
+</div>
+<script>
+    //$(window).off("loaded_listDatagrid");
+    $(window).one("loaded_listDatagrid",function(){
+        console.log("loaded_listDatagrid1");
+        //cn_Pagination($("#dgPicList").datagrid('getPager'));
+    });
+    (function () {
+        var currentPara={ chnid:"{$chnid}",programid:"{$programid}" };  //后端传入当前选择的频道及节目id
+
+        //有关功能按钮的处理
+        //增加
+        $("#dgbutton #Append").linkbutton({
+            iconCls:'icon-add',plain:true,
+            onClick:function () {
+                if(itemChanged && !confirm("您刚才的修改将丢失。")){
+                    return false;
+                }else{
+                    itemChanged=false;
+                    $('#dgPicList').edatagrid('addRow');
+                }
+            }
+        });
+        //删除
+        $("#dgbutton #Remove").linkbutton({
+            iconCls:'icon-remove',plain:true,
+            onClick:function () {
+                var row=$('#dgPicList').edatagrid('getSelected');
+                var index=$('#dgPicList').edatagrid('getRowIndex',row);
+                //console.log(row,index);
+                $('#dgPicList').edatagrid('destroyRow');
+                //$('#dgPicList').edatagrid('deleteRow',index);
+                if(row.isNewRecord==true) $("#blkPicItem").hide();
+            }
+        });
+        //撤回
+        $("#blkPicItem #btn-recall").linkbutton({ iconCls:'icon-cancel',plain:true,
+            onClick:function () {
+                var url='__APP__/MG_PicTxt/index/work/recallItem';
+                var id=$("#blkPicItem input[name='id']").val();
+                $.post(url,{id:id},function (data) {
+                    console.log(data);
+                    if(data.success=="true") {
+                        $.messager.show({title: "消息", msg: "撤回成功"});
+                        $("#dgPicList").datagrid('reload');
+                        $("#dgPicList").datagrid("selectRecord",id);
+                        //if('publishtime' in data) $("#blkPicItem #data-publishtime").html(data.publishtime);
+                        itemChanged=false;
+                    }else{
+                        if(data.msg !== "undefine"){
+                            $.messager.alert("警告",data.msg,"error");
+                        }
+                    }
+                },"json");
+            }
+        });
+        //保存当前内容
+        $("#blkPicItem #btn-save").linkbutton({
+            iconCls:'icon-save',plain:true,
+            onClick:function(){
+                $("#frm-item input[name='html']").val(editor.html());
+                var url='__APP__/MG_PicTxt/index/work/saveItem';
+                var postdata=$("#frm-item").serialize();
+                $.post(url,postdata,function (data) {
+                    console.log(data);
+                    if(data.success=="true"){
+                        $.messager.show({title:"消息",msg:"更新成功"});
+
+                        //更新datagrid列表
+                        //var row=$("#dgPicList").datagrid('getSelected');
+                        //var rowindex=$("#dgPicList").datagrid('getRowIndex',row);
+                        $("#dgPicList").datagrid('reload');
+                        if(data.publishtime>'2000-00-00') publishedButton();
+                        else unpublishButton();
+                        if('id' in data){
+                            console.log("id="+data.id);
+                            $("#blkPicItem input[name='id']").val(data.id);
+                            $("#dgPicList").datagrid("selectRecord",data.id);
+                        }
+                        itemChanged=false;
+                    }else{
+                        if(data.msg !== "undefine"){
+                            $.messager.alert("警告",data.msg,"error");
+                        }
+                    }
+                },"json");
+            }
+            
+        });
+        //发布
+        $("#blkPicItem #btn-publish").linkbutton({
+            iconCls:'icon-ok',plain:true,
+            onClick:function () {
+
+                var publishtime=$("#blkPicItem #data-publishtime").html();
+                console.log("publishtime="+publishtime);
+                if(publishtime<='2000-00-00' || confirm("真的要重新发布吗？")){
+                    var id= $("#blkPicItem input[name='id']").val();
+                    var url='__APP__/MG_PicTxt/index/work/publish';
+                    $.post(url,{id:id},function (data) {
+                        console.log(data);
+                        $.messager.alert("提醒",data.msg,"info");
+                        if(data.success=='true'){
+                            //更新列表的发布时间
+                            $.ajaxSettings.async = false;   //设置为同步调用
+                            $("#dgPicList").datagrid('reload');
+                            $("#dgPicList").datagrid("selectRecord",id);
+                            //$("#blkPicItem #data-publishtime").html(data.publishtime);
+                            //publishedButton();
+                        }
+                    },"json");
+                }else{
+                    $.messager.alert("提醒","发布已取消","warning");
+                }
+            }
+        });
+
+        //新记录状态的功能按钮
+        var newRecordButton=function () {
+            $("#btn-recall").linkbutton('disable');
+            $("#btn-save").linkbutton('enable');
+            $("#btn-publish").linkbutton('disable');
+        }
+        //已发布记录的功能按钮
+        var publishedButton=function () {
+            $("#btn-recall").linkbutton('enable');
+            $("#btn-save").linkbutton('disable');
+            $("#btn-publish").linkbutton('disable');
+        }
+        //未发布记录且非新记录的功能按钮
+        var unpublishButton=function () {
+            $("#btn-recall").linkbutton('disable');
+            $("#btn-save").linkbutton('enable');
+            $("#btn-publish").linkbutton('enable');
+        }
+        //将record的相关字段写入条目form中
+        var setFromData=function(record){
+            $("#blkPicItem input[name='id']").val(("id" in record)?record.id:"");
+            $("#blkPicItem input[name='chnid']").val(("chnid" in record)?record.chnid:"");
+            $("#blkPicItem input[name='programid']").val(("programid" in record)?record.programid:"");
+            $("#blkPicItem input[name='title']").val(("title" in record)?record.title:"");
+            $("#blkPicItem input[name='html']").val(("html" in record)?record.html:"");
+            $("#blkPicItem #data-publishtime").html(("publishtime" in record)?record.publishtime:"");
+        }
+        $("#dgPicList").edatagrid({
+            url:'__APP__/MG_PicTxt/index/work/itemList',
+            rownumbers:true,singleSelect:true,
+            toolbar:'#tb',pagination:true,  pageSize:20,idField:'id',
+            destroyMsg:{
+                norecord:{title:'提示',msg:'请先选择要删除的记录'},
+                confirm:{title:'<span style="font-size: 1.2em; color: red; font-weight: bolder">!!!最后警告!!!</span>',msg:'记录删除后将无法恢复。真的要删除此记录吗？'}
+            },
+            destroyUrl:"__APP__/MG_PicTxt/index/work/destroy",
+            saveUrl:"__APP__/MG_PicTxt/index/work/getItemJson",
+            onSelect:function(index,row){
+                //console.log("select....");
+                //console.log(row);
+                if( row.isNewRecord==true){
+                    //新建记录
+                    $.extend(row,currentPara,{ "html":" ","title":"新标题"+(new Date()).getTime(),"publishtime":"1000-01-01","id":0 });
+                    setFromData(row);
+                    editor.html("新条目...");
+                    newRecordButton();
+                }else{
+                    $.ajaxSetup ({
+                        cache: false //close AJAX cache
+                    });
+                    $.post("__APP__/MG_PicTxt/index/work/getItem",row,function (data) {
+                        console.log(data);
+                        setFromData(data);
+                        editor.html(data.html);
+                        if(data.publishtime>'2000-00-00') publishedButton();
+                        else unpublishButton();
+                        //row.publishtime=data.publishtime;
+                    },"json");
+                }
+
+                $("#blkPicItem").show();
+                itemChanged=false;
+            },
+            onBeforeSelect:function(index){
+                //console.log("onBeforeSelect:"+index);
+                //var row=$("#dgPicList").datagrid('getSelected');
+                //var rowindex=$("#dgPicList").datagrid('getRowIndex',row);
+                //console.log("now select:"+rowindex);
+                if(itemChanged && !confirm("您刚才的修改将丢失。")){
+                    return false;
+                } else return true;
+            },
+            onError:function(index,row){
+                alert(row.msg);
+                $("#dgPicList").datagrid('reload');
+            },
+            onDestroy:function(index){
+                console.log("onDestroy:"+index);
+                var rows=$('#dgPicList').edatagrid('getRows');
+                console.log("rows:"+rows.length);
+                var row=(rows.length>index)?index: index-1;
+                if(row>=0) $('#dgPicList').edatagrid('selectRow',row);
+                else{
+                    $('#dgPicList').edatagrid('load');
+                    $("#blkPicItem").hide();
+                }
+                itemChanged=false;
+            },
+            onBeforeUnselect:function(index,row){
+                console.log("onBeforeUnselect"); //不会触发
+            },
+            onBeforeUncheck:function(){
+                console.log("onBeforeUncheck");//不会触发
+            }
+        });
+        var editor =  KindEditor.create('#editor_id',{
+            uploadJson:'__APP__/MG_PicTxt/index/work/editorUploadJson/chnid/'+currentPara.chnid+'/programid/'+currentPara.programid,
+            allowFileManager :true,
+            cssPath:'__PUBLIC__/kindeditor/article.css',	//用于编辑内容显示的CSS
+            bodyClass:'article',
+            imageTabIndex:1,
+            items:[ 'undo', 'redo', '|',  'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|',
+                'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', '/',
+                'subscript', 'superscript', 'formatblock', 'fontsize', '|',
+                'forecolor', 'hilitecolor', 'bold',
+                'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat',  '/',
+                'wordpaste', 'image', 'table', 'hr', 'emoticons', 'anchor', 'link', 'unlink']
+        });
+
+        //记录条目是否被编辑过
+        var itemChanged=false;
+        $("#blkPicItem input").on('change',function () {
+            console.log('changed.');
+            itemChanged=true;
+        });
+        //编辑框内是body没有onchange消息，只能鼠标点了就算修改
+        var aaa =$(".ke-edit-iframe").contents().find("body").on('change click',function () {
+            console.log("aa click")
+            itemChanged=true;
+        });
+
+    })();
+
+
+    //局部用的js功能集中此对象中，尽量避免冲突
+    /*
+    console.log(typeof pictxtObj);
+    if(typeof(pictxtObj)=="undefined"){
+        function f() {
+            console.log("fff33");
+        }
+        var pictxtObj=new function () {
+            this.add=function(){
+                console.log("add item2");
+            }
+        }
+    }
+    pictxtObj.add();
+    f();
+    */
+</script>

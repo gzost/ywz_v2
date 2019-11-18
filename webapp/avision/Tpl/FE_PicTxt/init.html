@@ -1,0 +1,132 @@
+<!-- 图文直播主页面 -->
+<link href="__PUBLIC__/kindeditor/article.css" rel="stylesheet" >
+<style>
+    #blkPicTxtCont {
+        position: relative;
+        margin-left: 20px;
+        box-sizing: border-box;
+        padding: 5px;
+        background-color: #FFF;
+        border-left: 1px dotted #aae;
+    }
+    .PTitem .PTitemTitle{
+        margin: 5px 0 5px -11px;
+        font-size: 8px;
+        color: #c3c3c9;
+    }
+    .PTitem .PTitemTitle:before{
+        color: #aae;
+        display:inline-block;
+        margin-right: 5px;
+        content: "⦿";
+    }
+    .PTitem .PTitemHtml{
+        padding: 5px;
+        border-radius: 5px;
+        background-color: #eaeaef;
+    }
+</style>
+<div id="blkPicTxtCont" class="article"></div>
+
+<script>
+    (function () {
+        console.log('pic txt init...');
+        var pictxt=new Opictxt({ chnid:"{$chnid}",programid:"{$programid}",loadDataUrl:"{$loadDataUrl}" });
+
+        /**
+         * 图文直播前端处理类，这部分与后台框架无关，可独立作为js文件引用
+         * @param options JSON，可定义的参数
+         *  - chnid int 必须，当前直播的频道ID
+         *  - programid int 未启用，当前直播的节目ID
+         *  - container string 默认值"blkPicTxtCont", 控件容器ID
+         *  - loadDataUrl string 必须, 装载数据地址
+         *      前端会POST以下参数：chnid,programid,firstItem,lastItem,directtion:取记录的方向，可能取值['befor'|'after']
+         *      要求后端返回JSON提供：success:true -读取成功，否则读取失败，
+         *          读取成功时：html：显示条目的HTML内容，firstItem,lastItem本次数据的开始和结束itemID
+         */
+        function Opictxt(options) {
+            var defaults = {
+                //各种参数，各种属性
+                chnid: 0,   //当前直播的频道ID
+                programid: 0,   //当前直播的节目ID
+                container: "blkPicTxtCont", //控件容器ID
+                scrollCont: "pictxt",   //滚动容器
+                loadDataUrl:"",  //装载数据地址 POST参数：chnid,programid,firstItem,lastItem,directtion['befor'|'after']
+                interval:10000,    //向后台请求刷新数据间隔(ms)
+                firstItem: null,    //当前装载的最先条目publishorder
+                lastItem:null      //当前装载的最后条目publishorder
+            }
+            var options = $.extend(defaults,options);   //公共参数
+            var firstPageLoaded=false;  //首页已经读入标志，用于控制下拉到顶部时是否触发读旧条目
+
+            var containerObj=$("#"+options.container);  //条目容器的JQ对象
+            var scrollObj=$("#"+options.scrollCont);  //滚动容器的JQ对象
+            //从后台读取新条目
+            var loadItem=function (direction){
+                var para={ chnid:options.chnid, programid:options.programid, firstItem:options.firstItem, lastItem:options.lastItem, direction:direction };
+                $.post(options.loadDataUrl,para,function (data) {
+                    console.log(data);
+                    try{
+                        if(data.success !== "true") throw "后台读取数据失败:"+data.msg;
+                        if(direction=='before'){
+                            containerObj.prepend(data.html);    //插到开始
+                        }else{
+                            if(''!=data.html){
+                                containerObj.append(data.html); //插到末尾
+                                //$("#blkPicTxtCont").animate({scrollTop:$("#blkPicTxtCont").prop("scrollHeight")}, 400);	//滚动到底部
+                                // ？？？内层DIV blkPicTxtCont无法滚动，只好滚动外层的!!!
+                                //scrollObj.scrollTop(scrollObj.prop('scrollHeight'));
+                                scrollObj.animate({scrollTop:scrollObj.prop('scrollHeight')},3000);
+                            }
+                        }
+                        if('lastItem' in data) {
+                            var lastItem=parseInt(data.lastItem);
+                            if(null===options.lastItem || lastItem > options.lastItem ) options.lastItem=lastItem;
+                        }
+                        if('firstItem' in data) {
+                            var firstItem=parseInt(data.firstItem);
+                            if(null===options.firstItem || firstItem < options.firstItem ) options.firstItem=firstItem;
+                        }
+                    }catch (err) {
+                        if(direction=='before') firstPageLoaded=true;    //读旧条目失败认为是已经没有再多的旧条目了
+                        console.log(err);
+                    }
+                    if('after'==direction) setTimeout(function(){loadItem('after');},options.interval);
+                },'json');
+            }
+
+            //处理滚动消息，滚动到顶部时尝读旧的条目
+            //
+            // firstPageLoaded
+            var scrollProcessing=false; //正在处理滚动消息，忽略其它滚动消息
+            scrollObj.on("scroll",function(){
+                var scrollTop = scrollObj.scrollTop();
+                //console.log("on scroll top="+scrollTop);
+                if(0!==scrollTop || scrollProcessing) return;
+                scrollProcessing=true;
+                if (true === firstPageLoaded) {
+                    //已经没有更早的聊天记录可装入了。
+                    containerObj.prepend("<div class='loadmsg'>没有更多的数据了</div>");
+                    var loadmsg=containerObj.find(".loadmsg");
+                    loadmsg.fadeOut(2000,function(){
+                        loadmsg.remove();
+                        scrollProcessing=false;
+                    });
+                }else{
+                    containerObj.prepend("<div class='loadmsg'>正在读入数据...</div>");
+
+                    $.ajaxSettings.async = false;   //设置为同步调用
+                    loadItem("before");
+                    var loadmsg=containerObj.find(".loadmsg");
+                    loadmsg.fadeOut(2000,function(){
+                        loadmsg.remove();
+                        scrollProcessing=false;
+                    });
+                    //scrollObj.scrollTop(5);
+                }
+            });
+            //首次装载条目并启用定时器
+            loadItem('after');
+        }
+    })();
+</script>

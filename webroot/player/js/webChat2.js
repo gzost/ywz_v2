@@ -165,11 +165,12 @@ webChat.prototype.updateChatMsg = function(){
 	var para={channelId:this.channelId, userId:this.userId,userName:this.userName,objName:this.objName,lastMsgId:this.lastMsgId,firstMsgId:this.firstMsgId };
 	$.post(this.appUrl+"/WebChat/updateChatMsg",para,
 		function(data){
-console.log(data);
-			if(''!=data.html){
+//console.log(data);
+			if(data.html.length >1){
 				$('#chatMsg').append(data.html);
 				$('#chatMsg').scrollTop($("#chatMsg")[0].scrollHeight);	//滚动到底部
 			}
+console.log("chatScrollTop="+$('#chatMsg').scrollTop());
 			if('lastMsgId' in data)instance.lastMsgId=data.lastMsgId;	//最新信息Id
             if('firstMsgId' in data)instance.firstMsgId=data.firstMsgId;
 

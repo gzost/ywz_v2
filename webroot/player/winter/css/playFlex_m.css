@@ -3,10 +3,10 @@
     playFlex_m.css
     播放器手机Flex模板，winter皮肤样式
  */
-
+html {font-size:12px; }
 body{
     width:100%; height:100%;
-    background-color:#fff;font-size:24px;margin:0;padding:0;
+    background-color:#fff;font-size:12px;margin:0;padding:0;
 }
 .FlowBottom{
     position:fixed;

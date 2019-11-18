@@ -1,0 +1,10 @@
+<!-- FE_PicTxt/loadItem
+    渲染图文条目
+-->
+<foreach name="rows" item="rec">
+    <div class="PTitem" rid="{$rec.id}" order="{$rec.publishorder}">
+        <div class="PTitemTitle">{$rec.publishtime}</div>
+        <div class="PTitemHtml">{$rec.html}</div>
+    </div>
+
+</foreach>

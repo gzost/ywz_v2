@@ -98,11 +98,14 @@ class ST_ChannelViewAction extends AdminBaseAction{
         $dbAgent=D("agent");
         $agent=0;   //TODO:取频道对应的机构
         $fieldName=$dbAgent->getUserFieldName($agent);
+
         $header=array();
         $header[]=array('name'=>'userid','text'=>$fieldName['id'],'data-options'=>"width:100,align:'right', halign:'center',sortable:'true'");
         $header[]=array('name'=>'account','text'=>$fieldName['account'],'data-options'=>"width:100,align:'left', halign:'center'");
         $header[]=array('name'=>'username','text'=>$fieldName['username'],'data-options'=>"width:200,align:'left', halign:'center'");
         $header[]=array('name'=>'phone','text'=>$fieldName['phone'],'data-options'=>"width:200,align:'left', halign:'center'");
+        $header[]=array('name'=>'realname','text'=>$fieldName['realname'],'data-options'=>"width:200,align:'left', halign:'center'");
+        $header[]=array('name'=>'company','text'=>$fieldName['company'],'data-options'=>"width:200,align:'left', halign:'center'");
         $header[]=array('name'=>'duration','text'=>'观看时长','data-options'=>"width:100,align:'right', halign:'center',sortable:'true' ");
         //叠加会员问题字段
         $dbchannel=D('channel');

@@ -13,7 +13,9 @@ require_once(LIB_PATH.'Model/DictionaryModel.php');
 class ChannelModel extends Model {
 	//默认返回的频道字段可通过接口修改
 	protected $m_fields='id,name,connectkey';
-	protected $tabs=array(101=>'频道介绍', 102=>'互动聊天', 103=>'排行榜', 104=>'点播资源', 105=>'图片直播', 106=>'会员' ,107=>'分享', 108=>'首页');	//频道播放界面支持的功能标签
+    //频道播放界面支持的功能标签
+	protected $tabs=array(101=>'频道介绍', 102=>'互动聊天', 103=>'排行榜', 104=>'点播资源', 105=>'图片直播', 106=>'会员' ,107=>'分享',
+		108=>'首页', 109=>'图文直播');
 	protected $extFuncs=array(501=>"送礼",502=>"抽奖",503=>"红包");	//频道使用的扩展功能
 	/**
 	 * @brief 设置需要返回的字段，字段间用逗号分隔
@@ -1057,6 +1059,7 @@ class ChannelModel extends Model {
             if(!mkdir($physicalPath.'/photoOrg',0774,true)) throw new Exception('目录O创建失败');
             if(!mkdir($physicalPath.'/photoL',0774,true)) throw new Exception('目录L创建失败');
             if(!mkdir($physicalPath.'/photoM',0774,true)) throw new Exception('目录M创建失败');
+			if(!mkdir($physicalPath.'/pictxt',0774,true)) throw new Exception('目录M创建失败');
         }
         return $returnPath;
     }

@@ -644,6 +644,7 @@ logfile('WhatViewer:'.$st);
 	protected $playingFile=0;
 	public function play($chnId='',$account='', $u='', $r='', $key='', $xtl='', $xu='')
 	{
+		$chnId=intval($chnId);
 		logfile("chnid=".$chnId." userid=".$this->userId()." U=".$u." session:".session_id(), LogLevel::DEBUG);
 		$this->playingChannel=$chnId;
 		$this->playingFile=$r;

@@ -1,11 +1,18 @@
 @charset "utf-8";
 /* 基本的页面布局及基础字体定义 */
+html {
+	width:100%; height: 100%;
+	margin: 0; 	padding: 0;
+	font-size: 14px;
+}
 body {
+	box-sizing: border-box;
+	margin: 0; 	padding: 0;
+	width:100%; height: 100%;
 	font-family:"微软雅黑","宋体",Courier, "Courier New", monospace ;
 	font-size: 14px; line-height:15px;
 	background-color: #d3c5a2; color: #000;
-	margin: 0; 	padding: 0;
-	
+
 }
 #container {
 	width: 100%;

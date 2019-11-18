@@ -33,7 +33,7 @@ div{
 	/*display:inline-block;*/
 	vertical-align:top;
 	text-align:left;
-	overflow:hidden;
+	/* overflow:hidden; */
 }
 
 .bodyContain{
@@ -413,6 +413,9 @@ function tbInfoClickEx()
 		DivLoadHtml('__APP__/HDPlayer/infoPage/chnId/{$chnId}', 'divMore');
 		selImgChange('tbInfo');
 	}
+    $("#pictxt").hide();
+    $("#divMore").show();
+
 }
 
 function tbRePlayClick()
@@ -423,6 +426,9 @@ function tbRePlayClick()
     DivLoadHtmlPost('__APP__/HDPlayer/recordPage', 'divMore', para);
 	selImgChange('tbRePlay');
 	//DivMoreFit(true);
+    $("#pictxt").hide();
+    $("#divMore").show();
+
 }
 
 function tbVoteClick()
@@ -491,6 +497,7 @@ function onVideoClick()
 }
 
 var chat = null;
+var pictxtLoaded=false;
 $(document).ready(function(){
     //设置当前URL
     var nowURL="{$myurl}";
@@ -536,7 +543,15 @@ console.log("url="+uu);
 	$('#tbEntrytimes').click(tbEntrytimesClick);
 
 	$('#msgShow').click(hidenMsg);
-
+	$("#tbPicTxt").click(function(){
+	    console.log("clck pictxt...");
+	    $("#divMore").hide();
+	    $("#pictxt").show();
+        if(!pictxtLoaded){	//模块未装载
+            $("#pictxt").load("__APP__/FE_PicTxt/init",{chnid:chnId, programid:rId});
+            pictxtLoaded=true;
+        }
+	});
 	(function () {
 		if("{$CanChat}"==""){
             $("#divShow").height(675);
@@ -553,6 +568,8 @@ console.log("url="+uu);
         $("#divShow").html(blk);
         blk.show();
     });
+    //$("#pictxt").css('top',$('#divMore').position().top);
+    //$("#pictxt").css('left',$('#divMore').position().left);
 });
 
 function hidenMsg()
@@ -631,7 +648,7 @@ function loadSubscriberInfo() {
 
 </script>
 </head>
-<body style="background-color:#FFF;font-size:24px;line-height:24px;text-align:center;padding:0;margin-top:1em;background-image: url(/player/{$theme|default='default'}/images/bg.jpg);background-repeat: no-repeat;">
+<body style="background-color:#FFF;font-size:24px;line-height:24px;text-align:center;padding-top:0.5em;background-image: url(/player/{$theme|default='default'}/images/bg.jpg);background-repeat: no-repeat;">
 
 <div class="bodyContain">
 	<div class="bodyLeft{$CanChat}">
@@ -698,13 +715,15 @@ function loadSubscriberInfo() {
 		<div class="statcell" id="tbInfo"><img src="/player/{$theme|default='default'}/images/renxian.png" src-sel="/player/{$theme|default='default'}/images/renxian_s.png" src-org="/player/{$theme|default='default'}/images/renxian.png"/>直播</div>
 		<div class="imgSp"></div>
 		<div class="statcell" id="tbRePlay"><img src="/player/{$theme|default='default'}/images/huifan.png" src-sel="/player/{$theme|default='default'}/images/huifan_s.png" src-org="/player/{$theme|default='default'}/images/huifan.png"/>录像</div>
+		<div class="imgSp"></div>
+		<div class="statcell" id="tbPicTxt">图文直播</div>
 		<div id="msgShow" class="scroll-left msgFlow" style="position: relative; top:-34px; width:100%;   padding-left: 80%;"></div>
 
 	</div>
 
 	<!--下部可变内容，宣传介绍，-->
-	<div id="divMore" style="min-height:200px;width:1200px;">
-	</div>
+	<div id="divMore" style="min-height:200px;width:1200px;"></div>
+	<div id="pictxt" style="position: relative; box-sizing: border-box; height:500px; width:1200px; padding: 0 2em; background-color: #FFF;display:none; overflow-x: hidden; overflow-y: scroll;">Loading...</div>
 	<div id="divLayer" class="divLayer" style="display:none;">
 	</div>
 <!-- 网络中断显示的内容 -->

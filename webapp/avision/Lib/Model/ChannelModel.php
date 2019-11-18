@@ -863,34 +863,25 @@ class ChannelModel extends Model {
 	 */
 	public function GetNameJason($searchKey, $owner = 0, $fmt = 'array')
 	{
-		$w = array();
-		$ws['name'] = array('like','%'.$searchKey.'%');
-		$ws['id'] = $searchKey;
-		$ws['_logic'] = 'or';
+		$condstr="";
+		if(!empty($searchKey)){
+			$id=intval($searchKey);
+            $condstr=" (name like '%$searchKey%' or id=$id) ";
 
-		if(0 != $owner)
-		{
-			$w['owner'] = $owner;
-			$w['_logic'] = 'and';
-			$w['_complex'] = $ws;
 		}
-		else
-		{
-			$w = $ws;
+		if(!empty($owner)){
+			if(!empty($condstr)) $condstr .=" and ";
+            $condstr .="( (owner='$owner') or (anchor='$owner')) ";
 		}
 
-		$rs = $this->field('id, name')->where($w)->select();
-
-		if(NULL == $rs)
-		{
+		$rs = $this->field('id, name')->where($condstr)->select();
+//echo $this->getLastSql();
+		if(NULL == $rs)	{
 			$rs = array();
 		}
-
-		if('json' == $fmt)
-		{
+		if('json' == $fmt){
 			$rs = json_encode2($rs);
 		}
-
 		return $rs;
 	}
 

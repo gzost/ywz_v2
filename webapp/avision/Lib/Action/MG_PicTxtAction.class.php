@@ -76,7 +76,7 @@ class MG_PicTxtAction extends AdminBaseAction{
         }
         $chnName=(isset($_POST["chnName"]))?trim($_POST["chnName"]):"";
         $chnList=$dbChannel->GetNameJason($chnName,$owner);
-        if(count($chnList)>1){
+        if(count($chnList)>0){
             $webVar["chnId"]=$chnList[0]['id'];
             $chnListJson=json_encode2($chnList);
             $chnListJson=str_replace('"',"'",$chnListJson);

@@ -342,7 +342,7 @@ $(document).ready(function(){
         $(".tab-list>div[tabid='"+activtab+"']").removeClass('tab-selected');
 		activtab=tabid;
         $(".tab-list>div[tabid='"+activtab+"']").addClass('tab-selected');
-
+        $("#pictxt").css('top',$('#divMore').position().top);
     });
     //设置当前活跃tab，必须要在设了Onclick之后
 //console.log("refurl="+document.referrer);
@@ -427,7 +427,7 @@ function DivMoreFit(isFit)
 		$('#divMore').css('overflow-y', '');
 	}
 	moreFit = isFit;
-	$("#pictxt").css('top',$('#divMore').position().top);
+
     //$("#pictxt").css('height',$('#divMore').height());
 }
 

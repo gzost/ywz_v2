@@ -3,7 +3,7 @@
     playFlex_m.css
     播放器手机Flex模板，winter皮肤样式
  */
-html {font-size:12px; }
+html {width:100%; height:100%;font-size:12px; }
 body{
     width:100%; height:100%;
     background-color:#fff;font-size:12px;margin:0;padding:0;

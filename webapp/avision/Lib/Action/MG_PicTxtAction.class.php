@@ -51,6 +51,7 @@ class MG_PicTxtAction extends AdminBaseAction{
         $this->baseAssign();
         $this->assign('mainTitle','频道图文直播后台');
         $webVar=array();
+        $webVar['bozu']=$this->getUserInfo('account');
         $webVar['viewAll']=($this->isOpPermit('A'))?"true":"false"; //是否锁定owner
 
         $this->assign($webVar);

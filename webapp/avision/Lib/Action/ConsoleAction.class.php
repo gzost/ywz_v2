@@ -19,6 +19,7 @@ require_once LIB_PATH.'Model/StreamModel.php';
 require_once LIB_PATH.'Model/StreamDetailViewModel.php';
 require_once LIB_PATH.'Action/ChannelAction.class.php';
 require_once APP_PUBLIC.'aliyun/Sms.Class.php';
+require_once(LIB_PATH.'Model/UserPassModel.php');
 
 class ConsoleAction extends AdminBaseAction {
 	

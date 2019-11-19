@@ -19,7 +19,6 @@ require_once LIB_PATH.'Model/StreamModel.php';
 require_once LIB_PATH.'Model/StreamDetailViewModel.php';
 require_once LIB_PATH.'Action/ChannelAction.class.php';
 require_once APP_PUBLIC.'aliyun/Sms.Class.php';
-require_once(LIB_PATH.'Model/UserPassModel.php');
 
 class ConsoleAction extends AdminBaseAction {
 	
@@ -496,6 +495,15 @@ logfile("count post:".count($_POST),LogLevel::DEBUG);
             //点赞次数
             if(isset($para['votetimes'])) $record['votetimes'] = $para['votetimes'];
 
+            //频道助手
+            if(!empty($para['asstAccount'])){
+                $dbUser=D("user");
+                $asstId=$dbUser->where(array('account'=>$para['asstAccount']))->getField('id');
+                $asstId=intval($asstId);
+                if($asstId>0) $record['anchor']=$asstId;
+                else $record['anchor']=0;
+            }
+
             //综合属性
             $attr=$chnDal->getAttrArray($chnId);
             $attr['wxonly']=($para['wxonly']=='true')?true:false; //$para['wxonly'];
@@ -785,6 +793,12 @@ if(null==$list) logfile("list==null");
 		$webVar['vlimit'] = $attr['viewerlimit'];
 		$webVar['entrytimes'] = $r['entrytimes'];
         $webVar['votetimes'] = $r['votetimes'];
+        if($r['anchor']<1) $webVar['asstAccount']="未设置";
+        else{
+            $dbUser=D("user");
+            $account=$dbUser->where("id=".$r['anchor'])->getField("account");
+            $webVar['asstAccount']=(empty($account))? "未设置*":$account;
+        }
 
 		//视频流
 		$webVar['stream'] = $r['streamid'];

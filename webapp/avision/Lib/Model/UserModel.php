@@ -391,8 +391,9 @@ logfile($this->getLastSql(),LogLevel::SQL);
      * @throws Exception    不符合要求抛出错误
      */
     public function validate($rec){
-        $isMatch=preg_match('/^[a-zA-Z][a-zA-Z0-9_]{5,15}$/i', $rec['account']);
-        if(!$isMatch) throw new Exception('账号应字母开头，允许6-16个字母、数字及下划线');
+        //$isMatch=preg_match('/^[a-zA-Z][a-zA-Z0-9_]{5,15}$/i', $rec['account']);
+        $isMatch=preg_match('/^[a-zA-Z0-9][a-zA-Z0-9_]{5,20}$/i', $rec['account']);
+        if(!$isMatch) throw new Exception('账号应字母开头，允许6-20个字母、数字及下划线');
 
         $txtFields=array("refCode","phone","idcard","company","realname","udef1","groups"); //只允许可显示字符的字段
         foreach ($txtFields as $field){

@@ -176,6 +176,11 @@ class MyAction extends SafeAction
             $dbChnUser=D('channelreluser');
             $dbchn=D('channel');
             $chnAttr=$dbchn->getAttrArray($chnid);
+            $agent=$dbchn->where("id=".$chnid)->getField('agent');
+            if(!empty($agent)) $webVar['agent']=$agent;
+            else $webVar['agent']=0;
+
+            $webVar['username']=$this->userName();
 
             $work=$_REQUEST['work'];
             if('save'==$work){

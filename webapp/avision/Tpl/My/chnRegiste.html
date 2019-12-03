@@ -30,6 +30,10 @@
     <div style="height: 1px"></div>
     <div class="block-title">填写或修改频道注册资料</div>
     <div class="block-contain">
+        <div>
+            当前用户：{$username}
+            <div class="OUI-btn OUI-font14" style="margin-left:2em; background-color:#a33;"><a href="__APP__/Home/login/agent/{$agent}" style="width:80px;height: 22px;">切换其它账号</a></div>
+        </div>
         <div style="margin:10px 2em 10px 0;color: #ce6500; line-height: 1.3em;white-space: pre-wrap;">{$signNote}</div>
         <form id='ff' method="post">
             <foreach name="qna" item="r" key="k">

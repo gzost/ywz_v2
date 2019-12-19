@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c373e6b3-2af5-4bab-bede-a2195dffe403" name="默认更改列表" comment="">
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/PlayAction.class.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Play/jumpTo.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Play/play.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Play/play_w.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Play/showException.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webroot/play2.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/计费设计.docx" beforeDir="false" afterPath="$PROJECT_DIR$/document/计费设计.docx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/public/CommonFun.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/public/CommonFun.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webroot/play.html" beforeDir="false" />
-    </list>
+    <list default="true" id="c373e6b3-2af5-4bab-bede-a2195dffe403" name="默认更改列表" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -555,16 +544,15 @@
       <workItem from="1575542099097" duration="28000" />
       <workItem from="1576119174727" duration="3568000" />
       <workItem from="1576137893550" duration="81826000" />
-      <workItem from="1576568002828" duration="22600000" />
+      <workItem from="1576568002828" duration="23200000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2172364000" />
+    <option name="totallyTimeSpent" value="2172964000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" />
       <window_info anchor="bottom" id="调试" order="12" />

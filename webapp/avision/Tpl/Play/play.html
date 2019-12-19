@@ -1,0 +1,47 @@
+<link href="__PUBLIC__/kindeditor/article.css" rel="stylesheet" >
+<style>
+    .fullScreen{
+        position: absolute;
+        top:0;
+        width: 100vw; height: 100vh;
+    }
+
+    .layerCover{
+        z-index: 10;
+    }
+    .layerCoverBtn{
+        z-index: 11;
+    }
+    .btnCircle{
+        border-radius: 50%;
+    }
+    #blkCover{
+        background-color: #ff3;
+    }
+</style>
+
+<div id="blkCover" class="fullScreen layerCover article">
+    {$coverHtml}
+    <div id="btnEnterChannel" class="layerCoverBtn btnCircle" style="position: absolute; top:2em; right: 2em; width:4em; padding:1em;height:4em;display: flex;/*设置外层盒子display为flex*/
+            justify-content:center;/*设置内层盒子的水平居中*/
+            align-items:center;/*设置内层盒子的垂直居中*/
+            background-color: #355; color: #fff;opacity: .8;">
+        <div style="opacity:1">进入频道</div>
+    </div>
+</div>
+<div id="blkMain" class="fullScreen">
+    main
+</div>
+<script>
+    (function () {
+        var option={
+            showCover: "{$showCover}"=="1" ? true:false
+        };
+        console.log(option);
+        if(!option.showCover) $("#blkCover").hide();
+
+        $("#btnEnterChannel").on("click",function () {
+            $("#blkCover").animate({right:'100%'});
+        })
+    })();
+</script>

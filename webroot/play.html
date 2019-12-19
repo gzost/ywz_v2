@@ -5,62 +5,92 @@
     <meta name="viewport" content="width=device-width">
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-    <title>Title</title>
-    <link rel="stylesheet" href="https://g.alicdn.com/de/prismplayer/2.8.2/skins/default/aliplayer-min.css" />
+    <title>易网真视频云</title>
 
-    <script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/de/prismplayer/2.8.2/aliplayer-h5-min.js" ></script>
-    <script src="/public/jeasyui/jquery.min.js" ></script>
     <style>
-        body { padding: 0; margin: 0}
-        video {
-            width:100%; height:800px !important;  object-fit: contain !important; object-position: 0 50% !important;
+        * { box-sizing: border-box;}
+        body {
+            position: relative;
+            height: 100vh; width: 100vw;
+            margin: 0;
+            background-color: #faf;
+            font-size: 12px;
         }
 
+        /* 手机-电脑统一的封面 */
+        .compatible-cover{
+           width:100%; max-width:720px; height: 100vh;
+        }
+
+        /** 装载播放器时显示内容的容器 **/
+        .blkLoading{
+            position: absolute;
+            height: 100vh; width: 100vw;
+            top:0;
+            z-index: 10;
+            display: flex;/*设置外层盒子display为flex*/
+            justify-content:center;/*设置内层盒子的水平居中*/
+            align-items:center;/*设置内层盒子的垂直居中*/
+            background-color: #005ae5;
+            color: #fff;
+        }
+        .blkLoading .itemLoading{
+            display: inline-block;
+        }
+        .blkLoading .itemLoading img{
+            display: block;
+            animation: rotate 6s ease infinite;
+        }
+        /* 图片绕Y轴旋转动画 */
+        @keyframes rotate {
+            0% {
+                transform: rotateY(0deg); /*从0度开始*/
+            }
+            100% {
+                transform: rotateY(360deg); /*360度结束*/
+            }
+        }
+
+        /**** 弹窗颜色定义 ****/
+        .exceptionBox{
+            position: fixed;
+            width: 300px;
+            height: 200px;
+            top:calc( 50vh - 100px );
+            left:calc( 50vw - 150px );
+            border-radius: 7px;
+            box-shadow: 10px 10px 10px 2px #888,0px 0px 1px 0px #aaa;
+
+            background-color: #fff;
+            color:#3a3a3a;
+            padding: 30px;
+        }
+        .exceptionBox .msg{
+            font-size: 16px;
+            color:#3a3a3a;
+        }
     </style>
 </head>
 <body>
-<div>TOP,,,,TOP</div>
-<div  class="prism-player" id="J_prismPlayer" style="width:480px; height: 270px;"></div>
-<script>
-    var player = new Aliplayer({"id": "J_prismPlayer",
-        "source": "http://www.av365.cn/ts/dfhc.mp4",
-        "width": "100%",
-        "height":"100%",
-        "autoplay": true,
-        "isLive": false,
-        "rePlay": false,
-        "playsinline": true,
-        "preload": true,
-        "controlBarVisibility": "always",//控制面板的实现 ‘click’ 点击出现、‘hover’ 浮动出现、‘always’ 一直在
-        "useH5Prism": true,
-        "x5_type":"h5",
-        "x5_video_position":"top"
-    },function (player) {
-        console.log('player ready!');
-    });
-    var setLayout = function()
-    {
-        //设置播放器容器的高度
-        var height=800 ; //根据实际情况设置高度
-       // player.el().style.height = height;
-//alert($("body").offset().top);
-        console.log("height="+height);
-    }
-    window.onresize = function(){
-        setLayout();
-    }
-    player.on("requestFullScreen", function(){
-        setLayout();
-    });
-    player.on('play',function () {
-        console.log('on play');
-        //player.pause();
-    })
-</script>
-<div>11111AAA</div>
-<div id="msg" style="overflow: scroll">
-    ==
+
+<div class="blkLoading" id="blkLoading">
+    <div class="itemLoading">
+        <img src="Public/images/ywzlogo64.png" >
+        Loading...
+    </div>
 </div>
-<div style="position: fixed; top:20px; background-color:#00ee00;z-index: 99;">TTTPPP</div>
+<div id="playerMain" style="display: block; position:absolute; top:0;width: 100vw; height: 100vh;">播放器最外层容器</div>
+
+<script src="/public/jeasyui/jquery.min.js" ></script>
+<script>
+    $(document).ready(function(){
+        //装入播放器页面，同时传递url给后台
+        var data={url:window.location.href};
+        $("#playerMain").load("Home.php/Play/main.html",data,function () {
+            $('#blkLoading').animate({right:'100%'});
+        });
+    });
+</script>
+
 </body>
 </html>

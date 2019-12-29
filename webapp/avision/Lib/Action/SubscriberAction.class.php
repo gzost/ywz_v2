@@ -26,8 +26,8 @@ class SubscriberAction extends AdminBaseAction{
  		$this->assign('mainTitle','观众管理');
  		$this->assign('userName',$this->userName());
  		//网页传递的变量模板
- 		$webVarTpl=array('work'=>'init','chnId'=>0,'classify'=>'','type'=>'0','classifyListJson'=>'[]','status'=>'0','note'=>'','agent'=>0, 'owner'=>$this->getUserInfo('account'));
- 		$condTpl=array('chnId'=>0,'classify'=>'','type'=>'0','status'=>'0','note'=>'','agent'=>0, 'ownerid'=>$this->userId());
+ 		$webVarTpl=array('work'=>'init','chnId'=>0,'classify'=>'','type'=>'0','classifyListJson'=>'[]','status'=>'0','note'=>'','agent'=>0, 'owner'=>$this->getUserInfo('account'),'viewer'=>'');
+ 		$condTpl=array('chnId'=>0,'classify'=>'','type'=>'0','status'=>'0','note'=>'','agent'=>0, 'ownerid'=>$this->userId(),'viewer'=>'');
  //var_dump(array_diff_key($webVarTpl,$condTpl));
   		condition::clear(ACTION_NAME);
  		pagination::clear(ACTION_NAME);
@@ -128,6 +128,11 @@ class SubscriberAction extends AdminBaseAction{
             if(!empty($c['classify'])) $cond['classify']=$c['classify'];
             if(!empty($c['type'])) $cond['type']=$c['type'];
             if(!empty($c['status'])) $cond['status']=$c['status'];
+            if(!empty($c['viewer'])) {
+                $dbUser=D("user");
+                $rt=$dbUser->getUserId($c['viewer']);
+                if(!empty($rt)) $cond['uid']=$rt;
+            }
 //var_dump($cond);
 			$db=D('ChannelRelUserView');
 			$rec=$db->getList($cond);

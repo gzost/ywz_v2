@@ -14,8 +14,8 @@ class ChannelModel extends Model {
 	//默认返回的频道字段可通过接口修改
 	protected $m_fields='id,name,connectkey';
     //频道播放界面支持的功能标签
-	protected $tabs=array(101=>'频道介绍', 102=>'互动聊天', 103=>'排行榜', 104=>'点播资源', 105=>'图片直播', 106=>'会员' ,107=>'分享',
-		108=>'首页', 109=>'图文直播');
+	protected $tabs=array(101=>'视频直播', 102=>'互动聊天', 103=>'排行榜', 104=>'点播资源', 105=>'图片直播', 106=>'会员' ,107=>'分享',
+		108=>'首页', 109=>'图文直播', 110=>'频道介绍');
 	protected $extFuncs=array(501=>"送礼",502=>"抽奖",503=>"红包");	//频道使用的扩展功能
 	/**
 	 * @brief 设置需要返回的字段，字段间用逗号分隔
@@ -60,7 +60,8 @@ class ChannelModel extends Model {
 	 * 
 	 * 获取指定用户的权限字串
 	 * @param int $userId
-	 * @param JsonString $attr	包含 uright及gright属性的Json字串
+	 * @param string $attr	包含 uright及gright属性的Json字串
+	 * @return string
 	 */
 	public function getRightStr($userId, $attr){
 		$rightStr='';

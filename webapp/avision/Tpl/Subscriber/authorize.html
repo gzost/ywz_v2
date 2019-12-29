@@ -99,7 +99,7 @@ function setUserStatus(status){
 </script>
 
 <style type="text/css">
-	.cond-item { white-space: nowrap; line-height: 1em; margin-top:5px;}
+	.cond-item { display:inline-block;white-space: nowrap; line-height: 1em; margin:5px;}
 </style>
 
 <table id="dg" class="easyui-edatagrid"  style="width:99%"
@@ -165,7 +165,7 @@ function setUserStatus(status){
 				}
 			"
 		></span>
-		<span class="cond-item">播主账号：<input class="easyui-textbox" id="cond-owner" name="owner" value="{$owner}" style="width:60px; height: 25px;"
+		<span class="cond-item">播主账号：<input class="easyui-textbox" id="cond-owner" name="owner" value="{$owner}" style="width:100px; height: 25px;"
 			data-options="
 				readonly: {$ownerReadonly},
 				onChange:function(newVal,oldVal){
@@ -179,17 +179,21 @@ function setUserStatus(status){
 					onLoadSuccess:function(){ channelListLoaded=true }
 				" />
 		</span>
-		<!-- url:'__URL__/onlineUserGetChnPulldown' -->
-		<span class="cond-item">会员信息：<input class="easyui-textbox" name="note" value="{$note}" style="width:150px; height: 25px;" ></span>
-		<span class="cond-item">分组：<input class='easyui-textbox' name='classify' value='{$classify}'  style='width:100px; height: 25px;' /></span>
+		<span class="cond-item">
+			观众账号：<input class="easyui-textbox" name="viewer" value="{$viewer}" style="width:100px; height: 25px;">
+		</span>
 		<span class="cond-item">类型：<input class='easyui-combobox' name='type' value='{$type}'  style='width:100px; height: 25px;'
-				  data-options="valueField:'id',textField:'name', editable:false,
+										  data-options="valueField:'id',textField:'name', editable:false,
 					data: [{id:'0',name:'全部'},{id:'关注',name:'关注'},{id:'会员',name:'会员'},{id:'订购',name:'订购'}] " />
 		</span>
 		<span class="cond-item">状态：<input class='easyui-combobox' name='status' value='{$status}'  style='width:100px; height: 25px;'
-				  data-options="valueField:'id',textField:'name', editable:false,
+										  data-options="valueField:'id',textField:'name', editable:false,
 					data: [{id:'0',name:'全部'},{id:'正常',name:'正常'},{id:'禁用',name:'禁用'}] " />
 		</span>
+		<!-- url:'__URL__/onlineUserGetChnPulldown' -->
+		<span class="cond-item">会员信息：<input class="easyui-textbox" name="note" value="{$note}" style="width:150px; height: 25px;" ></span>
+		<span class="cond-item">分组：<input class='easyui-textbox' name='classify' value='{$classify}'  style='width:100px; height: 25px;' /></span>
+
 		<input name='work' value='search' style="display:none" />
 		<div class="easyui-linkbutton" iconCls="icon-search" style="height: 25px" onclick="$('#cond').submit();">查询</div>
 	</form>

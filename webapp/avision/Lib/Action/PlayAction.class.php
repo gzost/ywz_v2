@@ -14,6 +14,7 @@ require_once(LIB_PATH.'Model/ChannelreluserModel.php');
 require_once(LIB_PATH.'Model/UserrelroleModel.php');
 require_once(LIB_PATH.'Model/OnlineModel.php');
 require_once(LIB_PATH.'Model/RecordfileModel.php');
+require_once(APP_PATH.'/Common/platform.class.php');
 
 class PlayAction extends SafeAction{
 
@@ -21,9 +22,14 @@ class PlayAction extends SafeAction{
      * 播放器主入口
      * 接受参数url，在url中分析要播放的频道及VOD文件，例如：www.av365.cn/play.html?ch=1098&fl=9832
      *  - ch: 频道ID
-     *  - fl: VOD记录ID
+     *  - vf: VOD记录ID
      *  - nc: 无论什么值，有此参数则不显示频道封面
+     *  - tab: 默认的活跃tabid
      * 当不提供ch或找不到ch指出的频道时，显示首页。
+     * 仅提供ch时，初始化进入直播状态，若不开放VOD tab则无法切换到VOD状态
+     * 提供的vf时，初始化进入VOD状态，若不开放VOD tabs则无法显示VOD列表从而切换其它VOD资源。若不开放live tab无法切换到直播状态。
+     *
+     *
     */
     public function main(){
         //sleep(1);
@@ -39,6 +45,7 @@ class PlayAction extends SafeAction{
 
         $para=$this->analyseUrl($url)["params"];    //传入的参数数组
         $chnid=intval($para['ch']); //取参数中的频道ID
+        $vodid=intval($para['vf']); //取参数中的VOD文件ID
         if(empty($chnid)) $this->jumpTo(U("Home/goHome",array("agent"=>$agent)));
 
         //2、读取频道信息
@@ -64,37 +71,86 @@ class PlayAction extends SafeAction{
         }
 
         //4、按频道类型决定是否需要登录/注册/付费等
-        $chnType=$channel["type"];  //频道类型
-        $tollChn=(!empty($channel["ext"]["userbill"]) && $channel["ext"]["userbill"]["isbill"]=="true")?true:false;  //是否是收费频道
-        $uid=$this->userId();
-        if($chnType=="public" && !$tollChn){
-            //公开及非收费频道无需登录，但为了处理和统计方便，专门做了一个匿名登录账号anonymous
-            if(empty($uid)){
-                //没有用户登录
-                //用匿名登录
-                $this->author->issue('anonymous','');
-            }
-            $webVar["forceLayer"]="hide";   //不显示强制操作层
-            //forceLayer(强制操作层)为覆盖在播放界面之上的层，要求用户完成一定的动作后才能解除并正常观看
-            //forceLayer，目前考虑的功能有：登录(login)，注册频道会员(register)，付费频道订阅(subscribe)。
-            //forceLayer采用iframe
-        }else{
-            //非公开或收费频道必须登录
-            if(empty($uid) || C('anonymousUserId') == $uid) {
-                //没有用户登录
-                $webVar["forceLayer"]="login";
-            }else{
-                //已登录
-                $webVar["forceLayer"]="hide";
-                $dbChnUser=D("channelreluser");
-                if("private"==$chnType){
-                    //检查会员状态，是否需要注册
+        if('normal'==$channel['status']){
+            $chnType=$channel["type"];  //频道类型
+            $tollChn=(!empty($channel["ext"]["userbill"]) && $channel["ext"]["userbill"]["isbill"]=="true")?true:false;  //是否是收费频道
+            $uid=$this->userId();
+            if($chnType=="public" && !$tollChn){
+                //公开及非收费频道无需登录，但为了处理和统计方便，专门做了一个匿名登录账号anonymous
+                if(empty($uid)){
+                    //没有用户登录
+                    //用匿名登录
+                    $this->author->issue('anonymous','');
+                    $uid=C('anonymousUserId');
                 }
-               if($tollChn && "hide"==$webVar["forceLayer"]){
-                    //若是收费频道，并且未要求注册会员，检查是否需要付费
-               }
+                $webVar["forceLayer"]="hide";   //不显示强制操作层
+                //forceLayer(强制操作层)为覆盖在播放界面之上的层，要求用户完成一定的动作后才能解除并正常观看
+                //forceLayer，目前考虑的功能有：登录(login)，注册频道会员(register)，付费频道订阅(subscribe)，频道关闭(close),不显示(hide)。
+                //forceLayer采用iframe
+            }else{
+                //非公开或收费频道必须登录
+                if(empty($uid) || C('anonymousUserId') == $uid) {
+                    //没有用户登录
+                    $webVar["forceLayer"]="login";
+                }else{
+                    //已登录
+                    $webVar["forceLayer"]="hide";
+                    $dbChnUser=D("channelreluser");
+                    if("private"==$chnType){
+                        //检查会员状态，是否需要注册
+                        $rt=$dbChnUser->WhatViewer($chnid,$uid);
+                        //1:可以收看 0:已报名未通过 -1:未报名
+                        if(0==$rt || -1==$rt)    $webVar["forceLayer"]="register";   //已报名未通过或未报名
+                    }
+                    if($tollChn && "hide"==$webVar["forceLayer"]){
+                        //若是收费频道，并且未要求注册会员，检查是否需要付费
+                        if(!$dbChnUser->isHaveTicket($chnid,$uid)) $webVar["forceLayer"]="subscribe";    //请求付费
+                    }
+                }
             }
+        }else{
+            $webVar["forceLayer"]="close";   //频道已关闭
         }
+
+
+        //5、按频道配置生成中部导航条数据tabs
+        $chnAttr=$channel["ext"];
+        $tabArr=$dbChannel->getTabs2($chnAttr);
+        $tabs=array();
+        foreach ($tabArr['tabs'] as $row){
+            $tabs[$row['val']]=$row['text'];
+        }
+        $webVar["tabs"]=$tabs;
+        $activetab=$_REQUEST['tab'];	//从前端传入的默认tab编号，这将覆盖频道配置的默认tab
+        if(empty($activetab)) $activetab=(empty($tabArr['activetab']))?'':$tabArr['activetab'];
+        $webVar["activetab"]=$activetab;
+
+        //6、播放类型 vod/live
+        $webVar['chnid']=empty($chnid)?"":$chnid;
+        if(empty($vodid)){
+            $webVar['vodid']="";
+            $webVar["playType"]="live";
+            $webVar["cover"] = $dbChannel->getPosterUrl($chnid,$chnAttr);   //海报地址
+            $streamDal = D('stream');
+            $w = array('id'=>$channel['streamid']);
+            $row = $streamDal->where($w)->find();
+            $pf = new platform();
+            $pf->load($row['platform']);
+            $webVar["source"] = $pf->getHls($row['idstring']);
+            //$webVar["source"]="http://www.av365.cn/ts/dfhc.mp4";
+        }else{
+            $dbRf=D("recordfile");
+            $vodfile=$dbRf->where("id=".$vodid)->find();
+            $webVar['vodid']=$vodid;
+            $webVar["playType"]="vod";
+            $webVar["cover"] = $dbRf->getImgMrl($vodfile['path']);   //海报地址
+            $webVar["source"]=$dbRf->getVodMrl($vodid);
+        }
+        $webVar['uid']=empty($uid)?"":$uid;
+
+
+
+        //$webVar["cover"]="/t/1.jpg";
         //dump($_POST);
         //var_dump( IsAndroid());
         //var_dump( IsWxBrowser());
@@ -158,7 +214,7 @@ class PlayAction extends SafeAction{
      * 当对应的模板文件不存在时，尝试调用另一种模板
      * @param string $name
      */
-    public function show($name){
+    protected function show($name){
         if(null==$name) $name=ACTION_NAME;	//默认模板与当前action同名
         //$scrType=getPara('scrType');
         $scrType=IsMobile()?'h':'w';
@@ -171,5 +227,20 @@ class PlayAction extends SafeAction{
             $name = ('w'==$scrType)? $name_org: $name.'_w';
         }
         $this->display($name);
+    }
+
+    public function blkini(){
+        echo "pppwpwpwpw\n";
+        echo <<<EOF
+<script>
+(function() {
+  //alert("tttt");
+  console.log($("#pp11").html());
+})();
+    
+</script>
+<div id="pp11">pp1122</div>
+EOF;
+
     }
 }

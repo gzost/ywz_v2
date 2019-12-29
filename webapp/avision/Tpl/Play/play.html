@@ -1,3 +1,10 @@
+<!--
+    播放器主页面，结构：
+
+    通过ThinkPHP传入的页面变量：
+
+-->
+<link rel="stylesheet" href="https://g.alicdn.com/de/prismplayer/2.8.2/skins/default/aliplayer-min.css" />
 <link href="__PUBLIC__/kindeditor/article.css" rel="stylesheet" >
 <style>
     .fullScreen{
@@ -6,42 +13,340 @@
         width: 100vw; height: 100vh;
     }
 
-    .layerCover{
-        z-index: 10;
-    }
-    .layerCoverBtn{
-        z-index: 11;
-    }
+    .layerCover{  z-index: 50;  }   /*  频道封面层 */
+    .layerCoverBtn{  z-index: 51;  }
+    .layerForce { z-index: 40; }    /* 频道强制操作层 */
+    .layerMain { z-index: 0; }  /* 频道主显示层 */
     .btnCircle{
         border-radius: 50%;
     }
     #blkCover{
         background-color: #ff3;
+        overflow-y: auto;
     }
+    #blkForceLayer{
+        display:none;
+        background-color: #244; color: #fff;opacity: .6;">
+    }
+
+    /****视频播放窗口相关样式****/
+    video {
+        /* width:100%;
+        object-position: 0 50% !important;
+        object-fit: contain !important; */
+        object-position: center top !important;
+    }
+    video::-webkit-media-controls {
+        position: absolute;
+        bottom: 0;
+    }
+
+    /**	 中部导航栏的样式定义  */
+    .func-tabs{
+        /* 导航条容器 */
+        position: relative;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        padding-top:2px;
+        /*margin: 4px 0;	 拉开距离是为了显示阴影效果*/
+        box-shadow: inset 0 0px 3px 0px #aab;
+        border: 0;
+        width: 100%;
+        font-size: 13px;
+        color: #3a3a3a;
+        line-height: 24px;
+        background-color: #fcfdfe;
+        height: 30px;
+    }
+    .tab-list{
+        display:inline-flex;
+        /* width: calc(100% - 37px); 有more菜单 */
+        width: calc(100% - 1px);
+        flex-flow:row nowrap;
+        white-space: nowrap;
+        justify-content:space-around;
+        overflow-x: scroll;
+    }
+    .more-menu{
+        display: inline-block;
+        width: 36px;
+        text-align: center;
+        border-left: 1px solid #eee;
+        border-bottom: 1px solid #f1f2f3;
+    }
+    .tab-list div{
+        flex-grow: 1;
+        padding: 0 0.6em;
+        text-align: center;
+    }
+    .tab-list .tab-selected{
+        border-bottom: 2px solid #02aaf1;
+        color:#028ae1;
+    }
+
+    .tabContiner{
+        display:inline-block;position:relative;
+        vertical-align: top;
+        width: 100%;height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
 </style>
 
+<!-- 频道封面层，初始化时通过 $showCover 变量控制是否显示 -->
 <div id="blkCover" class="fullScreen layerCover article">
     {$coverHtml}
-    <div id="btnEnterChannel" class="layerCoverBtn btnCircle" style="position: absolute; top:2em; right: 2em; width:4em; padding:1em;height:4em;display: flex;/*设置外层盒子display为flex*/
+    <div id="btnEnterChannel" class="layerCoverBtn btnCircle" style="position: fixed; top:2em; right: 2em; width:4em; padding:1em;height:4em;display: flex;/*设置外层盒子display为flex*/
             justify-content:center;/*设置内层盒子的水平居中*/
             align-items:center;/*设置内层盒子的垂直居中*/
-            background-color: #355; color: #fff;opacity: .8;">
-        <div style="opacity:1">进入频道</div>
+            background-color: rgba(30,50,50,.5); color: #fff;">
+        <div style="position: relative;z-index: 99;">进入频道</div>
     </div>
 </div>
-<div id="blkMain" class="fullScreen">
-    main
+
+<!-- 强制操作层 按$forceLayer指示执行不同的操作 -->
+<div id="blkForceLayer" class="fullScreen layerForce">
+    blkForceLayer<br>22<br>
+    {$forceLayer}
 </div>
+
+<!-- 播放器层 -->
+<div id="blkMain" class="fullScreen layerMain" style="display: flex; flex-flow:column nowrap;justify-content:flex-start; overflow: hidden;">
+    <!-- 视频窗口 -->
+    <div  class="prism-player" id="prismPlayer" style="position: relative;width:100%; height:0;padding-top: 56.25%; flex:none; overflow: hidden;">
+
+        <!-- 视频叠加层 -->
+        <div style="position: absolute; top:20px; background-color:#00ee00;">.</div>
+    </div>
+
+    <!-- 中部导航条 -->
+    <div class="func-tabs" style="flex:none;">
+        <div id="tabBar" class="tab-list">
+            <assign name="tabOrder" value="0" />
+            <foreach name="tabs" key="tabid" item="tabtext">
+                <div tabid="{$tabid}" tabOrder="{$tabOrder++}">{$tabtext}</div>
+            </foreach>
+        </div>
+    </div>
+
+    <!-- 下部多功能窗口 -->
+    <div id="blkSouth" style="position: relative; width: 100%; background-color: #FFF; flex: auto; overflow-x: auto;overflow-y:hidden;white-space: nowrap;">
+        <foreach name="tabs" key="tabid" item="tabtext">
+            <div class="tabContiner" id="tabItem{$tabid}" >{$tabtext} loading...</div>
+        </foreach>
+    </div>
+</div>
+
+<load href="__PUBLIC__/js/publicFunction.js"/>
 <script>
-    (function () {
-        var option={
-            showCover: "{$showCover}"=="1" ? true:false
+    ( function () {
+        //从后台传入的参数
+        var params={
+            showCover: "{$showCover}"=="1" ? true:false,    //是否显示频道封面
+            chnid:"{$chnid}",   //当前频道ID
+            vodid:"{$vodid}",   //需要播放的VOD文件ID
+            uid:"{$uid}",       //当前用户ID
+            playType:"{$playType}", //播放类型 [live|vod]
+            activetab:"{$activetab}",   //默认活跃的tabID
+            source:"{$source}",     //要播放的视频源
+            cover:"{$cover}",       //视频区封面图片
+            tabItemPrefix:"tabItem"
         };
-        console.log(option);
-        if(!option.showCover) $("#blkCover").hide();
+        console.log(params);
+        //频道封面
+        if(!params.showCover) $("#blkCover").hide();
 
         $("#btnEnterChannel").on("click",function () {
+            $("#blkCover div").hide();
             $("#blkCover").animate({right:'100%'});
-        })
+        });
+
+        //导航条处理对象
+        var tabs=function (tabPara) {
+            console.log(tabPara);
+            var activetab=tabPara.activetab;    //当前活动标签ID
+
+            var tabBar=$("#"+tabPara.tabBar);   //导航条JQ对象
+            var tabBlk=$("#"+tabPara.tabBlk);   //tab内容容器JQ对象
+
+            //设置指定的tab为活动tab
+            var setActive=function(tabOrder){
+                var scrollWidth=tabBlk.width();
+                console.log("scrollWidth="+scrollWidth);
+                var tabid=tabBar.find(">div[tabOrder='"+tabOrder+"']").attr("tabid");
+                tabid=parseInt(tabid);
+
+                //发送tab激活消息
+                tabBlk.trigger("tabActive",[tabid,tabPara]);
+
+                //处理界面
+                tabBar.find(">div[tabid='"+activetab+"']").removeClass('tab-selected');
+                activetab=tabid;
+                tabBar.find(">div[tabid='"+activetab+"']").addClass('tab-selected');
+                //$("#blkSouth").scrollLeft(tabOrder*scrollWidth);
+                $("#blkSouth").animate({scrollLeft:(tabOrder*scrollWidth)},300);
+
+            }
+
+            //初始化
+            var activeOrder=tabBar.find(">div[tabid='"+activetab+"']").attr("taborder");  //addClass('tab-selected');
+            if(typeof(activeOrder)=="undefined") activeOrder=0;
+            setActive(activeOrder);
+
+            //导航条点击事件
+            tabBar.on("click",function (event) {
+                var obj = event.target;
+                //console.log(obj);
+                //var tabid=$(obj).attr("tabid");
+                var tabOrder=$(obj).attr("tabOrder");
+                setActive(tabOrder);
+            });
+
+            //左右拖动时,由于浏览器自带滑动特效，touchend后还会继续滚动，因此只能监听scroll事件，并延迟处理
+            tabBlk.scroll(function() {
+                clearTimeout($.data(this, 'scrollTimer'));
+                $.data(this, 'scrollTimer', setTimeout(function() {
+                    var scrollLeft=tabBlk.scrollLeft(); //取滚动条位置
+                    var scrollWidth=tabBlk.width();
+                    var tabOrder=Math.round(scrollLeft/scrollWidth);
+                    setActive(tabOrder);
+                }, 250));
+            });
+
+            //处理tab激活消息
+            var isTabInit={};   //记录已经初始化的tab，{tabid:true,...}
+            tabBlk.bind("tabActive",function(event,tabid,para) {
+                var blkItem=$("#"+params.tabItemPrefix+tabid);
+                switch (tabid){
+                    case 101:   //频道介绍
+                        if(true != isTabInit[tabid]){
+                            //未初始化，执行初始化
+                            blkItem.load("__APP__/HDPlayer/infoPage/chnId/1098");
+                            isTabInit[tabid]=true;
+                        }
+
+                        break;
+                    case 102:
+                        blkItem.load("__APP__/Play/blkini");
+                        break;
+                }
+            });
+            //其它扩展的tab功能
+            tabBlk.bind("tabActive",function(event,tabid,para) {
+                //console.log(tabid);
+                //console.log(para);
+            });
+        }({ tabBar:"tabBar",tabBlk:"blkSouth",activetab:params.activetab });
+
+        ///////////播放及播放器
+
+        /**
+         * 初始化播放器
+         *
+         * @param string container  播放器容器DOM id
+         * @param string playType    播放类型 [live|vod]
+         * @param string source     播放地址
+         * @param object playOpt    可选参数将取代默认参数
+         * @return object 播放器对象
+         */
+        var initPlayer=function (container,playType,source,cover) {
+            var playerOpt={
+                "id": "prismPlayer",
+                "width": "100%",  "height":"100%",
+                "autoplay": false,
+                "isLive": true, //false,
+                //"skinLayout":false,
+                "skinLayout": [
+                    { "name": "bigPlayButton", "align": "blabs", "x": 30, "y": 80 },
+                    { "name": "H5Loading", "align": "cc" },
+                    { "name": "errorDisplay", "align": "tlabs", "x": 0, "y": 0 },
+                    { "name": "infoDisplay" },
+                    { "name": "tooltip", "align": "blabs", "x": 0, "y": 56 },
+                    { "name": "thumbnail" },
+                    {
+                        "name": "controlBar", "align": "blabs", "x": 0, "y": 0,
+                        "children": [
+                            { "name": "progress", "align": "blabs", "x": 0, "y": 44 },
+                            { "name": "playButton", "align": "tl", "x": 15, "y": 12 },
+                            { "name": "timeDisplay", "align": "tl", "x": 10, "y": 7 },
+                            { "name": "fullScreenButton", "align": "tr", "x": 10, "y": 12 },
+                            //{ "name": "subtitle", "align": "tr", "x": 15, "y": 12 },
+                            //{ "name": "setting", "align": "tr", "x": 15, "y": 12 },
+                            //{ "name": "volume", "align": "tr", "x": 5, "y": 10 },
+                            //{ "name": "snapshot", "align": "tr", "x": 10, "y": 12 }
+                        ]
+                    }
+                ],
+                "rePlay": false,
+                "playsinline": true,
+                //"preload": true,
+                "cover":"/t/1.jpg",
+                "controlBarVisibility": "hover",//控制面板的实现 ‘click’ 点击出现、‘hover’ 浮动出现、‘always’ 一直在
+                "useH5Prism": true,
+                //"x5_type":"h5",
+                "x5_fullscreen":true,
+                "x5_video_position":"top"
+            }
+            playerOpt.id=container;
+            playerOpt.source=source;
+            playerOpt.cover=cover;
+            if("live"==playType){
+                playerOpt.isLive=true;
+            }else{
+                playerOpt.isLive=false;
+            }
+
+            return new Aliplayer(playerOpt,function (player) {
+                console.log('player ready!');
+            });
+
+        }
+        var player=initPlayer("prismPlayer",params.playType,params.source,params.cover);
+/*
+        var player = new Aliplayer({"id": "prismPlayer",
+            "source": "http://www.av365.cn/ts/dfhc.mp4",   //http://www.av365.cn/ts/dfhc.mp4
+            //"source": "http://ha.av365.cn/customer1/ou.m3u8",
+            "width": "100%",
+            "height":"100%",
+            "autoplay": false,
+            "isLive": true, //false,
+            //"skinLayout":false,
+            "skinLayout": [
+                { "name": "bigPlayButton", "align": "blabs", "x": 30, "y": 80 },
+                { "name": "H5Loading", "align": "cc" },
+                { "name": "errorDisplay", "align": "tlabs", "x": 0, "y": 0 },
+                { "name": "infoDisplay" },
+                { "name": "tooltip", "align": "blabs", "x": 0, "y": 56 },
+                { "name": "thumbnail" },
+                {
+                    "name": "controlBar", "align": "blabs", "x": 0, "y": 0,
+                    "children": [
+                        { "name": "progress", "align": "blabs", "x": 0, "y": 44 },
+                        { "name": "playButton", "align": "tl", "x": 15, "y": 12 },
+                        { "name": "timeDisplay", "align": "tl", "x": 10, "y": 7 },
+                        { "name": "fullScreenButton", "align": "tr", "x": 10, "y": 12 },
+                        //{ "name": "subtitle", "align": "tr", "x": 15, "y": 12 },
+                        //{ "name": "setting", "align": "tr", "x": 15, "y": 12 },
+                        //{ "name": "volume", "align": "tr", "x": 5, "y": 10 },
+                        //{ "name": "snapshot", "align": "tr", "x": 10, "y": 12 }
+                    ]
+                }
+            ],
+            "rePlay": false,
+            "playsinline": true,
+            //"preload": true,
+            "cover":"/t/1.jpg",
+            "controlBarVisibility": "hover",//控制面板的实现 ‘click’ 点击出现、‘hover’ 浮动出现、‘always’ 一直在
+            "useH5Prism": true,
+            //"x5_type":"h5",
+            "x5_fullscreen":true,
+            "x5_video_position":"top"
+        },function (player) {
+            console.log('player ready!');
+        });
+console.log(typeof(player));
+*/
     })();
 </script>

@@ -16,6 +16,8 @@ class OnlineModel extends Model {
 	/**
 	 * 
 	 * 增加一条新的在线记录
+     * 在建立新的online记录时，若发现有相同的sessionID且$objType,$objId,$userId相同的web资源时，只更新记录，不新建。
+     *
 	 * @param string $objType	在线对象类型
 	 * @param int $objId		在线对象ID
 	 * @param int $userId		使用者用户Id
@@ -23,10 +25,30 @@ class OnlineModel extends Model {
 	 * 
 	 * @return 成功-记录Id，失败-false
 	 */
-	public function newOnline($objType,$objId,$userId=0, $account=''){
+	public function newOnline($objType='web',$objId=0,$userId=0, $account=''){
 		$dbChannel=D('Channel');
 		$dbRecordfile=D('Recordfile');
 		$onlineId=0; $name=''; $objowner=0;
+
+		//对$objType=='web'的特殊处理补丁 2020-01-01
+        $sessionId=session_id();
+        if('web'==$objType && !empty($sessionId)){
+            $cond=array('userid'=>$userId, 'objType'=>$objType, 'refid'=>$objId, 'sessionid'=>$sessionId, 'isonline'=>'true');
+            try{
+                $this->execute("LOCK TABLES __ONLINE__ WRITE");
+                $onlineId=$this->where($cond)->getField('id');
+                if(null != $onlineId){
+                    //当前session有在线记录，不新建
+                    $rec=array('activetime'=>time());
+                    $this->where('id='.$onlineId)->save($rec);
+                    $this->execute('UNLOCK TABLES');
+                    return $onlineId;
+                }
+                $this->execute('UNLOCK TABLES');
+            }catch (Exception $e){
+                $this->execute('UNLOCK TABLES');
+            }
+        }
 
 		switch ($objType){
 			case 'live':
@@ -244,13 +266,25 @@ class OnlineModel extends Model {
 
     /**
      * 检查用户的重复登录状态。
+     * !!注意!! 当$objtype != "web"时，逻辑还没处理好 TODO:
+     * 与当前sessionID相同的WEB资源记录不在统计之列，在建立新的online记录时，若发现有相同的sessionID的web资源时，只更新记录，不新建。
+     *
      * @param int $uid 用户ID
+     * @param string 在线资源类型，目前只支持web
      * @return int  0:可继续登录, 1：重复登录（默认，最多登录次数为1，且已经有一条在线记录），2：账号已到达最大同时登录次数。
      */
 	public function checkMultiLogin($uid,$objtype='web'){
+	    //补丁非web资源永远可以继续. 2020-01-01 by outao
+        if('web'!=$objtype) return 0;
+
 	    //统计在线记录
-	    $cond=array('userid'=>$uid, 'objtype'=>$objtype, 'isonline'=>'true');
+        $cond=array('userid'=>$uid, 'objtype'=>$objtype, 'isonline'=>'true');
+        $sessionId=session_id();    //取当前session id
+        if(!empty($sessionId)){
+            $cond['sessionid']=array('NEQ',$sessionId);
+        }
 	    $loginTimes=$this->where($cond)->count();
+//echo $this->getLastSql().'=='. $loginTimes;
 	    if(0==$loginTimes) return 0;  //没在线记录可继续登录
         //读用户的重复登录设定
         //$multiLogin=getExtAttr(D('User'),array('id'=>$uid),'multiLogin');

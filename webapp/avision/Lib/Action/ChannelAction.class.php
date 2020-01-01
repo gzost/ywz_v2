@@ -229,7 +229,7 @@ class ChannelAction extends AdminBaseAction
 		$this->assign('editUrl', U('Edit'));
 		$this->assign('userRefUrl', U('Subscriber/authorize'));
 		$this->AssignPage('list');
-		$this->assignB($this->webVar);
+		$this->assign($this->webVar);
 		$this->display();
 	}
 
@@ -322,7 +322,9 @@ class ChannelAction extends AdminBaseAction
 			$w2['_logic'] = 'or';
 			$w['_complex'] = $w2;
 		}
-		$data = $chnDal->field('a.*, concat(account,\'(\',username,\')\') as ownername')->alias('a')->where($w)->join('__USER__ u on owner = u.id')->select();
+		$data = $chnDal->field('a.id, a.name,a.type, a.status, adpush, concat(account,\'(\',username,\')\') as ownername,S.name as streamname')->alias('a')->where($w)
+				->join('__USER__ u on owner = u.id')->join("__STREAM__ S on S.id=a.streamid")->select();
+		//echo $chnDal->getLastSql();
 		pagination::setData('chnSearch', $data);
 	}
 

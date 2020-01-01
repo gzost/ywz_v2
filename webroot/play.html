@@ -81,12 +81,13 @@
 </div>
 <div id="playerMain" style="display: block; position:absolute; top:0;width: 100vw; height: 100vh; overflow: hidden;">播放器最外层容器</div>
 
-<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/de/prismplayer/2.8.2/aliplayer-h5-min.js" ></script>
+<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/de/prismplayer/2.8.7/aliplayer-h5-min.js" ></script>
 <script src="/Public/jeasyui/jquery.min.js" ></script>
 <script>
     $(document).ready(function(){
         //装入播放器页面，同时传递url给后台
         var data={url:window.location.href};
+        $.ajaxSetup({ async : true   });
         $("#playerMain").load("home.php/Play/main.html",data,function () {
             $('#blkLoading').animate({right:'100%'});
         });

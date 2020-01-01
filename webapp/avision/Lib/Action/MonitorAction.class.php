@@ -108,7 +108,7 @@ class MonitorAction extends AdminBaseAction{
         $rows=(!empty($_POST['rows']))? intval($_POST['rows']):20;
         $dbOnline=D('online');
         $field='id,from_unixtime(logintime,"%m-%d %H:%i") logintime, ceil((activetime-logintime)/60) minutes ';
-        $field .=',objtype,account,clientip,name,location';
+        $field .=',objtype,refid,account,clientip,name,location';
         $data=$dbOnline->where($cond)->field($field)->order('logintime desc')->page($page,$rows)->select();
 
         if(null==$data){
@@ -264,13 +264,15 @@ class MonitorAction extends AdminBaseAction{
 
 	public function activeStreamData()
 	{
-		$actDal = D('activestream');
-		$data = $actDal->where(array('isactive'=>'true'))->order('activetime desc')->select();
-		foreach($data as $i => $row)
-		{
-			$data[$i]['begintime'] = date('m-d H:i:s', $row['begintime']);
-			$data[$i]['activetime'] = date('m-d H:i:s', $row['activetime']);
-		}
+		$actDal = new Model();  //D('activestream');
+		$dbPrefix=C("DB_PREFIX");
+		$sql="select A.id as id, FROM_UNIXTIME(begintime,'%m-%d %H:%i:%s') as begintime, FROM_UNIXTIME(activetime,'%m-%d %H:%i:%s') as activetime ".
+            " ,  sourceip,isactive,A.name as name,serverip,size, S.name as streamname, owner, account,username from {$dbPrefix}activestream A ".
+            " left join {$dbPrefix}stream S on S.id=A.streamid ".
+            " left join {$dbPrefix}user U on U.id=S.owner ".
+            " where isactive=true order by activetime desc";
+        $data=$actDal->query($sql);
+        //echo $actDal->getLastSql();
 		Data2ListJson($data, count($data));
 	}
 	

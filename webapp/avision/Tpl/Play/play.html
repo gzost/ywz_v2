@@ -103,14 +103,14 @@
     <div id="btnEnterChannel" class="layerCoverBtn btnCircle" style="position: fixed; top:2em; right: 2em; width:4em; padding:1em;height:4em;display: flex;/*设置外层盒子display为flex*/
             justify-content:center;/*设置内层盒子的水平居中*/
             align-items:center;/*设置内层盒子的垂直居中*/
-            background-color: rgba(30,50,50,.5); color: #fff;">
+            background-color: rgba(30,30,30,.3); color: #fff;">
         <div style="position: relative;z-index: 99;">进入频道</div>
     </div>
 </div>
 
 <!-- 强制操作层 按$forceLayer指示执行不同的操作 -->
-<div id="blkForceLayer" class="fullScreen layerForce" style="padding: 60px 30px;">
-    <iframe src="__APP__/Home/login.html" width="100%" height="100%" scrolling="no" marginheight="0" marginwidth="0" style="background-color: #fff;"></iframe>
+<div id="blkForceLayer" class="fullScreen layerForce" style="">
+
     {$forceLayer}
 </div>
 
@@ -150,6 +150,7 @@
             chnid:"{$chnid}",   //当前频道ID
             vodid:"{$vodid}",   //需要播放的VOD文件ID
             uid:"{$uid}",       //当前用户ID
+            agent:"{$agent}",
             playType:"{$playType}", //播放类型 [live|vod]
             activetab:"{$activetab}",   //默认活跃的tabID
             source:"{$source}",     //要播放的视频源
@@ -239,6 +240,13 @@
                     case 102:
                         blkItem.load("__APP__/Play/blkini");
                         break;
+                    case 106:   //会员
+                        if(true != isTabInit[tabid]){
+                            //未初始化，执行初始化
+                            blkItem.load("__APP__/My/showMyInfo/chnid/"+params.chnid);
+                            isTabInit[tabid]=true;
+                        }
+                        break;
                 }
             });
             //其它扩展的tab功能
@@ -313,6 +321,14 @@
         var player=initPlayer("prismPlayer",params.playType,params.source,params.cover);
 
         //////////强制操作层处理///////////
+        console.log("gggggss");
+        switch (params.forceLayer){
+            case "register":
+                //$("#"+local.blkForceLayer).load("Home.php/My/chnRegiste/chnid/1098");
+                var para={"chnid":params.chnid,"vidid":params.vodid, "tab":params.activetab, "agent":params.agent};
+                $("#"+local.blkForceLayer).load("__URL__/showChnRegister",para);
+                break;
+        }
         if(params.forceLayer!="hide") $("#"+local.blkForceLayer).show();
         else $("#"+local.blkForceLayer).hide();
     })();

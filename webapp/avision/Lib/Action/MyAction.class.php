@@ -157,11 +157,15 @@ class MyAction extends SafeAction
     }
     /**
      * 显示及修改会员信息
+     * 通过$_REQUEST传递如下网页变量：
+     *  - backUrl 按返回键时调用的URL，若不提供back
+     *  - agent 当前操作的机构若不提供则查找用户所在的机构，（频道对应的机构? )
+     *
      * @param int $chnid    频道ID
      * @param string $msg   提示信息
      * @param string $continerid    当以ajax形式调用时，返回页面装入的DOM容器ID
-     * @param strin $backUrl    按返回键时调用的URL
      * @param string $mode  返回模式：ajax|page 当以ajax返回时，返回地址输出页面装入指定容器，否则做页面跳转
+     *
      */
     public function chnRegiste($chnid=0,$msg='',$continerid='',$mode=''){
         $webVar=array('chnid'=>$chnid,'msg'=>$msg);
@@ -170,13 +174,13 @@ class MyAction extends SafeAction
             if((1>$uid) || (1>$chnid)) throw new Exception('未登录或找不到频道。');
             $webVar['continerid']=(''==$continerid)?SUBSCRIBER_CONTNER:$continerid;
             $webVar['backUrl']=urldecode($_REQUEST['backUrl']);
-            //$webVar['mode']=$_REQUEST['mode'];
             $webVar['mode']=$mode;
 
             $dbChnUser=D('channelreluser');
             $dbchn=D('channel');
             $chnAttr=$dbchn->getAttrArray($chnid);
-            $agent=$dbchn->where("id=".$chnid)->getField('agent');
+            $agent=intval($_REQUEST['agent']);
+            if(empty($agent))  $agent=$dbchn->where("id=".$chnid)->getField('agent');
             if(!empty($agent)) $webVar['agent']=$agent;
             else $webVar['agent']=0;
 

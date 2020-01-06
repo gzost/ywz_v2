@@ -514,7 +514,7 @@ class HDPlayerAction extends SafeAction {
 
 		$chnUser=D('Channelreluser');
 		$st = $chnUser->WhatViewer($chnInfo['id'],$userInfo['userId']);
-		//dump($st); die('ssss');
+//dump($st); die('ssss');
 logfile('WhatViewer:'.$st);
 		switch($st)
 		{

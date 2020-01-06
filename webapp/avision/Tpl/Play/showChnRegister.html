@@ -1,0 +1,21 @@
+<link rel="stylesheet" type="text/css" href="__PUBLIC__/css/MyAction.css" />
+<load href="__PUBLIC__/css/OUI.css" />
+<div style="position: relative; display: flex; flex-flow: column nowrap; justify-content: center; align-items:center; height: 100%; width: 100%; ">
+    <div id="regContine" style="width: 90%; ">
+        loading...
+    </div>
+</div>
+<script>
+    (function () {
+        var para={
+            chnid:"{$chnid}",
+            vodid:"{$vodid}",
+            tab:"{$tab}",
+            agent:"{$agent}",
+            backUrl:"{$backUrl}"
+        };
+        $("#regContine").load("__APP__/My/chnRegiste",para,function () {
+            //$.parser.parse();
+        });
+    })();
+</script>

@@ -25,6 +25,14 @@ class PlayAction extends SafeAction{
     protected $dbChannel=null;  //channel数据表对象
     protected $channel=null;    //当前频道记录，attr字段已扩展到ext
 
+    public function test(){
+        for($i=0; $i<10; $i++){
+            echo $i.',';
+            ob_flush();//修改部分
+            flush();
+            sleep(1);
+        }
+    }
     /////// 以下方法设计为通过main方法调用，其它方法调用请谨慎 ////
 
     /**
@@ -68,6 +76,7 @@ class PlayAction extends SafeAction{
      *  - nc: 有此参数且非零、空值，则不显示频道封面
      *  - tab: 默认的活跃tabid
      *  - ag: agentID 有此参数传入时，用此覆盖用户的agentID
+     *  - du: 介绍人（推荐人）ID
      * 当不提供ch或找不到ch指出的频道时，显示首页。
      * 仅提供ch时，初始化进入直播状态，若不开放VOD tab则无法切换到VOD状态
      * 提供的vf时，初始化进入VOD状态，若不开放VOD tabs则无法显示VOD列表从而切换其它VOD资源。若不开放live tab无法切换到直播状态。
@@ -82,6 +91,7 @@ class PlayAction extends SafeAction{
         $webVar=array();
 
         //1、分析传入参数，若无传入参数或参数不包含ch，跳转到首页
+        $this->author->autoIssue();		//用cookie自动登录
         $agent=$this->getUserInfo("agent");
         if(null===$agent) $agent=0;
         $url=$_REQUEST['url'];
@@ -204,7 +214,7 @@ class PlayAction extends SafeAction{
             $webVar["source"]=$dbRf->getVodMrl($this->vodid);
         }
         $webVar['uid']=empty($uid)?"":$uid;
-
+        unsetPara("playToken");
         //7、暂时用旧的界面处理登录、注册、付费等
         if($webVar["forceLayer"] != "hide"){
             //生成回调地址
@@ -226,9 +236,13 @@ class PlayAction extends SafeAction{
                     $this->redirect('HDPlayer/chnbill', array('chnId'=>$this->chnid));
                     break;
             }
-
+        }else{
+            //用户满足播放权限，授予token，本方法生成的页面凭此token申请有播放权限限制的其它数据（如：播放地址）不必再检查权限
+            $playToken=uniqid("Play",true);
+            $webVar['playToken']=$playToken;
+            setPara("playToken",$playToken);
         }
-
+        $webVar["source"]="";
         //$webVar["source"]="http://www.av365.cn/ts/dfhc.mp4";
         //$webVar["cover"]="/t/1.jpg";
         //dump($_POST);
@@ -328,7 +342,8 @@ class PlayAction extends SafeAction{
      *  - chnid
      *  - vodid
      *  - tab   活跃的tabID
-     *
+     *  - agent     机构ID，与机构定制Home相关
+     *  - backUrl   注册/登录成功后跳转的地址
      */
     public function showChnRegister(){
         $uid=$this->userId();
@@ -343,18 +358,75 @@ class PlayAction extends SafeAction{
         $this->display("Play:showChnRegister");
     }
 
-    public function blkini(){
-        echo "pppwpwpwpw\n";
-        echo <<<EOF
-<script>
-(function() {
-  //alert("tttt");
-  console.log($("#pp11").html());
-})();
-    
-</script>
-<div id="pp11">pp1122</div>
-EOF;
+    /**
+     * 输出频道装修内容
+     * @param int $chnid
+     */
+    public function showChnInfo($chnid=0){
+        $dbChannel=D("channel");
+        $rec=$dbChannel->where("id=$chnid")->field('name,attr')->find();
+        if(empty($rec)){
+            echo "找不到频道信息！";
+        }else{
+            $attr=(null==$rec['attr'])?array():json_decode($rec['attr'],true);
+            $this->assign('title',$rec['name']);
+            $this->assign('infojson', (is_array($attr['info']))?json_encode2($attr['info']):$attr['info']);
+            $this->display('Play:showChnInfo');
+        }
+    }
+
+    /**
+     * 显示频道可用点播资源列表，
+     * POST传入参数
+     *  - chnid 频道ID
+     *  - vodid 当前请求播放的录像文件ID
+     */
+    public function vodList(){
+        $chnid=intval($_POST["chnid"]);
+        $vodid=intval($_POST["vodid"]);
+//$chnid=11223344;
+        try{
+            if($chnid<1) throw new Exception("缺少频道参数");
+
+            //获取录像文件记录
+            $dbVod = D('recordfile');
+            $cond=array('channelid'=>$chnid);
+            $data = $dbVod->where($cond)->order('seq, createtime desc')->select();
+            if(!is_array($data)) throw new Exception("没找到录像资源");
+
+            //整理图片地址
+            foreach($data as $i => $r)   {
+                $data[$i]['imgpath'] = $dbVod->getImgMrl($r['path']);	//由于每次上传图片都会更换名称，因此没必要增加随机链接。
+            }
+        }catch (Exception $e){
+            //没有频道ID、找不到录像列表、其它错误
+            echo "<div style='width: 100%; text-align: center; padding-top: 1em; font-size: 1.5em; color:#666;'>".$e->getMessage()."</div>";
+            return;
+        }
+//dump($data);
+        //取频道的皮肤模板, 支持播放器皮肤定义 2019-01-16 outao
+        $chnDal = new ChannelModel();
+        $chnAttr=$chnDal->getAttrArray($chnid);
+        $theme=(is_string($chnAttr['theme']))?$chnAttr['theme']:"default";
+
+        $webVar=array("chnid"=>chnid, "vodid"=>$vodid, "theme"=>$theme, "recList"=>$data);
+        $webVar['playToken']=$_POST['playToken'];
+        $this->assign($webVar);
+        $this->display('vodList');
+    }
+
+    /**
+     * 取直播的播放地址及cover地址
+     */
+    public function getLiveSourceJson(){
+
+    }
+
+    /**
+     * 取点播播的播放地址及cover地址
+     */
+    public function getVodSourecJson(){
+        $localToken=getPara("playToken");
 
     }
 }

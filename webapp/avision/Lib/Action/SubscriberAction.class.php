@@ -14,6 +14,7 @@ require_once(LIB_PATH.'Model/ChannelreluserModel.php');
 require_once(LIB_PATH.'Model/ChannelRelUserViewModel.php');
 require_once(LIB_PATH.'Model/AgentModel.php');
 require_once(LIB_PATH.'Model/UserModel.php');
+require_once APP_PATH.'../public/exportExecl.php';
 
 class SubscriberAction extends AdminBaseAction{
 	/**
@@ -22,6 +23,12 @@ class SubscriberAction extends AdminBaseAction{
      * 权限：{"operation":[{"text":"允许","val":"R"},{"text":"管理所有","val":"A"}]}
 	 */
 	public function authorize(){
+	    //下载频道关注/会员/订购名单列表补丁 2020-02-13
+        if($_POST['work']=='saveExcel'){
+            $this->authorizeGetList(null,1,'false',true);
+            return;
+        }
+
  		$this->baseAssign();
  		$this->assign('mainTitle','观众管理');
  		$this->assign('userName',$this->userName());
@@ -89,12 +96,14 @@ class SubscriberAction extends AdminBaseAction{
                 $header[]=array('name'=>$v,'text'=>htmlspecialchars($v));
             }
             $webVar['multiChn']='0';
+            setPara('ExtHeader',$header);
         }else{
  		    //没选择唯一频道
             $webVar['multiChn']='1';
+            unsetPara('ExtHeader');
         }
 
-        setPara('ExtHeader',$header);
+
         $webVar['header']=$header;
 /*
  		//取用户分组数据
@@ -112,8 +121,15 @@ class SubscriberAction extends AdminBaseAction{
 		$this->display('authorize');
 	}
 
-	
-	public function authorizeGetList($page=1,$rows=1,$renew='false'){
+    /**
+     * @param int $page 输出第n页，从1开始，0或null输出全部记录
+     * @param int $rows 每页行数
+     * @param string $renew 若为‘true’字串，强制重新查询数据
+     * @param bool $exportExcel  true-输出excel下载数据;false-直接输出json字串(显示)
+     *
+
+     */
+	public function authorizeGetList($page=1,$rows=1,$renew='false',$exportExcel=false){
 	    if('true'==$renew || !pagination::isAvailable('authorize')){
 			//新的查询
             $c=condition::get('authorize');
@@ -152,7 +168,33 @@ class SubscriberAction extends AdminBaseAction{
         }
 		$result["rows"]=$data;
 		$result["total"]=$rows;
-		if(null==$result)	echo '[]';
+
+		//下载查询结果
+		if($exportExcel) {
+		    $extHeader=getPara('ExtHeader');
+
+		    $header=array();
+		    $header[]=array('name'=>'chnname','text'=>'频道名称');
+            $header[]=array('name'=>'account','text'=>'观众账号');
+            $header[]=array('name'=>'username','text'=>'观众名称');
+            $header[]=array('name'=>'realname','text'=>'真实姓名');
+            $header[]=array('name'=>'idcard','text'=>'证件号');
+            $header[]=array('name'=>'company','text'=>'工作单位');
+            $header[]=array('name'=>'type','text'=>'类型');
+            $header[]=array('name'=>'status','text'=>'状态');
+            $header[]=array('name'=>'classify','text'=>'分组');
+            $header[]=array('name'=>'note2','text'=>'备注');
+            if(is_array($extHeader)){
+                $header=array_merge($header,$extHeader);
+            }else{
+                $header[]=array('name'=>'note','text'=>'会员信息');
+            }
+
+            $result['header'][]=$header;
+            $result['title'][]=array('text'=>'频道观众列表','size'=>16);
+            $result['defaultFile']='频道观众列表.xlsx';
+            exportExecl($result);
+        }
 		else echo json_encode2($result);
 	}
 	public function authorizeUpdateAjax(){
@@ -253,5 +295,6 @@ class SubscriberAction extends AdminBaseAction{
         //echo $db->getLastSql();
         //dump($an);
     }
+
 }
 ?>

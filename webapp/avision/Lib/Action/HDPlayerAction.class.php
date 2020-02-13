@@ -677,6 +677,13 @@ logfile('WhatViewer:'.$st);
 			$chnDb = D('Channel');
 			$chnInfo = $chnDb->getInfoExt($chnId);
 			$chnAttr = $chnInfo['ext'];
+			//检查设置的播放器版本，若==2，跳到新播放器
+			if(intval($chnAttr['player']['version'])==2){
+				$url=$_SERVER["HTTP_ORIGIN"]."/play.html?ch=".$chnId;
+				if(!empty($r)) $url .="&vf=".intval($r);
+				if(!empty($u)) $url .="&du=".intval($u);
+				redirect($url);
+			}
 			$this->channelAvailable($chnInfo);
 
             //整理频道信息

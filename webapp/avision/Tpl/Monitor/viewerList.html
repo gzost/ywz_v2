@@ -53,6 +53,7 @@ $(document).ready(function(){
 			data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
 		至<input class="easyui-datebox" name="endTime" value="{$endTime}" style="width:120px"
 			data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+		地区：<input class="easyui-textbox" name="location" value="{$location}" style="width:100px" >
 		<input name='work' value='search' style="display:none" />
 		<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
 		<if condition="$work eq 'search'">

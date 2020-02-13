@@ -1,0 +1,90 @@
+<!--
+    vodList.html
+    频道可点播资源列表，响应点击发送播放消息
+-->
+<style type="text/css">
+    /*
+        播放器上回放列表样式
+     */
+    #record-list{
+        box-sizing: border-box;
+        flex-direction: column;
+        display:flex;
+        width:100%;
+        margin:auto;
+        border: 2px solid #eee;
+        border-bottom:0px;
+        background-color:#fff;
+        color:#004040;
+    }
+    .record-item{
+        box-sizing: border-box;
+        width:100%;
+        /* min-height: 100px; */
+        padding: 5px;
+        border-bottom: 1px solid #aaa;
+    }
+    .record-img{
+        float: left;
+        margin: 0 5px 2px 0;
+    }
+    .current-item {
+        background-color: #ffffcc;
+        order: -1;
+    }
+    .record-title {
+        font-size: 1rem;
+
+    }
+    .record-desc{
+        white-space: pre-wrap;
+        font-size: 0.8rem;
+        font-weight: normal;
+        color: #3f3f3f;
+    }
+
+</style>
+<div id="record-list">
+
+        <foreach name="recList" item="it">
+            <div class="record-item" fileid="{$it.id}">
+                <div class="record-img" style="width: 40%;">
+                    <img src="{$it.imgpath}" style="width: 100%", height="100%" >
+                </div>
+                <span class="record-title">{$it.name}</span><br>
+
+                    <div style="height: 0.8rem;"></div>
+                    <span class="record-desc">{$it.descript}</span>
+
+            </div>
+        </foreach>
+
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var width=$("#record-list").width()*0.4;	//确定图片宽度为容器宽度的0.4
+        var height=width*9/16;
+        $(".record-img").width(width).height(height);	//根据容器宽度确定固定的图片长宽
+        $(".record-item").css({"min-height":height+10+"px"});	//项目栏高度不小于图片高度
+        console.log(width);
+    });
+    (function () {
+        var params={
+            chnid:"{$chnid}",
+            vodid:"{$vodid}",
+            playToken:"{$playToken}"
+        };
+        $(".record-item[fileid='"+params.vodid+"']").addClass("current-item");
+        $("#record-list .record-item").on("click",function (event) {
+            var obj=event.currentTarget;
+            //console.log(obj);
+            var fileid=$(obj).attr("fileid");   //取VOD文件ID
+            //console.log(fileid);
+            $(".record-item[fileid='"+params.vodid+"']").removeClass("current-item");
+            params.vodid=fileid;
+            $(".record-item[fileid='"+params.vodid+"']").addClass("current-item");
+        });
+    })();
+
+</script>

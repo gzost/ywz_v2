@@ -53,7 +53,18 @@ $(document).ready(function(){
 		}
 	});
 	 
-	cn_Pagination($("#dg").edatagrid('getPager'));		 
+	cn_Pagination($("#dg").edatagrid('getPager'));
+
+	$("#btn_search").on("click",function () {
+        $("#cond input[name='work']").val("search");
+        $("#cond").submit();
+    });
+
+    //另存为Excel按钮事件
+    $("#btn_saveExcel").on("click",function () {
+        $("#cond input[name='work']").val("saveExcel");
+        $("#cond").submit();
+    });
 });
 
 function setUserStatus(status){
@@ -195,7 +206,7 @@ function setUserStatus(status){
 		<span class="cond-item">分组：<input class='easyui-textbox' name='classify' value='{$classify}'  style='width:100px; height: 25px;' /></span>
 
 		<input name='work' value='search' style="display:none" />
-		<div class="easyui-linkbutton" iconCls="icon-search" style="height: 25px" onclick="$('#cond').submit();">查询</div>
+		<div id="btn_search" class="easyui-linkbutton" iconCls="icon-search" style="height: 25px" >查询</div>
 	</form>
 	
 	
@@ -205,6 +216,7 @@ function setUserStatus(status){
     		onclick="$('#dg').edatagrid('saveRow')">保存</a>
     	<a  href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-undo',plain:true" 
     		onclick="$('#dg').edatagrid('cancelRow')">取消</a>
+		<div id="btn_saveExcel" class="easyui-linkbutton" iconCls="icon-down" data-options="plain:true" >另存为Excel</div>
 	</div>
 	<div style="margin-left:50px; display:inline">
 		设置状态：

@@ -192,8 +192,8 @@ class OnlineModel extends Model {
 	 * @param int	$endTime 不提供则转移所有offline记录
 	 */
 	public function moveOfflineToLog($endTime=null){
-		$fields='id onlineid,userid,logintime,activetime,beginview,objtype,refid,account,clientip,hostid,sessionid,name';
-		$logFields='onlineid,userid,logintime,activetime,beginview,objtype,refid,account,clientip,hostid,sessionid,name';
+		$fields='id onlineid,userid,logintime,activetime,beginview,objtype,refid,account,clientip,hostid,sessionid,name,location';
+		$logFields='onlineid,userid,logintime,activetime,beginview,objtype,refid,account,clientip,hostid,sessionid,name,location';
 		$cond='isonline="false"';
 		if(null!=$endTime) $cond .=' and activetime<'.$endTime;
 		$queryStr='insert into '.C('DB_PREFIX').'onlinelog('.$logFields.')' .

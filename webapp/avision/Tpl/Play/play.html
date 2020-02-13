@@ -156,6 +156,7 @@
             source:"{$source}",     //要播放的视频源
             cover:"{$cover}",       //视频区封面图片
             forceLayer:"{$forceLayer}", //强制操作层显示内容
+            playToken:"{$playToken}",   //有权播放令牌
             tabItemPrefix:"tabItem"
         };
         //本HTML相关的参数，如DOM。在JS内部不直接使用HTML相关信息，降低耦合度
@@ -225,20 +226,40 @@
             });
 
             //处理tab激活消息
+            /*
+            101=>'视频直播', 102=>'互动聊天', 103=>'排行榜', 104=>'点播资源', 105=>'图片直播', 106=>'会员' ,107=>'分享',
+                108=>'首页', 109=>'图文直播', 110=>'频道介绍');
+            (501=>"送礼",502=>"抽奖",503=>"红包");	//频道使用的扩展功能
+            */
             var isTabInit={};   //记录已经初始化的tab，{tabid:true,...}
             tabBlk.bind("tabActive",function(event,tabid,para) {
                 var blkItem=$("#"+params.tabItemPrefix+tabid);
                 switch (tabid){
-                    case 101:   //频道介绍
+                    case 101:   //视频直播
                         if(true != isTabInit[tabid]){
                             //未初始化，执行初始化
-                            blkItem.load("__APP__/HDPlayer/infoPage/chnId/1098");
+                            blkItem.load("__APP__/Play/showChnInfo",{chnid:params.chnid});
                             isTabInit[tabid]=true;
                         }
+                        player.dispose();
+                        player=initPlayer("prismPlayer","live",params.source,params.cover);
+                        break;
+                    case 110:   //频道介绍
+                        if(true != isTabInit[tabid]){
+                            //未初始化，执行初始化
+                            blkItem.load("__APP__/Play/showChnInfo",{chnid:params.chnid});
+                            isTabInit[tabid]=true;
+                        }
+                        break;
+                    case 102:   //互动聊天
 
                         break;
-                    case 102:
-                        blkItem.load("__APP__/Play/blkini");
+                    case 104:   //视频点播
+                        if(true != isTabInit[tabid]){
+                            //未初始化，执行初始化
+                            blkItem.load("__APP__/Play/vodlist",{chnid:params.chnid,vodid:params.vodid,playToken:params.playToken});
+                            isTabInit[tabid]=true;
+                        }
                         break;
                     case 106:   //会员
                         if(true != isTabInit[tabid]){
@@ -296,7 +317,7 @@
                 ],
                 "rePlay": false,
                 "playsinline": true,
-                //"preload": true,
+                //"preload": false,
                 "cover":"/t/1.jpg",
                 "controlBarVisibility": "hover",//控制面板的实现 ‘click’ 点击出现、‘hover’ 浮动出现、‘always’ 一直在
                 "useH5Prism": true,
@@ -315,13 +336,18 @@
 
             return new Aliplayer(playerOpt,function (player) {
                 console.log('player ready!');
+                //错误消息处理
+                player.on("error",function (e) {
+                   console.log('error!!');
+                   console.log(e);
+                   //$(".prism-ErrorMessage").hide();
+                });
             });
 
         }
         var player=initPlayer("prismPlayer",params.playType,params.source,params.cover);
 
         //////////强制操作层处理///////////
-        console.log("gggggss");
         switch (params.forceLayer){
             case "register":
                 //$("#"+local.blkForceLayer).load("Home.php/My/chnRegiste/chnid/1098");

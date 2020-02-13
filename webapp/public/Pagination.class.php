@@ -30,11 +30,9 @@ class pagination {
 	 * 
 	 * 取得分页数据
 	 * @param string $name	数据名称，用于区分不同的缓存数据
-	 * @param *function() $func	从数据库查询数据的函数指针。函数返回查询结果数组，失败返回false。
 	 * @param int $page		需要地几页的数据，从1开始。当=0时返回全部的数据
 	 * @param int $rows		输入为每页的行数，输出为全部数据总行数
-	 * @param array	$param	$func的参数数组
-	 * 
+	 *
 	 * *当不传入$page时，返回全部数据且不计算总记录数
 	 * 
 	 * @return array 

@@ -287,8 +287,8 @@ class MonitorAction extends AdminBaseAction{
  		$this->baseAssign();
  		$this->assign('mainTitle','观众列表');
  		//网页传递的变量模板
- 		$webVarTpl=array('work'=>'init','chnId'=>-1,'objtype'=>0,'beginTime'=>date('Y-m-d',strtotime('-1 day')),'endTime'=>date('Y-m-d'));
- 		$condTpl=array('chnId'=>0,'objtype'=>0,'beginTime'=>$webVarTpl['beginTime'],'endTime'=>$webVarTpl['endTime']);
+ 		$webVarTpl=array('work'=>'init','chnId'=>-1,'objtype'=>0,'beginTime'=>date('Y-m-d',strtotime('-1 day')),'endTime'=>date('Y-m-d'),'location'=>'');
+ 		$condTpl=array('chnId'=>0,'objtype'=>0,'beginTime'=>$webVarTpl['beginTime'],'endTime'=>$webVarTpl['endTime'],'location'=>'');
 
   		condition::clear(ACTION_NAME);
  		pagination::clear(ACTION_NAME);
@@ -366,6 +366,7 @@ class MonitorAction extends AdminBaseAction{
                 $header[]=array('name'=>'chnname','text'=>'节目名称','data-options'=>"width:200,align:'left', halign:'center'");
                 $header[]=array('name'=>'objtype','text'=>'节目类型','data-options'=>"width:60,align:'left', halign:'center'");
                 $header[]=array('name'=>'username','text'=>'观众名称','data-options'=>"width:200,align:'left', halign:'center'");
+                $header[]=array('name'=>'location','text'=>'地区','data-options'=>"width:100,align:'center', halign:'center'");
                 $header[]=array('name'=>'viewtimes','text'=>'观看次数','data-options'=>"width:100,align:'right', halign:'center'");
                 $header[]=array('name'=>'duration','text'=>'观看时长(分)','data-options'=>"width:100,align:'right', halign:'center'");
 
@@ -404,7 +405,7 @@ class MonitorAction extends AdminBaseAction{
 
 //var_dump($cond);
 			$db= new Model() ;
-			$queryStr ="select objtype,refid,userid, name chnname, U.username, count(*) viewtimes,sum(ceil((activetime-logintime)/60)) duration 
+			$queryStr ="select objtype,refid,userid,location, name chnname, U.username, count(*) viewtimes,sum(ceil((activetime-logintime)/60)) duration 
 					from __PREFIX__onlinelog 					
 					left join __PREFIX__user U on userid=U.id
 					where ";
@@ -430,6 +431,10 @@ class MonitorAction extends AdminBaseAction{
 			if(isset($cond['endTime'])){
 				$where .=" and activetime<=".strtotime('+1 day',strtotime($cond['endTime']));	//?array('LT',date('Y-m-d',strtotime('+1 day',strtotime($cond['endTime']))))
 			}
+			//地区
+            if(!empty($cond['location'])){
+			    $where .=" and location like '%".$cond['location']."%'";
+            }
 			$queryStr .= $where." group by refid,userid order by refid,userid";
 			
 			$rec=$db->query($queryStr);

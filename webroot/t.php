@@ -1,5 +1,11 @@
 <?php
 echo strtotime("2019-01-01");
+$ar=array_fill(1,31,0);
+$ar[10]=90;
+$ar['2']=2;
+$json=json_encode($ar);
+echo $json;
+exit;
 phpinfo();
 error_reporting(E_ALL ^ E_NOTICE);
 ob_implicit_flush();

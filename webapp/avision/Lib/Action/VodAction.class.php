@@ -80,7 +80,7 @@ class VodAction extends AdminBaseAction {
 		else return array('BETWEEN',array($bd,$ed));
 	}
 	
-	public function getFileListAjax($page=1,$rows=10){
+	public function getFileListAjax($page=1,$rows=10,$sort='viewers',$order='desc'){
 		//提取记录数据
 		//$index=pagination::getData(self::VODFILEINDEX,$page,$rows);
 //var_dump($index);
@@ -91,7 +91,7 @@ class VodAction extends AdminBaseAction {
 		$cond=condition::get('VODfilelist');
 //var_dump($cond);
 		if(isset($cond)){   //必须要有条件变量才进行查询
-            $data=$db->where($cond)->order('id desc')->page($page,$rows)->select();
+            $data=$db->where($cond)->order("$sort $order")->page($page,$rows)->select();
             $rows=$db->where($cond)->count();
             $result=array();
             $result["rows"]=$data;

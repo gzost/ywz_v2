@@ -305,5 +305,44 @@ logfile("rename: $oldCoverPath,$newCoverPath return:$rt", LogLevel::DEBUG);
         $rt=rename($orgCoverPath,$newCoverPath);
         return preg_replace($patter, $rep, $path);
     }
+
+    /**
+     * 增加观看计数。无论增加是否成功，不返回信息
+     * @param int $id 记录ID
+     * @param int $inc  增长值
+     */
+    public function incAudience($id, $inc=1){
+        $id=intval($id);
+        if($id<1) return;
+
+        $monthDetail=$this->where("id=$id")->getField("monthdetail");
+//var_dump($monthDetail);
+        $monthArr=json_decode($monthDetail,true);
+        if(!is_array($monthArr)) $monthArr=array();
+//var_dump($monthArr);
+        $this->incMonthDetail($monthArr,$inc);
+//var_dump($monthArr);
+        $monthDetail=json_encode($monthArr);
+        $data=array("monthdetail"=>$monthDetail);
+        $data['viewers']=array('exp','viewers+'.$inc);
+        $this->where("id=$id")->save($data);
+//echo $this->getLastSql();
+    }
+
+    private function incMonthDetail(&$detail,$inc){
+        $now=time();    //取当前时间
+        $today=date("Y-m-d",$now);
+        $day=date("j",$now);    //1~31的日期
+
+        //处理当前日期
+        if(!empty($detail[$day]) && $detail[$day]['d']==$today){
+            $detail[$day]['c'] +=$inc;
+        }else{
+            //今天第一次更新
+            $detail[$day]['d']=$today;
+            $detail[$day]['c']=$inc;
+
+        }
+    }
 }
 ?>

@@ -139,17 +139,17 @@ function vodfunction(work){
 		}	" >
 	<thead>
 	<tr>
-		<th data-options="field:'id', width:80,align:'center' ">ID</th>
+		<th data-options="field:'id', width:80,align:'center',sortable:true, order:'desc' ">ID</th>
 		<eq name="viewSelf" value="false"> 
-			<th data-options="field:'account', width:120,align:'left', halign:'center' ">属主</th>
+			<th data-options="field:'account', width:120,align:'left', halign:'center',sortable:true, order:'desc' ">属主</th>
 		</eq>
 		<th data-options="field:'name', width:200,align:'left', halign:'center' ">录像名称</th>
-		<th data-options="field:'channelname', width:150,align:'left', halign:'center' ">频道</th>
-		<th data-options="field:'createtime', width:150,align:'center' ">建立时间</th>
-		<th data-options="field:'length', width:80,align:'center' ">长度</th>
-		<th data-options="field:'size', width:80,align:'right',halign:'center' ">大小(MB)</th>
-		<th data-options="field:'viewers', width:80,align:'right',halign:'center' ">观看人次</th>
-        <th data-options="field:'seq', width:80,align:'right',halign:'center' ">排序</th>
+		<th data-options="field:'channelname', width:150,align:'left', halign:'center',sortable:true, order:'desc' ">频道</th>
+		<th data-options="field:'createtime', width:150,align:'center',sortable:true, order:'desc' ">建立时间</th>
+		<th data-options="field:'length', width:80,align:'center',sortable:true, order:'desc' ">长度</th>
+		<th data-options="field:'size', width:80,align:'right',halign:'center',sortable:true, order:'desc' ">大小(MB)</th>
+		<th data-options="field:'viewers', width:80,align:'right',halign:'center',sortable:true, order:'desc' ">观看人次</th>
+        <th data-options="field:'seq', width:80,align:'right',halign:'center',sortable:true, order:'desc' ">排序</th>
 	</tr>
 	</thead>
 </table>

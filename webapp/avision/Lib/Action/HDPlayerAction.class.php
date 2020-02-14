@@ -276,6 +276,9 @@ class HDPlayerAction extends SafeAction {
 
 			//TODO:插入收费策略
 
+			//增加观看计数
+            $recDal->incAudience($str);
+
 			//添加一条message记录,
 			$msgDal = new MessageModel();
 			$arr = array();

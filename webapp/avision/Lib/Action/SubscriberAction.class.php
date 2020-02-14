@@ -25,6 +25,7 @@ class SubscriberAction extends AdminBaseAction{
 	public function authorize(){
 	    //下载频道关注/会员/订购名单列表补丁 2020-02-13
         if($_POST['work']=='saveExcel'){
+            //ini_set('memory_limit', '8192M');
             $this->authorizeGetList(null,1,'false',true);
             return;
         }
@@ -33,8 +34,9 @@ class SubscriberAction extends AdminBaseAction{
  		$this->assign('mainTitle','观众管理');
  		$this->assign('userName',$this->userName());
  		//网页传递的变量模板
- 		$webVarTpl=array('work'=>'init','chnId'=>0,'classify'=>'','type'=>'0','classifyListJson'=>'[]','status'=>'0','note'=>'','agent'=>0, 'owner'=>$this->getUserInfo('account'),'viewer'=>'');
- 		$condTpl=array('chnId'=>0,'classify'=>'','type'=>'0','status'=>'0','note'=>'','agent'=>0, 'ownerid'=>$this->userId(),'viewer'=>'');
+ 		$webVarTpl=array('work'=>'init','chnId'=>0,'classify'=>'','type'=>'0','classifyListJson'=>'[]','status'=>'0','note'=>'','agent'=>0,
+            'owner'=>$this->getUserInfo('account'),'viewer'=>'','realname'=>'','idcard'=>'','company'=>'');
+ 		//$condTpl=array('chnId'=>0,'classify'=>'','type'=>'0','status'=>'0','note'=>'','agent'=>0, 'ownerid'=>$this->userId(),'viewer'=>'');
  //var_dump(array_diff_key($webVarTpl,$condTpl));
   		condition::clear(ACTION_NAME);
  		pagination::clear(ACTION_NAME);
@@ -74,7 +76,7 @@ class SubscriberAction extends AdminBaseAction{
  			//dump($chnList);
  			//$chnListJson=(null==$chnList)?'[]':json_encode($chnList);
  			//setPara('chnListJson', $chnListJson);
- 			$condTpl['chnId']=$webVar['chnId'];
+ 			//$condTpl['chnId']=$webVar['chnId'];
  			condition::save($webVar,ACTION_NAME);	//更新并存储最新的查询条件
  		} else {
  			condition::update($webVar,ACTION_NAME);
@@ -149,6 +151,10 @@ class SubscriberAction extends AdminBaseAction{
                 $rt=$dbUser->getUserId($c['viewer']);
                 if(!empty($rt)) $cond['uid']=$rt;
             }
+            if(!empty($c['realname']))  $cond['realname']=($c['realname']=='@')?"":$c['realname'];
+            if(!empty($c['idcard']))  $cond['idcard']=($c['idcard']=='@')?"":$c['idcard'];
+            if(!empty($c['company']))  $cond['company']=($c['company']=='@')?"":$c['company'];
+
 //var_dump($cond);
 			$db=D('ChannelRelUserView');
 			$rec=$db->getList($cond);

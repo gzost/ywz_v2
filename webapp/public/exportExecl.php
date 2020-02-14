@@ -44,8 +44,9 @@ require_once  '../../WebLib/PHPExcel/PHPExcel.php';
  */
 function exportExecl($data) {
 	ob_clean ();
-    ini_set('memory_limit', '1024M');
+    ini_set('memory_limit', '2048M');
     $cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_in_memory_serialized;
+    //$cacheMethod = PHPExcel_CachedObjectStorageFactory::cache_to_discISAM;
     PHPExcel_Settings::setCacheStorageMethod($cacheMethod);
 
 	$objPHPExcel = new PHPExcel ();
@@ -138,6 +139,7 @@ function exportExecl($data) {
             }
 		}
 		$row ++;
+		unset($dt,$name,$val);
 	}
 	//表尾
 	//dump($data[footer]);
@@ -149,6 +151,7 @@ function exportExecl($data) {
 		$row ++;
 	}
 	//die('eee');
+    //unset($data);
 	$defaultFile = (isset ( $data [defaultFile] )) ? $data [defaultFile] : "myfile.xlsx";
 	header ( 'Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' );
 	header ( 'Content-Disposition: attachment;filename="' . $defaultFile . '"' );

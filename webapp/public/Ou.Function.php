@@ -658,4 +658,31 @@ function is_https() {
     return false;
 }
 
+/**
+ * Class contextToken
+ * 上下文令牌处理类
+ */
+class contextToken{
+
+    /**
+     * 生成新的令牌，并记录在session变量中
+     * @param $name 令牌名称，校验时需要提供相同的名称
+     * @return string   生成的新令牌，要证明请求来自主页面（生成令牌的页面）需提供此令牌
+     */
+    static public function newToken($name){
+        $token=uniqid("Token",true);
+        setPara($name,$token);
+        return $token;
+    }
+
+    /**
+     * @param $name
+     * @param $token
+     * @return bool 成功返回true
+     */
+    static public function verifyToken($name,$token){
+        $myTokey=getPara($name);
+        return ($myTokey==$token);
+    }
+}
 ?>

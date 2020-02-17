@@ -1,5 +1,6 @@
 <?php
 require_once(APP_PATH.'/Common/platform.class.php');
+require_once(LIB_PATH.'Model/DeletedlogModel.php');
 
 class RecordfileModel extends Model {
 	static public function getRecMrl($recpath)
@@ -316,12 +317,9 @@ logfile("rename: $oldCoverPath,$newCoverPath return:$rt", LogLevel::DEBUG);
         if($id<1) return;
 
         $monthDetail=$this->where("id=$id")->getField("monthdetail");
-//var_dump($monthDetail);
         $monthArr=json_decode($monthDetail,true);
         if(!is_array($monthArr)) $monthArr=array();
-//var_dump($monthArr);
         $this->incMonthDetail($monthArr,$inc);
-//var_dump($monthArr);
         $monthDetail=json_encode($monthArr);
         $data=array("monthdetail"=>$monthDetail);
         $data['viewers']=array('exp','viewers+'.$inc);
@@ -329,20 +327,52 @@ logfile("rename: $oldCoverPath,$newCoverPath return:$rt", LogLevel::DEBUG);
 //echo $this->getLastSql();
     }
 
-    private function incMonthDetail(&$detail,$inc){
+    /**
+     * 增加月明细观看次数，仅修改数组，不写入数据库
+     * @param array $detail   明细数组：array('日期'=>array('d'=>'最后更新日期', 'c'=>'观看计数值'))
+     * @param int   $inc    增长值，默认=1
+     */
+    private function incMonthDetail(&$detail,$inc=1){
         $now=time();    //取当前时间
         $today=date("Y-m-d",$now);
         $day=date("j",$now);    //1~31的日期
 
         //处理当前日期
         if(!empty($detail[$day]) && $detail[$day]['d']==$today){
+            //今天已经更新过，只增加观看计值
             $detail[$day]['c'] +=$inc;
         }else{
-            //今天第一次更新
+            //今天第一次更新。填写更新日期，初始化观看计数值
             $detail[$day]['d']=$today;
             $detail[$day]['c']=$inc;
 
         }
+    }
+
+    /**
+     * 删除指定记录
+     * @param $id
+     * @throws Exception
+     */
+    public function remove($id){
+        $id=intval($id);
+        try{
+            if(empty($id)) throw new Exception("必须提供记录ID。");
+            $this->startTrans();
+            $rec=$this->where("id=$id")->find();
+            if(!is_array($rec)) throw new Exception("找不到要删除的记录。");
+            D("deletedlog")->saveRec($rec,"recordfile");    //把要删除的记录移到log
+            $rt=$this->where("id=$id")->delete();
+            if(false==$rt) throw new Exception("删除记录失败。");
+            if($rec['sourceid']>0){
+                //共享记录，减主记录的共享值
+                $this->where(array("id"=>$rec['sourceid'],"sourceid"=>array("LT",0)))->setInc("sourceid");
+            }
+        }catch (Exception $e){
+            $this->rollback();
+            throw new Exception($e->getMessage());
+        }
+        $this->commit();
     }
 }
 ?>

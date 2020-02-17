@@ -9,6 +9,7 @@ require_once APP_PATH.'../public/uploadhandler.php';
 
 class VodAction extends AdminBaseAction {
 
+    const VODACTION_TOKEN="vodFileListToken";    //传递页面上下文，的访问令牌，用于校验请求来自fileList方法生成的页面
 	public function  t(){
 		$db=D('Recordfile');
 		$str=$db->getVodMrl(10197);
@@ -17,7 +18,7 @@ class VodAction extends AdminBaseAction {
 	/**
 	 * 
 	 * 录像管理列表主界面
-	 * 
+	 * {"operation":[{"text":"允许","val":"R"},{"text":"所有","val":"A"},{"text":"上传","val":"C"},{"text":"修改","val":"M"}]}
 	 */
 	const VODFILEINDEX='VodFileListIndex';
 	public function fileList(){
@@ -59,7 +60,8 @@ class VodAction extends AdminBaseAction {
 		//$db=D('RecordfileDetailView');
 		//$result=$db->getIdList($cond);
 		//pagination::setData(self::VODFILEINDEX, $result);
-		
+
+		$webVar[self::VODACTION_TOKEN]=contextToken::newToken(self::VODACTION_TOKEN);
 		$this->assign($webVar);
     	$this->show('fileList');
 	}
@@ -248,7 +250,7 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 				if(false===$rt) throw new Exception('新增失败，请通知管理员。');
 			}else{
 				$rt=$dbRf->where('id='.$_POST['id'])->save($rec);
-				if(false===$rt) throw new Exception('更新失败，请通知管理员。');
+				if(false===$rt) throw new Exception('更新失败，请通知管理员。'.$dbRf->getLastSql());
 			}
 			
 		}catch (Exception $ex){
@@ -262,19 +264,36 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 	
 	
 	
-	//删除录像记录及文件
+	/**
+     * 删除录像记录及文件
+     * 前端会POST整个录像文件记录,以及以下权限标识：
+     *  - 上传（新建）录像文件,共享录像到其它频道权限：'permitCreate'=[true|false]
+     *  - 修改、删除录像记录权限'permitModify' = [true|false]
+     *  - 只能操作自己的记录 viewSelf=[true|false]
+     * 参数$id,$path必须提供
+     * @param $id int   记录id
+     * @param path string 录像文件相对路径及名称
+     *
+     */
 	public function deleteAjax($id,$path){
 		//$path='/000/020/173/1.mp4';
 		$dbRf=D('recordfile');
+		$id=intval($id);
 		try{
-			if(1>$id) throw new Exception('参数错误！');
-			$rt=$dbRf->where(array('id'=>$id,'size'=>0))->delete(); //只能删除新建而没有录像文件的记录
+		    if(!contextToken::verifyToken(self::VODACTION_TOKEN, $_POST[self::VODACTION_TOKEN])) throw new Exception("非法访问！");
+			if(1>$id) throw new Exception('参数错误，丢失频道ID！');
+			if(intval($_POST['channelid'])!=0) throw new Exception("请先取消与频道的关联后再删除。");
 
-			if(false==$rt) throw new Exception('无法删除！');
-			//删除视频文件及图片
-			$rt=$dbRf->where(array('path'=>$path))->count();
-			if('0'===$rt){
-				//已经没有其他记录引用此视频文件
+			//查看online表中是否有与将被删除资源的记录（有未结算的记录）
+            $dbOnline=D('online');
+            $conut=$dbOnline->where(array("objtype"=>"vod","refid"=>$id))->count();
+            if($conut>0) throw new Exception("该资源还要未完成结算的点播记录，请1小时后再试。");
+
+			//$rt=$dbRf->where(array('id'=>$id,'size'=>0))->delete(); //只能删除新建而没有录像文件的记录。这些记录保证没有消费，因消费结算时需要读录像记录。
+            $dbRf->remove($id); //删除记录。
+
+			//删除主记录时同时视频文件及图片，共享生成的记录只删除数据表记录不删除录像文件
+			if(intval($_POST['sourceid'])<1){
 				$path=substr($path,0,strrpos($path,'.')+1);
 				$base=(''==C(vodfile_base_path))?'/vodfile':C(vodfile_base_path);
 				$base=$_SERVER['DOCUMENT_ROOT'].$base;
@@ -546,5 +565,52 @@ echo 'owner='.$owner;
 		else error_log('<br>'.$msg,3,$para['progressFile']);
 	}
 
+    /**
+     * 共享一个录像记录到其它频道。
+     * 前端POST源录像记录以及以下参数：
+     *  target: int 目标频道ID
+     * 有关权限参数：
+     *  - 上传（新建）录像文件,共享录像到其它频道权限：'permitCreate'=[true|false]
+     *  - 修改、删除录像记录权限'permitModify' = [true|false]
+     *  - 只能操作自己的记录 viewSelf=[true|false]
+     * 若viewSelf==true只能共享到属主为自己的频道
+     */
+	public function shareAjax(){
+	    $sourceId=intval($_POST['id']); //源录像记录ID
+        $targetChannel=intval($_POST['target']);    //目标频道ID
+//var_dump($_POST['viewSelf'],$_POST['viewSelf']=="false");
+        $viewSelf=($_POST['viewSelf']=="false")?false:true;   //只能操作自己录像记录标识
+        try{
+            if(empty($sourceId) || empty($targetChannel)) throw new Exception("缺少必要的参数。");
+            if(intval($_POST['sourceid'])>0) throw new Exception("分享的记录不能再次分享。");
+            $dbRf=D('recordfile');
+            $dbChannel=D("channel");
+            $targetOwner=$dbChannel->where("id=$targetChannel")->getField("owner");
+//var_dump($targetOwner);
+//var_dump($viewSelf,$this->userId());
+            if(null==$targetOwner) throw new Exception("找不到你需要的频道:".$targetChannel);
+            if($viewSelf && ($this->userId() !=$targetOwner)) throw new Exception("您没权操作其它播主的录像。");
+            $newRecord=array(
+                "createtime"=>$_POST['createtime'],
+                "owner"=>$targetOwner,
+                "channelid"=>$targetChannel,
+                "size"=>$_POST['size'],
+                "length"=>$_POST['length'],
+                "path"=>$_POST["path"],
+                "name"=>$_POST["name"],
+                "descript"=>$_POST["descript"],
+                "sourceid"=>$sourceId
+            );
+            $recId=$dbRf->add($newRecord);
+            if(false==$recId) throw new Exception("共享失败，请检查目标频道是否已经有了此录像。");
+            //更新分享值，不保证成功
+            $dbRf->where("id=".$sourceId)->setDec("sourceid");
+            echo "共享成功，新录像记录ID：".$recId;
+        }catch (Exception $e){
+            echo $e->getMessage();
+            return;
+        }
+
+    }
 }
 ?>

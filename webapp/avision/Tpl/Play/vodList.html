@@ -96,6 +96,7 @@
                     var cover=$(obj).find("img").attr("src");
                     console.log(mrl,cover,fileid);
                     playPage.reloadPlayer("vod",mrl,cover,fileid);
+                    playPage.getPlayer().play();
                 }
             },'json');
 

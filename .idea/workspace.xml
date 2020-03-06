@@ -2,28 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c373e6b3-2af5-4bab-bede-a2195dffe403" name="默认更改列表" comment="">
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/BE_communicateAction.class.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/SpeedtestAction.class.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/WebChat3Action.class.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Speedtest/index.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webroot/player/js/playpage.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/document/计费设计.docx" beforeDir="false" afterPath="$PROJECT_DIR$/document/计费设计.docx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Conf/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Conf/config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/PlayAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/PlayAction.class.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Model/ChannelModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Model/ChannelModel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Model/OnlineModel.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Model/OnlineModel.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/Channel/showPhotoDetail_m.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Channel/showPhotoDetail_m.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/Channel/showPhoto_m.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Channel/showPhoto_m.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/FE_PicTxt/init.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/FE_PicTxt/init.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/Play/play.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Play/play.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/Play/vodList.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Play/vodList.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/Vod/fileList_w.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Vod/fileList_w.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/Vod/showDetail.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Vod/showDetail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/public/Ou.Function.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/public/Ou.Function.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webroot/play.html" beforeDir="false" afterPath="$PROJECT_DIR$/webroot/play.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webroot/player/default/css/webChat.css" beforeDir="false" afterPath="$PROJECT_DIR$/webroot/player/default/css/webChat.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webroot/player/js/playpage.js" beforeDir="false" afterPath="$PROJECT_DIR$/webroot/player/js/playpage.js" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -49,38 +30,16 @@
     <expand />
     <select />
   </component>
-  <component name="DockManager">
-    <window id="1">
-      <content type="file-editors">
-        <state>
-          <leaf>
-            <file leaf-file-name="playpage.js" pinned="false" current-in-tab="true">
-              <entry file="file://$PROJECT_DIR$/webroot/player/js/playpage.js">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="100">
-                    <caret line="4" selection-start-line="4" selection-end-line="4" />
-                    <folding>
-                      <element signature="n#!!doc" expanded="true" />
-                    </folding>
-                  </state>
-                </provider>
-              </entry>
-            </file>
-          </leaf>
-        </state>
-      </content>
-    </window>
-  </component>
   <component name="FavoritesManager">
     <favorites_list name="ywz" />
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="play.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="play.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Play/play.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="427">
-              <caret line="161" column="52" selection-start-line="161" selection-start-column="52" selection-end-line="161" selection-end-column="52" />
+            <state relative-caret-position="200">
+              <caret line="161" column="44" selection-start-line="161" selection-start-column="44" selection-end-line="161" selection-end-column="44" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
@@ -94,10 +53,6 @@
                 <element signature="n#style#0;n#div#0;n#div#4;n#div#2;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#1;n#div#4;n#div#2;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#button#0;n#div#1;n#div#4;n#div#2;n#!!top" expanded="true" />
-                <element signature="e#5620#7393#0" />
-                <element signature="e#7690#8464#0" />
-                <element signature="e#28688#28718#0" />
-                <element signature="e#28773#29135#0" />
               </folding>
             </state>
           </provider>
@@ -118,8 +73,8 @@
       <file leaf-file-name="vodList.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Play/vodList.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="431">
-              <caret line="80" column="12" selection-start-line="80" selection-start-column="12" selection-end-line="80" selection-end-column="12" />
+            <state relative-caret-position="806">
+              <caret line="98" column="48" selection-start-line="98" selection-start-column="48" selection-end-line="98" selection-end-column="48" />
             </state>
           </provider>
         </entry>
@@ -136,11 +91,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="OnlineModel.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/OnlineModel.php">
+      <file leaf-file-name="playpage.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/webroot/player/js/playpage.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="284">
-              <caret line="494" column="98" selection-start-line="494" selection-start-column="98" selection-end-line="494" selection-end-column="98" />
+            <state relative-caret-position="359">
+              <caret line="331" column="47" selection-start-line="331" selection-start-column="47" selection-end-line="331" selection-end-column="47" />
+              <folding>
+                <element signature="n#!!block;n#Ou_Communicate#0" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -158,8 +116,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>user</find>
-      <find>initPlayer</find>
       <find>NewChn</find>
       <find>activetime</find>
       <find>$tabtext</find>
@@ -188,6 +144,8 @@
       <find>挂</find>
       <find>operatorIdleInt</find>
       <find>keepalive</find>
+      <find>__</find>
+      <find>option</find>
     </findStrings>
     <dirStrings>
       <dir>D:\MyProject\reform\approot\mdcflow</dir>
@@ -270,11 +228,11 @@
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/FE_PicTxt/init.html" />
         <option value="$PROJECT_DIR$/webroot/play.html" />
         <option value="$PROJECT_DIR$/webroot/p1.html" />
-        <option value="$PROJECT_DIR$/webapp/avision/Tpl/Play/vodList.html" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Model/OnlineModel.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/PlayAction.class.php" />
-        <option value="$PROJECT_DIR$/webroot/player/js/playpage.js" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/Play/play.html" />
+        <option value="$PROJECT_DIR$/webapp/avision/Tpl/Play/vodList.html" />
+        <option value="$PROJECT_DIR$/webroot/player/js/playpage.js" />
       </list>
     </option>
   </component>
@@ -570,12 +528,12 @@
       <workItem from="1583141150269" duration="5608000" />
       <workItem from="1583287047760" duration="22184000" />
       <workItem from="1583333122485" duration="29171000" />
-      <workItem from="1583459015508" duration="23155000" />
+      <workItem from="1583459015508" duration="25805000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2684872000" />
+    <option name="totallyTimeSpent" value="2687522000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -590,16 +548,16 @@
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4450102" visible="true" weight="0.19178082" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.4439394" visible="true" weight="0.19178082" />
       <window_info id="TODO" order="2" sideWeight="0.54083663" side_tool="true" weight="0.16280295" />
       <window_info anchor="bottom" id="调试" order="10" />
       <window_info anchor="bottom" id="Docker" order="6" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="8" show_stripe_button="false" side_tool="true" weight="0.32925585" />
       <window_info anchor="right" id="Database" order="3" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32790223" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.32790223" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info id="Structure" order="3" sideWeight="0.5549898" side_tool="true" visible="true" weight="0.19178082" />
+      <window_info id="Structure" order="3" sideWeight="0.5560606" side_tool="true" visible="true" weight="0.19178082" />
       <window_info id="Terminal" order="1" type="SLIDING" />
       <window_info id="Favorites" order="4" sideWeight="0.5168421" side_tool="true" weight="0.18282403" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -646,13 +604,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/ST_ChannelViewAction.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="675">
-          <caret line="108" column="135" selection-start-line="101" selection-start-column="8" selection-end-line="108" selection-end-column="135" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webroot/exportExcel.php" />
     <entry file="file://$PROJECT_DIR$/webapp/public/exportExecl.php">
       <provider selected="true" editor-type-id="text-editor">
@@ -988,13 +939,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Play/vodList.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="431">
-          <caret line="80" column="12" selection-start-line="80" selection-start-column="12" selection-end-line="80" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webroot/play.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="875">
@@ -1032,20 +976,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webroot/player/js/playpage.js">
+    <entry file="file://$PROJECT_DIR$/webroot/player/js/playpage.min.js">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Play/vodList.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
-          <caret line="4" selection-start-line="4" selection-end-line="4" />
-          <folding>
-            <element signature="n#!!doc" expanded="true" />
-          </folding>
+        <state relative-caret-position="806">
+          <caret line="98" column="48" selection-start-line="98" selection-start-column="48" selection-end-line="98" selection-end-column="48" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Play/play.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="427">
-          <caret line="161" column="52" selection-start-line="161" selection-start-column="52" selection-end-line="161" selection-end-column="52" />
+        <state relative-caret-position="200">
+          <caret line="161" column="44" selection-start-line="161" selection-start-column="44" selection-end-line="161" selection-end-column="44" />
           <folding>
             <element signature="n#style#0;n#div#0;n#div#0;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#0;n#div#0;n#div#0;n#!!top" expanded="true" />
@@ -1059,10 +1003,16 @@
             <element signature="n#style#0;n#div#0;n#div#4;n#div#2;n#!!top" expanded="true" />
             <element signature="n#style#0;n#div#1;n#div#4;n#div#2;n#!!top" expanded="true" />
             <element signature="n#style#0;n#button#0;n#div#1;n#div#4;n#div#2;n#!!top" expanded="true" />
-            <element signature="e#5620#7393#0" />
-            <element signature="e#7690#8464#0" />
-            <element signature="e#28688#28718#0" />
-            <element signature="e#28773#29135#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webroot/player/js/playpage.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="359">
+          <caret line="331" column="47" selection-start-line="331" selection-start-column="47" selection-end-line="331" selection-end-column="47" />
+          <folding>
+            <element signature="n#!!block;n#Ou_Communicate#0" />
           </folding>
         </state>
       </provider>

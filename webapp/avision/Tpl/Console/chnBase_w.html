@@ -34,12 +34,12 @@ function posterSuccess(url)
 	$('#posterimg').attr('src', url+'?'+Math.random());
 }
 
-function genQrcode()
+function genQrcode(str)
 {
 	$('#qrcode').html('');
 	$('#qrcode').qrcode(
 	{
-		text: $('#Fcode').attr('value'),
+		text: str,
 		width:200,
 		height:200,
 		logoid:'logoimg',
@@ -89,22 +89,27 @@ function isClearDis(chnId)
 
 //生成二维码
 $(document).ready(function(){
-
-	try
-	{
-
-		setTimeout("genQrcode()", 100);
-
-		if(0 < chnId)
-		{
+	try	{
+	    var opt={
+            width:200,
+            height:200,
+            logoid:'logoimg',
+            logoW:48,
+            logoH:48
+	    }
+		setTimeout(function () {
+		    opt.text=$('#Fcode').attr('value');
+            $('#qrcode').qrcode(opt);
+            opt.text=$("#V3Url").attr("value");
+            $('#qrcodeV3').qrcode(opt);
+        }, 100);
+		if(0 < chnId)		{
 			$('#divCont').show();
 		}
 	}
-	catch (e)
-	{
+	catch (e)	{
 		//alert(e);
 	}
-
 });
 
 
@@ -203,7 +208,7 @@ function jumpChn(chnId)
 	background-color:#AAA;
 }
 .flex-between-item{
-    width: 650px;
+    width: 750px;
     border-width: thin;
     border-color: blue;
     margin: 3px;
@@ -222,14 +227,19 @@ function jumpChn(chnId)
 </div>
 <div class="flex-contBetween" id="divCont" style="display:none;">
 	<div class="flex-between-item">
-	<div style="float:right;">
+	<div style="float:right; text-align: center;">
 		<div id="qrcode">
 		</div>
 		<div style="text-align:center;">
 		<a href="javascript:copyToClipBoard('Fcode','');" class="easyui-linkbutton" iconcls="icon-menu" plain="true">复制观看地址</a>
 		<br/>
-		<input id="Fcode" type="text" value="{$viewurl}" readonly/>
+		<input id="Fcode" type="text" value="{$viewurl}" readonly style="width: 20em" />
 		</div>
+		<div style="margin: 30px 30px 10px 30px; font-size:1.2em; text-align: center">易网真V3播放器播放地址</div>
+		<div id="qrcodeV3"></div>
+		<a href="javascript:copyToClipBoard('V3Url','');" class="easyui-linkbutton" iconcls="icon-menu" plain="true">复制观看地址</a>
+		<br>
+		<input id="V3Url" type="text" value="{$viewurlV3}"  readonly style="width: 20em" >
 	</div>
 		<form id="ff" action="" method="post">
 			<div class="flex-contStart">

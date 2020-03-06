@@ -384,6 +384,8 @@ class ConsoleAction extends AdminBaseAction {
 		$webVar['logoUrl'] = $chn->getLogoImgUrl($attr, $webVar['chnId']).'?'.time();
 		$webVar['posterUrl'] = $chn->getPosterImgUrl($attr, $webVar['chnId']).'?'.time();
 
+        $webVar['viewurlV3'] = C('webdomain').'play.html?ch='.$webVar['chnId'];
+
 		$this->baseAssign();
 		$this->assign($webVar);
 		$this->assign($r);

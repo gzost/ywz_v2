@@ -28,11 +28,13 @@ $(document).ready(function(){
 
 function vodfunction(work){
 	var para=$('#dg').datagrid('getSelected');
-	para.vodFileListToken="{$vodFileListToken}";    //上下文访问令牌
+
 	if('add' != work && null==para){
 		alert("请先单击选定录像记录。");
 		return false;
 	}
+    if(null==para) para={};
+    para.vodFileListToken="{$vodFileListToken}";    //上下文访问令牌
 	switch(work){
 	case "modify":
 		var url='__APP__/Vod/getDetailAjax';
@@ -164,8 +166,10 @@ function vodfunction(work){
 		<th data-options="field:'viewers', width:80,align:'right',halign:'center',sortable:true, order:'desc' ">观看人次</th>
         <th data-options="field:'sourceid', width:80,align:'right',halign:'center',
             formatter:function(value){
-                if(parseInt(value)!=0) return value;
-                else return '主记录';
+                value=parseInt(value);
+                if(value==0) return '-';
+                else if(value>0) return value;
+                else return '*'+Math.abs(value);
             } ">共享</th>
 	</tr>
 	</thead>
@@ -211,5 +215,6 @@ function vodfunction(work){
         <li>删除分享的点播记录不影响其它分享同一资源的点播记录。</li>
         <li>删除主记录时同时删除视频文件及封面图片，分享的记录将无法访问对于的资源。</li>
         <li>通过分享生成的记录不能再次分享。</li>
+        <li>“分享”字段显示数字是本记录的主记录ID；若以*开头表示本记录是主记录，*后面是分享的次数。</li>
     </ol>
 </block>

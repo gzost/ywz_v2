@@ -13,11 +13,13 @@
         width: 100vw; height: 100vh;
     }
 
-    .layerCover{  z-index: 50;  }   /*  频道封面层 */
-    .layerCoverBtn{  z-index: 51;  }
-    .layerForce { z-index: 40; }    /* 频道强制操作层 */
-    .layerVideoTop1 { z-index: 10; } /* 视频窗口之上的显示层1，显示固定于视频之上的内容 */
-    .layerVideoTop2 { z-index: 9; } /* 视频窗口之上的显示层2，视频开始播放后不显示 */
+    .layerCover{  z-index: 90;  }   /*  频道封面层 */
+    .layerCoverBtn{  z-index: 91;  }
+    .layerPopup{ z-index: 51; }     /* 弹出窗口层 */
+    .layerForce { z-index: 50; }    /* 频道强制操作层, 同时作为marsk层 */
+    /* 阿里视频窗口的z-index=11 */
+    .layerVideoTop1 { z-index: 21; } /* 视频窗口之上的显示层1，显示固定于视频之上的内容 */
+    .layerVideoTop2 { z-index: 20; } /* 视频窗口之上的显示层2，视频开始播放后不显示 */
     .layerMain { z-index: 0; }  /* 频道主显示层 */
     .btnCircle{
         border-radius: 50%;
@@ -28,7 +30,7 @@
     }
     #blkForceLayer{
         display:none;
-        background-color: rgba(20,20,20,.6); color: #fff;">
+        background-color: rgba(120,120,120,.6); color: #fff;">
     }
 
     /****视频播放窗口相关样式****/
@@ -110,7 +112,6 @@
 
 <!-- 强制操作层 按$forceLayer指示执行不同的操作 -->
 <div id="blkForceLayer" class="fullScreen layerForce" style="">
-
     {$forceLayer}
 </div>
 
@@ -120,7 +121,9 @@
     <div  class="prism-player" id="prismPlayer" style="position: relative;width:100%; height:0;padding-top: 56.25%; flex:none; overflow: hidden;">
 
         <!-- 视频叠加层 -->
-        <div style="position: absolute; top:20px; background-color:#00ee00;">.</div>
+        <div class="layerVideoTop1" style="position: absolute; top:0; background-color:#00ee00;">
+
+        </div>
     </div>
 
     <!-- 中部导航条 -->
@@ -132,18 +135,84 @@
             </foreach>
         </div>
     </div>
-
+    <!--<button  style="z-index:999; position: fixed; bottom:100px;" onclick="playPage.send({},function(){ alert('send callback');})">send data</button>-->
     <!-- 下部多功能窗口 -->
-    <div id="blkSouth" style="position: relative; width: 100%; background-color: #FFF; flex: auto; overflow-x: auto;overflow-y:hidden;white-space: nowrap;">
+    <div id="blkSouth" style="position: relative; width: 100%; height:200px; background-color: #FFF; flex: auto; overflow-x: auto;overflow-y:hidden;white-space: nowrap;">
         <foreach name="tabs" key="tabid" item="tabtext">
             <div class="tabContiner" id="tabItem{$tabid}" >{$tabtext} loading...</div>
         </foreach>
     </div>
+
+    <!-- 图文直播容器-->
+    <div id="pictxt" style="position: relative; bottom:0; height:100%; width:100%;  background-color: #FFF;display:none; overflow-x: hidden; overflow-y: auto; white-space: normal;">Loading...</div>
+
+    <!-- 弹出窗口，放在这里是为了避免，非同层播放时被视频遮挡 -->
+
+    <div id="win_popup" class="layerPopup" style="position: fixed; display:none; top:65vw; left:0; right:0; margin: 0 auto; width: 96%; min-height: 57vw;
+        box-shadow: 0 0 3px 1px #999 inset; border-radius:14px; background-color: #feffff; padding: 15px; text-align: center;">
+        <div class="win_notify" style="margin-top: 16px; font-size: 18px; color: #444;"> </div>
+        <div class="blk_button" style="position: absolute; width: 95%; bottom: 30px; text-align:center; ">
+            <button style="border-radius:5px; padding:2px 15px; font-size:16px;">确定</button>
+        </div>
+    </div>
+
 </div>
 
-<load href="__PUBLIC__/js/publicFunction.js"/>
+<load href="__PUBLIC__/js/publicFunction.js" />
+<!-- load href="__ROOT__/player/js/playpage.js" / -->
 <script>
-    ( function () {
+    //////////与后端通讯类//////////
+    function Ou_Communicate(options) {
+        var defaults={
+            //各种默认参数，各种属性
+            backend:"",         //后端URL
+            tokenName:"",       //通讯令牌名称
+            tokenValue:"",
+            lostCount:5         //5+1次联络服务器出错(响应超时或无法连接)发出ServerLost消息
+        }
+        var params = $.extend(defaults,options);
+        var lostCount=params.lostCount; //服务器丢失倒计数
+        /**
+         *  向服务端发送数据
+         *  @param sendData 要发送的数据对象
+         *  成功发送并收到服务器回应后，发送RecvData消息
+         */
+        this.send=function(sendData,callback){
+            //alert("ggssss");
+            var sendTime=new Date().getTime();  //毫秒为单位的时间戳，向后端发送当前时间戳，用于校准服务器与终端间的时间，同时也可计算通讯延迟。
+            var commPkg={tokenName:params.tokenName,tokenValue:params.tokenValue,sendTime:sendTime,playload:sendData} //数据包
+            console.log("Communicate Send:",commPkg);
+            $.ajax({
+                url: params.backend,
+                type: 'post',
+                data: commPkg,
+                cache:false,
+                dataType: 'json',
+                success:function (recvData) {
+                    console.log("Communicate recv:",recvData);
+                    if(recvData["success"]=="false"){
+                        console.log(recvData["msg"]); //在控制台显示错误
+                    }
+                    lostCount=params.lostCount;
+                    $(window).trigger("RecvData",recvData);
+                    if(typeof callback === "function") callback(recvData);
+                },
+                error:function () {
+                    if(lostCount>0) lostCount--;
+                    else $(window).trigger("ServerLost");   //发送ServerLost消息
+                    console.log("Server lost :"+lostCount);
+                    if(typeof callback === "function") callback(null);
+                },
+                complete:function () {
+                    console.log("Communicate delay(ms)="+(new Date().getTime()-sendTime),typeof callback);
+
+                }
+            });
+        }
+    }
+
+    //本页面的全局JS对象，外部可通过此对象访问开放bridge接口，实现与对象内部的通讯
+    var playPage=  (function () {
         //从后台传入的参数
         var params={
             showCover: "{$showCover}"=="1" ? true:false,    //是否显示频道封面
@@ -156,15 +225,206 @@
             source:"{$source}",     //要播放的视频源
             cover:"{$cover}",       //视频区封面图片
             forceLayer:"{$forceLayer}", //强制操作层显示内容
+            onlineid:"{$onlineid}",     //本web页面的onlineid，在线表中另有副本
             playToken:"{$playToken}",   //有权播放令牌
-            tabItemPrefix:"tabItem"
+            aliveTime:"{$aliveTime}",    //最长通讯时间间隔(秒)
+            operatorIdleInt:"{$operatorIdleInt}",   //播放终端最长不操作时间(秒)
+            homeUrl:"{$homeUrl}",       //首页地址
+            tabItemPrefix:"tabItem"     //多功能窗口内各tab容器子窗口的id前缀
         };
+
         //本HTML相关的参数，如DOM。在JS内部不直接使用HTML相关信息，降低耦合度
         var local={
             blkForceLayer:"blkForceLayer"
         };
+        //一些状态控制变量集中管理
+        var status={
+            tabScrolling:false, //多功能窗口在程序操作滚动中，用于暂停手动滚动事件的响应
+        }
+        var _this=this;
 
-        console.log(params);
+        var appPara={}; //应用参数，每次向服务端发送数据时，自动附加。chat参数在chat属性内
+
+        ////////在线记录对象/////////
+        var Ou_OnlineTable=function () {
+            /**
+             * 在线记录表，这是本对象关键的数据结构，格式为：
+             * {"<前端在线记录ID>":{
+             *      BEid:<后端在线记录ID，在前端建立了记录但后端未确认前保持为0，后端同步了记录后填入后端在线记录ID>,
+             *      starttime:<记录开始有效时间戳，0说明此记录尚未生效>,
+             *      endtime:<记录设置为无效的时间戳>,
+             *      objtype:<后端关联在线类型[web|vod|live]每个活动页面前端至少包含一条且只有一条web类型的记录，其它根据页面布局而定>,
+             *      refid:<后端关联对象ID，目前vod类型关联recordfileID,其它关联channelID>,
+             *      FEobj:<关联的前端对象，vod|live时关联对应播放窗口的播放器对象>
+             *      },
+             *  "<前端在线记录ID>":{...}...}
+             *  播放状态判断
+             *  starttime   endtime
+             *      0           0       未播放
+             *      n           0       播放中
+             *      n           n       播放已结束
+             *      0           n       未播放
+             */
+            var onlineTable={}; //在线记录表当objtype="live"|"vod"时，player填写对应的播放对象
+
+            /**
+             * 建立新的在线记录
+             */
+            this.createOnline=function(id,BEid,starttime,endtime,objtype,refid,FEobj){
+                onlineTable[id]={ BEid:BEid, starttime:starttime, endtime:endtime, objtype:objtype, refid:refid, FEobj:FEobj}  //填写在线记录
+                console.log(onlineTable);
+            }
+            this.getOnlineTable=function () {
+                return onlineTable;
+            }
+            this.setOnline=function (id,objtype,refid,FEobj) {
+                var now=parseInt((new Date()).getTime()/1000);
+                console.log("setting online..");
+                //相同资源暂停20秒内重新播放，连续计算播放时间
+                if(onlineTable[id]["starttime"]>0 && (now-onlineTable[id]["endtime"])<20 && onlineTable[id]["objtype"]==objtype && onlineTable[id]["refid"]==refid){
+                    onlineTable[id]["endtime"]=0;
+                }else{
+                    onlineTable[id]["BEid"]=0;
+                    onlineTable[id]["starttime"]=now;
+                    onlineTable[id]["endtime"]=0;
+                    onlineTable[id]["objtype"]=objtype;
+                    onlineTable[id]["refid"]=refid;
+                    onlineTable[id]["FEobj"]=FEobj;
+                }
+                console.log(onlineTable);
+            }
+            this.setOffline=function (id) {
+                var now=parseInt((new Date()).getTime()/1000);
+                console.log("setting offline..");
+                onlineTable[id]["endtime"]=now;
+                console.log(onlineTable);
+            }
+            this.procFeedback=function(fbTable){
+                var keys=Object.keys(onlineTable);  //取在线记录表的所有key
+                var reject=0;   //是否被踢，0-无需操作，1-停止播放(心跳继续，只是停止播放，可建议跳到首页)，2-停止使用(停止心跳，只能关闭或刷新)
+                for(var j=0, len=keys.length; j<len; j++){
+                    var k=keys[j];
+                    //console.log("procFeedback processing row:",fbTable[k]);
+                    //符合这个条件说明还是同一条记录。若不同了，说明原记录已经播放结束并重新播放了
+                    //若后端没传回BEid说明(新)记录未被处理，只有starttime>0的记录会被后端处理
+                    if((onlineTable[k]["starttime"]==fbTable[k]["starttime"]) && (fbTable[k]["BEid"]>0)){
+                        //console.log("procFeedback matched row:",fbTable[k]);
+                        //发送数据时是播放中的记录，现在状态可以忽略
+                        if(fbTable[k]["endtime"]==0){
+                            onlineTable[k]["BEid"]= fbTable[k]["BEid"]; //后台保证传来id
+                            if(fbTable[k]["reject"]==true)  reject=(k=="web")? 2:1;
+                            //console.log("reject",fbTable[k]["reject"],"k=",k);
+                        }
+                        else {
+                            //发送数据时已经是播放结束的记录，清理，确认结束
+                            onlineTable[k]["BEid"]=onlineTable[k]["starttime"]=onlineTable[k]["endtime"]=onlineTable[k]["FEobj"]=0
+                        }
+                    }
+                }
+                console.log("procFeedback output table: ",onlineTable);
+                return reject;
+            }
+            return this;
+        }(); //在线记录对象
+
+        /**
+         * ////// 定义心跳对象 ///////
+         * @param int 最大通讯间隔
+         * @param function func 定时触发的函数
+         */
+        function Ou_KeepAlive(func,interval) {
+            var timeoutHandle=null; //超时触发句柄
+            interval=parseInt(interval)*1000;
+            if(interval<1000) interval=10*1000;
+            var aliveFunc=function () {
+                func();
+                if(null !=timeoutHandle) clearTimeout(timeoutHandle);
+                timeoutHandle=setTimeout(aliveFunc,interval);
+            }
+            //重置触发器
+            this.reset=function(){
+                aliveFunc();
+            }
+            this.stop=function () {
+                if(null !=timeoutHandle) clearTimeout(timeoutHandle);
+            }
+            this.reset();   //构造后启动触发器
+            console.log("Ou_KeepAlive start.");
+        }
+
+        //预填写所有在线记录，整个播放前端只有3个在线记录且live，vod不能同时在线
+        var now=parseInt((new Date()).getTime()/1000);
+        Ou_OnlineTable.createOnline("web", params.onlineid, now, 0, "web",params.chnid,null); //填写web在线记录
+        Ou_OnlineTable.createOnline("live",0, 0, 0, "live",params.chnid,null); //填写live在线记录
+        Ou_OnlineTable.createOnline("vod", 0, 0, 0, "vod",0,null); //填写vod在线记录
+
+        //////////与后端通讯相关//////////
+        var communicate= new Ou_Communicate({"backend":"__APP__/BE_communicate/server",
+            "tokenName":"playToken",    //通讯令牌名称
+            "tokenValue":params.playToken   //通讯令牌值
+        });
+        /**
+         * 向服务器发送数据，自动附加onlineTable
+         */
+        this.send=function(data,callback){
+            data["onlineTable"]=Ou_OnlineTable.getOnlineTable();
+            data["appPara"]=appPara;
+            communicate.send(data,callback);
+        }
+
+        //设置发送到服务端自动附加的应用参数
+        //原来有的参数，若无新值传入不改变
+        this.setAppPara=function(app, para){
+            if("undefined"==typeof (appPara[app])) appPara[app]={};
+            appPara[app] = $.extend(appPara[app],para);
+//console.log("setAppPara: app=",app," para=",para," appPara=",appPara);
+        }
+        var keepalive=new Ou_KeepAlive(function (){  this.send({});},params.aliveTime );    //params.aliveTime
+
+        //响应收到服务器发送数据
+        $(window).on("RecvData",function (event,recvData) {
+            var _this=this;
+            console.log("recvData proc onlineTable");
+            //处理在线用户表
+            if("object"==typeof(recvData.onlineTable)){
+                var reject=Ou_OnlineTable.procFeedback(recvData.onlineTable);
+                console.log("reject=",reject);
+                if(1==reject){
+                    player.pause();
+                    Ou_OnlineTable.setOffline("vod");
+                    Ou_OnlineTable.setOffline("live");
+                    _this.send({});
+                    //$("#"+local.blkForceLayer).show();
+                    //TODO: 完善显示的内容
+                    //$("#"+local.blkForceLayer).html("强制停止播放");
+                    alert("已经暂停播放");
+                }else if(2==reject){
+                    keepalive.stop(); //停止心跳
+                    //player.pause();
+                    player.dispose();
+                    Ou_OnlineTable.setOffline("web");
+                    Ou_OnlineTable.setOffline("vod");
+                    Ou_OnlineTable.setOffline("live");
+                    _this.send({});
+                    alert("您的账号从别的地方登录或被强制下线，若非本人操作，请立即修改密码！");
+                    window.location.href=params.homeUrl;    //关闭提示窗口后跳转到首页
+                    //$("#"+local.blkForceLayer).show();
+                    //TODO: 完善显示的内容
+                    //$("#"+local.blkForceLayer).html("强制退出本页");
+
+                }
+            }
+        });
+
+        //响应服务器丢失
+        $(window).on("ServerLost",function (event) {
+            player.dispose();
+            $("#"+local.blkForceLayer).show();
+            //TODO: 完善显示的内容
+            $("#"+local.blkForceLayer).html("与服务器失去联系");
+            keepalive.stop(); //停止心跳
+        });
+
         ///////频道封面////////
         if(!params.showCover) $("#blkCover").hide();
 
@@ -196,14 +456,13 @@
                 activetab=tabid;
                 tabBar.find(">div[tabid='"+activetab+"']").addClass('tab-selected');
                 //$("#blkSouth").scrollLeft(tabOrder*scrollWidth);
-                $("#blkSouth").animate({scrollLeft:(tabOrder*scrollWidth)},300);
+                status.tabScrolling=true;
+                $("#blkSouth").animate({scrollLeft:(tabOrder*scrollWidth)},300,function () {
+                    setTimeout(function(){status.tabScrolling=false;},100); //为了避免执行滚动事件响应
+                    //console.log("animate end");
+                });
 
             }
-
-            //初始化
-            var activeOrder=tabBar.find(">div[tabid='"+activetab+"']").attr("taborder");  //addClass('tab-selected');
-            if(typeof(activeOrder)=="undefined") activeOrder=0;
-            setActive(activeOrder);
 
             //导航条点击事件
             tabBar.on("click",function (event) {
@@ -216,6 +475,8 @@
 
             //左右拖动时,由于浏览器自带滑动特效，touchend后还会继续滚动，因此只能监听scroll事件，并延迟处理
             tabBlk.scroll(function() {
+                console.log("scroll even");
+                if(status.tabScrolling) return;
                 clearTimeout($.data(this, 'scrollTimer'));
                 $.data(this, 'scrollTimer', setTimeout(function() {
                     var scrollLeft=tabBlk.scrollLeft(); //取滚动条位置
@@ -225,7 +486,7 @@
                 }, 250));
             });
 
-            //处理tab激活消息
+            //////////处理tab激活消息//////////
             /*
             101=>'视频直播', 102=>'互动聊天', 103=>'排行榜', 104=>'点播资源', 105=>'图片直播', 106=>'会员' ,107=>'分享',
                 108=>'首页', 109=>'图文直播', 110=>'频道介绍');
@@ -233,16 +494,32 @@
             */
             var isTabInit={};   //记录已经初始化的tab，{tabid:true,...}
             tabBlk.bind("tabActive",function(event,tabid,para) {
+
                 var blkItem=$("#"+params.tabItemPrefix+tabid);
+                console.log("recive event:"+tabid);
                 switch (tabid){
                     case 101:   //视频直播
+                        console.log("101直播");
                         if(true != isTabInit[tabid]){
                             //未初始化，执行初始化
+                            $.ajaxSetup({async:false});
                             blkItem.load("__APP__/Play/showChnInfo",{chnid:params.chnid});
                             isTabInit[tabid]=true;
                         }
-                        player.dispose();
-                        player=initPlayer("prismPlayer","live",params.source,params.cover);
+
+                        //取直播播放地址及cover
+                        console.log("取直播播放地址及cover");
+                        var postData={"chnid":params.chnid, "agent":params.agent,"playToken":params.playToken};
+                        $.post("__URL__/getLiveSourceJson",postData,function (data) {
+                            console.log("getLiveSourceJson",data);
+                            if(null == data) alert("错误: 无法访问服务器");
+                            else {
+                                if (data.success != "true") alert(data.msg);
+                                else {
+                                    _this.reloadPlayer("live",data.source,data.cover,params.chnid);
+                                }
+                            }
+                        },"json");
                         break;
                     case 110:   //频道介绍
                         if(true != isTabInit[tabid]){
@@ -252,12 +529,23 @@
                         }
                         break;
                     case 102:   //互动聊天
-
+                        if(true != isTabInit[tabid]){
+                            //未初始化，执行初始化
+                            blkItem.load("__APP__/WebChat3/webChat",{channelId:params.chnid});
+                            isTabInit[tabid]=true;
+                        }
                         break;
                     case 104:   //视频点播
                         if(true != isTabInit[tabid]){
                             //未初始化，执行初始化
                             blkItem.load("__APP__/Play/vodlist",{chnid:params.chnid,vodid:params.vodid,playToken:params.playToken});
+                            isTabInit[tabid]=true;
+                        }
+                        break;
+                    case 105:   //图片直播
+                        if(true != isTabInit[tabid]){
+                            //未初始化，执行初始化
+                            blkItem.load("__APP__/Channel/showPhoto",{chnId:params.chnid});
                             isTabInit[tabid]=true;
                         }
                         break;
@@ -268,6 +556,16 @@
                             isTabInit[tabid]=true;
                         }
                         break;
+                    case 109:   //图文直播
+                        if(true != isTabInit[tabid]){
+                            //未初始化，执行初始化
+                            blkItem.html("");
+                            $("#pictxt").appendTo(blkItem);
+                            $("#pictxt").load("__APP__/FE_PicTxt/init",{chnid:params.chnid, programid:params.vodid});
+                            $("#pictxt").show();
+                            isTabInit[tabid]=true;
+                        }
+                        break;
                 }
             });
             //其它扩展的tab功能
@@ -275,6 +573,11 @@
                 //console.log(tabid);
                 //console.log(para);
             });
+
+            //初始化，必须要放在此对象的最后
+            var activeOrder=tabBar.find(">div[tabid='"+activetab+"']").attr("taborder");  //addClass('tab-selected');
+            if(typeof(activeOrder)=="undefined") activeOrder=0;
+            setActive(activeOrder);
         }({ tabBar:"tabBar",tabBlk:"blkSouth",activetab:params.activetab });
 
         ///////////播放及播放器//////////
@@ -284,10 +587,11 @@
          * @param string container  播放器容器DOM id
          * @param string playType    播放类型 [live|vod]
          * @param string source     播放地址
-         * @param object playOpt    可选参数将取代默认参数
+         * @param object options    可选参数将取代默认参数, 以下参数必须提供：
+         *  - playType,source,cover
          * @return object 播放器对象
          */
-        var initPlayer=function (container,playType,source,cover) {
+        var initPlayer=function (container, options) {
             var playerOpt={
                 "id": "prismPlayer",
                 "width": "100%",  "height":"100%",
@@ -325,10 +629,13 @@
                 "x5_fullscreen":true,
                 "x5_video_position":"top"
             }
-            playerOpt.id=container;
-            playerOpt.source=source;
-            playerOpt.cover=cover;
-            if("live"==playType){
+            //playerOpt.id=container;
+            //playerOpt.source=source;
+            //playerOpt.cover=cover;
+            playerOpt=$.extend(playerOpt,options);
+//playerOpt.source="/vodfile/000/000/001/13288_5c9f740976775.mp4";    //for test
+
+            if("live"==playerOpt.playType){
                 playerOpt.isLive=true;
             }else{
                 playerOpt.isLive=false;
@@ -338,14 +645,33 @@
                 console.log('player ready!');
                 //错误消息处理
                 player.on("error",function (e) {
-                   console.log('error!!');
-                   console.log(e);
-                   //$(".prism-ErrorMessage").hide();
+                    console.log('player error!!====',e);
+                    Ou_OnlineTable.setOffline(playerOpt.playType);
+                    $(".prism-ErrorMessage").hide(); //隐藏出错信息
+                    player.setCover(params.cover);   //显示封面
+                });
+                player.on("play",function (e) {
+                    console.log("player play.====",playerOpt);
+                    if(playerOpt.isLive){
+                        Ou_OnlineTable.setOnline("live","live",playerOpt.chnid,0);
+                        Ou_OnlineTable.setOffline("vod");
+                    }else{
+                        Ou_OnlineTable.setOnline("vod","vod",playerOpt.vodid,0);
+                        Ou_OnlineTable.setOffline("live");
+                    }
+                });
+                player.on("pause",function (e) {
+                    console.log("player pause.====",playerOpt);
+                    Ou_OnlineTable.setOffline(playerOpt.playType);
+                });
+                player.on("ended",function (e) {
+                    console.log("player ended.====");
+                    Ou_OnlineTable.setOffline(playerOpt.playType);
                 });
             });
-
         }
-        var player=initPlayer("prismPlayer",params.playType,params.source,params.cover);
+        var player=initPlayer("prismPlayer",params);
+
 
         //////////强制操作层处理///////////
         switch (params.forceLayer){
@@ -357,5 +683,76 @@
         }
         if(params.forceLayer!="hide") $("#"+local.blkForceLayer).show();
         else $("#"+local.blkForceLayer).hide();
+
+        this.popup=function (notify,button,callback) {
+            var popup=$("#win_popup");
+            if(null!=notify) popup.find(".win_notify").html(notify);
+            if(null!=notify) popup.find("button").html(button);
+            popup.show();
+            popup.find("button").on("click",function () {
+                console.log("popup click");
+                popup.find("button").off("click");
+                popup.hide();
+                if("function"==typeof callback) callback();
+            });
+        }
+
+        /////// 防挂机 //////
+        !function(interval){
+            var defaultInterval=3600;    //默认挂机(秒)
+            var warmTime=60;        //提前警告时间
+            var countdownInterval=10;   //减法计数时间间隔(秒)
+
+            interval=parseInt(interval);
+            if(interval<warmTime) interval=defaultInterval;
+            var countdown=interval;
+
+            //10秒做一次减法计数
+            var idleTimrer=setInterval(function () {
+                countdown -= countdownInterval;
+                console.log("idleTimrer countdown=",countdown);
+                if(countdown<=warmTime){
+                    //弹出警告窗口
+                    _this.popup("您已经观看很久了，请休息一会","再看一会儿",function () {
+                        countdown=interval;
+                    });
+                }
+                if(countdown<0){
+                    console.log("foce out===");
+                    keepalive.stop(); //停止心跳
+                    clearInterval(idleTimrer);
+                    player.dispose();
+                    Ou_OnlineTable.setOffline("web");
+                    Ou_OnlineTable.setOffline("vod");
+                    Ou_OnlineTable.setOffline("live");
+                    _this.send({});
+                    _this.popup("您太久没活动了，已被强制退出","到首页看看",function () {
+                        window.location.href=params.homeUrl;    //关闭提示窗口后跳转到首页
+                    });
+                }
+            },countdownInterval*1000);
+            $(window).on("touchstart click",function () {
+                countdown=interval;
+            });
+        }(params.operatorIdleInt);
+
+        //取公共参数
+        this.getParam=function () {
+            return params;
+        }
+        this.reloadPlayer=function (type,mrl,cover,refid) {
+            console.log("reloading player. type=",type,mrl,cover,refid);
+            player.pause();
+            params.playType=type;
+            params.source=mrl;
+            params.cover=cover;
+            if("live"==type) { params.chnid=refid; params.vodid=0; }
+            else { params.vodid=refid; }
+            player.dispose();
+            player=initPlayer("prismPlayer",params);
+        }
+
+        return this;
     })();
+
 </script>

@@ -9,6 +9,7 @@
 
     <style>
         * { box-sizing: border-box;}
+
         body {
             position: relative;
             height: 100vh; width: 100vw;
@@ -71,7 +72,7 @@
         }
     </style>
 </head>
-<body>
+<body >
 
 <div class="blkLoading" id="blkLoading">
     <div class="itemLoading">
@@ -79,7 +80,9 @@
         Loading...
     </div>
 </div>
-<div id="playerMain" style="display: block; position:absolute; top:0;width: 100vw; height: 100vh; overflow: hidden;">播放器最外层容器</div>
+<div id="playerMain" style="display: block; position:absolute; top:0;width: 100vw; height: 100vh; overflow: hidden;">
+    <div style="margin-top:49vh; width:100%; text-align:center; font-size: 18px;">服务器繁忙请稍后再试</div>
+</div>
 
 <script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/de/prismplayer/2.8.7/aliplayer-h5-min.js" ></script>
 <script src="/Public/jeasyui/jquery.min.js" ></script>
@@ -92,6 +95,7 @@
             $('#blkLoading').animate({right:'100%'});
         });
     });
+
 </script>
 
 </body>

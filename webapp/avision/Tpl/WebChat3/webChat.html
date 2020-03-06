@@ -1,0 +1,62 @@
+<!-- 聊天显示块, for WebChat3, 初始化时载入 -->
+<link href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" rel="stylesheet" type="text/css">
+
+<div class="wechat-container">
+<div id="chatMsg">
+
+</div>
+
+<div id="chat-bottom">
+	<div id="newMsg" >
+
+		<if condition="$showfullurl neq ''">
+			<!-- <div class="func-btn" func="full">📄</div> 单页显示样式问题，暂时停用-->
+		</if>
+		<div contenteditable="plaintext-only" class="input-box"></div>
+		<div class="func-btn" func="emoji">☺</div>
+		<!-- <div class="func-btn" func="gift">🎁</div> 等待实现-->
+		<div class="func-btn txt-btn" func="send">发送</div>
+	</div>
+	<div id="emoji" class="popup-box">
+		<ul>
+			<li>😊</li><li>😉</li><li>🤣</li><li>😂</li><li>😍</li>
+			<li>😎</li><li>😡</li><li>🤬</li><li>😤</li><li>😱</li>
+			<li>😷</li><li>🤧</li><li>👻</li><li>👏</li><li>🙏</li>
+			<li>🧡</li><li>💔</li><li>💪</li><li>👌</li><li>👍</li>
+			<li>👊</li><li>🐶</li><li>🍌</li><li>🍻</li><li>🚗</li>
+			<li>🚲</li><li>🏡</li><li>🚀</li><li>💋</li><li>🙉</li>
+		</ul>
+	</div>
+	<div id="gift-list" class="popup-box">
+		礼物，还未解锁
+	</div>
+</div>
+</div>
+
+<!-- 消息显示模板 -->
+<div id="msgItemTpl" style="display: none">
+	<div class="chat-item"  msgid="msgid">
+		<div class="left-box" sender="{$msg.senderid}">
+			<div class="bg-img" style="background-image: url(__PUBLIC__/images/user.jpg)"></div>
+		</div>
+		<div class="right-box">
+			<div class="msg-info"><span>{$msg.sendername}</span><div style="float: right;">{$msg.date}</div></div>
+			<div class="msg-text"><xmp style="margin:0;white-space: pre-wrap;">{$msg.message}</xmp></div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript" src="/player/js/webChat3.min.js"></script>
+<script type="text/javascript">
+
+    //创建交流实例，并设置基本参数
+    var chat=new webChat({
+        canChat:"{$CanChat}",
+		channelId:"{$channelId}",
+        userName:"{$userName}",
+		userId:"{$userId}",
+        isAdmin:"{$isAdmin}",
+		webpage:playPage
+	});
+
+</script>

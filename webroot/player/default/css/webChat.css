@@ -6,7 +6,7 @@
 	display: flex;
 	flex-flow: column nowrap;
 	position: relative;
-	height:100%;width: 100%;"
+	height:100%;width: 100%;
 }
 #chatMsg{
 	/*聊天信息容器*/
@@ -146,6 +146,7 @@
 	-justify-content: space-around;*/
 	margin:0;
 	padding: 10px 15px;
+	white-space: normal;
 	list-style: none;
 	font-size: 0;
 }

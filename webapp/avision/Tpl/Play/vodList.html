@@ -78,12 +78,27 @@
         $(".record-item[fileid='"+params.vodid+"']").addClass("current-item");
         $("#record-list .record-item").on("click",function (event) {
             var obj=event.currentTarget;
-            //console.log(obj);
+            console.log(obj);
             var fileid=$(obj).attr("fileid");   //取VOD文件ID
             //console.log(fileid);
             $(".record-item[fileid='"+params.vodid+"']").removeClass("current-item");
             params.vodid=fileid;
             $(".record-item[fileid='"+params.vodid+"']").addClass("current-item");
+
+            console.log(playPage.getParam());
+            $.post("__URL__/getVodSourecJson",params,function (data) {
+                console.log(data);
+                if(null == data) alert("错误: 无法访问服务器");
+                else if(data.success !="true") alert(data.msg);
+                else{
+                    var mrl=data.source;
+                    //mrl="/m.mp4";
+                    var cover=$(obj).find("img").attr("src");
+                    console.log(mrl,cover,fileid);
+                    playPage.reloadPlayer("vod",mrl,cover,fileid);
+                }
+            },'json');
+
         });
     })();
 

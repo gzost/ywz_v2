@@ -14,9 +14,10 @@ require_once(LIB_PATH.'Model/ChannelreluserModel.php');
 require_once(LIB_PATH.'Model/UserrelroleModel.php');
 require_once(LIB_PATH.'Model/OnlineModel.php');
 require_once(LIB_PATH.'Model/RecordfileModel.php');
-require_once(APP_PATH.'/Common/platform.class.php');
+require_once(LIB_PATH.'Model/UserModel.php');
 
 class PlayAction extends SafeAction{
+    const PLAY_TOKEN="playToken";    //页面上下文校验令牌变量名称，此名称要注意与TPL中处理的页面变量名称一致
 
     //以下类属性由main方法初始赋值
     protected $para=null;   //读web参数形成的参数数组
@@ -26,6 +27,21 @@ class PlayAction extends SafeAction{
     protected $channel=null;    //当前频道记录，attr字段已扩展到ext
 
     public function test(){
+        $FE_recs["web"]=array();
+        $cmd=D("online")->where("id=208")->field("command")->find();//getField("command");
+        var_dump($cmd);
+        //$cmd=$this->where("id=$BEid and isonline='true' ")->field("command")->select();
+        if(null==$cmd){
+            //找不到活跃的在线记录
+            $FE_recs["web"]["reject"]=true;    //向前端在线表发出reject
+        }elseif(!empty($cmd["command"])){
+            echo "eeee<br>";
+            //找到在线记录，分析命令
+            $cmdArr=json_decode($cmd["command"],true);
+            if($cmdArr['reject']=="true") $FE_recs["web"]["reject"]=true;    //向前端在线表发出reject
+        }
+        var_dump($FE_recs);
+        exit;
         for($i=0; $i<10; $i++){
             echo $i.',';
             ob_flush();//修改部分
@@ -55,9 +71,29 @@ class PlayAction extends SafeAction{
                 $webVar["btnTxt"]="去首页看看";
                 throw new Exception("频道已关闭");
             }
-            //TODO:频道最大观众数限制
-            //TODO：播主是否欠费
+            //频道最大观众数限制
+            $viewerlimit=intval($this->channel["viewerlimit"]);
+            if($viewerlimit>0){
+                $online=D("online")->getOnlineNum("web",$this->chnid);
+                if($online>=$viewerlimit){
+                    $msg="频道已经热爆了，请稍后再试。($online:$viewerlimit)";
+                    $webVar["msg"]=$msg;
+                    $webVar["btnTxt"]="去首页看看";
+                    throw new Exception($msg);
+                }
+            }
 
+            //播主是否欠费
+            $userDal = D("user");
+            $fee = $userDal->getAvailableBalance($this->channel['owner']);
+//dump($fee); die();
+            if($fee < 0) {
+                //频道欠费
+                $msg="播主忘记充值了，请与播主或主办方联系 $fee:".$this->channel['id'];
+                $webVar["msg"]=$msg;
+                $webVar["btnTxt"]="去首页看看";
+                throw new Exception($msg);
+            }
 
             //资源允许播放
             return true;
@@ -122,7 +158,9 @@ class PlayAction extends SafeAction{
             $this->display("Play/showException");
             return;
         }
-
+        //复制频道有用信息
+        $idleInt=intval($chnAttr["player"]["operatorIdleInt"]);
+        $webVar["operatorIdleInt"]=(empty($idleInt))? 60:$idleInt;    //播放终端最长不操作时间(秒)
 
         //3、处理频道封面
         $isShowCover=intval($this->channel["ext"]["showCover"]);
@@ -176,7 +214,7 @@ class PlayAction extends SafeAction{
                 }
             }
         }
-        //$webVar["forceLayer"]="login";  //为测试的强制赋值
+        //$webVar["forceLayer"]="register";  //为测试的强制赋值
 
 
 
@@ -194,27 +232,14 @@ class PlayAction extends SafeAction{
         //6、播放类型 vod/live
         $webVar['chnid']=empty($this->chnid)?"":$this->chnid;
         if(empty($this->vodid)){
-            $webVar['vodid']="";
-            $webVar["playType"]="live";
-            $webVar["title"]=$this->channel["name"];
-            $webVar["cover"] = $this->dbChannel->getPosterUrl($this->chnid,$chnAttr);   //海报地址
-            $streamDal = D('stream');
-            $w = array('id'=>$this->channel['streamid']);
-            $row = $streamDal->where($w)->find();
-            $pf = new platform();
-            $pf->load($row['platform']);
-            $webVar["source"] = $pf->getHls($row['idstring']);
+            $this->getLivePara($webVar,$webVar['chnid']);
         }else{
-            $dbRf=D("recordfile");
-            $vodfile=$dbRf->where("id=".$this->vodid)->find();
-            $webVar['vodid']=$this->vodid;
-            $webVar['title']=$vodfile['name'];
-            $webVar["playType"]="vod";
-            $webVar["cover"] = $dbRf->getImgMrl($vodfile['path']);   //海报地址
-            $webVar["source"]=$dbRf->getVodMrl($this->vodid);
+            $this->getVodPara($webVar,$this->vodid);    //填写vod相关的参数
         }
         $webVar['uid']=empty($uid)?"":$uid;
-        unsetPara("playToken");
+
+        contextToken::clearToken(self::PLAY_TOKEN);
+
         //7、暂时用旧的界面处理登录、注册、付费等
         if($webVar["forceLayer"] != "hide"){
             //生成回调地址
@@ -238,10 +263,29 @@ class PlayAction extends SafeAction{
             }
         }else{
             //用户满足播放权限，授予token，本方法生成的页面凭此token申请有播放权限限制的其它数据（如：播放地址）不必再检查权限
-            $playToken=uniqid("Play",true);
+            /*$playToken=uniqid("Play",true);
             $webVar['playToken']=$playToken;
-            setPara("playToken",$playToken);
+            setPara("playToken",$playToken);*/
+            $webVar[self::PLAY_TOKEN]=contextToken::newToken(self::PLAY_TOKEN);
+
         }
+
+        //8、检查用户并发登录限制，写入在线记录
+        try{
+            $onlineId=D("online")->checknCreate($uid,"web",$this->chnid,$this->userName());
+            $webVar["onlineid"]=$onlineId;
+        }catch (Exception $e){
+            $webVar["href"]=U("Home/goHome",array("agent"=>$this->para["ag"]));
+            $webVar["msg"]=$e->getMessage();
+            $webVar["btnTxt"]="去首页看看";
+            $this->assign($webVar);
+            $this->display("Play/showException");
+            return;
+        }
+
+        //其它前端需要的参数
+        $webVar["aliveTime"]=(empty(C("aliveTime")))? 10:C("aliveTime");    //最大通讯时间间隔(秒)
+        $webVar["homeUrl"]=U("Home/goHome",array("agent"=>$this->para["ag"]));  //跳转到首页的地址
         $webVar["source"]="";
         //$webVar["source"]="http://www.av365.cn/ts/dfhc.mp4";
         //$webVar["cover"]="/t/1.jpg";
@@ -337,6 +381,43 @@ class PlayAction extends SafeAction{
     }
 
     /**
+     * 点播指定资源时前端需要的参数。
+     * 此方法初始化播放页面及通过ajax切换播放资源时共用
+     * @param array $webVar 参数数组，方法内部直接修改此数组
+     * @param int $vodid
+     */
+    private function getVodPara(&$webVar,$vodid){
+        $dbRf=D("recordfile");
+        $vodfile=$dbRf->where("id=".$vodid)->find();
+        $webVar['vodid']=$vodid;
+        $webVar['title']=$vodfile['name'];
+        $webVar["playType"]="vod";
+        $webVar["cover"] = $dbRf->getImgMrl($vodfile['path']);   //海报地址
+        $webVar["source"]=$dbRf->getVodMrl($vodid);
+    }
+    /**
+     * 频道直播时前端需要的参数。
+     * 此方法初始化播放页面及通过ajax切换播放资源时共用
+     * @param array $webVar 参数数组，方法内部直接修改此数组
+     * @param int $chnid
+     */
+    private function getLivePara(&$webVar,$chnid){
+        $this->chnid=$chnid;
+        if(empty($this->dbChannel)) $this->dbChannel=D("channel");
+        if(empty($this->channel)) $this->channel=$this->dbChannel->getInfoExt($chnid);
+        $webVar['vodid']="";
+        $webVar["playType"]="live";
+        $webVar["title"]=$this->channel["name"];
+        $webVar["cover"] = $this->dbChannel->getPosterUrl($this->chnid,$this->channel["ext"]);   //海报地址
+        $streamDal = D('stream');
+        $w = array('id'=>$this->channel['streamid']);
+        $row = $streamDal->where($w)->find();
+        $pf = new platform();
+        $pf->load($row['platform']);
+        $webVar["source"] = $pf->getHls($row['idstring']);
+    }
+
+    /**
      * 显示频道会员注册信息
      * 通过POST传入以下参数：
      *  - chnid
@@ -387,7 +468,7 @@ class PlayAction extends SafeAction{
 //$chnid=11223344;
         try{
             if($chnid<1) throw new Exception("缺少频道参数");
-
+            if(!contextToken::verifyToken(self::PLAY_TOKEN,$_POST[self::PLAY_TOKEN])) throw new Exception("非法访问。");
             //获取录像文件记录
             $dbVod = D('recordfile');
             $cond=array('channelid'=>$chnid);
@@ -409,24 +490,54 @@ class PlayAction extends SafeAction{
         $chnAttr=$chnDal->getAttrArray($chnid);
         $theme=(is_string($chnAttr['theme']))?$chnAttr['theme']:"default";
 
-        $webVar=array("chnid"=>chnid, "vodid"=>$vodid, "theme"=>$theme, "recList"=>$data);
-        $webVar['playToken']=$_POST['playToken'];
+        $webVar=array("chnid"=>$chnid, "vodid"=>$vodid, "theme"=>$theme, "recList"=>$data);
+        $webVar[self::PLAY_TOKEN]=$_POST[self::PLAY_TOKEN];
         $this->assign($webVar);
         $this->display('vodList');
     }
 
     /**
      * 取直播的播放地址及cover地址
+     * POST传递以下参数：
+     * {"chnid":params.chnid, "agent":params.agent,"playToken":params.params.playToken}
      */
     public function getLiveSourceJson(){
+        //echo "getLiveSourceJson".$_POST["playToken"];
+        try{
+            if(!contextToken::verifyToken("playToken",$_POST["playToken"])) throw new Exception("非法访问。");
+            $chnid=intval($_POST['chnid']);
+            if(empty($chnid)) throw new Exception("缺少频道ID");
+            $webVar=array();
+            $this->getLivePara($webVar,$chnid);
+            Oajax::successReturn($webVar);
+        }catch (Exception $e){
+            Oajax::errorReturn($e->getMessage());
+        }
+
 
     }
 
     /**
-     * 取点播播的播放地址及cover地址
+     * 取点播播放地址及cover地址
+     * post传递以下参数：
+     *  chnid:  所在频道ID
+     *  vodid:  vod记录ID
+     * playToken: 上下文令牌
+     * 正常返回：{"success":"true","source":"<点播播放地址>","title":"","cover":"","vodid":""}
+     * 出错返回：{"success":"false","msg":"<出错信息>"}
      */
     public function getVodSourecJson(){
-        $localToken=getPara("playToken");
+        try{
+            if(!contextToken::verifyToken("playToken",$_POST["playToken"])) throw new Exception("非法访问。");
+            $vodid=intval($_POST['vodid']);
+            if(empty($vodid)) throw new Exception("缺少VODID");
+            $webVar=array();
+            $this->getVodPara($webVar,$vodid);
+            Oajax::successReturn($webVar);
+        }catch (Exception $e){
+            Oajax::errorReturn($e->getMessage());
+        }
 
     }
 }
+?>

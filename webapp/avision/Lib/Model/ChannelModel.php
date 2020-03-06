@@ -387,6 +387,7 @@ class ChannelModel extends Model {
 		$add['attr'] = json_encode($attr);
 
 		$add['agent']=$agent;	//2019-10-20 频道自动属于开设频道所属机构
+
 		$newId = $this->add($add);
 		return $newId;
 	}

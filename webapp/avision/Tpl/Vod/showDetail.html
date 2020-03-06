@@ -38,7 +38,7 @@ function init_fine_upload() {
     //上传视频
     var size = parseInt("{$size}");
     var sourceid=parseInt("{$sourceid}");
-    console.log("size="+size);
+    //console.log("size="+size+"  sourceid="+sourceid);
 	if(0 == size && sourceid<=0) {
         var videoUploader = new qq.FineUploader({
             element: document.getElementById("video-uploader"),
@@ -179,7 +179,7 @@ $('#coverimg').ready(function(){
 
 
 </script>
-<div class="title">{$title}</div>
+<div class="title">{$title}=={$sourceid}</div>
 <form id="fm-detail" >
 	<div style="display:inline-block; width:500px;vertical-align:top;">
 		{$detailFormData}

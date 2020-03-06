@@ -163,6 +163,7 @@ class VodAction extends AdminBaseAction {
 		$rec['path'] .='/'.$owner.'_'.$this->number2Text().'.mp4';
 		$rec['name']='新录像'.date('Y-m-d H:i:s');
 		$rec['size']=0; //size=0作为没有录像文件标志
+        $rec['sourceid']=0;
 		$id=$dbRecord->add($rec);
 		$rec['id']=$id;
 		$rec['account']=$account;

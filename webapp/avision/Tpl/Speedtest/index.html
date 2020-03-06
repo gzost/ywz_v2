@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <title>SpeedTest</title>
+</head>
+<body>
+<div style="position: relative; margin: 20px auto; text-align: center; line-height: 40px; font-size: 14px;">
+    <div style="font-size: 22px;">推流带宽测试</div>
+    <button id="btn_start">开始测试</button>
+    <div id="txt_resutl">按“开始测试”按钮开始测试，两次测试至少间隔1分钟。请勿频繁测试。</div>
+</div>
+
+
+<script src="/Public/jeasyui/jquery.min.js" ></script>
+<script>
+    var item="playloadItem";
+    var itemSize=1024*1024;
+    var repeat=10;
+    item=item.padEnd(itemSize,"1234567890");
+
+    $("#btn_start").on("click",function () {
+        $("#txt_resutl").html("测试中...");
+
+        var starttime=new Date().getTime(); //ms
+        $("#btn_start").hide("fast",function () {
+            for(var i=0; i<repeat; i++){
+                $.ajaxSetup({async:false,cache:false});
+                $.post("__URL__/endpoint",{item:item},function (data) {
+                    //console.log("sended="+i);
+                });
+                //console.log("pass="+i);
+            }
+            var endtime=new Date().getTime();
+            var duration=endtime-starttime;
+            var size=itemSize*repeat/1024*8; //bit k
+            var speed=size/duration; //Mbps
+            speed=speed.toFixed(2);
+            $("#btn_start").show(); $("#txt_resutl").html("上行速度："+speed+" Mbps");
+        });
+
+
+        //console.log("speed=",speed);
+    });
+</script>
+</body>
+</html>

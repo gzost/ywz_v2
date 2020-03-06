@@ -670,7 +670,7 @@ class contextToken{
      * @return string   生成的新令牌，要证明请求来自主页面（生成令牌的页面）需提供此令牌
      */
     static public function newToken($name){
-        $token=uniqid("Token",true);
+        $token=session_id();    //uniqid("Token",true);
         setPara($name,$token);
         return $token;
     }
@@ -683,6 +683,10 @@ class contextToken{
     static public function verifyToken($name,$token){
         $myTokey=getPara($name);
         return ($myTokey==$token);
+    }
+
+    static public function clearToken($name){
+        unsetPara($name);
     }
 }
 ?>

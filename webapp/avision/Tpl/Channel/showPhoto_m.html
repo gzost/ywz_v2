@@ -85,12 +85,16 @@
                 var photoName=$(target).attr('data-name'); //图片文件名
                 console.log(photoName);
                 var para={ "chnId":{$chnId},"photoName":photoName };
+                $("#photoDetail").load('__APP__/Channel/showPhotoDetail',para,function () {
+                    $("#detailContent").show();
+                });
+                /*
                 DivLoadHtmlPost('__APP__/Channel/showPhotoDetail', 'photoDetail',para,function (rt) {
                     if(true==rt){
                         $("#detailContent").show();
                         //$("#album").hide();
                     }
-                });
+                });*/
             }
             console.log("id="+target.id);
             switch(target.id){

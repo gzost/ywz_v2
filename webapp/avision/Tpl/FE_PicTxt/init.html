@@ -52,7 +52,7 @@
                 container: "blkPicTxtCont", //控件容器ID
                 scrollCont: "pictxt",   //滚动容器
                 loadDataUrl:"",  //装载数据地址 POST参数：chnid,programid,firstItem,lastItem,directtion['befor'|'after']
-                interval:10000,    //向后台请求刷新数据间隔(ms)
+                interval:15000,    //向后台请求刷新数据间隔(ms)
                 firstItem: null,    //当前装载的最先条目publishorder
                 lastItem:null      //当前装载的最后条目publishorder
             }
@@ -74,8 +74,6 @@
                             if(''!=data.html){
                                 containerObj.append(data.html); //插到末尾
                                 //$("#blkPicTxtCont").animate({scrollTop:$("#blkPicTxtCont").prop("scrollHeight")}, 400);	//滚动到底部
-                                // ？？？内层DIV blkPicTxtCont无法滚动，只好滚动外层的!!!
-                                //scrollObj.scrollTop(scrollObj.prop('scrollHeight'));
                                 scrollObj.animate({scrollTop:scrollObj.prop('scrollHeight')},3000);
                             }
                         }

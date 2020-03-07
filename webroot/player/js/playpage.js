@@ -339,6 +339,9 @@ function Ou_playPage(params) {
                             }
                         }
                     },"json");
+                    var url=window.location.protocol+"//"+window.location.host;
+                    url +="/play.html?ch="+params.chnid;
+                    history.replaceState(null,null,url);
                     break;
                 case 110:   //频道介绍
                     if(true != isTabInit[tabid]){

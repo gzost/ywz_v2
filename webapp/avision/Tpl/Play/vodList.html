@@ -97,6 +97,13 @@
                     console.log(mrl,cover,fileid);
                     playPage.reloadPlayer("vod",mrl,cover,fileid);
                     playPage.getPlayer().play();
+                    //修改当前网址
+                    var url=window.location.protocol+"//"+window.location.host;
+                    console.log("url=",url);
+
+                    url +="/play.html?ch="+params.chnid+"&vf="+fileid;
+                    //alert(url);
+                    history.replaceState(null,null,url);
                 }
             },'json');
 

@@ -243,7 +243,8 @@ class WeixinCallAction extends Action
 
 
 			//引导客户端打开的页面
-			$url = WX_SERVER_APL.urlencode('http://'.$_SERVER['HTTP_HOST'].U('WeixinCall/RemoteBack').'?t='.$locToken);
+            $hostUrl=(empty($_SERVER["HTTP_ALI_SWIFT_STAT_HOST"]))?$_SERVER['HTTP_HOST']:$_SERVER['HTTP_ALI_SWIFT_STAT_HOST'];
+			$url = WX_SERVER_APL.urlencode('http://'.$hostUrl.U('WeixinCall/RemoteBack').'?t='.$locToken);
 			$json = GetUrlJson($url, $content);
 			//var_dump($content);
 			//{"token":"6b97fd9fb9f1c8e2247f"}

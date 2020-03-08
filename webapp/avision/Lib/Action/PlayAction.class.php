@@ -28,8 +28,8 @@ class PlayAction extends SafeAction{
 
     public function test(){
         echo base_convert(mt_rand(100000000,999990000), 10, 32);//转为五进制
-        $rt=D("user")->adduser(array("account"=>"11223345","password"=>"123456"));
-        var_dump($rt);
+
+        var_dump($_SERVER);
         exit;
         for($i=0; $i<10; $i++){
             echo $i.',';
@@ -275,7 +275,7 @@ class PlayAction extends SafeAction{
         //其它前端需要的参数
         $webVar["aliveTime"]=(empty(C("aliveTime")))? 10:C("aliveTime");    //最大通讯时间间隔(秒)
         $webVar["homeUrl"]=U("Home/goHome",array("agent"=>$this->para["ag"]));  //跳转到首页的地址
-        $webVar["source"]="";
+        //$webVar["source"]="";
         //$webVar["source"]="http://www.av365.cn/ts/dfhc.mp4";
         //$webVar["cover"]="/t/1.jpg";
         //dump($_POST);
@@ -383,6 +383,7 @@ class PlayAction extends SafeAction{
         $webVar["playType"]="vod";
         $webVar["cover"] = $dbRf->getImgMrl($vodfile['path']);   //海报地址
         $webVar["source"]=$dbRf->getVodMrl($vodid);
+        //dump($webVar);
     }
     /**
      * 频道直播时前端需要的参数。

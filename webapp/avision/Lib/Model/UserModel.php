@@ -163,7 +163,7 @@ class UserModel extends Model {
 		
 		//$isMatch=preg_match('/^\S{5,}$/i', $rec['username']);
 		//if(!$isMatch) throw new Exception('用户昵称要6个或更多可显示字符');
-		if(empty($rec["username"])) $rec["username"]=$rec["account"];
+		if(empty($rec["username"])) $rec["username"]=substr($rec["account"],-4,4).base_convert(mt_rand(100000000,999990000), 10, 32);
 		$result=$this->add($rec);
 //echo $this->getLastSql();
 //var_dump($result);

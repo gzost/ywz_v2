@@ -27,20 +27,9 @@ class PlayAction extends SafeAction{
     protected $channel=null;    //当前频道记录，attr字段已扩展到ext
 
     public function test(){
-        $FE_recs["web"]=array();
-        $cmd=D("online")->where("id=208")->field("command")->find();//getField("command");
-        var_dump($cmd);
-        //$cmd=$this->where("id=$BEid and isonline='true' ")->field("command")->select();
-        if(null==$cmd){
-            //找不到活跃的在线记录
-            $FE_recs["web"]["reject"]=true;    //向前端在线表发出reject
-        }elseif(!empty($cmd["command"])){
-            echo "eeee<br>";
-            //找到在线记录，分析命令
-            $cmdArr=json_decode($cmd["command"],true);
-            if($cmdArr['reject']=="true") $FE_recs["web"]["reject"]=true;    //向前端在线表发出reject
-        }
-        var_dump($FE_recs);
+        echo base_convert(mt_rand(100000000,999990000), 10, 32);//转为五进制
+        $rt=D("user")->adduser(array("account"=>"11223345","password"=>"123456"));
+        var_dump($rt);
         exit;
         for($i=0; $i<10; $i++){
             echo $i.',';

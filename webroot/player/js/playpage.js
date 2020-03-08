@@ -252,6 +252,114 @@ function Ou_playPage(params) {
         $("#blkCover").animate({right:'100%'});
     });
 
+
+    ///////////播放及播放器//////////
+    /**
+     * 初始化播放器
+     *
+     * @param string container  播放器容器DOM id
+     * @param string playType    播放类型 [live|vod]
+     * @param string source     播放地址
+     * @param object options    可选参数将取代默认参数, 以下参数必须提供：
+     *  - playType,source,cover
+     * @return object 播放器对象
+     */
+    var initPlayer=function (container, options) {
+        var playerOpt={
+            "id": "prismPlayer",
+            "width": "100%",  "height":"100%",
+            "autoplay": false,
+            "isLive": true, //false,
+            //"skinLayout":false,
+            "skinLayout": [
+                { "name": "bigPlayButton", "align": "blabs", "x": 30, "y": 80 },
+                { "name": "H5Loading", "align": "cc" },
+                { "name": "errorDisplay", "align": "tlabs", "x": 0, "y": 0 },
+                { "name": "infoDisplay" },
+                { "name": "tooltip", "align": "blabs", "x": 0, "y": 56 },
+                { "name": "thumbnail" },
+                {
+                    "name": "controlBar", "align": "blabs", "x": 0, "y": 0,
+                    "children": [
+                        { "name": "progress", "align": "blabs", "x": 0, "y": 44 },
+                        { "name": "playButton", "align": "tl", "x": 15, "y": 12 },
+                        { "name": "timeDisplay", "align": "tl", "x": 10, "y": 7 },
+                        { "name": "fullScreenButton", "align": "tr", "x": 10, "y": 12 },
+                        //{ "name": "subtitle", "align": "tr", "x": 15, "y": 12 },
+                        //{ "name": "setting", "align": "tr", "x": 15, "y": 12 },
+                        //{ "name": "volume", "align": "tr", "x": 5, "y": 10 },
+                        //{ "name": "snapshot", "align": "tr", "x": 10, "y": 12 }
+                    ]
+                }
+            ],
+            "rePlay": false,
+            "playsinline": true,
+            //"preload": false,
+            "cover":"/t/1.jpg",
+            "controlBarVisibility": "hover",//控制面板的实现 ‘click’ 点击出现、‘hover’ 浮动出现、‘always’ 一直在
+            "useH5Prism": true,
+            //"x5_type":"h5",
+            "x5_fullscreen":true,
+            "x5_video_position":"top"
+        }
+        //playerOpt.id=container;
+        //playerOpt.source=source;
+        //playerOpt.cover=cover;
+        playerOpt=$.extend(playerOpt,options);
+//playerOpt.source="/vodfile/000/000/001/13288_5c9f740976775.mp4";    //for test
+
+        if("live"==playerOpt.playType){
+            playerOpt.isLive=true;
+        }else{
+            playerOpt.isLive=false;
+        }
+
+        return new Aliplayer(playerOpt,function (player) {
+            console.log('player ready!');
+            //错误消息处理
+            player.on("error",function (e) {
+                console.log('player error!!====',e);
+                Ou_OnlineTable.setOffline(playerOpt.playType);
+                $(".prism-ErrorMessage").hide(); //隐藏出错信息
+                player.setCover(params.cover);   //显示封面
+            });
+            player.on("play",function (e) {
+                console.log("player play.====",playerOpt);
+                if(playerOpt.isLive){
+                    Ou_OnlineTable.setOnline("live","live",playerOpt.chnid,0);
+                    Ou_OnlineTable.setOffline("vod");
+                }else{
+                    Ou_OnlineTable.setOnline("vod","vod",playerOpt.vodid,0);
+                    Ou_OnlineTable.setOffline("live");
+                }
+            });
+            player.on("pause",function (e) {
+                console.log("player pause.====",playerOpt);
+                Ou_OnlineTable.setOffline(playerOpt.playType);
+            });
+            player.on("ended",function (e) {
+                console.log("player ended.====");
+                Ou_OnlineTable.setOffline(playerOpt.playType);
+            });
+        });
+    }
+    var player=initPlayer("prismPlayer",params);
+
+    this.reloadPlayer=function (type,mrl,cover,refid) {
+        console.log("reloading player. type=",type,mrl,cover,refid);
+        player.pause();
+        params.playType=type;
+        params.source=mrl;
+        params.cover=cover;
+        if("live"==type) { params.chnid=refid; params.vodid=0; }
+        else { params.vodid=refid; }
+        player.dispose();
+        player=initPlayer("prismPlayer",params);
+    }
+    this.getPlayer=function () {
+        return  player;
+    }
+
     ///////////导航条处理对象/////////
     var tabs=function (tabPara) {
         console.log(tabPara);
@@ -402,98 +510,6 @@ function Ou_playPage(params) {
         setActive(activeOrder);
     }({ tabBar:"tabBar",tabBlk:"blkSouth",activetab:params.activetab });
 
-    ///////////播放及播放器//////////
-    /**
-     * 初始化播放器
-     *
-     * @param string container  播放器容器DOM id
-     * @param string playType    播放类型 [live|vod]
-     * @param string source     播放地址
-     * @param object options    可选参数将取代默认参数, 以下参数必须提供：
-     *  - playType,source,cover
-     * @return object 播放器对象
-     */
-    var initPlayer=function (container, options) {
-        var playerOpt={
-            "id": "prismPlayer",
-            "width": "100%",  "height":"100%",
-            "autoplay": false,
-            "isLive": true, //false,
-            //"skinLayout":false,
-            "skinLayout": [
-                { "name": "bigPlayButton", "align": "blabs", "x": 30, "y": 80 },
-                { "name": "H5Loading", "align": "cc" },
-                { "name": "errorDisplay", "align": "tlabs", "x": 0, "y": 0 },
-                { "name": "infoDisplay" },
-                { "name": "tooltip", "align": "blabs", "x": 0, "y": 56 },
-                { "name": "thumbnail" },
-                {
-                    "name": "controlBar", "align": "blabs", "x": 0, "y": 0,
-                    "children": [
-                        { "name": "progress", "align": "blabs", "x": 0, "y": 44 },
-                        { "name": "playButton", "align": "tl", "x": 15, "y": 12 },
-                        { "name": "timeDisplay", "align": "tl", "x": 10, "y": 7 },
-                        { "name": "fullScreenButton", "align": "tr", "x": 10, "y": 12 },
-                        //{ "name": "subtitle", "align": "tr", "x": 15, "y": 12 },
-                        //{ "name": "setting", "align": "tr", "x": 15, "y": 12 },
-                        //{ "name": "volume", "align": "tr", "x": 5, "y": 10 },
-                        //{ "name": "snapshot", "align": "tr", "x": 10, "y": 12 }
-                    ]
-                }
-            ],
-            "rePlay": false,
-            "playsinline": true,
-            //"preload": false,
-            "cover":"/t/1.jpg",
-            "controlBarVisibility": "hover",//控制面板的实现 ‘click’ 点击出现、‘hover’ 浮动出现、‘always’ 一直在
-            "useH5Prism": true,
-            //"x5_type":"h5",
-            "x5_fullscreen":true,
-            "x5_video_position":"top"
-        }
-        //playerOpt.id=container;
-        //playerOpt.source=source;
-        //playerOpt.cover=cover;
-        playerOpt=$.extend(playerOpt,options);
-//playerOpt.source="/vodfile/000/000/001/13288_5c9f740976775.mp4";    //for test
-
-        if("live"==playerOpt.playType){
-            playerOpt.isLive=true;
-        }else{
-            playerOpt.isLive=false;
-        }
-
-        return new Aliplayer(playerOpt,function (player) {
-            console.log('player ready!');
-            //错误消息处理
-            player.on("error",function (e) {
-                console.log('player error!!====',e);
-                Ou_OnlineTable.setOffline(playerOpt.playType);
-                $(".prism-ErrorMessage").hide(); //隐藏出错信息
-                player.setCover(params.cover);   //显示封面
-            });
-            player.on("play",function (e) {
-                console.log("player play.====",playerOpt);
-                if(playerOpt.isLive){
-                    Ou_OnlineTable.setOnline("live","live",playerOpt.chnid,0);
-                    Ou_OnlineTable.setOffline("vod");
-                }else{
-                    Ou_OnlineTable.setOnline("vod","vod",playerOpt.vodid,0);
-                    Ou_OnlineTable.setOffline("live");
-                }
-            });
-            player.on("pause",function (e) {
-                console.log("player pause.====",playerOpt);
-                Ou_OnlineTable.setOffline(playerOpt.playType);
-            });
-            player.on("ended",function (e) {
-                console.log("player ended.====");
-                Ou_OnlineTable.setOffline(playerOpt.playType);
-            });
-        });
-    }
-    var player=initPlayer("prismPlayer",params);
-
     //////////强制操作层处理///////////
     switch (params.forceLayer){
         case "register":
@@ -561,19 +577,6 @@ function Ou_playPage(params) {
     this.getParam=function () {
         return params;
     }
-    this.reloadPlayer=function (type,mrl,cover,refid) {
-        console.log("reloading player. type=",type,mrl,cover,refid);
-        player.pause();
-        params.playType=type;
-        params.source=mrl;
-        params.cover=cover;
-        if("live"==type) { params.chnid=refid; params.vodid=0; }
-        else { params.vodid=refid; }
-        player.dispose();
-        player=initPlayer("prismPlayer",params);
-    }
-    this.getPlayer=function () {
-        return  player;
-    }
+
     // return this;
 }

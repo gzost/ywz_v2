@@ -139,7 +139,13 @@
     <!-- 下部多功能窗口 -->
     <div id="blkSouth" style="position: relative; width: 100%; height:200px; background-color: #FFF; flex: auto; overflow-x: auto;overflow-y:hidden;white-space: nowrap;">
         <foreach name="tabs" key="tabid" item="tabtext">
-            <div class="tabContiner" id="tabItem{$tabid}" >{$tabtext} loading...</div>
+            <div class="tabContiner" id="tabItem{$tabid}" >
+                <div style="position: relative; margin: 30% auto; text-align: center">
+                    <img src="Public/images/loading.gif" style="width: 128px;">
+                    <div>{$tabtext} loading...</div>
+                </div>
+
+            </div>
         </foreach>
     </div>
 
@@ -159,7 +165,7 @@
 </div>
 <script charset="utf-8" type="text/javascript" src="__PUBLIC__/aliplayer/aliplayer2.8.7-h5-min.js" ></script>
 <load href="__PUBLIC__/js/publicFunction.js" />
-<load href="__ROOT__/player/js/playpage.min.js" />
+<load href="__ROOT__/player/js/playpage1.min.js" />
 <script>
     //本页面的全局JS对象，外部可通过此对象访问开放bridge接口，实现与对象内部的通讯
     var playPage= new Ou_playPage({

@@ -33,10 +33,13 @@ function Ou_Communicate(options) {
                 console.log("Communicate recv:",recvData);
                 if(recvData["success"]=="false"){
                     console.log(recvData["msg"]); //在控制台显示错误
+                    if(lostCount>0) lostCount--;
+                    else $(window).trigger("ServerLost");   //发送ServerLost消息
+                }else{
+                    lostCount=params.lostCount;
+                    $(window).trigger("RecvData",recvData);
+                    if(typeof callback === "function") callback(recvData);
                 }
-                lostCount=params.lostCount;
-                $(window).trigger("RecvData",recvData);
-                if(typeof callback === "function") callback(recvData);
             },
             error:function () {
                 if(lostCount>0) lostCount--;
@@ -240,7 +243,7 @@ function Ou_playPage(params) {
         player.dispose();
         $("#"+local.blkForceLayer).show();
         //TODO: 完善显示的内容
-        $("#"+local.blkForceLayer).html("与服务器失去联系");
+        $("#"+local.blkForceLayer).html("与服务器失去联系或通讯错误");
         keepalive.stop(); //停止心跳
     });
 
@@ -515,7 +518,7 @@ function Ou_playPage(params) {
         case "register":
             //$("#"+local.blkForceLayer).load("Home.php/My/chnRegiste/chnid/1098");
             var para={"chnid":params.chnid,"vidid":params.vodid, "tab":params.activetab, "agent":params.agent};
-            $("#"+local.blkForceLayer).load(params.appUrl+"/My/showChnRegister",para);
+            $("#"+local.blkForceLayer).load(params.appUrl+"/Play/showChnRegister",para);
             break;
     }
     if(params.forceLayer!="hide") $("#"+local.blkForceLayer).show();

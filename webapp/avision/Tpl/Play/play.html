@@ -113,7 +113,7 @@
 
 <!-- 强制操作层 按$forceLayer指示执行不同的操作 -->
 <div id="blkForceLayer" class="fullScreen layerForce" style="">
-    {$forceLayer}
+    {$forceLayerHtml}
 </div>
 
 <!-- 播放器层 -->
@@ -393,7 +393,6 @@
 
         //响应收到服务器发送数据
         $(window).on("RecvData",function (event,recvData) {
-            var _this=this;
             console.log("recvData proc onlineTable");
             //处理在线用户表
             if("object"==typeof(recvData.onlineTable)){
@@ -593,6 +592,14 @@
             }
         }
 
+        //设置当前URL以便分享
+        this.setUrl=function () {
+            var  url="play.html?ch="+params.chnid;  //url=window.location.protocol+"//"+window.location.host+"/play.html?ch="+params.chnid;
+            if(params.playType=="vod") url +="&vf="+params.vodid;
+            if(params.uid>=100) url+="&du="+params.uid;
+            console.log("url changed to=",url);
+            history.replaceState(null,null,url+"#");    //当URL内有&时必须要在url后加点东西，否则在手机上会跳转
+        }
 
         ///////////导航条处理对象/////////
         var tabs=function (tabPara) {
@@ -680,9 +687,12 @@
                                 }
                             }
                         },"json");
+                        _this.setUrl();
+                        /*
                         var url=window.location.protocol+"//"+window.location.host;
                         url +="/play.html?ch="+params.chnid;
                         history.replaceState(null,null,url);
+                        */
                         $(local.layerVideoTop2).show();
                         break;
                     case 110:   //频道介绍

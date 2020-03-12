@@ -187,7 +187,9 @@ class PlayAction extends SafeAction{
             $wxOnly = false;    //只限微信登录
         }
         $tollChn=(!empty($this->channel["ext"]["userbill"]) && $this->channel["ext"]["userbill"]["isbill"]=="true")?true:false;  //是否是收费频道
+        $haveTicket=false;  //是否已经付费，默认值
         $uid=$this->userId();
+        //var_dump($uid,$chnType); die();
         if($chnType=="public" && !$tollChn){
             //公开及非收费频道无需登录，但为了处理和统计方便，专门做了一个匿名登录账号anonymous
             if(empty($uid)){
@@ -198,7 +200,7 @@ class PlayAction extends SafeAction{
             }
             $webVar["forceLayer"]="hide";   //不显示强制操作层
             //forceLayer(强制操作层)为覆盖在播放界面之上的层，要求用户完成一定的动作后才能解除并正常观看
-            //forceLayer，目前考虑的功能有：登录(login)，注册频道会员(register)，付费频道订阅(subscribe)，不显示(hide)。
+            //forceLayer，目前考虑的功能有：登录(login)，注册频道会员(register)，付费频道订阅(subscribe)，传播(spread), 不显示(hide)。
             //forceLayer采用iframe
         }else{
             //非公开或收费频道必须登录
@@ -217,15 +219,40 @@ class PlayAction extends SafeAction{
                 }
                 if($tollChn && "hide"==$webVar["forceLayer"]){
                     //若是收费频道，并且未要求注册会员，检查是否需要付费
-                    if(!$dbChnUser->isHaveTicket($this->chnid,$uid)) $webVar["forceLayer"]="subscribe";    //请求付费
+                    $haveTicket=$dbChnUser->isHaveTicket($this->chnid,$uid);    //是否已付费
+                    if(!$haveTicket) $webVar["forceLayer"]="subscribe";    //请求付费
                 }
             }
         }
+
+        //5 记录传播，检查是否满足传播要求。传播要求与与会员是与的关系，与付费是或的关系
+        $du=intval($this->para["du"]);
+        $dbSpread=D("spread");
+        //系统账号不考虑传播,排除自身传播
+//var_dump($du,$uid);
+        if($uid>=100 && $du>=100 && $uid!=$du ) {
+            //尝试新建传播记录，若记录已存在，访问次数+1
+            $dbSpread->execute("insert into __TABLE__(chnid,tuid,suid,activity) values ($this->chnid,$uid,$du,1) on duplicate key update activity=activity+1");
+        }
+        if($uid>=100) {
+            //读取当前用户的成功传播人数
+            $cond = array("chnid" => $this->chnid, "suid" => $uid);
+            $timesOfSpread = $dbSpread->where($cond)->count();  //当前用户成功传播人数
+
+            //检查是否符合传播要求
+            $spreadTarget = intval($chnAttr["spreadTarget"]);
+            if ($spreadTarget > $timesOfSpread && ("private" == $chnType || "protect" == $chnType) && !$haveTicket && $webVar["forceLayer"] == "hide") {
+                $webVar["forceLayer"] = "spread";    //请求传播
+                $webVar["timesOfSpread"] = $timesOfSpread;
+                $webVar["spreadTarget"] = $spreadTarget;
+            }
+        }
+//var_dump( $webVar["forceLayer"],$chnType);die();
         //$webVar["forceLayer"]="register";  //为测试的强制赋值
 
 
 
-        //5、按频道配置生成中部导航条数据tabs
+        //6、按频道配置生成中部导航条数据tabs
         $tabArr=$this->dbChannel->getTabs2($chnAttr);
         $tabs=array();
         foreach ($tabArr['tabs'] as $row){
@@ -267,6 +294,11 @@ class PlayAction extends SafeAction{
                 case 'subscribe':   //付费频道订阅(subscribe)
                     $this->redirect('HDPlayer/chnbill', array('chnId'=>$this->chnid));
                     break;
+                case 'spread':
+                    $webVar["spreadLoginUrl"]=U('Home/login',array('chnId'=>$this->chnid, 'wxonly'=>$wxOnly,  'bozhu'=>0, 'acceptUrl'=>$acceptUrl ));
+                    $this->assign($webVar);
+                    $webVar["forceLayerHtml"]=$this->fetch("Play:spread");
+                    break;
             }
         }else{
             //用户满足播放权限，授予token，本方法生成的页面凭此token申请有播放权限限制的其它数据（如：播放地址）不必再检查权限
@@ -298,13 +330,13 @@ class PlayAction extends SafeAction{
         //其它前端需要的参数
         $webVar["aliveTime"]=(empty(C("aliveTime")))? 10:C("aliveTime");    //最大通讯时间间隔(秒)
         $webVar["homeUrl"]=U("Home/goHome",array("agent"=>$this->para["ag"]));  //跳转到首页的地址
-        $webVar["isAdmin"]=$this->isAdmin($uid) ?1:0;
+        $webVar["isAdmin"]=$this->isAdmin($uid) ?1:0;   //是否为管理员
         //$webVar["source"]="http://www.av365.cn/ts/dfhc.mp4";
         //$webVar["cover"]="/t/1.jpg";
         //dump($_POST);
         //var_dump( IsAndroid());
         //var_dump( IsWxBrowser());
-        //
+
         $this->assign($webVar);
         $this->show("Play:play");
 
@@ -404,7 +436,7 @@ class PlayAction extends SafeAction{
         $dbRf=D("recordfile");
         $vodfile=$dbRf->where("id=".$vodid)->find();
         $webVar['vodid']=$vodid;
-        $webVar['title']=$vodfile['name'];
+        //$webVar['title']=$vodfile['name'];
         $webVar["playType"]="vod";
         $webVar["cover"] = $dbRf->getImgMrl($vodfile['path']);   //海报地址
         $webVar["source"]=$dbRf->getVodMrl($vodid);

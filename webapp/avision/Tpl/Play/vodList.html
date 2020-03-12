@@ -98,12 +98,12 @@
                     playPage.reloadPlayer("vod",mrl,cover,fileid);
                     playPage.getPlayer().play();
                     //修改当前网址
+                    playPage.setUrl();
+                    /*
                     var url=window.location.protocol+"//"+window.location.host;
-                    console.log("url=",url);
-
-                    url +="/play.html?ch="+params.chnid+"&vf="+fileid;
-                    //alert(url);
+                     url +="/play.html?ch="+params.chnid+"&vf="+fileid;
                     history.replaceState(null,null,url);
+                    */
                 }
             },'json');
 

@@ -46,10 +46,11 @@
     	'adminGroup'=>1,		//系统管理员角色id
     	'bozhuGroup'=>2,		//播主角色id
     	'viewerGroup'=>3,		//观众角色id
+        'inspectorGroup'=>4,    //巡视员组，无视开播时间限制可以观看直播的人
     	'anchorGroup'=>5,		//频道助理(主播)角色id
     	'allUserGroup'=>100,	//定义此角色ID匹配所有用户，而不必在userrelrole表增加记录
     	'anonymousUserId'=>20,	//匿名用户ID
-    	'aliveTime'=>10,		//发送心跳的时间间隔，秒。V2.00开始转义为前端最长通讯间隔，此值应小于offLineTime/2
+    	'aliveTime'=>15,		//发送心跳的时间间隔，秒。V2.00开始转义为前端最长通讯间隔，此值应小于offLineTime/2
     	'offLineTime'=>60,		//播放端超过此时间没心跳将强制下线，由后台定时程序StatAction使用，这个值应该小于OVERTIME
     	'statUser'=>'system',	//统计使用的用户
     	'statPassword'=>'admin@135',	//统计用户密码

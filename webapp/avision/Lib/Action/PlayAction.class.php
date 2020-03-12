@@ -29,7 +29,7 @@ class PlayAction extends SafeAction{
     public function test(){
         echo base_convert(mt_rand(100000000,999990000), 10, 32);//转为五进制
 
-        var_dump($_SERVER);
+        dump($_SERVER["HTTP_USER_AGENT"]);
         exit;
         for($i=0; $i<10; $i++){
             echo $i.',';
@@ -91,6 +91,19 @@ class PlayAction extends SafeAction{
             return false;
         }
     }
+
+    /**
+     * 检查是否特权用户，这些用户可以在开播时间前观看频道，可以操作禁言等
+     * @param $uid
+     * @return bool true-是特权用户
+     */
+    private function isAdmin($uid){
+        if($this->author->isRole(C('adminGroup')) || $this->author->isRole(C('inspectorGroup')) ||
+            $uid==$this->channel['owner'] || $uid==$this->channel['anchor']
+        ) return true;
+        else return false;
+    }
+
     ////// main调用的方法结束
 
     /**
@@ -149,7 +162,12 @@ class PlayAction extends SafeAction{
         }
         //复制频道有用信息
         $idleInt=intval($chnAttr["player"]["operatorIdleInt"]);
-        $webVar["operatorIdleInt"]=(empty($idleInt))? 60:$idleInt;    //播放终端最长不操作时间(秒)
+        $webVar["operatorIdleInt"]=(empty($idleInt))? 3600:$idleInt;    //播放终端最长不操作时间(秒)
+        $webVar["airTime"]=(empty($chnAttr["livetime"]))?0:$chnAttr["livetime"];    //开播时间 YYYY-MM-DD hh:mm:ss
+        $webVar["airDuration"]=(empty($chnAttr["livekeep"]))?0:$chnAttr["livekeep"]*60;    //播出时长(秒)
+        $webVar["title"]=htmlspecialchars($this->channel["name"]);
+        $webVar["desc"]=htmlspecialchars($this->channel["descript"]);
+        $webVar["entrytimes"]=$this->channel["entrytimes"];
 
         //3、处理频道封面
         $isShowCover=intval($this->channel["ext"]["showCover"]);
@@ -272,10 +290,15 @@ class PlayAction extends SafeAction{
             return;
         }
 
+        //9、增加点击数
+        $inc=intval($chnAttr["viewIncRand"]);
+        if($inc>1) $inc=mt_rand(1,$inc);
+        $this->dbChannel->where("id=".$this->chnid)->setInc("entrytimes",$inc);
+
         //其它前端需要的参数
         $webVar["aliveTime"]=(empty(C("aliveTime")))? 10:C("aliveTime");    //最大通讯时间间隔(秒)
         $webVar["homeUrl"]=U("Home/goHome",array("agent"=>$this->para["ag"]));  //跳转到首页的地址
-        //$webVar["source"]="";
+        $webVar["isAdmin"]=$this->isAdmin($uid) ?1:0;
         //$webVar["source"]="http://www.av365.cn/ts/dfhc.mp4";
         //$webVar["cover"]="/t/1.jpg";
         //dump($_POST);
@@ -355,9 +378,11 @@ class PlayAction extends SafeAction{
      * @param string $name
      */
     protected function show($name){
+        //dump($_POST);dump($_SERVER);  die();
         if(null==$name) $name=ACTION_NAME;	//默认模板与当前action同名
-        //$scrType=getPara('scrType');
-        $scrType=IsMobile()?'h':'w';
+        //$h=$_POST['height']; $w=$_POST['width'];
+        //if(!empty($h) && !empty($w)) $scrType=($h>$w)?'h':'w';        else
+            $scrType=IsMobile()?'h':'w';
 
         $name_org = $name;
         if('w'==$scrType) $name .='_w';		//调用宽屏模板
@@ -529,5 +554,7 @@ class PlayAction extends SafeAction{
         }
 
     }
+
+
 }
 ?>

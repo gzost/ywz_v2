@@ -297,7 +297,7 @@ function Ou_playPage(params) {
             ],
             "rePlay": false,
             "playsinline": true,
-            //"preload": false,
+            "preload": false,
             "cover":"/t/1.jpg",
             "controlBarVisibility": "hover",//控制面板的实现 ‘click’ 点击出现、‘hover’ 浮动出现、‘always’ 一直在
             "useH5Prism": true,
@@ -544,7 +544,7 @@ function Ou_playPage(params) {
         var countdownInterval=10;   //减法计数时间间隔(秒)
 
         interval=parseInt(interval);
-        if(interval<warmTime) interval=defaultInterval;
+        if(interval<warmTime*2) interval=defaultInterval;
         var countdown=interval;
 
         //10秒做一次减法计数

@@ -132,7 +132,7 @@ class MG_UserAction extends AdminBaseAction{
         $dbUser=D('User');
         $page=$_POST['page'];
         $rows=$_POST['rows'];
-        $recs=$dbUser->getList($cond,$order,'',$page,$rows);
+        $recs=$dbUser->getList($cond,$order,'u.id,account,username,password,status,createdate,phone,agent,a.name as agentname,idcard,company,realname,groups',$page,$rows);
         if(!is_array($recs)) $recs=array();
         $result["rows"]=$recs;
         $total=condition::get('TOTAO_ORGUSERLIST');
@@ -256,9 +256,9 @@ class MG_UserAction extends AdminBaseAction{
             $record=array();
             if(!empty($_POST["username"])) $record["username"]=$_POST["username"];
             if(!empty($_POST["status"])) $record["status"]=$_POST["status"];
-            $modifiableFields=array("phone","idcard","company","realname","groups");
+            $modifiableFields=array("password","phone","idcard","company","realname","groups");
             foreach ($modifiableFields as $key){
-                if(isset($_POST[$key])) $record[$key]=$_POST[$key];
+                if(isset($_POST[$key]))   $record[$key]=("password"!=$key)?$_POST[$key]:md5($_POST[$key]);
             }
             $dbUser=D("user");
             $rt=$dbUser->where("id=".$id)->save($record);

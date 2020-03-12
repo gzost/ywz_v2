@@ -160,7 +160,7 @@ class WeixinCallAction extends Action
 	*/
 	public function GetAndSave($ouath, $isPc = false)
 	{
-		logfile('Call GetAndSave');
+		logfile('Call GetAndSave in');
 		//获取access_token
 		if(!$ouath->GetAccessToken($isPc))
 		{
@@ -183,7 +183,7 @@ class WeixinCallAction extends Action
 			//失败了。
 			//$this->ApplyEnd($ouath, false);
 		}
-
+        logfile('Call GetAndSave:'.json_encode2($ouath));
 		if(!$ouath->SaveWxLog())
 		{
 			//错误
@@ -196,7 +196,7 @@ class WeixinCallAction extends Action
 	*/
 	public function MoExBack()
 	{
-		//logfile("MoBack URI:".$_SERVER["REQUEST_URI"]);
+		//logfile("MoExBack URI:".$_SERVER["REQUEST_URI"]);
 		$ouath = new WxOauth2();
 		if(!$ouath->ReCallInit())
 		{
@@ -290,7 +290,7 @@ class WeixinCallAction extends Action
 			$ouath = new WxOauth2();
 			$ouath->userInfoStr = $content;
 			$ouath->userInfoArr = $json;
-			$ouath->SaveWxLog();
+			$ouath->SaveWxLog();    //这只作为信息记录，可以取消
 
 			//var_dump($json);
 
@@ -441,6 +441,7 @@ class WeixinCallAction extends Action
 		{
 			return false;
 		}
+		
 		$author = new authorize();
 		$userDal = D('user');
 

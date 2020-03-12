@@ -89,7 +89,7 @@
 <script>
     $(document).ready(function(){
         //装入播放器页面，同时传递url给后台
-        var data={url:window.location.href};
+        var data={url:window.location.href, height:window.screen.height, width:window.screen.width};
         $.ajaxSetup({ async : true   });
         $("#playerMain").load("home.php/Play/main.html",data,function () {
             $('#blkLoading').animate({right:'100%'});

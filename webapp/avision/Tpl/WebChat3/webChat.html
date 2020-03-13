@@ -1,5 +1,5 @@
 <!-- 聊天显示块, for WebChat3, 初始化时载入 -->
-<link href="__ROOT__/player/{$theme|default='default'}/css/webChat.css" rel="stylesheet" type="text/css">
+<link href="__ROOT__/player/{$theme|default='default'}/css/webChat3.1.css" rel="stylesheet" type="text/css">
 
 <div class="wechat-container">
 <div id="chatMsg">
@@ -37,7 +37,9 @@
 <div id="msgItemTpl" style="display: none">
 	<div class="chat-item"  msgid="msgid">
 		<div class="left-box" sender="{$msg.senderid}">
-			<div class="bg-img" style="background-image: url(__PUBLIC__/images/user.jpg)"></div>
+			<div class="bg-img" style="background-image: url()">
+
+			</div>
 		</div>
 		<div class="right-box">
 			<div class="msg-info"><span>{$msg.sendername}</span><div style="float: right;">{$msg.date}</div></div>
@@ -46,17 +48,15 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="/player/js/webChat3.min.js"></script>
+<script type="text/javascript" src="/player/js/webChat3.js"></script>
 <script type="text/javascript">
-
     //创建交流实例，并设置基本参数
     var chat=new webChat({
         canChat:"{$CanChat}",
-		channelId:"{$channelId}",
+        channelId:"{$channelId}",
         userName:"{$userName}",
-		userId:"{$userId}",
+        userId:"{$userId}",
         isAdmin:"{$isAdmin}",
-		webpage:playPage
-	});
-
+        webpage:playPage
+    });
 </script>

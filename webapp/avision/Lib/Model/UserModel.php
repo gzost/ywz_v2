@@ -439,5 +439,35 @@ logfile($this->getLastSql(),LogLevel::SQL);
         $this->commit();
         return false;   //此功能还未完全实现，故先永远返回失败
     }
+
+    static $defaultHeadImg="/Public/images/user40.jpg";
+    /**
+     * 取头像地址
+     * @param  maixd $para  若是整数是用户ID，若是字串是用户的attr字段
+     * @return string   头像URL地址
+     */
+    public function getHeadImg($para){
+        try{
+            $uid=intval($para);
+            if($uid>0){
+                $rt=$this->where("id=$uid")->getField("attr");
+                if(empty($rt)) throw new Exception("找不到或attr为空");
+                $para=$rt;
+            }
+            $attr=json_decode($para,true);
+
+            if( empty($attr) || empty($attr["headimg"])) throw new Exception("没headimg属性");
+            $img=$attr["headimg"];
+            if(0===stripos($img,"http")) $url=$img;
+            else{
+                $base=(empty(C("userFileBasePath")))? "/files": C("userFileBasePath");
+                $url=$base.$img;
+            }
+            return $url;
+
+        }catch (Exception $e){
+            return self::$defaultHeadImg;
+        }
+    }
 }
 ?>

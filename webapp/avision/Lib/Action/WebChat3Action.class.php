@@ -3,6 +3,7 @@ require_once APP_PATH.'../public/SafeAction.Class.php';
 require_once APP_PATH.'../public/CommonFun.php';
 require_once(APP_PATH.'/Common/functions.php');
 require_once(LIB_PATH.'Model/ChannelModel.php');
+require_once(LIB_PATH.'Model/UserModel.php');
 
 class WebChat3Action extends SafeAction {
 	/**
@@ -139,7 +140,7 @@ class WebChat3Action extends SafeAction {
 
 	/**
 	 * 
-	 * 取聊天信息并转换成可显示的HTML格式
+	 * 取聊天信息
      * @param int $chnid    频道ID
      * @param char $direct 读取方向n-新记录，p-上一页记录
      * @param int $being    从此记录ID之后或之前开始读
@@ -156,7 +157,7 @@ class WebChat3Action extends SafeAction {
 		if("n"==$direct){
 		    //取新的聊天记录
             if(0==$being) $maxRecords=20;  //刚进入聊天取最近20条记录
-            if($being>0) $cond['id']=array('GT',$being);
+            if($being>0) $cond['W.id']=array('GT',$being);
             if($delay>0){
                 $now=time()-$delay;
                 $cond["unix_timestamp(sendtime)"]=array("exp","< $now ");
@@ -164,12 +165,28 @@ class WebChat3Action extends SafeAction {
         }else{
 		    //取上一页聊天记录
             $maxRecords=20;
-            $cond['id']=array('LT',$being);
+            $cond['W.id']=array('LT',$being);
         }
-        $records=$webchat->where($cond)->order('id desc')->limit($maxRecords)->select();
-//echo $webchat->getLastSql();
-//var_dump($records);
 
+        $records=$webchat->Table(C("DB_PREFIX")."webchat W")->field("W.*,U.attr")->where($cond)->order('W.id desc')->limit($maxRecords)
+            ->join("left join ".C("DB_PREFIX")."user U on senderid=U.id")->select();
+//echo $webchat->getLastSql();
+//var_dump($records,$cond);
+        //取头像
+        $dbUser=D("user");
+        foreach ($records as $key=>$row){
+            if(!empty($row["attr"])){
+                /*
+                $attr=json_decode($row["attr"],true);
+                if(!empty($attr["headimg"])){
+                    $records[$key]["headimg"]=$attr["headimg"];
+                }
+                */
+                $records[$key]["headimg"]=$dbUser->getHeadImg($row["attr"]);
+            }
+            unset($records[$key]["attr"]);
+        }
+//var_dump($records);
 		if(null!=$records){ 	//出错或没有新数据返回此信息
             $retData["total"]=count($records);
             $retData['lastMsgId']=$records[0]['id'];

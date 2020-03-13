@@ -1,5 +1,5 @@
 @CHARSET "UTF-8";
-/* 互动聊天区样式 */
+/* 互动聊天区样式 V3.1*/
 
 .wechat-container{
 	/* 聊天区总容器，垂直弹性布局，通过聊天信息区自动伸缩，自动适应底部功能区高度的变化 */
@@ -38,7 +38,7 @@
 .chat-item .left-box{
 	/*聊天左侧块*/
 	display: inline-block;
-	width: 10%;
+	width: 40px;
 }
 .chat-item .right-box{
 	/*聊天右侧块*/
@@ -49,13 +49,13 @@
 }
 
 .chat-item .left-box .bg-img{
-	width: 100%;
-	padding-top: 100%;
-	height:0;
+	width: 32px;
+	/*padding-top: 100%;*/
+	height:32px;
 	background-size: cover;
 	background-position: center;
 	background-color: #0b89ca;
-	border-radius: 5px;
+	border-radius: 50%;
 }
 .chat-item .right-box .msg-info{
 	/*信息发送者，时间等附加信息*/

@@ -58,6 +58,7 @@
 		'roomImgView'=>'/room/',		//频道图片及录像存放虚拟路径
     	'STREAM_ALIVE_INTERVAL'=>600,	//推流报告活跃的最大间隔(秒)
     	'vodfile_base_path'=>'/vodfile',	//点播文件基础URL
+        'userFileBasePath'=>'/files',   //用户文件基础URL
     	
     	//有关webCall服务的配置
     	'webCallExpire'=>60,				//webcall连接无活动后自动断开的秒数。

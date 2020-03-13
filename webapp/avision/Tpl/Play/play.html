@@ -5,7 +5,7 @@
 
 -->
 <!--<link rel="stylesheet" href="https://g.alicdn.com/de/prismplayer/2.8.7/skins/default/aliplayer-min.css" />-->
-<link rel="stylesheet" href="__PUBLIC__/aliplayer/aliplayer2.8.7-min.css" />
+<link rel="stylesheet" href="__PUBLIC__/aliplayer/aliplayer2.8.7.css" />
 <link href="__PUBLIC__/kindeditor/article.css" rel="stylesheet" >
 <style>
     .fullScreen{
@@ -134,8 +134,8 @@
     </div>
     <!-- 视频叠加层 2-->
     <div class="layerVideoTop2" style="position: absolute; top:0; width: 100%; height: 100%; ">
-        <div class="blk_airTime" style="position: absolute; bottom: 50px; right: 10px; font-size: 16px; color:#fff; background-color: rgba(100,100,120,.3);"></div>
-        <div class="blk_leftTime" style="position: absolute; bottom: 20px; right: 10px; font-size: 16px; color:#fff; background-color: rgba(100,100,120,.3);"></div>
+        <div class="blk_airTime" style="position: absolute; bottom: 70px; right: 10px; font-size: 16px; color:#fff; background-color: rgba(100,100,120,.3);"></div>
+        <div class="blk_leftTime" style="position: absolute; bottom: 40px; right: 10px; font-size: 16px; color:#fff; background-color: rgba(100,100,120,.3);"></div>
     </div>
     </div>
     <!-- 中部导航条 -->
@@ -211,6 +211,7 @@
                 type: 'post',
                 data: commPkg,
                 cache:false,
+                async:true,
                 dataType: 'json',
                 success:function (recvData) {
                     console.log("Communicate recv:",recvData);
@@ -559,9 +560,9 @@
         var showAirTime=function () {
             if(params.airTime.length >2){
                 //设置了开播时间
-                $(local.blkAirTime).html("开播时间："+ params.airTime);
+                //$(local.blkAirTime).html("开播时间："+ params.airTime);
                 if(params.isAdmin !=1)  $(".blk_video .prism-big-play-btn").hide();
-                //设置截止时间
+                //设置倒计时终止时间
                 var endDate = new Date(params.airTime);
                 var end = Math.floor(endDate.getTime()/1000);   //转换成秒的时间戳
 
@@ -583,10 +584,23 @@
                         s=(leftTime%3600)%60;
                         if(s<10) s="0"+s;
                         countDownStr=h+":"+m+":"+s;
-                        $(local.blkLeftTime).html("离开播还有："+countDownStr);
+                        $(local.blkLeftTime).html("开播倒计时："+countDownStr);
+                        if(params.isAdmin !=1)  $(".blk_video .prism-big-play-btn").hide();
                     }else{
                         clearInterval(airTimer);
-                        $(".blk_video .prism-big-play-btn").show();
+                        if(params.airDuration.length>1){
+                            var duration=parseInt(params.airDuration);   //秒
+                            if(end+duration>now){
+                                //播出期间
+                                $(".blk_video .prism-big-play-btn").show();
+                            }else{
+                                $(local.blkLeftTime).html("直播已结束");
+                                if(params.isAdmin !=1)  $(".blk_video .prism-big-play-btn").hide();
+                            }
+                        }else{
+                            $(".blk_video .prism-big-play-btn").show();
+                        }
+
                     }
                 },1000);    //秒计数器
             }
@@ -669,7 +683,7 @@
                         console.log("101直播");
                         if(true != isTabInit[tabid]){
                             //未初始化，执行初始化
-                            $.ajaxSetup({async:false});
+                            $.ajaxSetup({async:true});
                             blkItem.load(params.appUrl+"/Play/showChnInfo",{chnid:params.chnid});
                             isTabInit[tabid]=true;
                         }
@@ -830,7 +844,9 @@
             //修改页面标题
             $("title").text(params.title);
         }
-        initPage();
+        setTimeout(function () {
+            initPage();
+        },500);
         // return this;
     }
 

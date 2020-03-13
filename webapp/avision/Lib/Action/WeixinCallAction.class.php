@@ -5,7 +5,7 @@ require_once APP_PUBLIC.'WxOauth2.Class.php';
 require_once APP_PUBLIC.'Authorize.Class.php';
 require_once(APP_PATH.'/Common/functions.php');
 require_once APP_PATH.'../public/CommonFun.php';
-
+require_once(APP_PATH.'../public/Ou.Function.php');
 
 class WeixinCallAction extends Action
 {
@@ -446,7 +446,7 @@ class WeixinCallAction extends Action
 		$userDal = D('user');
 
 		//$info = json_decode($userInfo['userinfo'], true);
-		$nickname = $userInfo['nickname'].'_'.substr($userInfo['unionid'],-6);
+		$nickname = $userInfo['nickname'].'_'.substr($userInfo['unionid'],-4);
 
 		if(null == $nickname || 0 == strlen($nickname))
 		{
@@ -486,7 +486,7 @@ class WeixinCallAction extends Action
 					$userDal->where(array('id'=>$exist['id']))->save(array('wxopenid'=>$userInfo['openid']));
 				}
 			}
-
+            $this->updateHeadImg($exits,$userInfo); //更新头像
 			$author->issue($exist['account'], $exist['password']);
 			return true;
 		}
@@ -505,6 +505,7 @@ class WeixinCallAction extends Action
 			$newuser['username'] = $nickname;
 			$newuser['password'] = '';
 			//只有手机端的openid才保留，作为提现帐号
+            $newuser['attr']['headimg']=$userInfo['headimgurl'];
 			if($isWxBrowser)
 				$newuser['wxopenid'] = $userInfo['openid'];
 			$newId = $userDal->add($newuser);
@@ -553,5 +554,58 @@ class WeixinCallAction extends Action
 		return $exits;
 	}
 
+    /**
+     * 根据微信获取的用户信息，更新用户的头像
+     * @param array $userRec
+     * @param array $wxInfo
+     */
+	protected function updateHeadImg($userRec=null, $wxInfo=null){
+	    if(!empty($userRec) && !empty($wxInfo) && !empty($wxInfo['headimgurl'])){
+	        $attr=array();
+	        if(empty($userRec['attr'])) { $userImg="";}
+	        else{
+	            $attr=json_decode($userRec["attr"],true);
+	            $userImg=(empty($attr['headimg']))? "": $attr['headimg'];
+            }
+	        if ( (empty($userImg)|| 0===stripos($userImg,'http')) && $userImg !=$wxInfo['headimgurl'] && strlen($wxInfo['headimgurl'])>10){
+	            //是外链的头像,且不同
+                $dbUser=D("user");
+                $attr['headimg']=$wxInfo['headimgurl'];
+                $attrJson=json_encode2($attr);
+                $rt=$dbUser->where("id=".$userRec['id'])->save(array("attr"=>$attrJson));
+            }
+        }
+    }
+
+    /**
+     * 这是一个维护使用的方法，扫描wxlog表，更新用户的头像信息
+     */
+    public function scanUpdate($maxPage=10){
+	    $dbWxlog=D("wxlog");
+	    $dbUser=D("user");
+
+	    for ($i=1; $i<=$maxPage; $i++){
+	        $wxRec=$dbWxlog->order("id desc")->page("$i,100")->select();
+echo "read=".count($wxRec)."<br>";
+ob_flush();//修改部分
+flush();
+
+            if(empty($wxRec)) break;
+	        foreach ($wxRec as $row){
+
+	            $userRec=$dbUser->where(array("account"=>$row["unionid"]))->find();
+//echo "<br>".$dbUser->getLastSql();
+//dump($userRec);
+//ob_flush();//修改部分
+//flush();
+	            if(is_array($userRec)){
+	                $wx=json_decode($row['userinfo'],true);
+	                $this->updateHeadImg($userRec,$wx);
+                }
+            }
+            unset($wxRec,$userRec);
+        }
+        echo "<p>down.";
+    }
 }
 ?>

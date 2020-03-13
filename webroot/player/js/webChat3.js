@@ -69,7 +69,9 @@ function webChat(options){
 	    chatItem.find(".right-box .msg-info span").html(rec.sendername);
         chatItem.find(".right-box .msg-info div").html(datestr);
         chatItem.find(".right-box .msg-text xmp").html(rec.message);
-
+        console.log("head img=",rec.headimg);
+        if("undefined"!= typeof rec.headimg)  chatItem.find(".left-box .bg-img").css("background-image","url("+rec.headimg+")");
+        else chatItem.find(".left-box .bg-img").css("background-image","url(/Public/images/user.jpg)");
     }
 
    //处理后台发来的数据
@@ -220,10 +222,12 @@ function webChat(options){
         updateMsg("init");
         $(page.blk_chatMsg).on("scroll",scrollFunc );
 
+
     }
     //初始化完成后，开始读入初始显示的聊天消息
-    init();
-
+    setTimeout(function () {
+        init();
+    },200)
 }
 
 

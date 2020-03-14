@@ -305,7 +305,8 @@ class MG_ChannelAction extends AdminBaseAction
                 unset($record);
                 $record=array("chnid"=>$chnid,"type"=>"会员","status"=>"正常","enddate"=>"6999-12-31");
                 foreach ($importFields as $field=>$col){
-                    $record[$field]=trim($sheetData[$row][$col]);
+                    $value=trim($sheetData[$row][$col]);
+                    if(!empty($value)) $record[$field]=$value;
                 }
                 //对读入的一条记录进行处理
                 try{
@@ -315,10 +316,21 @@ class MG_ChannelAction extends AdminBaseAction
                     $uid=$dbUser->getUserId($account);
                     if($uid<1) throw new Exception("系统无此账号");
                     $record["uid"]=$uid;
-
-//var_dump($tt,$record["type"]);
-                    $rt=$dbChnUsr->insertRec($record);
-                    if($rt<1) throw new Exception("会员已经存在");
+//var_dump($row,$record);
+                    //处理删除，删除时删除该用户与频道的所有关联
+                    if("删除"==$record["type"]){
+                        $cond=array("chnid"=>$chnid, "uid"=>$uid);
+                        $rt=$dbChnUsr->where($cond)->delete();
+                        if(false===$rt) throw new Exception("删除关联失败");
+                    }else{
+                        $rt=$dbChnUsr->insertRec($record);
+                        if($rt<1) {
+                            //无法插入可能已经存在
+                            $cond=array("chnid"=>$record["chnid"], "uid"=>$record["uid"], "type"=>$record["type"] );
+                            $rt=$dbChnUsr->where($cond)->save($record);
+                            if(false===$rt) throw new Exception("会员已经存在, 且无法更新资料。");
+                        }
+                    }
                     $imported++;
                 }catch (Exception $ex){
                     $prg->putMsg(sprintf("%4d行：账号=%s, 出错：%s",$row,$account,$ex->getMessage()));

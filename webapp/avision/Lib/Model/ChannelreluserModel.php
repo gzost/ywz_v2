@@ -228,7 +228,7 @@ class ChannelreluserModel extends Model {
      * @return array|null "显示字串"=>"字段名"
      */
     public function getImportableFieldsName(){
-        return array("用户号"=>"uid","分组"=>"classify","说明"=>"note2","提问"=>"note");
+        return array("用户号"=>"uid","类型"=>"type","状态"=>"status","开始时间"=>"begindate","结束时间"=>"enddate","分组"=>"classify","说明"=>"note2","提问"=>"note");
     }
 
     /**

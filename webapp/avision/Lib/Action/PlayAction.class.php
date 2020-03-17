@@ -25,6 +25,7 @@ class PlayAction extends SafeAction{
     protected $vodid=0;     //vod文件ID
     protected $dbChannel=null;  //channel数据表对象
     protected $channel=null;    //当前频道记录，attr字段已扩展到ext
+    protected $dbUser=null; //用户数据表对象
 
     public function test(){
         echo base_convert(mt_rand(100000000,999990000), 10, 32);//转为五进制
@@ -142,16 +143,21 @@ class PlayAction extends SafeAction{
         if(isset($this->para["ag"])) $this->para["ag"]=intval($this->para["ag"]);   //机构id参数
         //没机构参数取用户所在机构
         if(empty($this->para["ag"])) {
+            $paraNoAg=true; //网页参数无机构
             $this->para["ag"]=$this->getUserInfo("agent");
             if(null===$this->para["ag"]) $this->para["ag"]=0;
-        }
+        } else $paraNoAg=false;
         $webVar["agent"]=$this->para["ag"];
         if(empty($this->chnid)) $this->jumpTo(U("Home/goHome",array("agent"=>$this->para["ag"]))); //程序跳走不会再返回
 
         //2、读取频道信息
+        $this->dbUser=D("user");
         $this->dbChannel=D("channel");
         $this->channel=$this->dbChannel->getInfoExt($this->chnid);
         $chnAttr=$this->channel["ext"];
+        //若进入页面没带机构id，当前页面取频道ID，前面可能设了取用户的机构ID，这里覆盖
+        if($paraNoAg && $this->channel["agent"]>0 ) $this->para["ag"]=$this->channel["agent"];
+
         //测试频道是否允许播放
         if(!$this->chnAvailable($webVar)){
             //若不允许，提示后转到首页
@@ -168,6 +174,7 @@ class PlayAction extends SafeAction{
         $webVar["title"]=htmlspecialchars($this->channel["name"]);
         $webVar["desc"]=htmlspecialchars($this->channel["descript"]);
         $webVar["entrytimes"]=$this->channel["entrytimes"];
+        $webVar["logoImg"]=$this->dbChannel->getLogoImgUrl($chnAttr, $this->chnid);
 
         //3、处理频道封面
         $isShowCover=intval($this->channel["ext"]["showCover"]);
@@ -224,7 +231,9 @@ class PlayAction extends SafeAction{
                 }
             }
         }
-
+        //取用户头像
+        $webVar["UserHeadImg"]=$this->dbUser->getHeadImg($uid);
+//var_dump($webVar["UserHeadImg"]);
         //5 记录传播，检查是否满足传播要求。传播要求与与会员是与的关系，与付费是或的关系
         $du=intval($this->para["du"]);
         $dbSpread=D("spread");

@@ -455,7 +455,7 @@ logfile($this->getLastSql(),LogLevel::SQL);
                 $para=$rt;
             }
             $attr=json_decode($para,true);
-
+//var_dump($uid,$attr);
             if( empty($attr) || empty($attr["headimg"])) throw new Exception("没headimg属性");
             $img=$attr["headimg"];
             if(0===stripos($img,"http")) $url=$img;

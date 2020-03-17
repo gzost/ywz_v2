@@ -102,6 +102,7 @@ function webChat(options){
             }else{
                 //尾部插入信息
                 for(var i= chatObj.total-1; i>=0; i--){
+                    //console.log("chat item:",i);
                     fillItem(rows[i]);
                     chatItem.clone().appendTo(page.blk_chatMsg);
 				}

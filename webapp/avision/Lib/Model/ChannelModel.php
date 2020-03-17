@@ -1077,5 +1077,36 @@ class ChannelModel extends Model {
 //dump($path);
         return (is_file($_SERVER['DOCUMENT_ROOT'].$path))?$path:self::$defaultPosterUrl;
     }
+
+
+    /**
+     *
+     * 根据数据库中记录的路径转换成实际显示的路径
+     * $@param array chnAttr 频道属性数组
+     * @param int $chnId 频道ID
+	 * @return string
+     */
+
+    public function getLogoImgUrl($chnAttr = null, $chnId = 0){
+    	try{
+            $attr = $chnAttr;
+            if(null == $chnAttr)  {
+                $attr = $this->getAttrArray($chnId);
+            }
+            $file = $attr['logo'];
+//var_dump($file);
+            if(empty($file)) throw new Exception("未定义频道图标");
+            $chnPath=$this->imgFilePath($chnId);
+            $imgUrl=$chnPath."/".$file;
+            $imgPhysicalPath=getcwd().$imgUrl;
+//var_dump($chnPath,$imgUrl,$imgPhysicalPath);
+            if(!is_file($imgPhysicalPath)) throw new Exception("找不到指定的图片文件");
+            return $imgUrl;
+		}catch (Exception $e){
+            //返回默认图片
+            return '/player/default/images/chnlogo.png';
+		}
+
+	}
 }
 ?>

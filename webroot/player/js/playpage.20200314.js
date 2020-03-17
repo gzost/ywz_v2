@@ -1,4 +1,3 @@
-
 /**
  * 播放页面主要js集合
  */
@@ -29,7 +28,6 @@ function Ou_Communicate(options) {
             type: 'post',
             data: commPkg,
             cache:false,
-            async:true,
             dataType: 'json',
             success:function (recvData) {
                 console.log("Communicate recv:",recvData);
@@ -51,6 +49,7 @@ function Ou_Communicate(options) {
             },
             complete:function () {
                 console.log("Communicate delay(ms)="+(new Date().getTime()-sendTime),typeof callback);
+
             }
         });
     }
@@ -58,16 +57,11 @@ function Ou_Communicate(options) {
 function Ou_playPage(params) {
     //本HTML相关的参数，如DOM。在JS内部不直接使用HTML相关信息，降低耦合度
     var local={
-        blkForceLayer:"blkForceLayer",
-        blkAirTime:".layerVideoTop2 .blk_airTime",
-        blkLeftTime:".layerVideoTop2 .blk_leftTime",
-        layerVideoTop1:".layerVideoTop1",
-        layerVideoTop2:".layerVideoTop2"
+        blkForceLayer:"blkForceLayer"
     };
     //一些状态控制变量集中管理
     var status={
         tabScrolling:false, //多功能窗口在程序操作滚动中，用于暂停手动滚动事件的响应
-        playerReady:false   //播放器准备好
     }
     var _this=this;
 
@@ -211,6 +205,7 @@ function Ou_playPage(params) {
 
     //响应收到服务器发送数据
     $(window).on("RecvData",function (event,recvData) {
+        var _this=this;
         console.log("recvData proc onlineTable");
         //处理在线用户表
         if("object"==typeof(recvData.onlineTable)){
@@ -324,7 +319,6 @@ function Ou_playPage(params) {
 
         return new Aliplayer(playerOpt,function (player) {
             console.log('player ready!');
-            status.playerReady=true;
             //错误消息处理
             player.on("error",function (e) {
                 console.log('player error!!====',e);
@@ -334,7 +328,6 @@ function Ou_playPage(params) {
             });
             player.on("play",function (e) {
                 console.log("player play.====",playerOpt);
-                $(local.layerVideoTop2).hide();
                 if(playerOpt.isLive){
                     Ou_OnlineTable.setOnline("live","live",playerOpt.chnid,0);
                     Ou_OnlineTable.setOffline("vod");
@@ -357,79 +350,17 @@ function Ou_playPage(params) {
 
     this.reloadPlayer=function (type,mrl,cover,refid) {
         console.log("reloading player. type=",type,mrl,cover,refid);
-        if(!status.playerReady) return;
+        player.pause();
         params.playType=type;
         params.source=mrl;
         params.cover=cover;
         if("live"==type) { params.chnid=refid; params.vodid=0; }
         else { params.vodid=refid; }
-        if("object"==typeof player){
-            player.pause();
-            player.dispose();
-        }
+        player.dispose();
         player=initPlayer("prismPlayer",params);
     }
     this.getPlayer=function () {
         return  player;
-    }
-
-    //显示直播的播出时间以及倒计时
-    var showAirTime=function () {
-        if(params.airTime.length >2){
-            //设置了开播时间
-            //$(local.blkAirTime).html("开播时间："+ params.airTime);
-            if(params.isAdmin !=1)  $(".blk_video .prism-big-play-btn").hide();
-            //设置倒计时终止时间
-            var endDate = new Date(params.airTime);
-            var end = Math.floor(endDate.getTime()/1000);   //转换成秒的时间戳
-
-            var airTimer=setInterval(function () {
-                //获取当前时间
-                var date = new Date();
-                var now = Math.floor(date.getTime()/1000);
-
-                //时间差
-                var leftTime = end-now;
-                //定义变量 d,h,m,s保存倒计时的时间
-                var countDownStr,d,h,m,s;
-                if(leftTime>0){
-
-                    h=Math.floor(leftTime/3600);    //小时
-                    if(h<10) h="0"+h;
-                    m=Math.floor((leftTime%3600)/60);   //分
-                    if(m<10) m="0"+m;
-                    s=(leftTime%3600)%60;
-                    if(s<10) s="0"+s;
-                    countDownStr=h+":"+m+":"+s;
-                    $(local.blkLeftTime).html("开播倒计时："+countDownStr);
-                    if(params.isAdmin !=1)  $(".blk_video .prism-big-play-btn").hide();
-                }else{
-                    clearInterval(airTimer);
-                    if(params.airDuration.length>1){
-                        var duration=parseInt(params.airDuration);   //秒
-                        if(end+duration>now){
-                            //播出期间
-                            $(".blk_video .prism-big-play-btn").show();
-                        }else{
-                            $(local.blkLeftTime).html("直播已结束");
-                            if(params.isAdmin !=1)  $(".blk_video .prism-big-play-btn").hide();
-                        }
-                    }else{
-                        $(".blk_video .prism-big-play-btn").show();
-                    }
-
-                }
-            },1000);    //秒计数器
-        }
-    }
-
-    //设置当前URL以便分享
-    this.setUrl=function () {
-        var  url="play.html?ch="+params.chnid;  //url=window.location.protocol+"//"+window.location.host+"/play.html?ch="+params.chnid;
-        if(params.playType=="vod") url +="&vf="+params.vodid;
-        if(params.uid>=100) url+="&du="+params.uid;
-        console.log("url changed to=",url);
-        history.replaceState(null,null,url+"#");    //当URL内有&时必须要在url后加点东西，否则在手机上会跳转
     }
 
     ///////////导航条处理对象/////////
@@ -447,19 +378,20 @@ function Ou_playPage(params) {
             var tabid=tabBar.find(">div[tabOrder='"+tabOrder+"']").attr("tabid");
             tabid=parseInt(tabid);
 
+            //发送tab激活消息
+            tabBlk.trigger("tabActive",[tabid,tabPara]);
 
             //处理界面
             tabBar.find(">div[tabid='"+activetab+"']").removeClass('tab-selected');
             activetab=tabid;
             tabBar.find(">div[tabid='"+activetab+"']").addClass('tab-selected');
             //$("#blkSouth").scrollLeft(tabOrder*scrollWidth);
-            status.tabScrolling=true;   //避免其它滚动事件响应
+            status.tabScrolling=true;
             $("#blkSouth").animate({scrollLeft:(tabOrder*scrollWidth)},300,function () {
-                //滚动完成再发送tab激活消息
-                tabBlk.trigger("tabActive",[tabid,tabPara]);
                 setTimeout(function(){status.tabScrolling=false;},100); //为了避免执行滚动事件响应
                 //console.log("animate end");
             });
+
         }
 
         //导航条点击事件
@@ -500,7 +432,7 @@ function Ou_playPage(params) {
                     console.log("101直播");
                     if(true != isTabInit[tabid]){
                         //未初始化，执行初始化
-                        $.ajaxSetup({async:true});
+                        $.ajaxSetup({async:false});
                         blkItem.load(params.appUrl+"/Play/showChnInfo",{chnid:params.chnid});
                         isTabInit[tabid]=true;
                     }
@@ -518,13 +450,9 @@ function Ou_playPage(params) {
                             }
                         }
                     },"json");
-                    _this.setUrl();
-                    /*
                     var url=window.location.protocol+"//"+window.location.host;
                     url +="/play.html?ch="+params.chnid;
                     history.replaceState(null,null,url);
-                    */
-                    $(local.layerVideoTop2).show();
                     break;
                 case 110:   //频道介绍
                     if(true != isTabInit[tabid]){
@@ -653,19 +581,5 @@ function Ou_playPage(params) {
         return params;
     }
 
-    //页面初始时运行的东西集中在这里
-    var initPage=function () {
-
-        //若是直播，显示开播信息
-        if(params.playType=="live") showAirTime();
-        //修改页面标题
-        $("title").text(params.title);
-    }
-
-    setTimeout(function () {
-        initPage();
-    },500);
     // return this;
 }
-
-

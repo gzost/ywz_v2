@@ -39,6 +39,7 @@ function Ou_Communicate(options) {
                     else $(window).trigger("ServerLost");   //发送ServerLost消息
                 }else{
                     lostCount=params.lostCount;
+                    console.log("Send trigger RecvData.......");
                     $(window).trigger("RecvData",recvData);
                     if(typeof callback === "function") callback(recvData);
                 }
@@ -208,7 +209,9 @@ function Ou_playPage(params) {
 //console.log("setAppPara: app=",app," para=",para," appPara=",appPara);
     }
     var keepalive=new Ou_KeepAlive(function (){  _this.send({});},params.aliveTime );    //params.aliveTime
-
+    $(window).on("RecvData",function (event,recvdata){
+        console.log("re................");
+    });
     //响应收到服务器发送数据
     $(window).on("RecvData",function (event,recvData) {
         console.log("recvData proc onlineTable");
@@ -280,7 +283,7 @@ function Ou_playPage(params) {
             "isLive": true, //false,
             //"skinLayout":false,
             "skinLayout": [
-                { "name": "bigPlayButton", "align": "blabs", "x": 30, "y": 80 },
+                { "name": "bigPlayButton", "align": "cc", "x": 30, "y": 80 },
                 { "name": "H5Loading", "align": "cc" },
                 { "name": "errorDisplay", "align": "tlabs", "x": 0, "y": 0 },
                 { "name": "infoDisplay" },
@@ -452,9 +455,9 @@ function Ou_playPage(params) {
             tabBar.find(">div[tabid='"+activetab+"']").removeClass('tab-selected');
             activetab=tabid;
             tabBar.find(">div[tabid='"+activetab+"']").addClass('tab-selected');
-            //$("#blkSouth").scrollLeft(tabOrder*scrollWidth);
+            //$("#blk_func").scrollLeft(tabOrder*scrollWidth);
             status.tabScrolling=true;   //避免其它滚动事件响应
-            $("#blkSouth").animate({scrollLeft:(tabOrder*scrollWidth)},300,function () {
+            $("#blk_func").animate({scrollLeft:(tabOrder*scrollWidth)},300,function () {
                 //滚动完成再发送tab激活消息
                 tabBlk.trigger("tabActive",[tabid,tabPara]);
                 setTimeout(function(){status.tabScrolling=false;},100); //为了避免执行滚动事件响应
@@ -583,7 +586,7 @@ function Ou_playPage(params) {
         var activeOrder=tabBar.find(">div[tabid='"+activetab+"']").attr("taborder");  //addClass('tab-selected');
         if(typeof(activeOrder)=="undefined") activeOrder=0;
         setActive(activeOrder);
-    }({ tabBar:"tabBar",tabBlk:"blkSouth",activetab:params.activetab });
+    }({ tabBar:"tabBar",tabBlk:"blk_func",activetab:params.activetab });
 
     //////////强制操作层处理///////////
     switch (params.forceLayer){
@@ -661,10 +664,9 @@ function Ou_playPage(params) {
         //修改页面标题
         $("title").text(params.title);
     }
-
     setTimeout(function () {
         initPage();
-    },500);
+    },1);
     // return this;
 }
 

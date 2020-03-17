@@ -54,8 +54,8 @@
     	'offLineTime'=>60,		//播放端超过此时间没心跳将强制下线，由后台定时程序StatAction使用，这个值应该小于OVERTIME
     	'statUser'=>'system',	//统计使用的用户
     	'statPassword'=>'admin@135',	//统计用户密码
-    	'roomImgUpload'=>'D:/MyProject/ywz/webroot/room/',	//频道图片及录像存放物理路径
-		'roomImgView'=>'/room/',		//频道图片及录像存放虚拟路径
+    	'roomImgUpload'=>'D:/MyProject/ywz/webroot/room/',	//频道图片及录像存放物理路径。
+		'roomImgView'=>'/room/',		//频道图片及录像存放虚拟路径。
     	'STREAM_ALIVE_INTERVAL'=>600,	//推流报告活跃的最大间隔(秒)
     	'vodfile_base_path'=>'/vodfile',	//点播文件基础URL
         'userFileBasePath'=>'/files',   //用户文件基础URL

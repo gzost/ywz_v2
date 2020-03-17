@@ -6,7 +6,8 @@
         console.log('__ACTION__');
         console.log(continer);
         var para=$('#'+form).serialize();
-        DivReplaceHtml('__ACTION__',continer,para);
+        //DivReplaceHtml('__ACTION__',continer,para);
+        $("#"+continer).load("__ACTION__",para);
     }
 
     function chnRegBack() {

@@ -485,7 +485,8 @@ class OnlineModel extends Model {
                     if(empty($BEid)){
                         //前端新生成的在线记录，需要新增到数据库中
                         try{
-                            $BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"true",$starttime+$timeDiff,time()+1);
+                            //$BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"true",$starttime+$timeDiff,time()+1);
+                            $BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"true",$now,$now+1);
                             if(empty($BEid)) throw new Exception("建立在线记录失败!");
                         }catch(Exception $e){
                             if(empty($BEid)) logfile($e->getMessage().$this->getLastSql(),LogLevel::ALERT);
@@ -500,19 +501,22 @@ class OnlineModel extends Model {
                             //找到在线记录，分析命令
                             $cmdArr=json_decode($cmd["command"],true);
                             if($cmdArr['reject']=="true") $FE_recs[$key]["reject"]=true;    //向前端在线表发出reject
+                            $updateIdList .=(""==$updateIdList)? $BEid:",".$BEid;   //添加到更新activetime列表中
                         }
                         //无论是否在数据库找到此活跃记录，依然尝试更新活跃时间，直至前端注销
-                        $updateIdList .=(""==$updateIdList)? $BEid:",".$BEid;   //添加到更新activetime列表中
+                        //$updateIdList .=(""==$updateIdList)? $BEid:",".$BEid;   //添加到更新activetime列表中
                     }
                 }else{
                     //已结束播放的记录
                     if(empty($BEid)){
                         //没来得及向后端报告已经结束播放了，直接生成一条非活跃的记录
-                        $BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"false",$starttime+$timeDiff,$endtime+$timeDiff);
+                        //$BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"false",$starttime+$timeDiff,$endtime+$timeDiff);
+                        $BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"false",$now+$starttime-$endtime,$now);
                         if(empty($BEid)) logfile("建立在线记录失败!",LogLevel::EMERG);
                     }else{
                         //若还是在线的设为离线
-                        $this->where("id=$BEid and isonline='true' ")->save(array("isonline"=>"false","activetime"=>$endtime+$timeDiff));
+                        //$this->where("id=$BEid and isonline='true' ")->save(array("isonline"=>"false","activetime"=>$endtime+$timeDiff));
+                        $this->where("id=$BEid and isonline='true' ")->save(array("isonline"=>"false","activetime"=>$now));
                     }
                 }
             }//else 是未播放及未知状态的记录无需处理

@@ -299,6 +299,8 @@ class PlayAction extends SafeAction{
                     break;
                 case 'register':    //注册频道会员(register)
                     setPara('errorMsg','');   //提示信息
+//var_dump($this->chnid,$this->vodid,$activetab)             ; //die();
+                    $this->redirect('Play/showChnRegister',array('chnid'=>$this->chnid,"vodid"=>$this->vodid, "tab"=>$activetab, "agent"=>$this->para["ag"]));
                     break;
                 case 'subscribe':   //付费频道订阅(subscribe)
                     $this->redirect('HDPlayer/chnbill', array('chnId'=>$this->chnid));
@@ -485,10 +487,10 @@ class PlayAction extends SafeAction{
     public function showChnRegister(){
         $uid=$this->userId();
         $webVar=array( 'uid'=>$uid);
-        $webVar['chnid']=$this->chnid=$_POST["chnid"];
-        $webVar['vodid']=$this->vodid=$_POST["vodid"];
-        $webVar["tab"]=$this->para["tab"]=$_POST["tab"];
-        $webVar["agent"]=$this->para["agent"]=$_POST["agent"];
+        $webVar['chnid']=$this->chnid=$_REQUEST["chnid"];
+        $webVar['vodid']=$this->vodid=$_REQUEST["vodid"];
+        $webVar["tab"]=$this->para["tab"]=$_REQUEST["tab"];
+        $webVar["agent"]=$this->para["agent"]=$_REQUEST["agent"];
         $webVar['backUrl']=$this->pageUrl();
 
         $this->assign($webVar);

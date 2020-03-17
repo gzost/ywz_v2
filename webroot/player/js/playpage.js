@@ -304,7 +304,7 @@ function Ou_playPage(params) {
             "playsinline": true,
             "preload": false,
             "cover":"/t/1.jpg",
-            "controlBarVisibility": "hover",//控制面板的实现 ‘click’ 点击出现、‘hover’ 浮动出现、‘always’ 一直在
+            "controlBarVisibility": "click",//控制面板的实现 ‘click’ 点击出现、‘hover’ 浮动出现、‘always’ 一直在
             "useH5Prism": true,
             //"x5_type":"h5",
             "x5_fullscreen":true,
@@ -492,7 +492,6 @@ function Ou_playPage(params) {
         */
         var isTabInit={};   //记录已经初始化的tab，{tabid:true,...}
         tabBlk.bind("tabActive",function(event,tabid,para) {
-
             var blkItem=$("#"+params.tabItemPrefix+tabid);
             console.log("recive event:"+tabid);
             switch (tabid){
@@ -557,7 +556,7 @@ function Ou_playPage(params) {
                 case 106:   //会员
                     if(true != isTabInit[tabid]){
                         //未初始化，执行初始化
-                        blkItem.load(params.appUrl+"/My/showMyInfo/chnid/"+params.chnid);
+                        blkItem.load(params.appUrl+"/My/showMyInfo2",{chnid:params.chnid});
                         isTabInit[tabid]=true;
                     }
                     break;
@@ -660,6 +659,7 @@ function Ou_playPage(params) {
         if(params.playType=="live") showAirTime();
         //修改页面标题
         $("title").text(params.title);
+
     }
 
     setTimeout(function () {

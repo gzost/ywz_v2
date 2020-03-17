@@ -22,7 +22,17 @@ class MyAction extends SafeAction
         if($chnid>0)  $this->Subscriber($chnid);
 
     }
+    /**
+     * 显示当前用户的相关信息
+     */
+    public function showMyInfo2($chnid=0){
+        $this->assign("chnid",$chnid);
+        $this->display('showMyInfo2');
+        //$uid=$this->userId();
+        //if($uid>0) $this->userInfo($uid,$chnid);
+        //if($chnid>0)  $this->Subscriber($chnid);
 
+    }
     /**
      * 显示用户对频道的订阅状态
      * @param int $chnid    频道ID

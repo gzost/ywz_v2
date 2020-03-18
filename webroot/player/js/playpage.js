@@ -10,7 +10,7 @@ function Ou_Communicate(options) {
         backend:"",         //后端URL
         tokenName:"",       //通讯令牌名称
         tokenValue:"",
-        lostCount:5         //5+1次联络服务器出错(响应超时或无法连接)发出ServerLost消息
+        lostCount:15         //15+1次联络服务器出错(响应超时或无法连接)发出ServerLost消息
     }
     var params = $.extend(defaults,options);
     var lostCount=params.lostCount; //服务器丢失倒计数
@@ -107,7 +107,7 @@ function Ou_playPage(params) {
         }
         this.setOnline=function (id,objtype,refid,FEobj) {
             var now=parseInt((new Date()).getTime()/1000);
-            console.log("setting online..");
+            console.log("setting online..",id,objtype,refid);
             //相同资源暂停20秒内重新播放，连续计算播放时间
             if(onlineTable[id]["starttime"]>0 && (now-onlineTable[id]["endtime"])<20 && onlineTable[id]["objtype"]==objtype && onlineTable[id]["refid"]==refid){
                 onlineTable[id]["endtime"]=0;
@@ -123,8 +123,8 @@ function Ou_playPage(params) {
         }
         this.setOffline=function (id) {
             var now=parseInt((new Date()).getTime()/1000);
-            console.log("setting offline..");
-            onlineTable[id]["endtime"]=now;
+            console.log("setting offline..",id);
+            if(onlineTable[id]["starttime"]>0)  onlineTable[id]["endtime"]=now; //有start才设置
             console.log(onlineTable);
         }
         this.procFeedback=function(fbTable){
@@ -234,7 +234,7 @@ function Ou_playPage(params) {
                 Ou_OnlineTable.setOffline("live");
                 _this.send({});
                 alert("您的账号从别的地方登录或被强制下线，若非本人操作，请立即修改密码！");
-                window.location.href=params.homeUrl;    //关闭提示窗口后跳转到首页
+                //window.location.href=params.homeUrl;    //关闭提示窗口后跳转到首页
                 //$("#"+local.blkForceLayer).show();
                 //TODO: 完善显示的内容
                 //$("#"+local.blkForceLayer).html("强制退出本页");
@@ -327,7 +327,7 @@ function Ou_playPage(params) {
             status.playerReady=true;
             //错误消息处理
             player.on("error",function (e) {
-                console.log('player error!!====',e);
+                console.log('player error!!====',e,playerOpt.playType);
                 Ou_OnlineTable.setOffline(playerOpt.playType);
                 $(".prism-ErrorMessage").hide(); //隐藏出错信息
                 player.setCover(params.cover);   //显示封面
@@ -344,20 +344,21 @@ function Ou_playPage(params) {
                 }
             });
             player.on("pause",function (e) {
-                console.log("player pause.====",playerOpt);
+                console.log("player pause.====",playerOpt.playType);
                 Ou_OnlineTable.setOffline(playerOpt.playType);
             });
             player.on("ended",function (e) {
-                console.log("player ended.====");
+                console.log("player ended.====",playerOpt.playType);
                 Ou_OnlineTable.setOffline(playerOpt.playType);
             });
         });
     }
+console.log("befor init player.");
     var player=initPlayer("prismPlayer",params);
-
+console.log("status.playerReady=",status.playerReady);
     this.reloadPlayer=function (type,mrl,cover,refid) {
-        console.log("reloading player. type=",type,mrl,cover,refid);
-        if(!status.playerReady) return;
+        console.log("reloading player. type=",type,mrl,cover,refid,status.playerReady,typeof player);
+        //if(!status.playerReady) return;
         params.playType=type;
         params.source=mrl;
         params.cover=cover;

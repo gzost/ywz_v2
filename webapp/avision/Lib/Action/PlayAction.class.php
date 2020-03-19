@@ -342,7 +342,7 @@ class PlayAction extends SafeAction{
         $webVar["aliveTime"]=(empty(C("aliveTime")))? 10:C("aliveTime");    //最大通讯时间间隔(秒)
         $webVar["homeUrl"]=U("Home/goHome",array("agent"=>$this->para["ag"]));  //跳转到首页的地址
         $webVar["isAdmin"]=$this->isAdmin($uid) ?1:0;   //是否为管理员
-        //$webVar["source"]="http://www.av365.cn/ts/dfhc.mp4";
+        //if($this->chnid==1098) $webVar["source"]="http://v2.av365.cn/live/ou.m3u8";
         //$webVar["cover"]="/t/1.jpg";
         //dump($_POST);
         //var_dump( IsAndroid());

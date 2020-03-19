@@ -63,6 +63,8 @@ class MonitorAction extends AdminBaseAction{
  		
  		//组织符合ThinkPHP语法的条件数组
  		$TPcond=array('isonline'=>'true');	//只显示真正的在线记录 outao 2018-01-29
+//echo time();
+        $TPcond["logintime"]=array("LT",time()-50); //只显示50秒前建立的记录
  		if(isset($cond['objtype'])) $TPcond['objtype']=$cond['objtype'];
 		if(isset($cond['objAccount'])) {
 			//消费对象属主
@@ -87,7 +89,7 @@ class MonitorAction extends AdminBaseAction{
         setPara(COND_PGDATA_ONLINEUSER,$TPcond);    //将查询条件写到session变量
         setPara(COND_PGDATA_ONLINEUSER."total",$totalRecords);
         if(0==$totalRecords) $webVar['msg']="没有符合条件的记录";
-
+//echo $dbOnline->getLastSql();
  		$this->assign($webVar);
  		$this->display();
 	}

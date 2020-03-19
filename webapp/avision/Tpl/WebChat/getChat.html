@@ -4,7 +4,7 @@
 <foreach name="msgList" item="msg">
     <div class="chat-item"  msgid="{$msg.id}">
         <div class="left-box" sender="{$msg.senderid}">
-            <div class="bg-img" style="background-image: url(__PUBLIC__/images/user.jpg)"></div>
+            <div class="bg-img" style="background-image: url({$msg.headimg})"></div>
         </div>
         <div class="right-box">
             <div class="msg-info">{$msg.sendername}<div style="float: right;">{$msg.date}</div></div>

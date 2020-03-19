@@ -3,7 +3,7 @@ require_once APP_PATH.'../public/SafeAction.Class.php';
 require_once APP_PATH.'../public/CommonFun.php';
 require_once(APP_PATH.'/Common/functions.php');
 require_once(LIB_PATH.'Model/ChannelModel.php');
-
+require_once(LIB_PATH.'Model/UserModel.php');
 class WebChatAction extends SafeAction {
 	/**
 	 * @brief 记录与聊天状态相关信息的SESSION变量数组名
@@ -184,7 +184,9 @@ class WebChatAction extends SafeAction {
 			$cond['id']=array('GT',$this->webvar['lastMsgId']);
 		}
 		
-		$result=$webchat->where($cond)->order('id desc')->limit($maxRecords)->select();
+		//$result=$webchat->where($cond)->order('id desc')->limit($maxRecords)->select();
+        $result=$webchat->Table(C("DB_PREFIX")."webchat W")->field("W.*,U.attr")->where($cond)->order('W.id desc')->limit($maxRecords)
+            ->join("left join ".C("DB_PREFIX")."user U on senderid=U.id")->select();
 //logfile($webchat->getLastSql());
 		
 		if(null==$result) return '';	//出错或没有新数据返回此信息
@@ -196,6 +198,7 @@ class WebChatAction extends SafeAction {
             //处理显示的日期字串
             $now=getdate();
 //var_dump($now);
+            $dbUser=D("user");
             foreach ($result as $k=>$v) {
                 $sendtime = date_parse($v['sendtime']);
                 $dateStr = sprintf("%02d:%02d", $sendtime["hour"], $sendtime["minute"]);
@@ -203,6 +206,9 @@ class WebChatAction extends SafeAction {
                     $dateStr = sprintf("%02d-%02d %s", $sendtime["month"], $sendtime["day"],$dateStr);
                 }
                 $result[$k]["date"]=$dateStr;
+                if(!empty($v["attr"])){
+                    $result[$k]["headimg"]=$dbUser->getHeadImg($v["attr"]);
+                }
             }
 //var_dump($result);
 			$webVar=array('isAdmin'=>$this->IsAdmin(), 'msgList'=>$result);
@@ -227,7 +233,9 @@ class WebChatAction extends SafeAction {
         if($this->webvar['firstMsgId']>0){
             $cond['id']=array('LT',$this->webvar['firstMsgId']);
         }
-        $result=$webchat->where($cond)->order('id desc')->limit($maxRecords)->select();
+        //$result=$webchat->where($cond)->order('id desc')->limit($maxRecords)->select();
+        $result=$webchat->Table(C("DB_PREFIX")."webchat W")->field("W.*,U.attr")->where($cond)->order('W.id desc')->limit($maxRecords)
+            ->join("left join ".C("DB_PREFIX")."user U on senderid=U.id")->select();
         if(null==$result){
             $html='';
             $firstPageLoaded=true;
@@ -245,6 +253,9 @@ class WebChatAction extends SafeAction {
                     $dateStr = sprintf("%02d-%02d %s", $sendtime["month"], $sendtime["day"],$dateStr);
                 }
                 $result[$k]["date"]=$dateStr;
+                if(!empty($v["attr"])){
+                    $result[$k]["headimg"]=$dbUser->getHeadImg($v["attr"]);
+                }
             }
             $webVar=array('isAdmin'=>$this->IsAdmin(), 'msgList'=>$result);
             $this->assign($webVar);

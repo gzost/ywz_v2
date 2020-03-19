@@ -6,7 +6,7 @@
 
 class platform {
 	const DICTIONARY='dictionary';
-	const EFTIME=600;		//时间戳有效时长（秒）
+	const EFTIME=3600;		//时间戳有效时长（秒）
 	protected $dictDb;
 	protected $m_record;
 	

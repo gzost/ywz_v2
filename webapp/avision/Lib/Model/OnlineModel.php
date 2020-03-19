@@ -494,17 +494,23 @@ class OnlineModel extends Model {
                     }else{
                         //此记录已经在后端有生成，读命令
                         $cmd=$this->where("id=$BEid and isonline='true' ")->field("command")->find();
-                        if(null==$cmd){
+                        if(null===$cmd){
                             //找不到活跃的在线记录
-                            //$FE_recs[$key]["reject"]=true;    //向前端在线表发出reject
+                            $FE_recs[$key]["reject"]=true;    //向前端在线表发出reject
+                            $tmpstr=json_encode2($FE_recs);
+                            logfile("updateOnline[$BEid][$cmd]:".$tmpstr.$this->getLastSql(),LogLevel::ALERT);
                         }elseif(!empty($cmd["command"])){
                             //找到在线记录，分析命令
                             $cmdArr=json_decode($cmd["command"],true);
-                            //if($cmdArr['reject']=="true") $FE_recs[$key]["reject"]=true;    //向前端在线表发出reject
-                            $updateIdList .=(""==$updateIdList)? $BEid:",".$BEid;   //添加到更新activetime列表中
+                            if($cmdArr['reject']=="true") $FE_recs[$key]["reject"]=true;    //向前端在线表发出reject
+                            if($cmdArr['reject']=="true"){
+                                $tmpstr=json_encode2($FE_recs);
+                                logfile("updateOnline[$BEid]:".$tmpstr.$this->getLastSql(),LogLevel::ALERT);
+                            }
+
                         }
                         //无论是否在数据库找到此活跃记录，依然尝试更新活跃时间，直至前端注销
-                        //$updateIdList .=(""==$updateIdList)? $BEid:",".$BEid;   //添加到更新activetime列表中
+                        $updateIdList .=(""==$updateIdList)? $BEid:",".$BEid;   //添加到更新activetime列表中
                     }
                 }else{
                     //已结束播放的记录
@@ -524,7 +530,7 @@ class OnlineModel extends Model {
         }
         //更新播放中记录的最后活动时间
         if(!empty($updateIdList)){
-            $cond=array("id"=>array("in",$updateIdList),'isonline'=>'true');
+            $cond=array("id"=>array("in",$updateIdList));
             $rt=$this->where($cond)->save(array("activetime"=>$now));
             if(false===$rt) logfile("更新在线记录最后活动时间失败：".$this->getLastSql(),LogLevel::EMERG);
             else logfile("更新了 $rt 条在线记录的最后活动时间。",LogLevel::INFO);

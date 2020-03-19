@@ -29,25 +29,6 @@
     <expand />
     <select />
   </component>
-  <component name="DockManager">
-    <window id="1">
-      <content type="file-editors">
-        <state>
-          <leaf>
-            <file leaf-file-name="playpage.js" pinned="false" current-in-tab="true">
-              <entry file="file://$PROJECT_DIR$/webroot/player/js/playpage.js">
-                <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="259">
-                    <caret line="218" column="26" lean-forward="true" selection-start-line="218" selection-start-column="26" selection-end-line="218" selection-end-column="26" />
-                  </state>
-                </provider>
-              </entry>
-            </file>
-          </leaf>
-        </state>
-      </content>
-    </window>
-  </component>
   <component name="FavoritesManager">
     <favorites_list name="ywz" />
   </component>
@@ -72,11 +53,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="OnlineModel.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="OnlineModel.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/OnlineModel.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="309">
-              <caret line="502" column="110" selection-start-line="502" selection-start-column="104" selection-end-line="502" selection-end-column="110" />
+            <state relative-caret-position="384">
+              <caret line="499" column="59" selection-start-line="499" selection-start-column="59" selection-end-line="499" selection-end-column="59" />
             </state>
           </provider>
         </entry>
@@ -124,6 +105,15 @@
           </provider>
         </entry>
       </file>
+      <file leaf-file-name="playpage.js" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/webroot/player/js/playpage.js">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="506">
+              <caret line="237" column="16" selection-start-line="237" selection-start-column="16" selection-end-line="237" selection-end-column="16" />
+            </state>
+          </provider>
+        </entry>
+      </file>
     </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
@@ -137,8 +127,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>forceLayer</find>
-      <find>title</find>
       <find>热爆</find>
       <find>outter</find>
       <find>LTAIpJbtY9z01MkR</find>
@@ -166,6 +154,8 @@
       <find>setOffline</find>
       <find>playerReady</find>
       <find>已经</find>
+      <find>connect</find>
+      <find>too</find>
       <find>reject</find>
     </findStrings>
     <dirStrings>
@@ -193,8 +183,8 @@
       <dir>D:\MyProject\ywz\webapp\avision\Lib\Model</dir>
       <dir>D:\MyProject\ywz\webapp\avision\Tpl\Play</dir>
       <dir>D:\MyProject\ywz\webapp\avision\Lib\Action</dir>
-      <dir>D:\MyProject\ywz\webapp</dir>
       <dir>D:\MyProject\ywz\webroot</dir>
+      <dir>D:\MyProject\ywz\webapp</dir>
     </dirStrings>
   </component>
   <component name="Git.Settings">
@@ -252,8 +242,8 @@
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/My/showMyInfo2.html" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/PlayAction.class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/Play/play.html" />
-        <option value="$PROJECT_DIR$/webroot/player/js/playpage.js" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Model/OnlineModel.php" />
+        <option value="$PROJECT_DIR$/webroot/player/js/playpage.js" />
       </list>
     </option>
   </component>
@@ -602,12 +592,12 @@
       <workItem from="1584066324540" duration="33384000" />
       <workItem from="1584114003259" duration="744000" />
       <workItem from="1584158302812" duration="47692000" />
-      <workItem from="1584417316378" duration="25787000" />
+      <workItem from="1584417316378" duration="31998000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="2907379000" />
+    <option name="totallyTimeSpent" value="2913590000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -627,13 +617,13 @@
       <window_info anchor="bottom" id="Event Log" order="8" show_stripe_button="false" side_tool="true" weight="0.32925585" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3268839" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.3268839" />
       <window_info id="Terminal" order="1" type="SLIDING" />
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.43686354" visible="true" weight="0.1654373" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.43721634" visible="true" weight="0.1654373" />
       <window_info anchor="bottom" id="Docker" order="6" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" show_stripe_button="false" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.39578947" />
-      <window_info id="Structure" order="3" sideWeight="0.56313646" side_tool="true" visible="true" weight="0.1654373" />
+      <window_info id="Structure" order="3" sideWeight="0.56278366" side_tool="true" visible="true" weight="0.1654373" />
       <window_info id="Favorites" order="4" sideWeight="0.5168421" side_tool="true" weight="0.18282403" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -1001,6 +991,11 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/BE_communicateAction.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-394" />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Play/play.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-282">
@@ -1033,22 +1028,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/BE_communicateAction.class.php">
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/OnlineModel.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-394" />
+        <state relative-caret-position="384">
+          <caret line="499" column="59" selection-start-line="499" selection-start-column="59" selection-end-line="499" selection-end-column="59" />
+        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/webroot/player/js/playpage.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
-          <caret line="218" column="26" lean-forward="true" selection-start-line="218" selection-start-column="26" selection-end-line="218" selection-end-column="26" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/OnlineModel.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="309">
-          <caret line="502" column="110" selection-start-line="502" selection-start-column="104" selection-end-line="502" selection-end-column="110" />
+        <state relative-caret-position="506">
+          <caret line="237" column="16" selection-start-line="237" selection-start-column="16" selection-end-line="237" selection-end-column="16" />
         </state>
       </provider>
     </entry>

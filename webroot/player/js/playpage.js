@@ -135,11 +135,12 @@ function Ou_playPage(params) {
                 //console.log("procFeedback processing row:",fbTable[k]);
                 //符合这个条件说明还是同一条记录。若不同了，说明原记录已经播放结束并重新播放了
                 //若后端没传回BEid说明(新)记录未被处理，只有starttime>0的记录会被后端处理
-                if((onlineTable[k]["starttime"]==fbTable[k]["starttime"]) && (fbTable[k]["BEid"]>0)){
+                //if((onlineTable[k]["starttime"]==fbTable[k]["starttime"]) && (fbTable[k]["BEid"]>0)){
+                if((onlineTable[k]["starttime"]==fbTable[k]["starttime"])){
                     //console.log("procFeedback matched row:",fbTable[k]);
                     //发送数据时是播放中的记录，现在状态可以忽略
                     if(fbTable[k]["endtime"]==0){
-                        onlineTable[k]["BEid"]= fbTable[k]["BEid"]; //后台保证传来id
+                        if(fbTable[k]["BEid"]>0) onlineTable[k]["BEid"]= fbTable[k]["BEid"]; //后台不保证传来id，插入在线记录失败时BEid=0
                         if(fbTable[k]["reject"]==true)  reject=(k=="web")? 2:1;
                         //console.log("reject",fbTable[k]["reject"],"k=",k);
                     }
@@ -234,7 +235,7 @@ function Ou_playPage(params) {
                 Ou_OnlineTable.setOffline("live");
                 _this.send({});
                 alert("您的账号从别的地方登录或被强制下线，若非本人操作，请立即修改密码！");
-                //window.location.href=params.homeUrl;    //关闭提示窗口后跳转到首页
+                window.location.href=params.homeUrl;    //关闭提示窗口后跳转到首页
                 //$("#"+local.blkForceLayer).show();
                 //TODO: 完善显示的内容
                 //$("#"+local.blkForceLayer).html("强制退出本页");

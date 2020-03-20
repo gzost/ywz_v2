@@ -181,14 +181,14 @@ class WebChatAction extends SafeAction {
 		$cond['chnid']=$this->webvar['channelId'];
 //logfile($this->webvar['lastMsgId']);		
 		if($this->webvar['lastMsgId']>0){
-			$cond['id']=array('GT',$this->webvar['lastMsgId']);
+			$cond['W.id']=array('GT',$this->webvar['lastMsgId']);
 		}
 		
 		//$result=$webchat->where($cond)->order('id desc')->limit($maxRecords)->select();
         $result=$webchat->Table(C("DB_PREFIX")."webchat W")->field("W.*,U.attr")->where($cond)->order('W.id desc')->limit($maxRecords)
             ->join("left join ".C("DB_PREFIX")."user U on senderid=U.id")->select();
 //logfile($webchat->getLastSql());
-		
+//logfile(print_r($result,true));
 		if(null==$result) return '';	//出错或没有新数据返回此信息
 		else {
 			$this->webvar['lastMsgId']=$result[0]['id'];
@@ -231,7 +231,7 @@ class WebChatAction extends SafeAction {
         $cond['chnid']=$this->webvar['channelId'];
 
         if($this->webvar['firstMsgId']>0){
-            $cond['id']=array('LT',$this->webvar['firstMsgId']);
+            $cond['W.id']=array('LT',$this->webvar['firstMsgId']);
         }
         //$result=$webchat->where($cond)->order('id desc')->limit($maxRecords)->select();
         $result=$webchat->Table(C("DB_PREFIX")."webchat W")->field("W.*,U.attr")->where($cond)->order('W.id desc')->limit($maxRecords)
@@ -245,6 +245,7 @@ class WebChatAction extends SafeAction {
             $this->webvar['firstMsgId']=$result[0]['id'];
 //处理显示的日期字串
             $now=getdate();
+            $dbUser=D("user");
 //var_dump($now);
             foreach ($result as $k=>$v) {
                 $sendtime = date_parse($v['sendtime']);

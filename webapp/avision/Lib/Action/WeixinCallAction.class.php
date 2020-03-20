@@ -505,7 +505,8 @@ class WeixinCallAction extends Action
 			$newuser['username'] = $nickname;
 			$newuser['password'] = '';
 			//只有手机端的openid才保留，作为提现帐号
-            $newuser['attr']['headimg']=$userInfo['headimgurl'];
+            $attr=array("headimg"=>$userInfo['headimgurl']);
+            $newuser['attr']=json_encode2($attr);
 			if($isWxBrowser)
 				$newuser['wxopenid'] = $userInfo['openid'];
 			$newId = $userDal->add($newuser);

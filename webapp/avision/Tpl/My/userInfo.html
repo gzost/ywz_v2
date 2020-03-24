@@ -92,15 +92,17 @@
 
 </div>
 <div style="text-align: right; padding: 5px;">
-    <a id="cwd" href="javascript:void(0);" class="easyui-linkbutton" plain="true" outline="true" style="width:80px;">修改密码</a>
-    <a href="__APP__/Home/logout/agent/{$agent}" class="easyui-linkbutton " plain="true" outline="true" style="width:80px;">登 出</a>
+    <!--<a id="cwd" href="javascript:void(0);" class="easyui-linkbutton" plain="true" outline="true" style="width:80px;">修改密码</a> 要弹窗暂时不实现-->
+    <a href="__APP__/Home/logout/agent/{$agent}" class="OUI-btn " plain="true" outline="true" style="width:80px; font-size:14px;">登 出</a>
 </div>
+    <!--
     <div id="win1" class="easyui-dialog" style="padding:5px 6px;width:80%;"
          data-options="inline:true,modal:true,closed:true,title:'Loding...',closable:true, toolbar:'#bb' ">
     </div>
     <div id="bb" style="text-align: right; border: 0; background-color: transparent;">
         <a href="#" class="easyui-linkbutton" data-options="{ width:80 }" onclick="$('#win1').dialog('close');"> 关闭 </a>
     </div>
+    -->
 <script>
     $("#cwd").off("click");
     $("#cwd").on("click",function (event) {
@@ -117,7 +119,7 @@
 console.log(para);
         $.post('__APP__/My/updateUserInfoAjax',para,function(data){
 console.log(data);
-            $.messager.alert('更新结果',data,'info');
+            alert(data);
         },'html');
     });
 </script>

@@ -28,9 +28,9 @@ class MyAction extends SafeAction
     public function showMyInfo2($chnid=0){
         $this->assign("chnid",$chnid);
         $this->display('showMyInfo2');
-        //$uid=$this->userId();
-        //if($uid>0) $this->userInfo($uid,$chnid);
-        //if($chnid>0)  $this->Subscriber($chnid);
+        $uid=$this->userId();
+        if($uid>0) $this->userInfo($uid,$chnid);
+        if($chnid>0 && $uid>0 && $uid!=C('anonymousUserId') )  $this->Subscriber($chnid);
 
     }
     /**
@@ -276,7 +276,12 @@ class MyAction extends SafeAction
     public function userInfo($uid=0,$chnid=0,$agentid=0){
 //var_dump($uid,$chnid,$agentid);// die('eee');
         try{
-            if($uid==0 || $uid==C('anonymousUserId') ) throw new Exception('您还未登录！');
+            if($uid==0 || $uid==C('anonymousUserId') ) {
+                $url=U("Home/login",array("agent"=>$agentid));
+                echo '您还未登录，请：<a href="'.$url.'" class="OUI-btn " plain="true" outline="true" style="width:80px; font-size:14px;">登 录</a><br>';
+                return;
+                //throw new Exception('您还未登录！');
+            }
             $webVar=array('continerid'=>'userinfo-continer');
 
             //确定机构，以便选择对应的首页。若有频道参数取频道所属ageng为显示专属首页

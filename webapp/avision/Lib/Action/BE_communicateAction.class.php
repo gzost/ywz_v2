@@ -35,8 +35,10 @@ class BE_communicateAction extends SafeAction{
             if(!contextToken::verifyToken($_POST["tokenName"],$_POST["tokenValue"])) throw new Exception("非法访问");
 
             $clientStamp=intval($_POST["sendTime"]/1000);   //转换为以秒为单位的时间戳
-            $uid=$this->userId();
-            $userName=$this->userName();
+            $clientUserInfo=$_POST["playload"]["appPara"]["user"]; //客户端的用户信息
+            $uid=(empty($clientUserInfo["uid"]))?$this->userId(): $clientUserInfo["uid"];
+            $userName=(empty($clientUserInfo["userName"]))?$this->userName():$clientUserInfo["userName"];
+//var_dump($uid,$userName);
             $retArr=array();
             //无论前端是否发送了在线记录数组，都要更新在线记录，同时通知前端是否需要下线
             $dbOnline=D("online");
@@ -47,7 +49,7 @@ class BE_communicateAction extends SafeAction{
             $actionWebChat=A("WebChat3");
             $rt=$actionWebChat->communicate($_POST["playload"]["appPara"]["chat"],$_POST["playload"]["chat"]);
             if(is_array($rt)) $retArr["chat"]=$rt;
-
+//$retArr["userid"]=$this->userId();
 //dump($retArr);
             Oajax::successReturn($retArr);
         }catch (Exception $ex){

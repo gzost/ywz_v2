@@ -55,6 +55,119 @@ function Ou_Communicate(options) {
         });
     }
 }
+
+////////在线记录对象/////////
+function  Ou_OnlineTableC() {
+    /**
+     * 在线记录表，这是本对象关键的数据结构，格式为：
+     * {"<前端在线记录ID>":{
+             *      BEid:<后端在线记录ID，在前端建立了记录但后端未确认前保持为0，后端同步了记录后填入后端在线记录ID>,
+             *      starttime:<记录开始有效时间戳，0说明此记录尚未生效>,
+             *      endtime:<记录设置为无效的时间戳>,
+             *      objtype:<后端关联在线类型[web|vod|live]每个活动页面前端至少包含一条且只有一条web类型的记录，其它根据页面布局而定>,
+             *      refid:<后端关联对象ID，目前vod类型关联recordfileID,其它关联channelID>,
+             *      FEobj:<关联的前端对象，vod|live时关联对应播放窗口的播放器对象>
+             *      },
+             *  "<前端在线记录ID>":{...}...}
+     *  播放状态判断
+     *  starttime   endtime
+     *      0           0       未播放
+     *      n           0       播放中
+     *      n           n       播放已结束
+     *      0           n       未播放
+     */
+    var onlineTable={}; //在线记录表当objtype="live"|"vod"时，player填写对应的播放对象
+
+    /**
+     * 建立新的在线记录
+     */
+    this.createOnline=function(id,BEid,starttime,endtime,objtype,refid,FEobj){
+        onlineTable[id]={ BEid:BEid, starttime:starttime, endtime:endtime, objtype:objtype, refid:refid, FEobj:FEobj}  //填写在线记录
+        console.log(onlineTable);
+    }
+    this.getOnlineTable=function () {
+        return onlineTable;
+    }
+    this.setOnline=function (id,objtype,refid,FEobj) {
+        var now=parseInt((new Date()).getTime()/1000);
+        console.log("setting online..",id,objtype,refid);
+        //相同资源暂停20秒内重新播放，连续计算播放时间
+        if(onlineTable[id]["starttime"]>0 && (now-onlineTable[id]["endtime"])<20 && onlineTable[id]["objtype"]==objtype && onlineTable[id]["refid"]==refid){
+            onlineTable[id]["endtime"]=0;
+        }else{
+            onlineTable[id]["BEid"]=0;
+            onlineTable[id]["starttime"]=now;
+            onlineTable[id]["endtime"]=0;
+            onlineTable[id]["objtype"]=objtype;
+            onlineTable[id]["refid"]=refid;
+            onlineTable[id]["FEobj"]=FEobj;
+        }
+        console.log(onlineTable);
+    }
+    this.setOffline=function (id) {
+        var now=parseInt((new Date()).getTime()/1000);
+        console.log("setting offline..",id);
+        if(onlineTable[id]["starttime"]>0)  onlineTable[id]["endtime"]=now; //有start才设置
+        console.log(onlineTable);
+    }
+    this.procFeedback=function(fbTable){
+        var keys=Object.keys(onlineTable);  //取在线记录表的所有key
+        var reject=0;   //是否被踢，0-无需操作，1-停止播放(心跳继续，只是停止播放，可建议跳到首页)，2-停止使用(停止心跳，只能关闭或刷新)
+        for(var j=0, len=keys.length; j<len; j++){
+            var k=keys[j];
+            //console.log("procFeedback processing row:",fbTable[k]);
+            //符合这个条件说明还是同一条记录。若不同了，说明原记录已经播放结束并重新播放了
+            //若后端没传回BEid说明(新)记录未被处理，只有starttime>0的记录会被后端处理
+            //if((onlineTable[k]["starttime"]==fbTable[k]["starttime"]) && (fbTable[k]["BEid"]>0)){
+            if((onlineTable[k]["starttime"]==fbTable[k]["starttime"])){
+                //console.log("procFeedback matched row:",fbTable[k]);
+                //发送数据时是播放中的记录，现在状态可以忽略
+                if(fbTable[k]["endtime"]==0){
+                    if(fbTable[k]["BEid"]>0) onlineTable[k]["BEid"]= fbTable[k]["BEid"]; //后台不保证传来id，插入在线记录失败时BEid=0
+                    if(fbTable[k]["reject"]==true)  reject=(k=="web")? 2:1;
+                    //console.log("reject",fbTable[k]["reject"],"k=",k);
+                }
+                else {
+                    //发送数据时已经是播放结束的记录，清理，确认结束
+                    onlineTable[k]["BEid"]=onlineTable[k]["starttime"]=onlineTable[k]["endtime"]=onlineTable[k]["FEobj"]=0
+                }
+            }
+        }
+        console.log("procFeedback output table: ",onlineTable);
+        return reject;
+    }
+}
+
+/**
+ * ////// 定义心跳对象 ///////
+ * @param int 最大通讯间隔(秒) 5< 有效值 <120
+ * @param function func 定时触发的函数
+ */
+function Ou_KeepAlive(func,second) {
+    var timeoutHandle=null; //超时触发句柄
+    second=parseInt(second);
+    if(5>second ) second=5;
+    if(120<second) second=120;
+    var interval=second*1000;
+
+    var aliveFunc=function () {
+        func();
+        if(null !=timeoutHandle) clearTimeout(timeoutHandle);
+        timeoutHandle=setTimeout(aliveFunc,interval);
+    }
+    //重置触发器
+    this.reset=function(){
+        //aliveFunc();
+        timeoutHandle=setTimeout(aliveFunc,interval);
+    }
+    this.stop=function () {
+        if(null !=timeoutHandle) clearTimeout(timeoutHandle);
+    }
+    this.reset();   //构造后启动触发器
+    console.log("Ou_KeepAlive start.");
+}
+
+//页面处理主类
 function Ou_playPage(params) {
     //本HTML相关的参数，如DOM。在JS内部不直接使用HTML相关信息，降低耦合度
     var local={
@@ -71,116 +184,10 @@ function Ou_playPage(params) {
     }
     var _this=this;
 
-    var appPara={}; //应用参数，每次向服务端发送数据时，自动附加。chat参数在chat属性内
+    //应用参数，每次向服务端发送数据时，自动附加。chat参数在chat属性内
+    var appPara={user:{uid:params.uid, userName:params.userName,account:params.account}};
 
-    ////////在线记录对象/////////
-    var Ou_OnlineTable=function () {
-        /**
-         * 在线记录表，这是本对象关键的数据结构，格式为：
-         * {"<前端在线记录ID>":{
-             *      BEid:<后端在线记录ID，在前端建立了记录但后端未确认前保持为0，后端同步了记录后填入后端在线记录ID>,
-             *      starttime:<记录开始有效时间戳，0说明此记录尚未生效>,
-             *      endtime:<记录设置为无效的时间戳>,
-             *      objtype:<后端关联在线类型[web|vod|live]每个活动页面前端至少包含一条且只有一条web类型的记录，其它根据页面布局而定>,
-             *      refid:<后端关联对象ID，目前vod类型关联recordfileID,其它关联channelID>,
-             *      FEobj:<关联的前端对象，vod|live时关联对应播放窗口的播放器对象>
-             *      },
-             *  "<前端在线记录ID>":{...}...}
-         *  播放状态判断
-         *  starttime   endtime
-         *      0           0       未播放
-         *      n           0       播放中
-         *      n           n       播放已结束
-         *      0           n       未播放
-         */
-        var onlineTable={}; //在线记录表当objtype="live"|"vod"时，player填写对应的播放对象
-
-        /**
-         * 建立新的在线记录
-         */
-        this.createOnline=function(id,BEid,starttime,endtime,objtype,refid,FEobj){
-            onlineTable[id]={ BEid:BEid, starttime:starttime, endtime:endtime, objtype:objtype, refid:refid, FEobj:FEobj}  //填写在线记录
-            console.log(onlineTable);
-        }
-        this.getOnlineTable=function () {
-            return onlineTable;
-        }
-        this.setOnline=function (id,objtype,refid,FEobj) {
-            var now=parseInt((new Date()).getTime()/1000);
-            console.log("setting online..",id,objtype,refid);
-            //相同资源暂停20秒内重新播放，连续计算播放时间
-            if(onlineTable[id]["starttime"]>0 && (now-onlineTable[id]["endtime"])<20 && onlineTable[id]["objtype"]==objtype && onlineTable[id]["refid"]==refid){
-                onlineTable[id]["endtime"]=0;
-            }else{
-                onlineTable[id]["BEid"]=0;
-                onlineTable[id]["starttime"]=now;
-                onlineTable[id]["endtime"]=0;
-                onlineTable[id]["objtype"]=objtype;
-                onlineTable[id]["refid"]=refid;
-                onlineTable[id]["FEobj"]=FEobj;
-            }
-            console.log(onlineTable);
-        }
-        this.setOffline=function (id) {
-            var now=parseInt((new Date()).getTime()/1000);
-            console.log("setting offline..",id);
-            if(onlineTable[id]["starttime"]>0)  onlineTable[id]["endtime"]=now; //有start才设置
-            console.log(onlineTable);
-        }
-        this.procFeedback=function(fbTable){
-            var keys=Object.keys(onlineTable);  //取在线记录表的所有key
-            var reject=0;   //是否被踢，0-无需操作，1-停止播放(心跳继续，只是停止播放，可建议跳到首页)，2-停止使用(停止心跳，只能关闭或刷新)
-            for(var j=0, len=keys.length; j<len; j++){
-                var k=keys[j];
-                //console.log("procFeedback processing row:",fbTable[k]);
-                //符合这个条件说明还是同一条记录。若不同了，说明原记录已经播放结束并重新播放了
-                //若后端没传回BEid说明(新)记录未被处理，只有starttime>0的记录会被后端处理
-                //if((onlineTable[k]["starttime"]==fbTable[k]["starttime"]) && (fbTable[k]["BEid"]>0)){
-                if((onlineTable[k]["starttime"]==fbTable[k]["starttime"])){
-                    //console.log("procFeedback matched row:",fbTable[k]);
-                    //发送数据时是播放中的记录，现在状态可以忽略
-                    if(fbTable[k]["endtime"]==0){
-                        if(fbTable[k]["BEid"]>0) onlineTable[k]["BEid"]= fbTable[k]["BEid"]; //后台不保证传来id，插入在线记录失败时BEid=0
-                        if(fbTable[k]["reject"]==true)  reject=(k=="web")? 2:1;
-                        //console.log("reject",fbTable[k]["reject"],"k=",k);
-                    }
-                    else {
-                        //发送数据时已经是播放结束的记录，清理，确认结束
-                        onlineTable[k]["BEid"]=onlineTable[k]["starttime"]=onlineTable[k]["endtime"]=onlineTable[k]["FEobj"]=0
-                    }
-                }
-            }
-            console.log("procFeedback output table: ",onlineTable);
-            return reject;
-        }
-        return this;
-    }(); //在线记录对象
-
-    /**
-     * ////// 定义心跳对象 ///////
-     * @param int 最大通讯间隔
-     * @param function func 定时触发的函数
-     */
-    function Ou_KeepAlive(func,interval) {
-        var timeoutHandle=null; //超时触发句柄
-        interval=parseInt(interval)*1000;
-        if(interval<1000) interval=10*1000;
-        var aliveFunc=function () {
-            func();
-            if(null !=timeoutHandle) clearTimeout(timeoutHandle);
-            timeoutHandle=setTimeout(aliveFunc,interval);
-        }
-        //重置触发器
-        this.reset=function(){
-            aliveFunc();
-        }
-        this.stop=function () {
-            if(null !=timeoutHandle) clearTimeout(timeoutHandle);
-        }
-        this.reset();   //构造后启动触发器
-        console.log("Ou_KeepAlive start.");
-    }
-
+    var Ou_OnlineTable= new Ou_OnlineTableC(); //在线记录对象
     //预填写所有在线记录，整个播放前端只有3个在线记录且live，vod不能同时在线
     var now=parseInt((new Date()).getTime()/1000);
     Ou_OnlineTable.createOnline("web", params.onlineid, now, 0, "web",params.chnid,null); //填写web在线记录
@@ -192,6 +199,7 @@ function Ou_playPage(params) {
         "tokenName":"playToken",    //通讯令牌名称
         "tokenValue":params.playToken   //通讯令牌值
     });
+
     /**
      * 向服务器发送数据，自动附加onlineTable
      */
@@ -254,7 +262,8 @@ function Ou_playPage(params) {
     });
 
     ///////频道封面////////
-    if(!params.showCover) $("#blkCover").hide();
+    if(params.showCover) $("#blkCover").css("display","block");
+
 
     $("#btnEnterChannel").on("click",function () {
         $("#blkCover div").hide();
@@ -280,8 +289,9 @@ function Ou_playPage(params) {
             "autoplay": false,
             "isLive": true, //false,
             //"skinLayout":false,
+            /*
             "skinLayout": [
-                { "name": "bigPlayButton", "align": "blabs", "x": 30, "y": 80 },
+                { "name": "bigPlayButton", "align": "cc", "x": 30, "y": 80 },
                 { "name": "H5Loading", "align": "cc" },
                 { "name": "errorDisplay", "align": "tlabs", "x": 0, "y": 0 },
                 { "name": "infoDisplay" },
@@ -300,10 +310,12 @@ function Ou_playPage(params) {
                         //{ "name": "snapshot", "align": "tr", "x": 10, "y": 12 }
                     ]
                 }
-            ],
+            ],*/
+            //"skinLayout": [],
             "rePlay": false,
             "playsinline": true,
             "preload": false,
+            "autoplay":false,
             "cover":"/t/1.jpg",
             "controlBarVisibility": "click",//控制面板的实现 ‘click’ 点击出现、‘hover’ 浮动出现、‘always’ 一直在
             "useH5Prism": true,
@@ -323,6 +335,28 @@ function Ou_playPage(params) {
             playerOpt.isLive=false;
         }
 
+        if(""==playerOpt.source){
+            playerOpt.skinLayout= [];
+            $(local.blkLeftTime).html("没有信号");
+        }else{
+            playerOpt.skinLayout= [
+            { "name": "bigPlayButton", "align": "cc", "x": 30, "y": 80 },
+            { "name": "H5Loading", "align": "cc" },
+            { "name": "errorDisplay", "align": "tlabs", "x": 0, "y": 0 },
+            { "name": "infoDisplay" },
+            { "name": "tooltip", "align": "blabs", "x": 0, "y": 56 },
+            { "name": "thumbnail" },
+            {
+                "name": "controlBar", "align": "blabs", "x": 0, "y": 0,
+                "children": [
+                { "name": "progress", "align": "blabs", "x": 0, "y": 44 },
+                { "name": "playButton", "align": "tl", "x": 15, "y": 12 },
+                { "name": "timeDisplay", "align": "tl", "x": 10, "y": 7 },
+                { "name": "fullScreenButton", "align": "tr", "x": 10, "y": 12 },
+                ]
+            }
+            ]
+        }
         return new Aliplayer(playerOpt,function (player) {
             console.log('player ready!');
             status.playerReady=true;
@@ -333,8 +367,11 @@ function Ou_playPage(params) {
                 $(".prism-ErrorMessage").hide(); //隐藏出错信息
                 player.setCover(params.cover);   //显示封面
             });
+            player.on("canplay",function(){
+                console.log("canplay=======");
+            });
             player.on("play",function (e) {
-                console.log("player play.====",playerOpt);
+                console.log("player On play.====",playerOpt);
                 $(local.layerVideoTop2).hide();
                 if(playerOpt.isLive){
                     Ou_OnlineTable.setOnline("live","live",playerOpt.chnid,0);
@@ -357,8 +394,9 @@ function Ou_playPage(params) {
 console.log("befor init player.");
     var player=initPlayer("prismPlayer",params);
 console.log("status.playerReady=",status.playerReady);
+
     this.reloadPlayer=function (type,mrl,cover,refid) {
-        console.log("reloading player. type=",type,mrl,cover,refid,status.playerReady,typeof player);
+        console.log("reloading player. type=",type,mrl,cover,refid,status.playerReady,typeof player,player);
         //if(!status.playerReady) return;
         params.playType=type;
         params.source=mrl;
@@ -377,14 +415,13 @@ console.log("status.playerReady=",status.playerReady);
 
     //显示直播的播出时间以及倒计时
     var showAirTime=function () {
-        if(params.airTime.length >2){
+        if("live"==params.playType && params.airTime.length >2){
             //设置了开播时间
             //$(local.blkAirTime).html("开播时间："+ params.airTime);
-            if(params.isAdmin !=1)  $(".blk_video .prism-big-play-btn").hide();
+            if(params.isAdmin !=1)  $(".blk_video .prism-big-play-btn").css("display","none");
             //设置倒计时终止时间
-            var endDate = new Date(params.airTime);
+            var endDate = new Date(Date.parse(params.airTime.replace(/-/g, "/")));   //new Date(params.airTime);
             var end = Math.floor(endDate.getTime()/1000);   //转换成秒的时间戳
-
             var airTimer=setInterval(function () {
                 //获取当前时间
                 var date = new Date();
@@ -393,6 +430,7 @@ console.log("status.playerReady=",status.playerReady);
                 //时间差
                 var leftTime = end-now;
                 //定义变量 d,h,m,s保存倒计时的时间
+
                 var countDownStr,d,h,m,s;
                 if(leftTime>0){
 
@@ -404,20 +442,20 @@ console.log("status.playerReady=",status.playerReady);
                     if(s<10) s="0"+s;
                     countDownStr=h+":"+m+":"+s;
                     $(local.blkLeftTime).html("开播倒计时："+countDownStr);
-                    if(params.isAdmin !=1)  $(".blk_video .prism-big-play-btn").hide();
+                    if(params.isAdmin !=1)  $(".blk_video .prism-big-play-btn").css("display","none");
                 }else{
                     clearInterval(airTimer);
                     if(params.airDuration.length>1){
                         var duration=parseInt(params.airDuration);   //秒
                         if(end+duration>now){
                             //播出期间
-                            $(".blk_video .prism-big-play-btn").show();
+                            $(".blk_video .prism-big-play-btn").css("display","block");
                         }else{
                             $(local.blkLeftTime).html("直播已结束");
-                            if(params.isAdmin !=1)  $(".blk_video .prism-big-play-btn").hide();
+                            if(params.isAdmin !=1)  $(".blk_video .prism-big-play-btn").css("display","none");
                         }
                     }else{
-                        $(".blk_video .prism-big-play-btn").show();
+                        $(".blk_video .prism-big-play-btn").css("display","block");
                     }
 
                 }
@@ -475,7 +513,7 @@ console.log("status.playerReady=",status.playerReady);
 
         //左右拖动时,由于浏览器自带滑动特效，touchend后还会继续滚动，因此只能监听scroll事件，并延迟处理
         tabBlk.scroll(function() {
-            console.log("scroll even");
+            //console.log("scroll even");
             if(status.tabScrolling) return;
             clearTimeout($.data(this, 'scrollTimer'));
             $.data(this, 'scrollTimer', setTimeout(function() {

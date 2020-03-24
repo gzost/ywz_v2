@@ -15,16 +15,17 @@ class StreamModel extends Model {
 	 * 
 	 * 判断流是否活动中
 	 * @param string $streamId	流字ID
-	 # @return true/false
+     * @param int $platform
+	 * @return  bool
 	 */
-	public function isActive($streamId)
+	public function isActive($streamId,$platform=0)
 	{
 		if(0 == $streamId)	{
 			return false;
 		}
 
 		//TODO: 根据不同的平台进行不同的处理
-		$platform=$this->where('id='.$streamId)->getfield('platform');
+		if(0==$platform) $platform=$this->where('id='.$streamId)->getfield('platform');
 		if($platform !=3 && $platform !=4) return true;	//outao 2017-12-09 临时返回永远活跃
 		
 		$act = D('activestream');

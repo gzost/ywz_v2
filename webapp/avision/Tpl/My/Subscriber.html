@@ -28,17 +28,17 @@
 </div>
 <script type="text/javascript">
     function modifyNrefresh(url,continer,msg){
-        console.log(url);
+        //console.log(url);
         console.log(continer);
-        console.log(msg);
+        //console.log(msg);
         if(msg.length>1){
-            $.messager.confirm('确认',msg,function(r){
-                if(r){
-                    DivReplaceHtml(url,continer);
+                if(confirm(msg)){
+                    //DivReplaceHtml(url,continer);
+                    $("#"+continer).load(url);
                 }
-            });
         }else {
-            DivReplaceHtml(url,continer);
+            $("#"+continer).load(url);
+            //DivReplaceHtml(url,continer);
         }
     }
 </script>

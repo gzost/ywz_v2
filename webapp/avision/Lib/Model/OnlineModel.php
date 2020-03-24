@@ -516,9 +516,11 @@ class OnlineModel extends Model {
                     //已结束播放的记录
                     if(empty($BEid)){
                         //没来得及向后端报告已经结束播放了，直接生成一条非活跃的记录
-                        //$BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"false",$starttime+$timeDiff,$endtime+$timeDiff);
-                        $BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"false",$now+$starttime-$endtime,$now);
-                        if(empty($BEid)) logfile("建立在线记录失败!",LogLevel::EMERG);
+                        if($endtime-$starttime >10){    //忽略播放短于10秒的记录
+                            $BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"false",$now+$starttime-$endtime,$now);
+                            if(empty($BEid)) logfile("建立在线记录失败!",LogLevel::EMERG);
+                        }
+
                     }else{
                         //若还是在线的设为离线
                         //$this->where("id=$BEid and isonline='true' ")->save(array("isonline"=>"false","activetime"=>$endtime+$timeDiff));

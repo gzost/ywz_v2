@@ -24,6 +24,7 @@
 	text-decoration:none;
 	/* 以下是默认的文字与背景样式，可以通过OUI-fontx与OUI-colorx覆盖 */
 	font-size:16px;
+	text-align: center;
 	border-radius:5px;
 	color:#FFF;
 	background-color:#004040;

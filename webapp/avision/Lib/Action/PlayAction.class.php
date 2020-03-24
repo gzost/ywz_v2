@@ -99,7 +99,7 @@ class PlayAction extends SafeAction{
      * @return bool true-是特权用户
      */
     private function isAdmin($uid){
-        if($this->author->isRole(C('adminGroup')) || $this->author->isRole(C('inspectorGroup')) ||
+        if($this->author->isRole('admin') || $this->author->isRole('inspector') ||
             $uid==$this->channel['owner'] || $uid==$this->channel['anchor']
         ) return true;
         else return false;
@@ -280,6 +280,8 @@ class PlayAction extends SafeAction{
             $this->getVodPara($webVar,$this->vodid);    //填写vod相关的参数
         }
         $webVar['uid']=empty($uid)?"":$uid;
+        $webVar['account']=$this->getUserInfo("account");
+        $webVar["userName"]=$this->userName();
 
         contextToken::clearToken(self::PLAY_TOKEN);
 
@@ -456,6 +458,7 @@ class PlayAction extends SafeAction{
     /**
      * 频道直播时前端需要的参数。
      * 此方法初始化播放页面及通过ajax切换播放资源时共用
+     * 当没有推流或流被关闭时$webVar["sourec"]=""
      * @param array $webVar 参数数组，方法内部直接修改此数组
      * @param int $chnid
      */
@@ -470,9 +473,20 @@ class PlayAction extends SafeAction{
         $streamDal = D('stream');
         $w = array('id'=>$this->channel['streamid']);
         $row = $streamDal->where($w)->find();
-        $pf = new platform();
-        $pf->load($row['platform']);
-        $webVar["source"] = $pf->getHls($row['idstring']);
+        if("normal"==$row["status"]){
+            if($streamDal->isActive($this->channel['streamid'],$row["platform"])){
+                //有推流
+                $pf = new platform();
+                $pf->load($row['platform']);
+                $webVar["source"] = $pf->getHls($row['idstring']);
+            }else{
+                $webVar["source"]="";
+            }
+        }else{
+            //流被关闭
+            $webVar["source"]="";
+        }
+
     }
 
     /**

@@ -1,10 +1,11 @@
 <?php
-echo strtotime("2019-01-01");
-$ar=array_fill(1,31,0);
-$ar[10]=90;
-$ar['2']=2;
-$json=json_encode($ar);
-echo $json;
+session_start();
+echo session_id();
+session_destroy();
+$expire=time()-3600;
+setcookie("PHPSESSID", "", $expire,'/');
+echo "<BR>".time();
+
 exit;
 phpinfo();
 error_reporting(E_ALL ^ E_NOTICE);

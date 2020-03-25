@@ -174,12 +174,13 @@ class OnlineModel extends Model {
 	public function consumpStat($start,$end){
 		$queryStr="select objtype,refid objid,name, count(*) users,
 			sum(case when beginview>=$start and $end>=beginview then 1 else 0 end) newusers,
-			sum( ceil( case 
+			sum( round( (case 
 				when beginview<=$start and $end<=activetime then $end-$start
 				when beginview<=$start and $end>activetime then activetime-$start
 				when beginview>$start and $end<=activetime then $end-beginview
 				when beginview>$start and $end>activetime then activetime-beginview
-			end /60 )) qty 
+				else 0
+			end +15)/60 )) qty 
 			from __TABLE__ where activetime>$start and $end>=beginview group by objtype,refid having qty>0 ";
 		$result=$this->query($queryStr);
 		logfile($this->getLastSql(),8);

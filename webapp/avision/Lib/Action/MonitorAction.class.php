@@ -42,7 +42,7 @@ class MonitorAction extends AdminBaseAction{
  		$this->baseAssign();
  		$this->assign('mainTitle','在线用户');
  		
- 		$webVarTpl=array('objtype'=>'live','name'=>'','objAccount'=>'','viewSelf'=>'true','work'=>'search',
+ 		$webVarTpl=array('objtype'=>'web','name'=>'','objAccount'=>'','viewSelf'=>'true','work'=>'search',
  			'msg'=>'','account'=>'');	//网页变量模板
  		$condTpl=array('objtype'=>'','name'=>'','objAccount'=>'','account'=>'');	//查询条件模板
  		
@@ -64,7 +64,7 @@ class MonitorAction extends AdminBaseAction{
  		//组织符合ThinkPHP语法的条件数组
  		$TPcond=array('isonline'=>'true');	//只显示真正的在线记录 outao 2018-01-29
 //echo time();
-        $TPcond["logintime"]=array("LT",time()-50); //只显示50秒前建立的记录
+        $TPcond["logintime"]=array("LT",time()-30); //只显示30秒前建立的记录
  		if(isset($cond['objtype'])) $TPcond['objtype']=$cond['objtype'];
 		if(isset($cond['objAccount'])) {
 			//消费对象属主

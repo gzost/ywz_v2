@@ -780,7 +780,7 @@ logfile('WhatViewer:'.$st);
 			}
 
 			//创建在线记录
-			$onlineId=$this->newOnline('web',$chnId);
+			$onlineId=$this->newOnline('web',$chnId,$chnId);
 			if(1>$onlineId) throw new Exception('无法创建在线记录。');
 			
 		}catch (Exception $e){
@@ -1024,10 +1024,11 @@ logfile("Play:befor display.");
 	 * 新建在线记录	
 	 * @param string $objType	在线对象类型
 	 * @param int $objId		在线对象ID
+	 * @param int $chnId		对应的频道ID，可选参数
 	 * @return	int	$onlineId正常返回在线用户的ID号，同时填写成员变量$onlineArr；失败返回false.
 	 * 			
 	 */
-	public function newOnline($objType, $objId){
+	public function newOnline($objType, $objId, $chnId=0){
 		if(null==$this->dbOnline) $this->dbOnline=D('Online');
 		if(null==$this->author) $this->author = new authorize();
 /*		
@@ -1051,7 +1052,7 @@ var_dump($location);
         $this->multiOnline=$this->dbOnline->checkMultiLogin($userId,$objType);
 
 		//超限连接，照样建立在线记录，但返回错误
-		$onlineId=$this->dbOnline->newOnline($objType,$objId,$userId, $this->author->getUserInfo('userName') );
+		$onlineId=$this->dbOnline->newOnline($objType,$objId,$userId, $this->author->getUserInfo('userName'),$chnId );
 
         if($this->multiOnline>0) {
             logfile("超限多重连接：uid=".$userId." objtype=".$objType." objId=".$objId.print_r($_SESSION['OuPara'],true),LogLevel::CRIT);
@@ -1175,7 +1176,7 @@ var_dump($location);
 		$para=$this->_param();
 		
 		Oajax::needAttr($para,'objType,objId');	//检查必须的参数，不满足直接出错返回
-		$onlineId=$this->newOnline($para['objType'], $para['objId']);
+		$onlineId=$this->newOnline($para['objType'], $para['objId'], $para['chnId']);
 		if(false != $onlineId)
 			Oajax::successReturn(array("onlineId"=>$onlineId,"multiOnline"=>$this->multiOnline));
 		else 

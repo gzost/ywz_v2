@@ -1,1 +1,1 @@
-d:\apmxe\php5\php.exe -c d:\apmxe\etc D:\MyProject\ywz\webapp\cmd.php Stat/perHour/account/system/password/admin@135
+D:\xampp\php\php.exe -c D:\xampp\php D:\MyProject\ywz\webapp\cmd.php Stat/perHour/account/system/password/admin@135

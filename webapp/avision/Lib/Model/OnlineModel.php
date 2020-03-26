@@ -26,7 +26,7 @@ class OnlineModel extends Model {
 	 * 
 	 * @return 成功-记录Id，失败-false
 	 */
-	public function newOnline($objType='web',$objId=0,$userId=0, $account=''){
+	public function newOnline($objType='web',$objId=0,$userId=0, $account='', $chnId=0){
 		$dbChannel=D('Channel');
 		$dbRecordfile=D('Recordfile');
 		$onlineId=0; $name=''; $objowner=0;
@@ -77,7 +77,7 @@ class OnlineModel extends Model {
 		$now=time();
 		$data=array('userid'=>$userId, 'logintime'=>$now, 'beginview'=>$now, 'activetime'=>$now+1,
 				'objtype'=>$objType, 'refid'=>$objId, 'account'=>$account,
-				'clientip'=>$_SERVER['REMOTE_ADDR'], 'location'=>$addr, 'sessionid'=>session_id(),'name'=>$name,'objowner'=>$objowner );
+				'clientip'=>$_SERVER['REMOTE_ADDR'], 'location'=>$addr, 'sessionid'=>session_id(),'name'=>$name,'objowner'=>$objowner, 'chnid'=>intval($chnId) );
 		
 		$onlineId=$this->add($data);
 		logfile($this->getLastSql(),LogLevel::SQL);
@@ -194,8 +194,8 @@ class OnlineModel extends Model {
 	 * @param int	$endTime 不提供则转移所有offline记录
 	 */
 	public function moveOfflineToLog($endTime=null){
-		$fields='id onlineid,userid,logintime,activetime,beginview,objtype,refid,account,clientip,hostid,sessionid,name,location,objowner';
-		$logFields='onlineid,userid,logintime,activetime,beginview,objtype,refid,account,clientip,hostid,sessionid,name,location,objowner';
+		$fields='id onlineid,userid,logintime,activetime,beginview,objtype,refid,account,clientip,hostid,sessionid,name,location,objowner,chnid';
+		$logFields='onlineid,userid,logintime,activetime,beginview,objtype,refid,account,clientip,hostid,sessionid,name,location,objowner,chnid';
 		$cond='isonline="false"';
 		if(null!=$endTime) $cond .=' and activetime<'.$endTime;
 		$queryStr='insert into '.C('DB_PREFIX').'onlinelog('.$logFields.')' .
@@ -326,16 +326,18 @@ class OnlineModel extends Model {
      * @param string $isonline  是否在线，默认"true"
      * @param int $logintime
      * @param int $activetime
+     * @param int $chnid
      * @return int  新在线记录ID
      * @throws Exception
      */
-    public function createOnline($uid,$objType,$refid,$account="",$isonline="true",$logintime=0, $activetime=0){
+    public function createOnline($uid,$objType,$refid,$account="",$isonline="true",$logintime=0, $activetime=0, $chnid=0){
         switch ($objType){
             case "live":
             case "web":
                 $rec=D("channel")->where("id=$refid")->field("name,owner")->find();
                 if(null==$rec) throw new Exception("找不到您要观看的频道");
                 $name=$rec['name']; $objowner=$rec['owner'];
+                if($chnid==0) $chnid=$refid;
                 break;
             case "vod":
                 $rec=D("recordfile")->where(array('id'=>$refid))->field('name,owner')->find();
@@ -352,12 +354,13 @@ class OnlineModel extends Model {
         if(!empty($_SERVER["HTTP_ALI_CDN_REAL_IP"])) $ip=$_SERVER["HTTP_ALI_CDN_REAL_IP"];
         elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) $ip=$_SERVER["HTTP_X_FORWARDED_FOR"];
         else $ip=$_SERVER["REMOTE_ADDR"];
+//logfile("HTTP_ALI_CDN_REAL_IP=".$_SERVER["HTTP_ALI_CDN_REAL_IP"]." IP=".$ip,1);
         $addr = $mod->get($ip);
         if(0==$logintime) $logintime=time();
         if(0==$activetime) $activetime=$logintime+1;
 
         $newRecord=array("userid"=>$uid, "logintime"=>$logintime, "activetime"=>$activetime, "beginview"=>$logintime, "objtype"=>$objType, "refid"=>$refid, "account"=>$account,
-            'clientip'=>$_SERVER['REMOTE_ADDR'], 'location'=>$addr, 'isonline'=>$isonline, 'sessionid'=>session_id(),'name'=>$name,'objowner'=>$objowner);
+            'clientip'=>$ip, 'location'=>$addr, 'isonline'=>$isonline, 'sessionid'=>session_id(),'name'=>$name,'objowner'=>$objowner,'chnid'=>$chnid);
         $newId=$this->add($newRecord);
         if(null==$newId) throw new Exception("建立在线记录失败");
         return $newId;
@@ -475,7 +478,7 @@ class OnlineModel extends Model {
      * @return array    格式同传入，只是每条记录可能会增加reject属性，通知前端退出该在线状态，对于新的正在播放记录，会赋予后端BEid
      * @throws Exception
      */
-    public function updateOnline($FE_recs,$uid,$userName,$clientStamp=0){
+    public function updateOnline($FE_recs,$uid,$userName,$clientStamp=0,$chnid=0){
         $now=time();
         //1、分析并处理前端在线记录
         $updateIdList="";   //可更新activeTime的记录ID列表
@@ -491,7 +494,8 @@ class OnlineModel extends Model {
                         //前端新生成的在线记录，需要新增到数据库中
                         try{
                             //$BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"true",$starttime+$timeDiff,time()+1);
-                            $BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"true",$now,$now+1);
+                            $playedSecond=($clientStamp>$starttime)?$clientStamp-$starttime: 1; //最少播放了1秒
+                            $BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"true",$now-$playedSecondf,$now,$chnid);
                             if(empty($BEid)) throw new Exception("建立在线记录失败!");
                         }catch(Exception $e){
                             if(empty($BEid)) logfile($e->getMessage().$this->getLastSql(),LogLevel::ALERT);
@@ -522,7 +526,7 @@ class OnlineModel extends Model {
                     if(empty($BEid)){
                         //没来得及向后端报告已经结束播放了，直接生成一条非活跃的记录
                         if($endtime-$starttime >10){    //忽略播放短于10秒的记录
-                            $BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"false",$now+$starttime-$endtime,$now);
+                            $BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"false",$now+$starttime-$endtime,$now,$chnid);
                             if(empty($BEid)) logfile("建立在线记录失败!",LogLevel::EMERG);
                         }
 

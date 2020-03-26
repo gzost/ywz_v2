@@ -185,7 +185,7 @@ function Ou_playPage(params) {
     var _this=this;
 
     //应用参数，每次向服务端发送数据时，自动附加。chat参数在chat属性内
-    var appPara={user:{uid:params.uid, userName:params.userName,account:params.account}};
+    var appPara={chnid:params.chnid,user:{uid:params.uid, userName:params.userName,account:params.account}};
 
     var Ou_OnlineTable= new Ou_OnlineTableC(); //在线记录对象
     //预填写所有在线记录，整个播放前端只有3个在线记录且live，vod不能同时在线

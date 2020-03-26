@@ -22,7 +22,7 @@ class BE_communicateAction extends SafeAction{
      * 目前支持的数据类型：
      *  onlineTable-在线记录数组，
      *  chat-聊天数据
-     *
+     *  appPara-应用相关的参数，如频道ID，当前登录用户信息等{chnid:频道ID, user:{uid:用户ID, userName:用户昵称,account:用户账号}}
      * 数据值根据数据类型不同为单值或数组
      *
      * 返回：json字串
@@ -38,12 +38,14 @@ class BE_communicateAction extends SafeAction{
             $clientUserInfo=$_POST["playload"]["appPara"]["user"]; //客户端的用户信息
             $uid=(empty($clientUserInfo["uid"]))?$this->userId(): $clientUserInfo["uid"];
             $userName=(empty($clientUserInfo["userName"]))?$this->userName():$clientUserInfo["userName"];
+            $chnid=$_POST["playload"]["appPara"]["chnid"];
+            $chnid=(empty($chnid))?0 : intval($chnid);
 //var_dump($uid,$userName);
             $retArr=array();
             //无论前端是否发送了在线记录数组，都要更新在线记录，同时通知前端是否需要下线
             $dbOnline=D("online");
             $FE_recs=(is_array($_POST["playload"]["onlineTable"]))?$_POST["playload"]["onlineTable"]:array();
-            $retArr["onlineTable"]=$dbOnline->updateOnline($FE_recs,$uid,$userName,$clientStamp);
+            $retArr["onlineTable"]=$dbOnline->updateOnline($FE_recs,$uid,$userName,$clientStamp,$chnid);
 
             //处理聊天通讯
             $actionWebChat=A("WebChat3");

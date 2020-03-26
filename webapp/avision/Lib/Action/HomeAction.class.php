@@ -159,7 +159,14 @@ class HomeAction extends SafeAction {
     public function channelListAjax($type=0,$searchStr='',$scrType=''){
     	try{
     		$chnList=$this->channelList($type,$searchStr,$scrType);
-//dump($chnList);
+//dump($_SERVER);
+            $host=$_SERVER["HTTP_HOST"];
+            if(0===stripos($host,"cdn") || 0===stripos($host,"ou")){
+                $playerURI="/play.html?ch=";
+            }else{
+                $playerURI="/player.php/HDPlayer/play/chnId/";
+            }
+            $this->assign("playerURI",$playerURI);
     		$this->assign('chnList',$chnList);
 			$this->assign('i', 0);
     		$this->show('channelList');

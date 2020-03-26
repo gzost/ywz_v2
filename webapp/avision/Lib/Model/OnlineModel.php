@@ -348,7 +348,11 @@ class OnlineModel extends Model {
         }
         if(empty($account)) $account=D("user")->where("id=$uid")->getField("username");
         $mod = new Ip2addrModel();
-        $addr = $mod->get($_SERVER["REMOTE_ADDR"]);
+
+        if(!empty($_SERVER["HTTP_ALI_CDN_REAL_IP"])) $ip=$_SERVER["HTTP_ALI_CDN_REAL_IP"];
+        elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) $ip=$_SERVER["HTTP_X_FORWARDED_FOR"];
+        else $ip=$_SERVER["REMOTE_ADDR"];
+        $addr = $mod->get($ip);
         if(0==$logintime) $logintime=time();
         if(0==$activetime) $activetime=$logintime+1;
 

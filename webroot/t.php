@@ -1,4 +1,11 @@
 <?php
+var_dump($_SERVER);
+if(!empty($_SERVER["HTTP_ALI_CDN_REAL_IP"])) $ip=$_SERVER["HTTP_ALI_CDN_REAL_IP"];
+elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) $ip=$_SERVER["HTTP_X_FORWARDED_FOR"];
+else $ip=$_SERVER["REMOTE_ADDR"];
+
+echo $ip;
+
 session_start();
 echo session_id();
 session_destroy();

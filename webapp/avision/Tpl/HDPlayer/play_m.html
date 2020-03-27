@@ -22,7 +22,7 @@
 <load href="__PUBLIC__/jeasyui/jquery.easyui.min.js"/>
 <load href="__PUBLIC__/js/jquery.json.min.js"/>
 <load href="__PUBLIC__/js/publicFunction.js"/>
-<script type="text/javascript" src="/player/js/webChat.js?t={$time}"></script>
+<script type="text/javascript" src="/player/js/webChat2.js?t={$time}"></script>
 <load href="__PUBLIC__/NivoSlider/jquery.nivo.slider.pack.js"/>
 <load href="__PUBLIC__/js/qrcode.js" />
 <load href="__PUBLIC__/js/jquery.qrcode.js" />
@@ -356,7 +356,7 @@ function onPlayEven()
 	heart.startOnline($('#h5Player').attr('filetype')
 						,$('#h5Player').attr('innerId')
 						,onlineSuccess
-						,onlineError);
+						,onlineError,"{$chnId}");
 }
 
 function onStopEven()

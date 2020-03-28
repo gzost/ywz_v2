@@ -216,9 +216,10 @@ function Ou_playPage(params) {
         appPara[app] = $.extend(appPara[app],para);
 //console.log("setAppPara: app=",app," para=",para," appPara=",appPara);
     }
+    
     var keepalive=new Ou_KeepAlive(function (){  _this.send({});},params.aliveTime );    //params.aliveTime
 
-    //响应收到服务器发送数据
+    //响应收到服务器发送数据，内部使用了keepalive.stop方法
     $(window).on("RecvData",function (event,recvData) {
         console.log("recvData proc onlineTable");
         //处理在线用户表
@@ -261,14 +262,6 @@ function Ou_playPage(params) {
         keepalive.stop(); //停止心跳
     });
 
-    ///////频道封面////////
-    if(params.showCover) $("#blkCover").css("display","block");
-
-
-    $("#btnEnterChannel").on("click",function () {
-        $("#blkCover div").hide();
-        $("#blkCover").animate({right:'100%'});
-    });
 
 
     ///////////播放及播放器//////////
@@ -289,28 +282,6 @@ function Ou_playPage(params) {
             "autoplay": false,
             "isLive": true, //false,
             //"skinLayout":false,
-            /*
-            "skinLayout": [
-                { "name": "bigPlayButton", "align": "cc", "x": 30, "y": 80 },
-                { "name": "H5Loading", "align": "cc" },
-                { "name": "errorDisplay", "align": "tlabs", "x": 0, "y": 0 },
-                { "name": "infoDisplay" },
-                { "name": "tooltip", "align": "blabs", "x": 0, "y": 56 },
-                { "name": "thumbnail" },
-                {
-                    "name": "controlBar", "align": "blabs", "x": 0, "y": 0,
-                    "children": [
-                        { "name": "progress", "align": "blabs", "x": 0, "y": 44 },
-                        { "name": "playButton", "align": "tl", "x": 15, "y": 12 },
-                        { "name": "timeDisplay", "align": "tl", "x": 10, "y": 7 },
-                        { "name": "fullScreenButton", "align": "tr", "x": 10, "y": 12 },
-                        //{ "name": "subtitle", "align": "tr", "x": 15, "y": 12 },
-                        //{ "name": "setting", "align": "tr", "x": 15, "y": 12 },
-                        //{ "name": "volume", "align": "tr", "x": 5, "y": 10 },
-                        //{ "name": "snapshot", "align": "tr", "x": 10, "y": 12 }
-                    ]
-                }
-            ],*/
             //"skinLayout": [],
             "rePlay": false,
             "playsinline": true,
@@ -505,7 +476,7 @@ console.log("status.playerReady=",status.playerReady);
         //导航条点击事件
         tabBar.on("click",function (event) {
             var obj = event.target;
-            //console.log(obj);
+            console.log(obj);
             //var tabid=$(obj).attr("tabid");
             var tabOrder=$(obj).attr("tabOrder");
             setActive(tabOrder);

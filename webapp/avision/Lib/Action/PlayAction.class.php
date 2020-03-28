@@ -116,7 +116,7 @@ class PlayAction extends SafeAction{
      * 接受参数url，在url中分析要播放的频道及VOD文件，例如：www.av365.cn/play.html?ch=1098&fl=9832
      *  - ch: 频道ID
      *  - vf: VOD记录ID
-     *  - nc: 有此参数且非零、空值，则不显示频道封面
+     *  - nc: 有此参数且非零、空值，则不显示频道封面，不显示系统公告，一般用于程序控制重新刷新播放器的情形
      *  - tab: 默认的活跃tabid
      *  - ag: agentID 有此参数传入时，用此覆盖用户的agentID
      *  - du: 介绍人（推荐人）ID
@@ -180,7 +180,13 @@ class PlayAction extends SafeAction{
         $webVar["entrytimes"]=$this->channel["entrytimes"];
         $webVar["logoImg"]=$this->dbChannel->getLogoImgUrl($chnAttr, $this->chnid);
 
-        //3、处理频道封面
+
+        //3.1 处理系统公告
+        if(!isset($this->para["nc"])){
+            $webVar['showNotice']=0;
+            $webVar["noticeHtml"]="<H1>公告</H1>";
+        }
+        //3.2 处理频道封面
         $isShowCover=intval($this->channel["ext"]["showCover"]);
         if(!isset($this->para["nc"]) && !empty($isShowCover)){
             $webVar['showCover']=1;
@@ -364,11 +370,13 @@ class PlayAction extends SafeAction{
      * @param $nc bool 是否显示频道封面，默认不显示
      * @return string 本页面的URL地址
      */
-    private function pageUrl($nc=false){
+    private function pageUrl($nc=true){
         $acceptUrl=$_SERVER["HTTP_ORIGIN"]."/play.html?ch=".$this->chnid;
         if(!empty($this->vodid)) $acceptUrl .= "&vf=".$this->vodid;
-        //if(!empty($this->para['tab'])) $acceptUrl .= "&tab=".$this->para['tab'];
-        if($nc) $acceptUrl .="&nc=true";
+        if(!empty($this->para['tab'])) $acceptUrl .= "&tab=".$this->para['tab'];
+        if(!empty($this->para['ag'])) $acceptUrl .= "&ag=".$this->para['ag'];
+        if(!empty($this->para['du'])) $acceptUrl .= "&du=".$this->para['du'];
+        if($nc) $acceptUrl .="&nc=1";
         return $acceptUrl;
     }
 

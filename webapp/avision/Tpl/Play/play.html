@@ -13,7 +13,7 @@
         top:0;
         width: 100vw; height: 100vh;
     }
-
+    .layerNotice{ z-index: 92; }    /* 系统公告层 */
     .layerCover{  z-index: 90;  }   /*  频道封面层 */
     .layerCoverBtn{  z-index: 91;  }
     .layerPopup{ z-index: 51; }     /* 弹出窗口层 */
@@ -26,9 +26,16 @@
         border-radius: 50%;
     }
     #blkCover{
+
         background-color: #ff3;
         overflow-y: auto;
         display:none;
+    }
+    #blkNotice{
+        text-align: center;
+        display:none;
+        background-color: #fff;
+        overflow-y: auto;
     }
     #blkForceLayer{
         display:none;
@@ -100,6 +107,13 @@
     }
 
 </style>
+
+<!-- 系统通知提示层 -->
+<div id="blkNotice" class="fullScreen layerNotice article">
+    {$noticeHtml}
+    notice
+    <div id="btnNotice" class="layerCoverBtn" style="position: absolute;width: 120px; bottom: 30px; left: calc( 50% - 60px ); padding: 2px 0; background-color: #f93;">知道了</div>
+</div>
 
 <!-- 频道封面层，初始化时通过 $showCover 变量控制是否显示 -->
 <div id="blkCover" class="fullScreen layerCover article">
@@ -178,15 +192,15 @@
 <!--<script charset="utf-8" type="text/javascript" src="__PUBLIC__/aliplayer/aliplayer2.8.7-h5-min.js" ></script>-->
 <!--<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/de/prismplayer/2.8.7/aliplayer-h5-min.js" ></script>-->
 <load href="__PUBLIC__/js/publicFunction.js" />
-<load href="__ROOT__/player/js/playpage3.6.min.js" />
-<!--<script src="__ROOT__/player/js/playpage.js?t=2" ></script>-->
+<!--<load href="__ROOT__/player/js/playpage3.6.min.js" />-->
+<script src="__ROOT__/player/js/playpage.js?t=6" ></script>
 <script>
     //本页面的全局JS对象，除页面的主功能还提供个plugin的公共服务
     var playPage=null;
     $(document).ready(function () {
-
-        playPage = new Ou_playPage({
+        var params={
             showCover: "{$showCover}" == "1" ? true : false,    //是否显示频道封面
+            showNotice:"{$showNotice}"=="1"? true:false,    //是否显示系统公告
             chnid: "{$chnid}",   //当前频道ID
             vodid: "{$vodid}",   //需要播放的VOD文件ID
             uid: "{$uid}",       //当前用户ID
@@ -211,7 +225,41 @@
             desc: "{$desc}",     //频道或点播视频的说明
             appUrl: "__APP__",       //应用基本地址
             tabItemPrefix: "tabItem"     //多功能窗口内各tab容器子窗口的id前缀
-        });
+        }
+        ///////频道封面////////
+        function checkCover() {
+            if(params.showCover){
+                $("#blkCover").css("display","block");
+                $("#btnEnterChannel").on("click",function () {
+                    $("#btnEnterChannel").off("click");
+                    $("#blkCover").animate({right:'100%'},function () {
+                        $("#blkCover").detach();
+                    });
+                    playPage = new Ou_playPage(params);
+                });
+            }else{
+                playPage = new Ou_playPage(params);
+            }
+        }
+        //系统公告
+        if(params.showNotice){
+            $("#blkNotice").css("display","block");
+            $("#btnNotice").on("click",function () {
+                $("#btnNotice").off("click");
+                checkCover();
+                $("#blkNotice").animate({right:'100%'},function () {
+                    $("#blkNotice").detach();
+                });
+            });
+        }else{
+            checkCover();
+        }
+
+
+
+
+
+       // playPage = new Ou_playPage(params);
 
     });
 

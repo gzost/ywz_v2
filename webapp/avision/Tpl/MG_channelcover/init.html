@@ -1,0 +1,109 @@
+<extend name="common:AdminBase" />
+<block name="bl_north">
+    <include file="Home:header_w" />
+    <include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+    <link rel="stylesheet" href="__PUBLIC__/kindeditor/themes/default/default.css" />
+    <div style="padding: 15px;">
+        <!-- 查询过滤条件 -->
+        <div id="blkFilter">
+
+        </div>
+        <!-- 封面编辑内容容器 -->
+        <div id="blkCoverContent" >
+            <div style="padding: 10px; width: 640px;">
+                <form id="frmEditCover">
+                    显示封面：<input type="checkbox" name="showcover" ><br>
+                    封面背景颜色：<input id="coverbackground" type="color" name="coverbackground">
+                    文字默认颜色：<input id="covercolor" type="color" name="covercolor">
+                    <input type="hidden" name="chnid" >
+                    <input type="hidden" name="func" value="saveJson">
+                    <input type="hidden" name="coverhtml" >
+                </form>
+                封面内容：<br>
+                <textarea id="editor_id" name="content" style="width:100%;height:620px;"></textarea>
+                <button id="btnSaveCover" style="margin-top:10px; width:150px;display: none;"> 保存 </button>
+            </div>
+        </div>
+    </div>
+    <script charset="utf-8" src="__PUBLIC__/kindeditor/kindeditor-all.js"></script>
+    <script charset="utf-8" src="__PUBLIC__/kindeditor/lang/zh_CN.js"></script>
+    <script>
+        $(document).ready(function(){
+            var chnid=0;    //当前编辑频道的ID
+            //建立编辑器对象
+            var editor;
+            //装入频道选择器
+            var filterContainer="#blkFilter";
+            var para={ container:filterContainer, func:"showfilter" }
+            var showFilterUrl="/home.php/MG_channelcover/main";
+            $(filterContainer).load(showFilterUrl,para,function () {
+                $.parser.parse(filterContainer);
+            });
+
+            //频道选择器选中频道后向选择器容器发送chnSelected消息
+            $(filterContainer).on("chnSelected",function (event,data) {
+                console.log("selected",data);
+                var chnid=data.id;
+                $("#frmEditCover input[name='chnid']").val(data.id);
+                $("#btnSaveCover").css("display","block");
+                //读出频道对应封面
+                var para={ func:"getCoverJson", chnid:data.id}
+                $.post("",para,function (data) {
+                    console.log(data);
+                    var check=(1==data.showcover)?true:false;
+                    $("#frmEditCover input[name='showcover']").prop("checked",check);
+
+                    editor =  KindEditor.create('#editor_id',{
+                        uploadJson:'',
+                        extraFileUploadParams:{ func:'editorUploadJson', chnid: chnid},
+                        allowFileManager :true,
+                        cssPath:'__PUBLIC__/kindeditor/article.css',	//用于编辑内容显示的CSS
+                        bodyClass:'article',
+                        imageTabIndex:1,
+                        items:[ 'undo', 'redo', '|',  'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|',
+                            'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', '/',
+                            'subscript', 'superscript', 'formatblock', 'fontsize', '|',
+                            'forecolor', 'hilitecolor', 'bold',
+                            'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat',  '/',
+                            'wordpaste', 'image', 'table', 'hr', 'emoticons', 'anchor', 'link', 'unlink']
+                    });
+                    editor.html(data.coverhtml);covercolor
+
+                    $("#coverbackground").val(data.coverbackground);
+                    $("iframe").contents().find("body").css({background:data.coverbackground});
+                    $("#covercolor").val(data.covercolor);
+                    $("iframe").contents().find("body").css({color:data.covercolor});
+                 },"json");
+            });
+
+            //修改封面背景颜色
+            $("#coverbackground").on("change",function () {
+                var color=$(this).val();
+                console.log("修改背景颜色:",color);
+                $("iframe").contents().find("body").css({background:color});
+            });
+
+            //修改封面文字颜色
+            $("#covercolor").on("change",function () {
+                var color=$(this).val();
+                $("iframe").contents().find("body").css({color:color});
+            });
+
+            //保存封面
+            $("#btnSaveCover").on("click",function () {
+                $("#frmEditCover input[name='coverhtml']").val(editor.html());
+                var postdata=$("#frmEditCover").serialize();
+
+                console.log(postdata);
+                $.post("",postdata,function (data) {
+                    console.log("Server back:",data);
+                    alert("保存完成");
+                },"json");
+            });
+        });
+    </script>
+
+</block>

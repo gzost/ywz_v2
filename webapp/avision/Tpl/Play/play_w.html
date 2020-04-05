@@ -6,8 +6,6 @@
 <link href="__PUBLIC__/kindeditor/article.css" rel="stylesheet" >
 <style>
     /** 图层定义 **/
-    .layerCover{  z-index: 90;  }   /*  频道封面层 */
-    .layerCoverBtn{  z-index: 91;  }
     .layerPopup{ z-index: 51; }     /* 弹出窗口层 */
     .layerForce { z-index: 50; }    /* 频道强制操作层, 同时作为marsk层 */
     /* 阿里视频窗口的z-index=11 */
@@ -20,14 +18,7 @@
         top:0;
         width: 100vw; height: 100vh;
     }
-    .btnCircle{
-        border-radius: 50%;
-    }
-    #blkCover{
-        background-color: #ff3;
-        overflow-y: auto;
-        display: none;
-    }
+
     #blkForceLayer{
         display:none;
         background-color: rgba(120,120,120,.6); color: #fff;">
@@ -53,16 +44,6 @@
         overflow-y: auto;
     }
 </style>
-<!-- 频道封面层，初始化时通过 $showCover 变量控制是否显示 -->
-<div id="blkCover" class="fullScreen layerCover article">
-    {$coverHtml}
-    <div id="btnEnterChannel" class="layerCoverBtn btnCircle" style="position: fixed; top:2em; right: 2em; width:4em; padding:1em;height:4em;display: flex;/*设置外层盒子display为flex*/
-            justify-content:center;/*设置内层盒子的水平居中*/
-            align-items:center;/*设置内层盒子的垂直居中*/
-            background-color: rgba(30,30,30,.3); color: #fff;">
-        <div style="position: relative;z-index: 99;">进入频道</div>
-    </div>
-</div>
 
 <!-- 强制操作层 按$forceLayer指示执行不同的操作 -->
 <div id="blkForceLayer" class="fullScreen layerForce" style="">

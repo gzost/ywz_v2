@@ -606,10 +606,12 @@ function Ouuid(){
     $t=microtime();
     list($usec, $sec) = explode(" ",$t );
     $usec=substr($usec,2,6);
-    $rand=mt_rand(0,0xfffff);
-    //echo $t.'='.$usec.'<br>';
-    $uuid=sprintf("%08x%05x%05x",$sec,$usec,$rand);
-    return $uuid;
+    $rand=mt_rand(1000,0xfffff);
+    //var_dump($usec, $sec,$rand);
+    $usec32=base_convert($usec,10,36);
+    $sec32=base_convert($sec,10,36);
+    $rand32=base_convert($rand,10,36);
+    return $sec32.$usec32.$rand32;
 }
 
 /**

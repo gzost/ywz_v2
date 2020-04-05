@@ -1,0 +1,47 @@
+<!-- 频道选择过滤器页面 -->
+<div style="padding: 5px 15px; border: 1px solid #ccf; border-radius: 7px;">
+    过滤条件：
+    <form id="frmChnFilter" method="post" style="display: inline-block;">
+        <span class="cond-item">机构：<input class="easyui-combobox"  name="agent" value="{$agent}" style="width: 150px; height: 25px;"
+                                          data-options="valueField:'id',textField:'name', data: {$agentListJson}, readonly:{$agentReadonly}">
+        </span>
+        <span class="cond-item">播主账号：<input class="easyui-textbox" name="owner" value="{$owner}" style="width:100px; height: 25px;"
+                                            data-options="readonly: {$ownerReadonly}" >
+        </span>
+        <span class="cond-item">
+            频道名称：<input class="easyui-textbox" name="chnName" value="{$chnName}" style="width:150px; height: 25px;" />
+        </span>
+        <input type="hidden" name="func" value="getChnListJson">
+        <div id="btn_chnsearch" class="easyui-linkbutton" iconCls="icon-search" style="height: 25px; margin-right: 2em;" >查询</div>
+    </form>
+    <span class="cond-item" >
+        选择频道:
+        <input id="chnList" class="easyui-combobox"  name="chnid" value="{$chnid}" style="width: 200px; height: 25px;"
+           data-options="valueField:'id',textField:'name' ">
+    </span>
+</div>
+<div>
+
+</div>
+<script>
+    $(document).ready(function () {
+        var container="{$container}";
+
+        $("#btn_chnsearch").on("click",function () {
+            var para= $("#frmChnFilter").serialize();
+            $.post("",para,function (data) {
+                $("#chnList").combobox("loadData",data);
+                if(data.length>0){
+                    $("#chnList").combobox("setValue",data[0].id);
+                }
+            },"json");
+        });
+
+        $("#chnList").combobox({
+            onSelect:function (row) {
+                console.log("selected",row);
+                $(container).trigger("chnSelected",row);
+            }
+        });
+    });
+</script>

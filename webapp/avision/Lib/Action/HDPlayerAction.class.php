@@ -769,7 +769,7 @@ logfile('WhatViewer:'.$st);
 			//记录传播者
 			if(!empty($userInfo['userId']))
 			{
-				$upDal->Rec($chnId, $userInfo['userId'], 'pass');
+				//$upDal->Rec($chnId, $userInfo['userId'], 'pass');
 			}
 			$this->assign('myurl',$myurl);
 //echo $myurl;

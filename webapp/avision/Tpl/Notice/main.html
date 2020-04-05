@@ -1,0 +1,55 @@
+<extend name="common:AdminBase" />
+<block name="bl_north">
+    <include file="Home:header_w" />
+    <include file="Console:north_w" />
+</block>
+<block name="bl_main">
+    <style>
+        .blkNoticeForm{
+            padding: 10px;
+            font-size: 16px;
+            line-height: 2em;
+        }
+        form>div{
+            margin: 10px 0;
+        }
+        form>div *{
+            border: 1px solid #aaa;
+            border-radius: 5px;
+        }
+
+    </style>
+    <div class="blkNoticeForm">
+        <form id="frmNotice" method="post">
+            <div>
+                标题：<input type="text" name="headline" value="{$headline}" style="width: 400px;">
+            </div>
+            <div style="vertical-align: top;">
+                内容：<textarea name="content" rows="5" style="width: 400px;">{$content}</textarea>
+            </div>
+            <div>
+                显示时间从：<input class="easyui-datetimebox" name="begintime" value="{$begintime}" >
+                <div style="height:5px;clear: both; border: 0;"></div>
+                　　　　至：<input class="easyui-datetimebox" name="endtime" value="{$endtime}">
+            </div>
+
+            <input type="hidden" name="work" value="saveJson">
+        </form>
+        <div id="noticeSaveResult" style="color: #333366;">确定更新后系统公告立即生效</div>
+        <button id="btnSaveNotice" style="margin-left: 30px; padding: 2px 10px;">确定更新公告</button>
+    </div>
+    <script type="text/javascript" src="__PUBLIC__/jeasyui/locale/easyui-lang-zh_CN.js" ></script>
+    <script>
+        $(document).ready(function () {
+            $("#btnSaveNotice").on("click",function () {
+                var para=$("#frmNotice").serialize();
+                $.post("__SELF__",para,function (data) {
+                    console.log(data);
+                    var str="公告更新成功";
+                    if(data.success!=="true") str=data.msg;
+                    $("#noticeSaveResult").html(str);
+                },"json");
+            });
+        });
+    </script>
+</block>

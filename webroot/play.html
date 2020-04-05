@@ -7,6 +7,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
     <title>易网真视频云</title>
 
+    <link rel="stylesheet" href="Public/kindeditor/article.css" />
     <style>
         * { box-sizing: border-box;}
 
@@ -17,6 +18,19 @@
             background-color: #fff;
             font-size: 12px;
         }
+        .layerLoading{ z-index: 1100; } /* 初始加载提示层 */
+        .layerNotice{ z-index: 1092; }    /* 系统公告层 */
+        .layerCover{  z-index: 1090;  }   /*  频道封面层 */
+        .layerCoverBtn{  z-index: 1091;  }
+
+        .fullScreen{
+            position: absolute;
+            top:0;
+            width: 100vw; height: 100vh;
+        }
+        .btnCircle{
+            border-radius: 50%;
+        }
 
         /* 手机-电脑统一的封面 */
         .compatible-cover{
@@ -25,10 +39,9 @@
 
         /** 装载播放器时显示内容的容器 **/
         .blkLoading{
-            position: absolute;
+            /*position: absolute;
             height: 100vh; width: 100vw;
-            top:0;
-            z-index: 100;
+            top:0;*/
             display: flex;/*设置外层盒子display为flex*/
             justify-content:center;/*设置内层盒子的水平居中*/
             align-items:center;/*设置内层盒子的垂直居中*/
@@ -70,16 +83,55 @@
             font-size: 16px;
             color:#3a3a3a;
         }
+
+
+        #blkNotice{
+            display: none;
+        }
+        #blkCover{
+            display:none;
+        }
     </style>
 </head>
 <body >
-
-<div class="blkLoading" id="blkLoading">
+<!-- 载入提示层 -->
+<div class="layerLoading blkLoading fullScreen" id="blkLoading">
     <div class="itemLoading">
         <img src="Public/images/ywzlogo64.png" >
         Loading...
     </div>
 </div>
+<!-- 系统通知提示层 btnCloseBlk是作为触发关闭本层 标志-->
+<div id="blkNotice" class="fullScreen layerNotice " style="overflow:hidden;background-color: #cccccc;">
+    <div id="blkNoticeContent" style="position: relative; margin:0 auto; height: 100%; width:100%; max-width:640px; padding: 10px;background-color: #ffffcc;">
+
+    </div>
+    <div id="btnNotice" blk="blkNotice" class="btnCloseBlk" style="position: absolute;width: 120px; bottom: 30px;
+    left: calc( 50% - 60px ); padding: 2px 0; text-align: center; font-size: 14px; color:#fff; background-color: #666699;">知道了</div>
+</div>
+
+<!-- 频道封面层，初始化时通过 $showCover 变量控制是否显示 -->
+<div id="blkCover" class="fullScreen layerCover" style="overflow:hidden;background-color: #cccccc;">
+    <div id="blkCoverContent" class="article" style="position: relative; margin:0 auto; height: 100%; width:100%; max-width:640px; overflow-y:auto; overflow-x:hidden;background-color: #ffffcc;">
+
+    </div>
+    <div style="position:absolute; top:30px;width: 100%; text-align: center;">
+        <div style="position:relative; display:inline-block; width:100%; max-width:640px; ">
+            <div  blk="blkCover" class="layerCoverBtn btnCircle btnCloseBlk"
+                 style="position: absolute; right: 30px; width:4em; padding:1em;height:4em;display: flex;/*设置外层盒子display为flex*/
+            justify-content:center;/*设置内层盒子的水平居中*/
+            align-items:center;/*设置内层盒子的垂直居中*/
+            font-weight: lighter;
+            background-color: rgba(30,30,30,.3); color: #fff;">
+                <div >进入频道</div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+
 <div id="playerMain" style="display: block; position:absolute; top:0;width: 100vw; height: 100vh; overflow: hidden;">
     <div style="margin-top:49vh; width:100%; text-align:center; font-size: 18px;">服务器繁忙请稍后再试</div>
 </div>
@@ -88,14 +140,72 @@
 <script src="/Public/jeasyui/jquery.min.js" ></script>
 <script>
     $(document).ready(function(){
-        //装入播放器页面，同时传递url给后台
-        var data = {url: window.location.href, height: window.screen.height, width: window.screen.width};
-        $.ajaxSetup({async: true});
-        $("#playerMain").load("home.php/Play/main.html", data, function () {
-            $('#blkLoading').animate({right: '100%'},function () {
-                $("#blkLoading").detach();
+        function getQueryString(name) {
+            var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+            var r = window.location.search.substr(1).match(reg);
+            if (r != null) {
+                return unescape(r[2]);
+            }
+            return null;
+        }
+
+        function loadPlayerPage(showing) {
+            //装入播放器页面，同时传递url给后台
+            var data = {url: window.location.href, height: window.screen.height, width: window.screen.width};
+            $.ajaxSetup({async: true});
+
+            $("#playerMain").load("home.php/Play/main.html", data, function () {
+                showing.animate({right: '100%'},function () {
+                    showing.detach();
+                });
             });
-        });
+        }
+
+        var showing=$('#blkLoading');   //正在显示div层的jq对象
+        console.log("nc=",getQueryString("nc"));
+        var nc=getQueryString("nc");
+        var chnid=getQueryString("ch");
+        var showpages=0;    //在装入正式播放器前需要关闭的页面数
+        if(null !== nc ) loadPlayerPage(showing);
+        else{
+            $.post("home.php/Preplay/getNoticeJson",{chnid:chnid},function (data) {
+                if(null != data.noticeHtml){
+                    $("#blkNoticeContent").html(data.noticeHtml);
+                    $("#blkNotice").css("display","block");
+                    showpages++;
+                }
+                if(null != data.coverHtml){
+                    $("#blkCoverContent").html(data.coverHtml);
+                    if(null != data.coverBackground) $("#blkCoverContent").css("background-color",data.coverBackground);
+                    if(null != data.coverColor) $("#blkCoverContent").css("color",data.coverColor);
+                    $("#blkCover").css("display","block");
+                    showpages++;
+                }
+
+                if(showpages>0){
+                    showing.animate({right: '100%'},function () {
+                        showing.detach();
+                    });
+                    $(".btnCloseBlk").on("click",function (event) {
+                        var obj=event.currentTarget;
+                        var blkId=$(obj).attr("blk");
+                        $(event.target).css("display","none");
+                        console.log(blkId);
+                        showing=$("#"+blkId);
+//console.log(showing,event.currentTarget,event.delegateTarget);
+                        if(--showpages == 0) loadPlayerPage(showing);
+                        else {
+                            showing.animate({right: '100%'},function () {
+                                showing.detach();
+                            });
+                        }
+                    });
+                }else{
+                    loadPlayerPage(showing);
+                }
+            },"json")
+        }
+
     });
 
 </script>

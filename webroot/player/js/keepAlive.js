@@ -14,8 +14,8 @@ function HeartBeat(para)
 	//私有属性
 	var enableHeartBeat=true;	//允许心跳
 	//看门狗相关属性
-     var netBrokenInt=6*10;	//网络中断最长时间，默认值，10分钟
-     var operatorIdleInt=6*30;	//播放终端最长不操作时间，默认值30分钟
+     var netBrokenInt=6*20;	//网络中断最长时间，默认值，20分钟
+     var operatorIdleInt=6*60;	//播放终端最长不操作时间，默认值60分钟
 	//处理传入参数
 	if('object'==typeof(para)){
 		console.log(para);
@@ -40,7 +40,7 @@ function HeartBeat(para)
 				type: 'post',
 				data: status,
 				cache:false,
-				timeout:15000,	//超时设为15秒
+				timeout:60000,	//超时设为60秒
 				dataType: 'json',
 				success:function(json){
 					//返回数据格式：[{"type":"数据分类名称","data":{} }, ...]
@@ -64,7 +64,7 @@ function HeartBeat(para)
                     }
 				},
 				complete:function(){	//无论是否成功都会调用
-                    setTimeout(_this.keepAlive,15000);	//心跳间隔15秒
+                    setTimeout(_this.keepAlive,50000);	//心跳间隔20秒
 				},
 				error:function(){
 					//网络中断了就不可能跳转了。这里无需处理，另外设置定时器，当一段时间没收到HeartBeatSuccess消息则判断网络中断

@@ -28,7 +28,7 @@ class PreplayAction extends Action
 
         $chnid=intval($chnid);
         if($chnid>0){
-            $rec=D("Channelext")->getCoverHtml($chnid);
+            $rec=D("Channelext")->getCoverHtml($chnid,"1");
             if(null==$rec) $retArr["coverHtml"]=null;
             else{
                 $retArr["coverHtml"]=$rec['coverhtml'];

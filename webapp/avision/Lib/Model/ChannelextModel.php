@@ -14,12 +14,16 @@ class ChannelextModel extends Model{
     /**
      * 频道封面HTML
      * @param int $chnid
+     * @param  string $showcover    显示状态条件，不提供为忽略
      * @return mixed null-没有需要显示的封面或者禁止显示封面，string-频道封面的HTML
      */
-    public function getCoverHtml($chnid=0){
+    public function getCoverHtml($chnid=0, $showcover=""){
         try{
             if(1>$chnid) throw new Exception("参数错误");
-            $rec=$this->field("coverhtml,coverbackground,covercolor,showcover")->where(array("chnid"=>$chnid, "showcover"=>1))->find();
+            $cond=array("chnid"=>$chnid);
+            if(""!==$showcover) $cond["showcover"]=$showcover;
+            $rec=$this->field("coverhtml,coverbackground,covercolor,showcover")->where($cond)->find();
+            //var_dump($rec); echo $this->getLastSql();
             if(empty($rec)) throw new Exception("没有可显示的封面");
             return $rec;
         }catch (Exception $e){

@@ -180,7 +180,7 @@ class PlayAction extends SafeAction{
         $webVar["entrytimes"]=$this->channel["entrytimes"];
         $webVar["logoImg"]=$this->dbChannel->getLogoImgUrl($chnAttr, $this->chnid);
 
-
+        /*
         //3.1 处理系统公告
         if(!isset($this->para["nc"])){
             $webVar['showNotice']=0;
@@ -195,7 +195,7 @@ class PlayAction extends SafeAction{
             $webVar['showCover']=0;
             $webVar["coverHtml"]="空白封面";
         }
-
+        */
         //4、按频道类型决定是否需要登录/注册/付费等
         $chnType=$this->channel["type"];  //频道类型
         if(isset($chnAttr['wxonly']) && 'true' == $chnAttr['wxonly']){
@@ -518,6 +518,12 @@ class PlayAction extends SafeAction{
         $webVar["tab"]=$this->para["tab"]=$_REQUEST["tab"];
         $webVar["agent"]=$this->para["agent"]=$_REQUEST["agent"];
         $webVar['backUrl']=$this->pageUrl();
+
+        //取频道海报
+        if(empty($this->dbChannel)) $this->dbChannel=D("channel");
+        if(empty($this->channel)) $this->channel=$this->dbChannel->getInfoExt($this->chnid);
+        $webVar["title"]=$this->channel["name"];
+        $webVar["poster"] = $this->dbChannel->getPosterUrl($this->chnid,$this->channel["ext"]);   //海报地址
 
         $this->assign($webVar);
         $this->display("Play:showChnRegister");

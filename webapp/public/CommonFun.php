@@ -15,7 +15,8 @@
 
 //include(APP_PATH.'Common/functions.php');
 require_once APP_PATH.'../public/Ou.Function.php';
-require_once(LIB_PATH.'Model/DictionaryModel.php');
+//require_once(LIB_PATH.'Model/DictionaryModel.php');
+require_once('../webapp/avision/Lib/Model/DictionaryModel.php');
 function replaceEmoji($str,$replace="_")
 {
 	//转换成uincode表示

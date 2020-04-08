@@ -20,10 +20,10 @@ function HeartBeat(para)
 	if('object'==typeof(para)){
 		console.log(para);
 		var tmpInt=parseInt(para.operatorIdleInt)/10;
-		if(tmpInt>2) operatorIdleInt=tmpInt;	//要长于20秒
+		if(tmpInt>180) operatorIdleInt=tmpInt;	//要长于1800秒
 
         tmpInt=parseInt(para.netBrokenInt)/10;
-        if(tmpInt>2) netBrokenInt=tmpInt;	//要长于20秒
+        if(tmpInt>60) netBrokenInt=tmpInt;	//要长于600秒
 	}
     //netBrokenInt=1;
 	//console.log("operatorIdleInt="+operatorIdleInt);

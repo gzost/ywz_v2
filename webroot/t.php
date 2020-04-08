@@ -1,4 +1,11 @@
 <?php
+define("appname",3);
+var_dump(defined("appname"));
+$v=appname;
+
+var_dump($v);
+
+exit;
 var_dump($_SERVER);
 if(!empty($_SERVER["HTTP_ALI_CDN_REAL_IP"])) $ip=$_SERVER["HTTP_ALI_CDN_REAL_IP"];
 elseif (!empty($_SERVER["HTTP_X_FORWARDED_FOR"])) $ip=$_SERVER["HTTP_X_FORWARDED_FOR"];

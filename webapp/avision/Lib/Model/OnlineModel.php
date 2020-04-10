@@ -495,8 +495,11 @@ class OnlineModel extends Model {
                         try{
                             //$BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"true",$starttime+$timeDiff,time()+1);
                             $playedSecond=($clientStamp>$starttime)?$clientStamp-$starttime: 1; //最少播放了1秒
-                            $BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"true",$now-$playedSecondf,$now,$chnid);
-                            if(empty($BEid)) throw new Exception("建立在线记录失败!");
+                            if($playedSecond>10){
+                                //播放10秒以上才开始记录
+                                $BEid=$this->createOnline($uid,$row["objtype"],$row["refid"],$userName,"true",$now-$playedSecond,$now,$chnid);
+                                if(empty($BEid)) throw new Exception("建立在线记录失败!");
+                            }
                         }catch(Exception $e){
                             if(empty($BEid)) logfile($e->getMessage().$this->getLastSql(),LogLevel::ALERT);
                         }

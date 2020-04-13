@@ -9,7 +9,7 @@
     background-color: #eee;
     /* min-height: 400px; */
     text-align: left;
-    border-bottom: 4px solid white;
+    border-bottom: 4px solid transparent;
 }
 
 .block-title{

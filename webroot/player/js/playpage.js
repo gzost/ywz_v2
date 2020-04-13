@@ -1,6 +1,7 @@
 
 /**
  * 播放页面主要js集合
+ * 依赖：jquery,jweixin
  */
 
 //////////与后端通讯类//////////
@@ -90,7 +91,7 @@ function  Ou_OnlineTableC() {
     }
     this.setOnline=function (id,objtype,refid,FEobj) {
         var now=parseInt((new Date()).getTime()/1000);
-        console.log("setting online..",id,objtype,refid);
+        console.log("setting online..",id,objtype,refid,now,onlineTable[id]["starttime"]);
         //相同资源暂停20秒内重新播放，连续计算播放时间
         if(onlineTable[id]["starttime"]>0 && (now-onlineTable[id]["endtime"])<20 && onlineTable[id]["objtype"]==objtype && onlineTable[id]["refid"]==refid){
             onlineTable[id]["endtime"]=0;
@@ -106,7 +107,7 @@ function  Ou_OnlineTableC() {
     }
     this.setOffline=function (id) {
         var now=parseInt((new Date()).getTime()/1000);
-        console.log("setting offline..",id);
+        console.log("setting offline..",id,now);
         if(onlineTable[id]["starttime"]>0)  onlineTable[id]["endtime"]=now; //有start才设置
         console.log(onlineTable);
     }
@@ -204,6 +205,9 @@ function Ou_playPage(params) {
      * 向服务器发送数据，自动附加onlineTable
      */
     this.send=function(data,callback){
+        var playStatus=player.getStatus();
+        console.log("playstatus=",playStatus,"playType=",params.playType);
+        if("error"==playStatus || "ended"==playStatus) Ou_OnlineTable.setOffline(params.playType);  //避免收不到结束信号错误计费
         data["onlineTable"]=Ou_OnlineTable.getOnlineTable();
         data["appPara"]=appPara;
         communicate.send(data,callback);
@@ -441,6 +445,45 @@ console.log("status.playerReady=",status.playerReady);
         if(params.uid>=100) url+="&du="+params.uid;
         console.log("url changed to=",url);
         history.replaceState(null,null,url+"#");    //当URL内有&时必须要在url后加点东西，否则在手机上会跳转
+
+        try{
+            //定制微信分享标签，每次更新URL需重新生成签名
+            url=window.location.href;
+            var post={ url: url}
+            $.post(params.getgetSignUrl,post,function (data) {
+                console.log(data);
+                wx.config({
+                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    appId: data.appId, // 必填，公众号的唯一标识
+                    timestamp: data.timestamp, // 必填，生成签名的时间戳
+                    nonceStr: data.noncestr, // 必填，生成签名的随机串
+                    signature: data.signature,// 必填，签名
+                    jsApiList: ['updateAppMessageShareData', 'updateTimelineShareData','onMenuShareWeibo','onMenuShareQZone'] // 必填，需要使用的JS接口列表
+                });
+                wx.ready(function () {   //需在用户可能点击分享按钮前就先调用
+                    console.log("WX ready====url:",url,params.logoImg);
+                    wx.updateAppMessageShareData({
+                        title: params.title, // 分享标题
+                        desc: params.desc, // 分享描述
+                        link: url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                        imgUrl: params.logoImg, // 分享图标
+                        success: function () {
+                            // 设置成功
+                        }
+                    });
+                    wx.updateTimelineShareData({
+                        title:params.title, // 分享标题
+                        link: url, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+                        imgUrl: params.logoImg, // 分享图标
+                        success: function () {
+                            // 设置成功
+                        }
+                    })
+                });
+            },"json");
+        }catch (e) {
+            console.log(e);
+        }
     }
 
     ///////////导航条处理对象/////////
@@ -665,18 +708,17 @@ console.log("status.playerReady=",status.playerReady);
 
     //页面初始时运行的东西集中在这里
     var initPage=function () {
-
         //若是直播，显示开播信息
         if(params.playType=="live") showAirTime();
         //修改页面标题
         $("title").text(params.title);
+        _this.setUrl();
 
     }
 
     setTimeout(function () {
         initPage();
     },500);
-    // return this;
 }
 
 

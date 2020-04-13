@@ -24,17 +24,29 @@ require_once APP_PUBLIC.'aliyun/Sms.Class.php';
 
 class TestAction extends Action
 {
-    public function db(){
-        echo "db".date("H:i:s")."<br>";
-        C('DB_HOST', 'localhost');
-        C('DB_USER','ywzdbu'); // 用户名
-        C('DB_PWD', 'ywz*2016'); // 密码
-        C('DB_PORT', 3860); // 端口
-        $db=D('user');
-        $name=$db->where("id=20")->getField("account");
-        var_dump($name);
-        echo "sql=".$db->getLastSql()."<br>";
+    //微信分享测试
+    public function wxshare(){
+        dump($_SERVER);
+        $webVar=array();
+        $this->assign($webVar);
+        $this->display("wxshare");
     }
+    //取js-sdk需要的签名等参数
+    public function getSignJson($url=""){
+        $tokenFile = APP_VAR.'wx_token.php';
+        include($tokenFile);
+//var_dump($tokenFile);
+        $pam = array();
+        $pam['noncestr'] = RandNum(16);
+        $pam['jsapi_ticket'] = $token['ticket'];
+        $pam['timestamp'] = time();
+        $pam['url'] =  (""==$url)? 'http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']:$url;
+//var_dump($pam);参与签名的字段包括noncestr（随机字符串）, 有效的jsapi_ticket, timestamp（时间戳）, url（当前网页的URL，不包含#及其后面部分
+        $pam["signature"] = WxSys::JsSDKSignature($pam);
+        $pam["appId"]=WX_APPID;
+        echo json_encode($pam);
+    }
+
 	function Ip2()
 	{
 		$mod = new Ip2addrModel();
@@ -47,15 +59,6 @@ class TestAction extends Action
 
 	function Ip()
 	{
-		/*
-		$str = 'CN|广东|广州|None|CHINANET|0|0';
-
-		$ret = explode('|', $str);
-		$addr = $ret[0].'|'.$ret[1].'|'.$ret[2];
-		var_dump($addr);
-		*/
-
-
 		$baidu = new Lbsyun();
 		$ret = $baidu->Ip2Address('101.226.125.117');
 		var_dump($ret);
@@ -361,13 +364,6 @@ class TestAction extends Action
 		var_dump($ret);
 		*/
 	}
-
-	public function T()
-	{
-		//echo $_SERVER['HTTP_USER_AGENT'];
-        $this->display();
-	}
-
 
 }
 ?>

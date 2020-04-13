@@ -178,7 +178,7 @@ class PlayAction extends SafeAction{
         $webVar["title"]=htmlspecialchars($this->channel["name"]);
         $webVar["desc"]=htmlspecialchars($this->channel["descript"]);
         $webVar["entrytimes"]=$this->channel["entrytimes"];
-        $webVar["logoImg"]=$this->dbChannel->getLogoImgUrl($chnAttr, $this->chnid);
+        $webVar["logoImg"]="http://".$_SERVER["HTTP_HOST"].$this->dbChannel->getLogoImgUrl($chnAttr, $this->chnid);
 
         /*
         //3.1 处理系统公告

@@ -462,6 +462,7 @@ class PlayAction extends SafeAction{
         $vodfile=$dbRf->where("id=".$vodid)->find();
         $webVar['vodid']=$vodid;
         //$webVar['title']=$vodfile['name'];
+        //$webVar["desc"]=htmlspecialchars($vodfile["descript"]);
         $webVar["playType"]="vod";
         $webVar["cover"] = $dbRf->getImgMrl($vodfile['path']);   //海报地址
         $webVar["source"]=$dbRf->getVodMrl($vodid);
@@ -481,6 +482,7 @@ class PlayAction extends SafeAction{
         $webVar['vodid']="";
         $webVar["playType"]="live";
         $webVar["title"]=$this->channel["name"];
+        $webVar["desc"]=htmlspecialchars($this->channel["descript"]); //频道描述
         $webVar["cover"] = $this->dbChannel->getPosterUrl($this->chnid,$this->channel["ext"]);   //海报地址
         $streamDal = D('stream');
         $w = array('id'=>$this->channel['streamid']);

@@ -226,6 +226,10 @@ function Ou_playPage(params) {
     //响应收到服务器发送数据，内部使用了keepalive.stop方法
     $(window).on("RecvData",function (event,recvData) {
         console.log("recvData proc onlineTable");
+        //var isFullScreen=player.fullscreenService.getIsFullScreen();
+        //console.log("fullscreenService.getIsFullScreen=",isFullScreen);
+        //alert("fullScr:"+isFullScreen+window.orientation);
+
         //处理在线用户表
         if("object"==typeof(recvData.onlineTable)){
             var reject=Ou_OnlineTable.procFeedback(recvData.onlineTable);
@@ -444,7 +448,7 @@ console.log("status.playerReady=",status.playerReady);
         if(params.playType=="vod") url +="&vf="+params.vodid;
         if(params.uid>=100) url+="&du="+params.uid;
         console.log("url changed to=",url);
-        history.replaceState(null,null,url+"#");    //当URL内有&时必须要在url后加点东西，否则在手机上会跳转
+        history.replaceState(null,null,url);    //当URL内有&时必须要在url后加点东西，否则在手机上会跳转
 
         try{
             //定制微信分享标签，每次更新URL需重新生成签名
@@ -452,8 +456,9 @@ console.log("status.playerReady=",status.playerReady);
             var post={ url: url}
             $.post(params.getgetSignUrl,post,function (data) {
                 console.log(data);
+                var debug=(1098==params.chnid)?true:false;
                 wx.config({
-                    debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+                    debug: debug, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
                     appId: data.appId, // 必填，公众号的唯一标识
                     timestamp: data.timestamp, // 必填，生成签名的时间戳
                     nonceStr: data.noncestr, // 必填，生成签名的随机串
@@ -461,7 +466,7 @@ console.log("status.playerReady=",status.playerReady);
                     jsApiList: ['updateAppMessageShareData', 'updateTimelineShareData','onMenuShareWeibo','onMenuShareQZone'] // 必填，需要使用的JS接口列表
                 });
                 wx.ready(function () {   //需在用户可能点击分享按钮前就先调用
-                    console.log("WX ready====url:",url,params.logoImg);
+                    console.log("WX ready====url:",url,params.logoImg,params.desc);
                     wx.updateAppMessageShareData({
                         title: params.title, // 分享标题
                         desc: params.desc, // 分享描述
@@ -557,26 +562,25 @@ console.log("status.playerReady=",status.playerReady);
                         blkItem.load(params.appUrl+"/Play/showChnInfo",{chnid:params.chnid});
                         isTabInit[tabid]=true;
                     }
-
-                    //取直播播放地址及cover
-                    console.log("取直播播放地址及cover");
-                    var postData={"chnid":params.chnid, "agent":params.agent,"playToken":params.playToken};
-                    $.post(params.appUrl+"/Play/getLiveSourceJson",postData,function (data) {
-                        console.log("getLiveSourceJson",data);
-                        if(null == data) alert("错误: 无法访问服务器");
-                        else {
-                            if (data.success != "true") alert(data.msg);
+                    //此if避免直播为默认tab时且播放类型是直播时，多取一次直播数据
+                    if((!firstActive) || params.playType!='live'){
+                        //取直播播放地址及cover
+                        console.log("取直播播放地址及cover");
+                        var postData={"chnid":params.chnid, "agent":params.agent,"playToken":params.playToken};
+                        $.post(params.appUrl+"/Play/getLiveSourceJson",postData,function (data) {
+                            console.log("getLiveSourceJson",data);
+                            if(null == data) alert("错误: 无法访问服务器");
                             else {
-                                _this.reloadPlayer("live",data.source,data.cover,params.chnid);
+                                if (data.success != "true") alert(data.msg);
+                                else {
+                                    params.desc=data.desc;
+                                    _this.reloadPlayer("live",data.source,data.cover,params.chnid);
+                                    _this.setUrl();
+                                }
                             }
-                        }
-                    },"json");
-                    _this.setUrl();
-                    /*
-                    var url=window.location.protocol+"//"+window.location.host;
-                    url +="/play.html?ch="+params.chnid;
-                    history.replaceState(null,null,url);
-                    */
+                        },"json");
+                    }
+
                     $(local.layerVideoTop2).show();
                     break;
                 case 110:   //频道介绍
@@ -625,6 +629,7 @@ console.log("status.playerReady=",status.playerReady);
                     }
                     break;
             }
+            firstActive=false;
         });
         //其它扩展的tab功能
         tabBlk.bind("tabActive",function(event,tabid,para) {
@@ -633,6 +638,7 @@ console.log("status.playerReady=",status.playerReady);
         });
 
         //初始化，必须要放在此对象的最后
+        var firstActive=true;   //触发第一次active后设为false,避免直播为默认tab时且播放类型是直播时，多取一次直播数据
         var activeOrder=tabBar.find(">div[tabid='"+activetab+"']").attr("taborder");  //addClass('tab-selected');
         if(typeof(activeOrder)=="undefined") activeOrder=0;
         setActive(activeOrder);
@@ -704,6 +710,10 @@ console.log("status.playerReady=",status.playerReady);
     //取公共参数
     this.getParam=function () {
         return params;
+    }
+    //设置公告参数
+    this.setParam=function (key,value) {
+        params[key]=value;
     }
 
     //页面初始时运行的东西集中在这里

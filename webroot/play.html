@@ -115,8 +115,16 @@
     <div id="blkCoverContent" class="article" style="position: relative; margin:0 auto; height: 100%; width:100%; max-width:640px; overflow-y:auto; overflow-x:hidden;background-color: #ffffcc;">
 
     </div>
+    <div style="position:absolute; top:30px;right: 30px; height:64px; width:64px; text-align: center; overflow: hidden; ">
+        <div  blk="blkCover" class="layerCoverBtn btnCircle btnCloseBlk" style="height:64px; width:64px;background-color: rgba(30,30,30,.3); color: #fff;">
+            <img src="Public/images/enterchannel.png" alt="进入频道" style="height: 100%;width: 100%">
+        </div>
+        <img src="Public/images/timg.gif" class="layerCoverBtn btnCircle" style="width: 100%; height: 100%">
+    </div>
+    <!--
     <div style="position:absolute; top:30px;width: 100%; text-align: center;">
         <div style="position:relative; display:inline-block; width:100%; max-width:640px; ">
+
             <div  blk="blkCover" class="layerCoverBtn btnCircle btnCloseBlk"
                  style="position: absolute; right: 30px; width:4em; padding:1em;height:4em;display: flex;/*设置外层盒子display为flex*/
             justify-content:center;/*设置内层盒子的水平居中*/
@@ -124,10 +132,15 @@
             font-weight: lighter;
             background-color: rgba(30,30,30,.3); color: #fff;">
                 <div >进入频道</div>
+                <div style="width:4em; height: 4em;flex: auto">
+                    <img src="Public/images/loading.gif" style="width: 100%; height: 100%">
+                </div>
             </div>
+
+
         </div>
     </div>
-
+    -->
 
 </div>
 
@@ -136,7 +149,7 @@
     <div style="margin-top:49vh; width:100%; text-align:center; font-size: 18px;">服务器繁忙请稍后再试</div>
 </div>
 
-<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/de/prismplayer/2.8.7/aliplayer-h5-min.js" ></script>
+<!--<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/de/prismplayer/2.8.7/aliplayer-h5-min.js" ></script>-->
 <script src="/Public/jeasyui/jquery.min.js" ></script>
 <script>
     $(document).ready(function(){
@@ -189,9 +202,11 @@
                     $(".btnCloseBlk").on("click",function (event) {
                         var obj=event.currentTarget;
                         var blkId=$(obj).attr("blk");
-                        $(event.target).css("display","none");
+                        //$(event.target).css("display","none");
+                        $(obj).css("display","none");
                         console.log(blkId);
                         showing=$("#"+blkId);
+//return;
 //console.log(showing,event.currentTarget,event.delegateTarget);
                         if(--showpages == 0) loadPlayerPage(showing);
                         else {

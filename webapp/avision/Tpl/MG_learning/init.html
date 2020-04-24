@@ -1,0 +1,272 @@
+<extend name="common:AdminBase" />
+<block name="bl_north">
+    <include file="Home:header_w" />
+    <include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+    <link rel="stylesheet" href="__PUBLIC__/kindeditor/themes/default/default.css" />
+    <style>
+        #blkPaperItem .item-line{
+            margin-top:10px;
+        }
+        #blkPaperItem .item-line .title{
+            display: inline-block;
+            width: 6em;
+            text-align: right;
+        }
+    </style>
+    <div style="padding: 15px;">
+        <!-- 查询过滤条件 -->
+        <div id="blkFilter">
+            {:R('MD_ChannelSelector/showfilter',array( $contextToken, $right, "$account" )) }
+        </div>
+        <div  style="display: flex; margin-top: 10px; flex-flow: row nowrap;">
+            <!-- 练习卷列表区 -->
+            <div style="flex:anone; width: 640px;">
+                <table id="dgPaperList" class="easyui-datagrid"  style="width:100%; "  data-options="toolbar:'#tb'" >
+                    <thead>
+                    <tr>
+                        <th data-options="field:'id', width:60, align:'center'">编号</th>
+                        <th data-options="field:'title', align:'center'">练习标题</th>
+                        <th data-options="field:'status', width:60,align:'center',
+                            formatter:function(value,row,index){
+                                if(value=='1') return '发布';
+                                else if(value=='0') return '编辑';
+                                else return value;
+                            }
+                        ">状态</th>
+                    </tr>
+                    </thead>
+                </table>
+                <div id="tb" style="padding:2px 5px;">
+                    <!-- 功能按钮 -->
+                    <div id="dgbutton" style="margin: 2px 5px; ">
+                        <button id="Append" >增加</button>
+                        <button id="Remove" >删除</button>
+                    </div>
+                    <div id="msg" class="errmsg" ></div>
+                </div>
+            </div>
+            <!-- 练习卷编辑区 -->
+            <div id="blkPaperItem" style="display:block; flex-shrink:0;margin-left:10px; width: 500px;  border: 1px solid #aae;">
+                <div style="box-sizing:border-box; height: 35px; padding: 5px 10px; background-color: #F0F0EE; border-bottom: 1px #dddddd solid;">
+                    <a id="btn-save" href="javascript:void(0)" >保存</a>
+                </div>
+                <div style="padding: 5px 10px; font-size: 14px;">
+                    <form id="frmItem" method="post">
+                        <div class="item-line">
+                            <span class="title">练习标题：</span><input name="title" type="text" style="width:350px; border-width: 0 0 1px 0; border-color: #889; background-color: transparent;">
+                        </div>
+                        <div class="item-line">
+                            <span class="title">标准答案：</span><input name="answer" type="text" style="width:350px; border-width: 0 0 1px 0; border-color: #889; background-color: transparent;" >
+                        </div>
+                        <div class="item-line">
+                            <span class="title">发卷时间：</span><input id="btime" name="btime" type="text" class="easyui-datetimebox" >
+                        </div>
+                        <div class="item-line">
+                            <span class="title">收卷时间：</span><input id="etime" name="etime" type="text" class="easyui-datetimebox" >
+                        </div>
+                        <div class="item-line">
+                            <span class="title">答案选项数：</span><input type="number" name="qt" min="1" max="6" />
+                            发布：</span><input name="status" type="checkbox" >
+
+                        </div>
+
+                        <input type="hidden" name="id" value="0"> <!-- 新建记录 id=0 -->
+                        <input type="hidden" name="content" value="0">
+                        <input type="hidden" name="type" value="1">
+                        <input type="hidden" name="chnid" value="0">
+                        <input type="hidden" name="vodid" value="0">
+                        <input type="hidden" name="html" value="">
+                        <!-- 以下两行为提交forme时的接口参数 -->
+                        <input type="hidden" name="contextToken" value="{$contextToken}">
+                        <input type="hidden" name="func" value="savePaperJson">
+
+                        <div class="item-line">习题内容：</div>
+                        封面背景颜色：<input type="color" name="bgrcolor">
+                        文字默认颜色：<input type="color" name="color">
+                    </form>
+
+                    <textarea id="editor_id" name="content" style="width:100%;height:520px;">
+				习题内容...
+            </textarea>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <load href="__PUBLIC__/jeasyui/jquery.edatagrid.js" />
+    <load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />
+    <load href="__PUBLIC__/jeasyui/locale/easyui-lang-zh_CN.js" />
+
+    <link rel="stylesheet" href="__PUBLIC__/kindeditor/themes/default/default.css" />
+    <script charset="utf-8" src="__PUBLIC__/kindeditor/kindeditor-all.js"></script>
+    <script charset="utf-8" src="__PUBLIC__/kindeditor/lang/zh_CN.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var params={
+                contextToken:"{$contextToken}",     //上下文访问令牌
+                getBlockUrl:"{:U('MD_Block/getRecJson')}",  //取指定可编辑块信息接口
+                MGurl:"{:U('MG_learning/main')}",     //学习管理入口URL
+                defColor:"#333333",
+                defBgrcolor:"#FFFFFF",
+            }
+            var chnSelected=false;  //是否已选中了一个频道
+            var currentChn=null;    //当前选中的频道记录
+            var editor=null;        //预定义编辑器对象
+
+            var dgobj=$("#dgPaperList");
+            $("#blkFilter").on("chnSelected",function (event,row) {
+                //console.log(row,event);
+                dgobj.edatagrid({
+                    url:'__APP__/MG_learning/main',
+                    queryParams:{func:"getPaperListJson", contextToken:params.contextToken, chnid:row.id},
+                    rownumbers:true,singleSelect:true,
+                    toolbar:'#tb',pagination:true,  pageSize:20,idField:'id',
+
+                    //数据装入成功，自动选中第一条记录
+                    onLoadSuccess:function(data){
+                        //console.log("onload:",data.total,data.total>0);
+                        if(data.total > 0) dgobj.datagrid("selectRow",0);
+                        else $("#btn-save").linkbutton("disable");
+                    },
+                    onSelect:function(index,row){
+                        $("#btn-save").linkbutton("enable");
+                        KindEditor.remove('#editor_id');
+                        editor =  KindEditor.create('#editor_id',{
+                            uploadJson:'__APP__/MD_Block/editorUploadJson',
+                            extraFileUploadParams:{ contextToken:params.contextToken, blockid:row.content},
+                            allowFileManager :true,
+                            cssPath:'__PUBLIC__/kindeditor/article.css',	//用于编辑内容显示的CSS
+                            bodyClass:'article',
+                            imageTabIndex:1,
+                            items:[ 'undo', 'redo', '|',  'justifyleft', 'justifycenter', 'justifyright', 'justifyfull', '|',
+                                'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', '/',
+                                'subscript', 'superscript', 'formatblock', 'fontsize', '|',
+                                'forecolor', 'hilitecolor', 'bold',
+                                'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat',  '/',
+                                'wordpaste', 'image', 'table', 'hr', 'emoticons', 'anchor', 'link', 'unlink']
+                        });
+
+                        $("#frmItem input[name='title']").val(row.title);
+                        $("#frmItem input[name='answer']").val(row.answer);
+                        $("#frmItem input[name='qt']").val(row.qt);
+                        $("#frmItem input[name='status']").prop("checked",(row.status==1));
+
+                        $("#btime").datetimebox("setValue",row.btime);
+                        $("#etime").datetimebox("setValue",row.etime);
+                        $("#frmItem input[name='id']").val(row.id);
+                        $("#frmItem input[name='type']").val(row.type);
+                        $("#frmItem input[name='chnid']").val(row.chnid);
+                        $("#frmItem input[name='vodid']").val(row.vodid);
+                        $("#frmItem input[name='content']").val(row.content);
+
+                        //读入练习题内容
+                        if(row.content>0){
+                            $.post(params.getBlockUrl,{contextToken:params.contextToken,id:row.content},function (block) {
+                                //console.log(Object.keys(block).length,block);
+                                var color=("undefined" != typeof(block.color))? block.color:params.defColor;
+                                $("#frmItem input[name='color']").val(color);
+                                $("iframe").contents().find("body").css({color:color});
+                                var bgrcolor=("undefined" != typeof(block.bgrcolor))? block.bgrcolor:params.defBgrcolor;
+                                $("#frmItem input[name='bgrcolor']").val(bgrcolor);
+                                $("iframe").contents().find("body").css({background:bgrcolor});
+                                if("undefined"!=typeof(block.html)) editor.html(block.html);
+                            },"json");
+                        }
+                    },
+                });
+                chnSelected=true;
+                currentChn=row;
+            });
+
+
+            ////修改默认背景及文字颜色处理
+            //修改封面背景颜色
+            $("#frmItem input[name='bgrcolor']").on("change",function () {
+                var color=$(this).val();
+                console.log("修改背景颜色:",color);
+                $("iframe").contents().find("body").css({background:color});
+            });
+
+            //修改封面文字颜色
+            $("#frmItem input[name='color']").on("change",function () {
+                var color=$(this).val();
+                $("iframe").contents().find("body").css({color:color});
+            });
+
+            //有关功能按钮的处理
+            //增加
+            $("#dgbutton #Append").linkbutton({
+                iconCls:'icon-add',plain:true,
+                onClick:function () {
+                    if(!chnSelected) { alert("请先选中一个频道。"); return; }
+
+                    $.post(params.MGurl,{func:"addPaperJson",contextToken:params.contextToken,chnid:currentChn.id, vodid:0},function (rec) {
+                        console.log(rec,rec.msg);
+                        if(rec.success=="true"){
+                            dgobj.datagrid("appendRow",rec);
+                            var index=dgobj.datagrid("getRowIndex",rec.id);
+                            dgobj.datagrid("selectRow",index);
+                        }else{
+                            if("undefined" != rec.msg) $("#msg").html(rec.msg);
+                        }
+                    },"json");
+                }
+            });
+            //删除
+            $("#dgbutton #Remove").linkbutton({
+                iconCls:'icon-remove',plain:true,
+                onClick:function () {
+                    if(!chnSelected) { alert("请先选中一个频道。"); return; }
+                    var row=dgobj.edatagrid('getSelected');
+                    if(null==row) { alert("请先选中要删除的习题。"); return; }
+                    var index=dgobj.edatagrid('getRowIndex',row);
+
+                    $.messager.confirm("<span style='font-size: 1.2em; color: red; font-weight: bolder'>!!!最后警告!!!</span>",
+                        "此试卷连同此试卷相关的考试成绩将同时删除。记录删除后将无法恢复。真的要删除此记录吗？",function (r) {
+                            var postdata={ func:'delPaperJson', contextToken:params.contextToken, exid:row.id, content:row.content }
+                            $.post(params.MGurl,postdata,function(result){
+                                console.log(result);
+                                if(result.success=="true"){
+                                    //删除成功
+                                    dgobj.datagrid("deleteRow",index);
+                                    var rows=dgobj.datagrid('getRows');
+                                    var row=(rows.length>index)?index: index-1;
+                                    if(row>=0) dgobj.edatagrid('selectRow',row);
+                                    else{
+                                        dgobj.edatagrid('load');
+                                    }
+                                }else{
+                                    //删除失败
+                                    if("undefined" != result.msg) $("#msg").html(result.msg);
+                                }
+                            },"json");
+                     });
+                }
+            });
+            //保存当前内容
+            $("#blkPaperItem #btn-save").linkbutton({
+                iconCls: 'icon-save', plain: true,disabled:true,
+                onClick: function () {
+                    $("#frmItem input[name='html']").val(editor.html());
+                    var postdata=$("#frmItem").serialize();
+                    $.post(params.MGurl,postdata,function (rec) {
+                        if("true"==rec.success){
+                            //更新成功
+                            console.log("update=",rec);
+                            var index=dgobj.datagrid("getRowIndex",rec.id);
+                            dgobj.datagrid("updateRow",{index:index,row:rec});
+                        }else{
+                            //更新失败
+                            if("undefined" != rec.msg) $("#msg").html(rec.msg);
+                        }
+                    },"json");
+                }
+            });
+        });
+
+    </script>
+</block>

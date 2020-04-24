@@ -4,6 +4,7 @@ webapp/public/wxpay/cert/
 logs/
 webroot/vodfile/
 webroot/room/
+webroot/block/
 webroot/doc/
 webroot/t/
 sslkeys/
@@ -25,6 +26,9 @@ document/~$Z修改记录及TODO.docx
 webroot/t.html
 webroot/t/
 webapp/public/aliyun/
+webapp/public/baidu/
+webapp/public/wxpay/
+webapp/public/Wx*.*
 
 *.tlog
 webroot/player/js/keepAlive - 20181206.js
@@ -41,3 +45,8 @@ webroot/c.html
 webroot/player/js/playpage3.6.min.js
 webroot/t.php
 webroot/t.php
+webroot/t.php
+webroot/t3.html
+webroot/t.php
+webroot/t3.html
+webroot/Public/images/answer.png

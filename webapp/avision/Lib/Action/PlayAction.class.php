@@ -28,11 +28,7 @@ class PlayAction extends SafeAction{
     protected $dbUser=null; //用户数据表对象
 
     public function test(){
-        $dbOnline=D("online");
-        $cmd=$dbOnline->where("id=47 ")->field("command")->find();
-        var_dump($cmd);
-        die();
-        echo base_convert(mt_rand(100000000,999990000), 10, 32);//转为五进制
+
 
         dump($_SERVER["HTTP_USER_AGENT"]);
         exit;
@@ -466,6 +462,7 @@ class PlayAction extends SafeAction{
         $webVar["playType"]="vod";
         $webVar["cover"] = $dbRf->getImgMrl($vodfile['path']);   //海报地址
         $webVar["source"]=$dbRf->getVodMrl($vodid);
+        $dbRf->incAudience($vodid); //记录观看次数
         //dump($webVar);
     }
     /**

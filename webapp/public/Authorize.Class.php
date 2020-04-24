@@ -498,7 +498,7 @@ class authorize {
 			$_SESSION[self::PROTECTFUNC]=$this->getProtectList();
 		}
 		foreach ($_SESSION[self::PROTECTFUNC] as $rec){
-			if($rec[module]==$module && $rec[action]==$action){
+			if($rec['module']==$module && $rec['action']==$action){
 				return true;
 			}
 		}

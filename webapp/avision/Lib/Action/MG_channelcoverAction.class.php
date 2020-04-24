@@ -48,7 +48,6 @@ class MG_channelcoverAction extends AdminBaseAction{
         $this->display("MG_channelcover:init");
     }
 
-
     //取指定频道的封面信息
     private function getCoverJson(){
         $chnid=intval($_POST["chnid"]);

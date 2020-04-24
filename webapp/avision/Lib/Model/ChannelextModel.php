@@ -5,7 +5,7 @@
  * Date: 2019/4/4
  * Time: 15:50
  *
- * 系统公告
+ * 频道封面
  */
 require_once(LIB_PATH.'Model/ChannelModel.php');
 

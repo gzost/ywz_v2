@@ -16,9 +16,7 @@ class MG_learningAction extends AdminBaseAction{
     const DEF_BGRCOLOR="#FFFFFF";   //默认练习卷背景颜色
 
     public function t(){
-        $dbBlock=D("block");
-        $rt=$dbBlock->remove(10);
-        var_dump($rt);
+
     }
     public function main()  {
         $paramsTpl = array( "chnid" => 0, "chnName" => "", "func" => "init");

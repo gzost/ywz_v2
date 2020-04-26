@@ -691,4 +691,41 @@ class contextToken{
         unsetPara($name);
     }
 }
+
+//////// insertOnDuplicateKeyUpdate ///////
+/**
+ * @param $dbname
+ * @param $where    仅insert时使用的字段
+ * @param $data     update时使用的字段
+ * @return mixed
+ */
+function insertOrUpdate($dbname,$where, $data)
+{
+    $where = safeCheck($where);
+    $data = safeCheck($data);
+
+    $table = C('DB_PREFIX').$dbname;
+    $merge = array_merge($where, $data);
+    $set = $whe = array();
+    foreach($data as $k=>$v) $set[] = "{$k}='{$v}'";
+    foreach($where as $k=>$v) $whe[] = "{$k}='{$v}'";
+
+    $sql = "INSERT INTO {$table}(".implode(',', array_keys($merge))
+        .") VALUES ('".implode("','", array_values($merge))."') ON DUPLICATE KEY UPDATE "
+        .implode(',',$set);
+    $Model = new Model();
+    return $Model->execute($sql);
+}
+//上述方法涉及到的简单字符串引号过滤方法
+function safeCheck($data)
+{
+    if(!is_array($data)) return addslashes($data);
+    $new = array();
+    foreach($data as $key=>$value)
+    {
+        $new[addslashes($key)] = safeCheck($value);
+    }
+    return $new;
+}
+
 ?>

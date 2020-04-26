@@ -168,6 +168,11 @@ function Ou_KeepAlive(func,second) {
     console.log("Ou_KeepAlive start.");
 }
 
+/**  显示实时(堂上)练习题目 */
+function Ou_Exercise(exParams) {
+
+}
+
 //页面处理主类
 function Ou_playPage(params) {
     //本HTML相关的参数，如DOM。在JS内部不直接使用HTML相关信息，降低耦合度
@@ -185,9 +190,23 @@ function Ou_playPage(params) {
     }
     var _this=this;
 
+    //识别当前设备的类型
+    var u = navigator.userAgent;
+    status.isAndroid = u.indexOf('Android') > -1 || u.indexOf('Linux') > -1; //android终端
+    status.isIOS = !!u.match(/\(i[^;]+;( U;)? CPU.+Mac OS X/); //ios终端
+    console.log("isAndroid:",status.isAndroid,"isIOS:", status.isIOS);
+
     //应用参数，每次向服务端发送数据时，自动附加。chat参数在chat属性内
     var appPara={chnid:params.chnid,user:{uid:params.uid, userName:params.userName,account:params.account}};
 
+    /////// 与其它对象无关联的函数 //////////
+    //当前(手机屏幕)是纵向还是横向, 横向返回true
+    var isHorizontal=function () {
+        if(status.isAndroid || status.isIOS){
+            return (Math.abs(window.orientation)==90)? true:false;
+        }else return false; //非安卓，IOS就是电脑
+    }
+console.log("isHorizontal",isHorizontal());
     var Ou_OnlineTable= new Ou_OnlineTableC(); //在线记录对象
     //预填写所有在线记录，整个播放前端只有3个在线记录且live，vod不能同时在线
     var now=parseInt((new Date()).getTime()/1000);
@@ -546,7 +565,7 @@ console.log("status.playerReady=",status.playerReady);
         //////////处理tab激活消息//////////
         /*
         101=>'视频直播', 102=>'互动聊天', 103=>'排行榜', 104=>'点播资源', 105=>'图片直播', 106=>'会员' ,107=>'分享',
-            108=>'首页', 109=>'图文直播', 110=>'频道介绍');
+            108=>'首页', 109=>'图文直播', 110=>'频道介绍', 111=>'课后练习' );
         (501=>"送礼",502=>"抽奖",503=>"红包");	//频道使用的扩展功能
         */
         var isTabInit={};   //记录已经初始化的tab，{tabid:true,...}
@@ -583,13 +602,6 @@ console.log("status.playerReady=",status.playerReady);
 
                     $(local.layerVideoTop2).show();
                     break;
-                case 110:   //频道介绍
-                    if(true != isTabInit[tabid]){
-                        //未初始化，执行初始化
-                        blkItem.load(params.appUrl+"/Play/showChnInfo",{chnid:params.chnid});
-                        isTabInit[tabid]=true;
-                    }
-                    break;
                 case 102:   //互动聊天
                     if(true != isTabInit[tabid]){
                         //未初始化，执行初始化
@@ -625,6 +637,19 @@ console.log("status.playerReady=",status.playerReady);
                         $("#pictxt").appendTo(blkItem);
                         $("#pictxt").load(params.appUrl+"/FE_PicTxt/init",{chnid:params.chnid, programid:params.vodid});
                         $("#pictxt").show();
+                        isTabInit[tabid]=true;
+                    }
+                    break;
+                case 110:   //频道介绍
+                    if(true != isTabInit[tabid]){
+                        //未初始化，执行初始化
+                        blkItem.load(params.appUrl+"/Play/showChnInfo",{chnid:params.chnid});
+                        isTabInit[tabid]=true;
+                    }
+                    break;
+                case 111:   //课后练习
+                    if(true != isTabInit[tabid]){
+                        blkItem.load(params.appUrl+"/FE_exercise/afterClass",{ uid:params.uid, chnid:params.chnid, vodid:params.vodid, type:1 });
                         isTabInit[tabid]=true;
                     }
                     break;

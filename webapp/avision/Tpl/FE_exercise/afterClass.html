@@ -1,0 +1,79 @@
+<style>
+    #blkDaan>span{
+        margin-left: 1em;
+    }
+</style>
+<div id="afterClass" style="display:flex; flex-flow:column nowrap;justify-content:flex-start; height:100%; width:100%; padding:3px; font-size:16px; ">
+    <div class="article" style="position: relative; flex: auto;  height: 300px; overflow-x: hidden;
+    color:{$color|default='#333333'}; background-color: {$bgrcolor|default='#FFFFFF'};">
+        {$html}
+    </div>
+    <div id="blkAnswer" style="flex: none; position: relative; width:100%; background-color: #FFFF99; padding: 5px; border-top: 2px solid #F1F191;">
+        <div id="blkbiaoti" style="padding: 5px;">
+            答题区
+            <div id="blkTime" style="float: right;">收卷时间：{$etime}</div>
+        </div>
+        <form id="fmExercise" method="post"  >
+            <div id="blkDaan"></div>
+        </form>
+        <div id="blkButtons" style="text-align: center"><button style="margin:20px;font-size: 14px;"> 提交答案，在收卷前可修改答案 </button></div>
+    </div>
+</div>
+<!-- 记录上次答案 -->
+<div id="prvAnswer" style="display: none;">{$answer}</div>
+<script>
+    $(document).ready(function () {
+        var params={
+            type:"{$type}",
+            qt:Number("{$qt}"),
+            endtime:Number("{$endtime}"),
+            uid:"{$uid}",
+            chnid:"{$chnid}",
+            exid:"{$id}",   //练习ID
+            submitUrl:"{:U('FE_exercise/saveAnserJson')}",
+            contextToken:"{$contextToken}"
+        }
+
+        if(params.qt>6) params.qt=6;  //限制最大可选答案数
+        //显示答题区
+        var date = new Date();
+        var now = Math.floor(date.getTime()/1000);
+        var prvAnswer=$("#prvAnswer").html();
+
+        console.log(params.endtime,now,params.qt);
+        if(now>params.endtime){
+            //已经过了交卷时间
+            $("#blkbiaoti").html("已经截止答题，您的最后答案是：");
+            var html="<textarea rows='3' maxlength='1000' name='A' readonly style='width: 100%; font-size: 14px;'>"+prvAnswer+"</textarea> ";
+            $("#blkDaan").append(html);
+            $("#blkButtons").remove();
+        }else{
+            if(1== params.qt){
+                var html="<textarea rows='3' maxlength='1000' name='A' style='width: 100%; font-size: 14px;'>"+prvAnswer+"</textarea> ";
+                $("#blkDaan").append(html);
+            }else {
+                for(var charCode=65; charCode<65+ params.qt; ++charCode){
+                    var ch=String.fromCharCode(charCode);
+                    var checked= (prvAnswer.indexOf(ch)== -1)?"":"checked";
+                    var html="<span style=''>"+ch+" <input type='checkbox' name='"+ch+"' "+checked+"></span>";
+                    $("#blkDaan").append(html);
+                }
+            }
+        }
+
+        $("#blkButtons button").on("click",function (event) {
+            var postData=$("#fmExercise").serializeArray();
+            postData.push({name:"exid", value:params.exid});
+            postData.push({name:"chnid",value:params.chnid});
+            postData.push({name:"uid", value:params.uid});
+            postData.push({name:"qt", value:params.qt});
+            postData.push({name:"contextToken", value:params.contextToken});
+            //console.log("pre post:",postData);
+            $.post(params.submitUrl,postData,function (result) {
+                //console.log(result,result.success=="true");
+                if(result.success=="true") alert("答案提交成功");
+                else if("undefined"!=result.msg) alert(result.msg);
+            },"json");
+        });
+    });
+</script>

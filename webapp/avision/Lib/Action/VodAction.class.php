@@ -40,7 +40,9 @@ class VodAction extends AdminBaseAction {
  			$webVar['ownerId']=$this->userId();
  		}
 		//上传（新建）录像文件权限
-		$webVar['permitCreate']=($this->isOpPermit('C'))?'true':'false';
+        $bozhu=$this->getUserInfo('bozhu');
+		if("junior"==$bozhu) $webVar['permitCreate']='false';   //初级播主不能上传和分享录像
+		else	$webVar['permitCreate']=($this->isOpPermit('C'))?'true':'false';
 		//修改、删除录像记录权限
 		$webVar['permitModify']=($this->isOpPermit('M'))?'true':'false';
 		

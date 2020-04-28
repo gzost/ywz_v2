@@ -2,19 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c373e6b3-2af5-4bab-bede-a2195dffe403" name="默认更改列表" comment="">
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_scoreAction.class.php" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webapp/avision/Tpl/MG_score/init.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/FE_exerciseAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/FE_exerciseAction.class.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_learningAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_learningAction.class.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/Console/stream_w.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Console/stream_w.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/FE_exercise/afterClass.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/FE_exercise/afterClass.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/MG_channelcover/init.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/MG_channelcover/init.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/Play/play.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Play/play.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/Play/play_w.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Play/play_w.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webroot/Public/kindeditor/plugins/answer/answer.js" beforeDir="false" afterPath="$PROJECT_DIR$/webroot/Public/kindeditor/plugins/answer/answer.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webroot/player/js/playpage.js" beforeDir="false" afterPath="$PROJECT_DIR$/webroot/player/js/playpage.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webroot/t.php" beforeDir="false" afterPath="$PROJECT_DIR$/webroot/t.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webroot/t3.html" beforeDir="false" afterPath="$PROJECT_DIR$/webroot/t3.html" afterDir="false" />
     </list>
@@ -154,10 +144,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="init.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="init.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_score/init.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="600">
+            <state relative-caret-position="1125">
               <caret line="45" column="18" selection-start-line="45" selection-start-column="18" selection-end-line="45" selection-end-column="18" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#block#1;n#!!top" expanded="true" />
@@ -174,6 +164,45 @@
                 <element signature="n#style#0;n#div#1;n#div#1;n#block#1;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#ul#0;n#div#2;n#block#1;n#!!top" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="VodAction.class.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="634">
+              <caret line="43" column="79" selection-start-line="43" selection-start-column="79" selection-end-line="43" selection-end-column="79" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Authorize.Class.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/webapp/public/Authorize.Class.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="825">
+              <caret line="69" column="44" selection-start-line="69" selection-start-column="39" selection-end-line="69" selection-end-column="44" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="showDetail.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Vod/showDetail.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1131">
+              <caret line="215" column="44" lean-forward="true" selection-start-line="215" selection-start-column="44" selection-end-line="215" selection-end-column="44" />
+              <folding>
+                <element signature="n#style#0;n#div#0;n#div#2;n#div#1;n#form#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="fileList_w.html" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Vod/fileList_w.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="250">
+              <caret line="196" column="26" selection-start-line="196" selection-start-column="14" selection-end-line="196" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -204,7 +233,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>layerNotice</find>
       <find>article</find>
       <find>ali</find>
       <find>editor</find>
@@ -234,6 +262,7 @@
       <find>getmrl</find>
       <find>getVodMrl</find>
       <find>1098</find>
+      <find>permitCreate</find>
     </findStrings>
     <dirStrings>
       <dir>D:\MyProject\reform\approot\mdcflow</dir>
@@ -272,7 +301,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/webapp/avision/Tpl/MG_channelcover/coverEditor.html" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/HDPlayerAction.class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/MG_channelcover/showfilter.html" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/MG_Channel/setting.html" />
@@ -323,6 +351,7 @@
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_learningAction.class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_scoreAction.class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/MG_score/init.html" />
+        <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php" />
       </list>
     </option>
   </component>
@@ -405,15 +434,6 @@
               <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="Lib" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Model" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Lib" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="Widget" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
@@ -423,15 +443,6 @@
               <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="Tpl" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Tpl" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Console" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
               <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
@@ -528,6 +539,15 @@
               <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
               <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Tpl" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Vod" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
+              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="public" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
@@ -543,21 +563,6 @@
               <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
               <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="webroot" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="webroot" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="player" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="webroot" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="player" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="js" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
               <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
@@ -803,12 +808,12 @@
       <workItem from="1586311902841" duration="688000" />
       <workItem from="1586330460593" duration="4370000" />
       <workItem from="1586416205031" duration="76194000" />
-      <workItem from="1587091572255" duration="142648000" />
+      <workItem from="1587091572255" duration="144170000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3353116000" />
+    <option name="totallyTimeSpent" value="3354638000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -887,32 +892,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Widget/WD_ChannelListWidget.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="12" column="26" selection-start-line="12" selection-start-column="20" selection-end-line="12" selection-end-column="26" />
-          <folding>
-            <element signature="e#6#101#0#PHP" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webroot/index.php">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webroot/home.php">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_channelcover/showfilter.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="625">
-          <caret line="28" selection-start-line="28" selection-end-line="28" />
-          <folding>
-            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/CH_cctsxx/index.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="600">
@@ -1280,7 +1259,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_score/init.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="600">
+        <state relative-caret-position="1125">
           <caret line="45" column="18" selection-start-line="45" selection-start-column="18" selection-end-line="45" selection-end-column="18" />
           <folding>
             <element signature="n#style#0;n#div#0;n#block#1;n#!!top" expanded="true" />
@@ -1297,6 +1276,37 @@
             <element signature="n#style#0;n#div#1;n#div#1;n#block#1;n#!!top" expanded="true" />
             <element signature="n#style#0;n#ul#0;n#div#2;n#block#1;n#!!top" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Vod/showDetail.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1131">
+          <caret line="215" column="44" lean-forward="true" selection-start-line="215" selection-start-column="44" selection-end-line="215" selection-end-column="44" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#div#2;n#div#1;n#form#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Vod/fileList_w.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="250">
+          <caret line="196" column="26" selection-start-line="196" selection-start-column="14" selection-end-line="196" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/public/Authorize.Class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="825">
+          <caret line="69" column="44" selection-start-line="69" selection-start-column="39" selection-end-line="69" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="634">
+          <caret line="43" column="79" selection-start-line="43" selection-start-column="79" selection-end-line="43" selection-end-column="79" />
         </state>
       </provider>
     </entry>

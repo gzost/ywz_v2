@@ -16,7 +16,9 @@ class MG_learningAction extends AdminBaseAction{
     const DEF_BGRCOLOR="#FFFFFF";   //默认练习卷背景颜色
 
     public function t(){
-
+        $t="abc";
+        $a=$t[1];
+        var_dump($a);
     }
     public function main()  {
         $paramsTpl = array( "chnid" => 0, "chnName" => "", "func" => "init");
@@ -24,7 +26,7 @@ class MG_learningAction extends AdminBaseAction{
         $this->params['uid'] = $this->userId();
         $this->params["agent"] = $this->getUserInfo("agent"); //当前用户所在机构
         $this->params["rightA"] = $this->isOpPermit("A"); //可管理所有频道[true|false]
-        $this->params["rigntG"] = $this->isOpPermit("G"); //可管理机构频道
+        $this->params["rightG"] = $this->isOpPermit("G"); //可管理机构频道
         $func=$this->params["func"];
         $this->$func();
     }

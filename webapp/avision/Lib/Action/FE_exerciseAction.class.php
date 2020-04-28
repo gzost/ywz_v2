@@ -29,20 +29,25 @@ class FE_exerciseAction extends Action{
         $uid=intval($_POST["uid"]);
         $chnid=intval($_POST["chnid"]);
         $rec=D("exercise")->getAfterClass($chnid);
-        $webVar=$rec;
-        $webVar['endtime']=strtotime($rec['etime'])-10; //截止时间前10秒交卷
-        $webVar['etime']=substr($rec['etime'],5,11);
-        //取用户的答案，不一定有
-        $answer=D("answer")->where(array("exerciseid"=>$rec['id'],"userid"=>$uid))->getField("answer");
-        if(null != $answer) $webVar["answer"]=htmlspecialchars(trim($answer));
-        else $webVar["answer"]="";
+        if(null!=$rec){
+            $webVar=$rec;
+            $webVar['endtime']=strtotime($rec['etime'])-10; //截止时间前10秒交卷
+            $webVar['etime']=substr($rec['etime'],5,11);
+            //取用户的答案，不一定有
+            $answer=D("answer")->where(array("exerciseid"=>$rec['id'],"userid"=>$uid))->getField("answer");
+            if(null != $answer) $webVar["answer"]=htmlspecialchars(trim($answer));
+            else $webVar["answer"]="";
 
 //var_dump($webVar);
-        $webVar["uid"]=$uid;
-        $webVar["chnid"]=$chnid;
-        $webVar["contextToken"]=session_id();
-        $this->assign($webVar);
-        $this->display("FE_exercise:afterClass");
+            $webVar["uid"]=$uid;
+            $webVar["chnid"]=$chnid;
+            $webVar["contextToken"]=session_id();
+            $this->assign($webVar);
+            $this->display("FE_exercise:afterClass");
+        }else{
+            echo "<div style='position: relative; top:30%; text-align: center;'>没找到练习题</div>";
+        }
+
     }
 
     /**

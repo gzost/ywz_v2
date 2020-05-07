@@ -1,0 +1,70 @@
+<!-- 堂上练习弹出显示块 -->
+<div id="blkInclassPaper" style="display: flex; flex-flow: column nowrap;justify-content: flex-start; align-items: center; width:100%; height: 100%; padding: 3px;font-size:16px; ">
+    <div class="article" style="flex:auto; height: 300px;  overflow-y: auto; overflow-x:hidden;background-color:{$bgrcolor}; color:{$color};">
+        {$html}
+    </div>
+    <div style="flex:none; width:100%; background-color: #FFFF99; padding: 5px; border-top: 2px solid #F1F191;">
+        <div id="blkbiaoti" style="padding: 5px;">
+            答题区
+            <div id="blkTime" style="float: right;font-size:14px; font-weight:normal; color: #888888;">收卷时间：{$etime}</div>
+        </div>
+        <form id="fmExercise" method="post"  >
+            <div id="blkDaan">
+            </div>
+        </form>
+        <div id="blkButtons" style="text-align: center"><button style="margin:20px;font-size: 16px;"> 提交答案，提交后不可修改 </button></div>
+    </div>
+</div>
+<script>
+    $(document).ready(function () {
+        var params={
+            type:"{$type}",
+            qt:Number("{$qt}"),
+            uid:"{$uid}",
+            chnid:"{$chnid}",
+            exid:"{$id}",   //练习ID
+            submitUrl:"{:U('FE_exercise/saveAnserJson')}",
+            contextToken:"{$contextToken}"
+        }
+
+        //填写答题区内容
+        if(1== params.qt){
+            var html="<textarea rows='3' maxlength='1000' name='A' style='width: 100%; font-size: 14px;'></textarea> ";
+            $("#blkDaan").append(html);
+        }else {
+            for(var charCode=65; charCode<65+ params.qt; ++charCode){
+                var ch=String.fromCharCode(charCode);
+                var checked= "";
+                var html="<span style=''>"+ch+" <input type='checkbox' name='"+ch+"' "+checked+"></span>";
+                $("#blkDaan").append(html);
+            }
+        }
+
+        //提交答案
+        $("#blkButtons button").on("click",function (event) {
+            var formData=$("#fmExercise").serializeArray();
+            var postData={}
+            $.each(formData,function (i,data) {
+                postData[data.name]=data.value;
+            });
+            postData["exid"]=params.exid;
+            postData["chnid"]=params.chnid;
+            postData["uid"]=params.uid;
+            postData["qt"]=params.qt;
+            postData["contextToken"]=params.contextToken;
+
+            //console.log("pre post:",postData);
+            playPage.send({exercise:postData},function (result) {
+                console.log("post send answer:",result);
+                if(("object"==typeof(result.exercise)) && (1== result.exercise["saved"])){
+                    alert("提交成功");
+                    $("#blkInclassPaper").parent().trigger("answered");
+                }else{
+                    alert("提交失败");
+                }
+            });
+
+        });
+    });
+
+</script>

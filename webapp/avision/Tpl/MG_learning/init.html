@@ -23,7 +23,7 @@
         </div>
         <div  style="display: flex; margin-top: 10px; flex-flow: row nowrap;">
             <!-- 练习卷列表区 -->
-            <div style="flex:anone; width: 640px;">
+            <div style="flex:none; width: 400px;">
                 <table id="dgPaperList" class="easyui-datagrid"  style="width:100%; "  data-options="toolbar:'#tb'" >
                     <thead>
                     <tr>
@@ -69,13 +69,12 @@
                         </div>
                         <div class="item-line">
                             <span class="title">答案选项数：</span><input type="number" name="qt" min="1" max="6" />
-                            发布：</span><input name="status" type="checkbox" >
-
+                            发布形式：<input type="number" name="type" min="1" max="2" />
+                            发布：<input name="status" type="checkbox" >
                         </div>
 
                         <input type="hidden" name="id" value="0"> <!-- 新建记录 id=0 -->
                         <input type="hidden" name="content" value="0">
-                        <input type="hidden" name="type" value="1">
                         <input type="hidden" name="chnid" value="0">
                         <input type="hidden" name="vodid" value="0">
                         <input type="hidden" name="html" value="">
@@ -92,6 +91,31 @@
 				习题内容...
             </textarea>
                 </div>
+            </div>
+            <!-- 使用提示与答案分析区 -->
+            <div id="blkTipsnAnalys" style="display:block;position: relative; box-sizing: border-box; flex:1 0 auto;margin-left:10px; width: 300px;  border: 1px solid #aae;">
+                <div style="box-sizing:border-box; height: 35px; padding: 5px 10px; background-color: #F0F0EE; border-bottom: 1px #dddddd solid;">
+                    <a id="btnTips" href="javascript:void(0)" >提示</a>
+                    <a id="btnAnalys" href="javascript:void(0)" >答案分析</a>
+                </div>
+                <div style="position: relative;   width: 100%;">
+                    <div id="blkTips" style="position: absolute; top:0; left: 0; width: 100%;box-sizing: border-box; padding: 5px;">
+                        <ul style="margin: 0; padding-inline-start: 30px;">
+                            <li>先输入过滤条件查询可选频道列表，在频道列表中选中要编辑练习卷的频道</li>
+                            <li>为避免混乱，每个频道最好只有一道发布中的“堂上练习”或“课后作业”</li>
+                            <li>客户端查找“课后作业”时，若有多份发布中的作业并且当前时间在发卷时间之后，只会选择编号最大的一条。留意收卷时间不做判断。</li>
+                            <li>客户端查找“堂上练习”时，若有多份发布中的练习并且当前时间在发卷和收卷时间区间，只会选择编号最大的一条</li>
+                            <li>客观题可填写标准答案，多选题按顺序填入应选的字符，如：BD。字母全部大写。</li>
+                            <li>发布形式：1=课后作业，2=堂上练习</li>
+                            <li>答案选项数：1=是简答题，2~6=选择题代表可以有2~6个选项</li>
+                            <li>有符合条件的堂上练习，客户端会弹出显示，在用户每提交答案前不会显示新的题目。已经回答过的题目不会再显示。</li>
+                        </ul>
+                    </div>
+                    <div id="blkAnalys" style="position: absolute; top:0; left: 0; width: 100%; box-sizing: border-box; padding: 5px; display: none;">
+                        答案分析
+                    </div>
+                </div>
+
             </div>
         </div>
 
@@ -115,11 +139,13 @@
             }
             var chnSelected=false;  //是否已选中了一个频道
             var currentChn=null;    //当前选中的频道记录
+            var currentPaper=null;  //当前选中的试卷
             var editor=null;        //预定义编辑器对象
 
             var dgobj=$("#dgPaperList");
             $("#blkFilter").on("chnSelected",function (event,row) {
                 //console.log(row,event);
+                currentPaper=null;
                 dgobj.edatagrid({
                     url:'__APP__/MG_learning/main',
                     queryParams:{func:"getPaperListJson", contextToken:params.contextToken, chnid:row.id},
@@ -176,6 +202,7 @@
                                 if("undefined"!=typeof(block.html)) editor.html(block.html);
                             },"json");
                         }
+                        currentPaper=row;   //当前试卷
                     },
                 });
                 chnSelected=true;
@@ -264,6 +291,23 @@
                             if("undefined" != rec.msg) $("#msg").html(rec.msg);
                         }
                     },"json");
+                }
+            });
+            //显示操作提示
+            $("#btnTips").linkbutton({
+                iconCls: 'icon-tip', plain: true, disabled: false,
+                onClick: function () {
+                    $("#blkTips").show();
+                    $("#blkAnalys").hide();
+
+                }
+            });
+            //显示答案分析
+            $("#btnAnalys").linkbutton({
+                iconCls: 'icon-sum', plain: true, disabled: false,
+                onClick: function () {
+                    $("#blkTips").css("display","none");
+                    $("#blkAnalys").css("display","block");
                 }
             });
         });

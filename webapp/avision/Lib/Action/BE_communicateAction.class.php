@@ -22,6 +22,7 @@ class BE_communicateAction extends SafeAction{
      * 目前支持的数据类型：
      *  onlineTable-在线记录数组，
      *  chat-聊天数据
+     *  exercise-堂上练习
      *  appPara-应用相关的参数，如频道ID，当前登录用户信息等{chnid:频道ID, user:{uid:用户ID, userName:用户昵称,account:用户账号}}
      * 数据值根据数据类型不同为单值或数组
      *
@@ -51,6 +52,12 @@ class BE_communicateAction extends SafeAction{
             $actionWebChat=A("WebChat3");
             $rt=$actionWebChat->communicate($_POST["playload"]["appPara"]["chat"],$_POST["playload"]["chat"]);
             if(is_array($rt)) $retArr["chat"]=$rt;
+
+            //处理堂上练习
+            $app=A("FE_exercise");
+            $rt=$app->communicate(session_id(),$_POST["playload"]["appPara"],$_POST["playload"]["exercise"]);
+            if(is_array($rt)) $retArr["exercise"]=$rt;
+
 //$retArr["userid"]=$this->userId();
 //dump($retArr);
             Oajax::successReturn($retArr);

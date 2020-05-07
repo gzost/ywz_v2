@@ -169,8 +169,48 @@ function Ou_KeepAlive(func,second) {
 }
 
 /**  显示实时(堂上)练习题目 */
-function Ou_Exercise(exParams) {
+function Ou_Exercise(params) {
+    console.log("Ou_Exercise",params);
+    const AppName="exercise";   //应用名称
+    var $container=$("#"+params.container);
+    var playPage=params.playPage;
 
+    $container.on("answered",function () {
+        $("#"+params.blkSouth).css("display","block");
+        $("#"+params.blkNavigate).css("display","block");
+        $container.css("display","none");
+        playPage.setAppPara(AppName,{showing:1});   //1-没练习在显示,2-正在显示练习
+    });
+
+    function show(paper) {
+        //console.log("show paper");
+        playPage.setAppPara(AppName,{showing:2});   //1-没练习在显示,2-正在显示练习
+        if(playPage.isHorizontal()){
+            //手机在水平状态
+            alert("堂上练习功能需要竖屏使用");
+        }
+        $("#"+params.blkSouth).css("display","none");
+        $("#"+params.blkNavigate).css("display","none");
+        $container.css("display","block");
+        $container.html(paper);
+    }
+
+    //对象实例化时运行，相当于构造函数
+    function init() {
+        //$container.css("display","block");
+        //$("#"+params.blkSouth).css("display","none");
+        playPage.setAppPara(AppName,{showing:1});   //1-没练习在显示,2-正在显示练习
+        $(window).on("RecvData",function (event,data) {
+            console.log(event,data);//,typeof(data.exercise.paper));
+            try{
+                if("string"==typeof(data.exercise.paper) ) show(data.exercise.paper);
+            }catch(e){
+
+            }
+        });
+        //playPage.send({});  //为测试加的
+    }
+    init();
 }
 
 //页面处理主类
@@ -181,7 +221,9 @@ function Ou_playPage(params) {
         blkAirTime:".layerVideoTop2 .blk_airTime",
         blkLeftTime:".layerVideoTop2 .blk_leftTime",
         layerVideoTop1:".layerVideoTop1",
-        layerVideoTop2:".layerVideoTop2"
+        layerVideoTop2:".layerVideoTop2",
+        blkSouthFix:"blkSouthFix",
+        blkNavigate:"blkNavigate",
     };
     //一些状态控制变量集中管理
     var status={
@@ -201,12 +243,12 @@ function Ou_playPage(params) {
 
     /////// 与其它对象无关联的函数 //////////
     //当前(手机屏幕)是纵向还是横向, 横向返回true
-    var isHorizontal=function () {
+    this.isHorizontal=function () {
         if(status.isAndroid || status.isIOS){
             return (Math.abs(window.orientation)==90)? true:false;
         }else return false; //非安卓，IOS就是电脑
     }
-console.log("isHorizontal",isHorizontal());
+console.log("isHorizontal",_this.isHorizontal());
     var Ou_OnlineTable= new Ou_OnlineTableC(); //在线记录对象
     //预填写所有在线记录，整个播放前端只有3个在线记录且live，vod不能同时在线
     var now=parseInt((new Date()).getTime()/1000);
@@ -232,8 +274,11 @@ console.log("isHorizontal",isHorizontal());
         communicate.send(data,callback);
     }
 
-    //设置发送到服务端自动附加的应用参数
-    //原来有的参数，若无新值传入不改变
+    /**
+     * 设置发送到服务端自动附加的应用参数,原来有的参数，若无新值传入不改变
+     * @param app   应用名称
+     * @param para  参数对象
+     */
     this.setAppPara=function(app, para){
         if("undefined"==typeof (appPara[app])) appPara[app]={};
         appPara[app] = $.extend(appPara[app],para);
@@ -748,7 +793,11 @@ console.log("status.playerReady=",status.playerReady);
         //修改页面标题
         $("title").text(params.title);
         _this.setUrl();
-
+        var ex=new Ou_Exercise({ playPage:_this,    //播放器页面对象
+            container:"blkSouthFix",     //堂上练习显示容器
+            blkSouth:"blkSouth",        //共享空间的显示内容，显示练习内容时，要关闭
+            blkNavigate:"blkNavigate"   //功能条，必要时可隐藏
+        });
     }
 
     setTimeout(function () {

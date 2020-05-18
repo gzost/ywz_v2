@@ -1,0 +1,42 @@
+<div>
+    <table id="dgAnswerAnalys" class="easyui-datagrid"  style="width:100%; "  data-options='data:{$data} ,showFooter: true' >
+        <thead>
+        <tr>
+            <th data-options="field:'answer', width:100, align:'center'">回答</th>
+            <th data-options="field:'numbers', width:100,align:'center'">人数</th>
+
+        </tr>
+        </thead>
+    </table>
+    <div id="chartContainer" style="height: 300px; width: 100%;"></div>
+</div>
+
+<script language="javascript" type="text/javascript" src="/Public/flot/jquery.canvaswrapper.js"></script>
+<script language="javascript" type="text/javascript" src="/Public/flot/jquery.colorhelpers.js"></script>
+<script language="javascript" type="text/javascript" src="/Public/flot/jquery.flot.js"></script>
+<script language="javascript" type="text/javascript" src="/Public/flot/jquery.flot.saturated.js"></script>
+<script language="javascript" type="text/javascript" src="/Public/flot/jquery.flot.browser.js"></script>
+<script language="javascript" type="text/javascript" src="/Public/flot/jquery.flot.drawSeries.js"></script>
+<script language="javascript" type="text/javascript" src="/Public/flot/jquery.flot.uiConstants.js"></script>
+<script language="javascript" type="text/javascript" src="/Public/flot/jquery.flot.legend.js"></script>
+<script language="javascript" type="text/javascript" src="/Public/flot/jquery.flot.pie.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        var data = {$pipeData}
+
+console.log(data);
+        var placeholder = $("#chartContainer");
+        placeholder.unbind();
+        $.plot(placeholder, data, {
+            series: {
+                pie: {
+                    show: true
+                }
+            }
+        });
+
+
+    });
+
+</script>

@@ -18,7 +18,7 @@ class VodAction extends AdminBaseAction {
 	/**
 	 * 
 	 * 录像管理列表主界面
-	 * {"operation":[{"text":"允许","val":"R"},{"text":"所有","val":"A"},{"text":"上传","val":"C"},{"text":"修改","val":"M"}]}
+	 * {"operation":[{"text":"允许","val":"R"},{"text":"所有","val":"A"},{"text":"上传","val":"C"},{"text":"修改","val":"M"},{"text":"下载","val":"S"}]}
 	 */
 	const VODFILEINDEX='VodFileListIndex';
 	public function fileList(){
@@ -39,12 +39,14 @@ class VodAction extends AdminBaseAction {
  			$webVar['ownerAccount']=$this->getUserInfo('account');	//默认只查找当前用户所属频道/VOD的用户
  			$webVar['ownerId']=$this->userId();
  		}
+
 		//上传（新建）录像文件权限
         $bozhu=$this->getUserInfo('bozhu');
 		if("junior"==$bozhu) $webVar['permitCreate']='false';   //初级播主不能上传和分享录像
 		else	$webVar['permitCreate']=($this->isOpPermit('C'))?'true':'false';
 		//修改、删除录像记录权限
 		$webVar['permitModify']=($this->isOpPermit('M'))?'true':'false';
+        $webVar['permitDownload']=($this->isOpPermit('S'))?'true':'false';
 		
 //dump($webVar);		
 		//生成符合Thinkphp语法的查询条件数组
@@ -615,5 +617,191 @@ echo 'owner='.$owner;
         }
 
     }
+
+    public function downloadFile(){
+	    //echo "download";
+        //dump($_POST);
+	    try{
+            if(!contextToken::verifyToken(self::VODACTION_TOKEN, $_POST[self::VODACTION_TOKEN])) throw new Exception("非法访问！");
+
+            $path=$_POST["path"];
+            $basePath=(''==C(vodfile_base_path))?'/vodfile':C(vodfile_base_path);
+            $filePath=$_SERVER["DOCUMENT_ROOT"].$basePath.$path;
+
+            $fancyName=$_POST["channelid"]."_".uniqid();
+            $fancyName .=".".pathinfo($path,PATHINFO_EXTENSION);
+//var_dump($path,$fancyName); return;
+            $speedLimit=0;//1024*1024;  //限速1M Byte/S
+            //$filePath="D:/abc.mp4";
+            //$fancyName="";
+            Ou_downloadFile($filePath,$fancyName,true,$speedLimit);
+        }catch (Exception $e){
+	        echo $e->getMessage();
+        }
+        //Ou_downloadFile("D:/abc.mp4",'',true,100000);
+    }
+}
+
+/**
+ * 下载文件支持断点续传
+ * @param string $fileName     要下载的文件及路径
+ * @param string $fancyName    在客户端写入的默认文件名
+ * @param bool $forceDownload   默认true,强制浏览器下载而不是在浏览器中打开
+ * @param int $speedLimit       限速Byte/S, 0-不限
+ * @param string $contentType
+ * @return bool
+ */
+function Ou_downloadFile($fileName, $fancyName = '', $forceDownload = true, $speedLimit = 0, $contentType = '') {
+    //必须是文件且可读才能下载
+    ob_clean();
+    if (!is_file($fileName) || !is_readable($fileName))   {
+        //header("HTTP/1.1 404 Not Found");
+        echo "找不到要下载的文件。";
+        return false;
+    }
+    ignore_user_abort(false);
+
+    $fileStat = stat($fileName);
+    $lastModified = $fileStat['mtime']; //上次修改时间Unix时间戳
+
+    $md5 = md5($fileStat['mtime'] .'='. $fileStat['ino'] .'='. $fileStat['size']);
+    $etag = '"' . $md5 . '-' . crc32($md5) . '"';
+
+    header('Last-Modified: ' . gmdate("D, d M Y H:i:s", $lastModified) . ' GMT');
+    header("ETag: $etag");
+
+    if (isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_MODIFIED_SINCE']) >= $lastModified)  {
+        header("HTTP/1.1 304 Not Modified");
+        return true;
+    }
+
+    if (isset($_SERVER['HTTP_IF_UNMODIFIED_SINCE']) && strtotime($_SERVER['HTTP_IF_UNMODIFIED_SINCE']) < $lastModified)   {
+        header("HTTP/1.1 304 Not Modified");
+        return true;
+    }
+
+    if (isset($_SERVER['HTTP_IF_NONE_MATCH']) &&  $_SERVER['HTTP_IF_NONE_MATCH'] == $etag)   {
+        header("HTTP/1.1 304 Not Modified");
+        return true;
+    }
+
+    if ($fancyName == '')  {
+        $fancyName = basename($fileName);
+    }
+
+    if ($contentType == '')   {
+        $contentType = 'application/octet-stream';
+    }
+
+    $fileSize = $fileStat['size'];
+
+    $contentLength = $fileSize;
+    $isPartial = false;
+
+    if (isset($_SERVER['HTTP_RANGE']))
+    {
+        if (preg_match('/^bytes=(\d*)-(\d*)$/', $_SERVER['HTTP_RANGE'], $matches))
+        {
+            $startPos = $matches[1];
+            $endPos = $matches[2];
+
+            if ($startPos == '' && $endPos == '')
+            {
+                return false;
+            }
+
+            if ($startPos == '')
+            {
+                $startPos = $fileSize - $endPos;
+                $endPos = $fileSize - 1;
+            }
+            else if ($endPos == '')
+            {
+                $endPos = $fileSize - 1;
+            }
+
+            $startPos = $startPos < 0 ? 0 : $startPos;
+            $endPos = $endPos > $fileSize - 1 ? $fileSize - 1 : $endPos;
+
+            $length = $endPos - $startPos + 1;
+
+            if ($length < 0)
+            {
+                return false;
+            }
+
+            $contentLength = $length;
+            $isPartial = true;
+        }
+    }
+
+// send headers
+    if ($isPartial)
+    {
+        header('HTTP/1.1 206 Partial Content');
+        header("Content-Range: bytes $startPos-$endPos/$fileSize");
+
+    }
+    else
+    {
+        header("HTTP/1.1 200 OK");
+        $startPos = 0;
+        $endPos = $contentLength - 1;
+    }
+
+    header('Pragma: cache');
+    header('Cache-Control: public, must-revalidate, max-age=0');
+    header('Accept-Ranges: bytes');
+    header('Content-type: ' . $contentType);
+    header('Content-Length: ' . $contentLength);
+
+    if ($forceDownload)
+    {
+        header('Content-Disposition: attachment; filename="' . rawurlencode($fancyName). '"');
+    }
+
+    header("Content-Transfer-Encoding: binary");
+
+    $bufferSize = 4096;
+
+    if ($speedLimit != 0)    {
+        $packetTime = floor($bufferSize * 1000000 / $speedLimit);
+    }
+
+    $bytesSent = 0;
+    $fp = fopen($fileName, "rb");
+    fseek($fp, $startPos);
+    while ($bytesSent < $contentLength && !feof($fp) && connection_status() == 0 )
+    {
+        if ($speedLimit != 0)
+        {
+            list($usec, $sec) = explode(" ", microtime());
+            $outputTimeStart = ((float)$usec + (float)$sec);
+        }
+
+        $readBufferSize = $contentLength - $bytesSent < $bufferSize ? $contentLength - $bytesSent : $bufferSize;
+        $buffer = fread($fp, $readBufferSize);
+
+        echo $buffer;
+
+        ob_flush();
+        flush();
+
+        $bytesSent += $readBufferSize;
+
+        if ($speedLimit != 0)
+        {
+            list($usec, $sec) = explode(" ", microtime());
+            $outputTimeEnd = ((float)$usec + (float)$sec);
+
+            $useTime = ((float) $outputTimeEnd - (float) $outputTimeStart) * 1000000;   //发送使用的微妙数
+            $sleepTime = round($packetTime - $useTime);
+            if ($sleepTime > 0)
+            {
+                usleep($sleepTime);
+            }
+        }
+    }
+    return true;
 }
 ?>

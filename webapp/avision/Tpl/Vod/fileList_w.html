@@ -65,6 +65,10 @@ function vodfunction(work){
         var url='__APP__/Vod/shareAjax';
         para.target=target;  //增加目标频道参数
         break;
+    case "download":
+        openPostWin("__APP__/Vod/downloadFile",para,"download","height=110,width=250");
+        return;
+        break;
 	default:
 		alert("内部错误："+work);
 		return false;
@@ -73,6 +77,7 @@ function vodfunction(work){
 	para.permitCreate='{$permitCreate}';
 	para.permitModify='{$permitModify}';
     para.viewSelf='{$viewSelf}';
+    para.permitDownload='{$permitDownload}';
 	console.log(para);
 	$.ajaxSetup({
         cache:false
@@ -82,6 +87,29 @@ function vodfunction(work){
 		$.parser.parse($('#detail'));
         if(work !='modify') $("#dg").datagrid("reload");
 	},'html');
+
+	function openPostWin(url,args,name,windowParam) {
+        //创建表单对象
+        var _form = $("<form></form>", {
+            'id': 'tempForm',
+            'method': 'post',
+            'action': url,
+            'target': name,
+            'style': 'display:none'
+        }).appendTo($("body"));
+        //将隐藏域加入表单
+        for (var i in args) {
+            _form.append($("<input>", { 'type': 'hidden', 'name': i, 'value': args[i] }));
+        }
+        //绑定提交触发事件
+        _form.bind('submit', function() {
+            //window.open("about:blank", name, windowParam);
+        });
+        //触发提交事件
+        _form.trigger("submit");
+        //表单删除
+        _form.remove();
+    }
 }
 
 </script>
@@ -193,7 +221,7 @@ function vodfunction(work){
 	<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
 	
 	<!-- 功能按钮 -->
-	<div id="dgbutton" style="width:300px;  ">
+	<div id="dgbutton" style="width:400px;  ">
 	<eq name='permitCreate' value='true'>
 		<a id="Append" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" 
 			onclick="vodfunction('add');">增加</a>
@@ -205,6 +233,10 @@ function vodfunction(work){
 	    	onclick="vodfunction('delete');">删除</a>
 	    <a id="Save" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true"
 	    	onclick="vodfunction('modify');">修改</a>
+    </eq>
+    <eq name='permitDownload' value='true'>
+        <a id="Save" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-down',plain:true"
+           onclick="vodfunction('download');">下载</a>
     </eq>
 	</div>
 	<div id="msg" class="errmsg" >{$msg}</div>

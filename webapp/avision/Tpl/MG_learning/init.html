@@ -308,6 +308,14 @@
                 onClick: function () {
                     $("#blkTips").css("display","none");
                     $("#blkAnalys").css("display","block");
+                    if(null==currentPaper)  $("#blkAnalys").html("请先选中练习");
+                    else if(1>=currentPaper.qt) $("#blkAnalys").html("只能分析选择题的答案");
+                    else {
+                        var postPara={exid:currentPaper.id, qt:currentPaper.qt, contextToken:params.contextToken,func:"analys"};
+                        $("#blkAnalys").load(params.MGurl,postPara,function () {
+                            $.parser.parse("#blkAnalys");
+                        });
+                    }
                 }
             });
         });

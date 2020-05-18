@@ -167,4 +167,41 @@ class MG_learningAction extends AdminBaseAction{
             Oajax::errorReturn($e->getMessage());
         }
     }
+
+    /**
+     * 答案分析
+     */
+    private function analys(){
+        try{
+            if($_POST["contextToken"] != session_id()) throw new Exception("非法访问");
+            $exid=intval($_POST["exid"]);
+            if(empty($exid)) throw new Exception("必须指定练习");
+            $qt=intval($_POST["qt"]);
+            if($qt>6 || $qt<2) throw new Exception("只能分析选择题");
+
+            $webVar=array();
+            $result=D("answer")->field("answer, count(*) as numbers")->where("exerciseid=".$exid)->group("answer")->select();
+            if(!empty($result)){
+                //统计总人数，生成圆饼图数据
+                $pipeData=array();
+                $total=0;
+                foreach ($result as $row){
+                    $total += $row["numbers"];
+                    $pipeData[]=array("label"=>$row["answer"],"data"=>$row["numbers"]);
+                }
+                $data=array("rows"=>$result, "footer"=>array(array("answer"=>"总人数","numbers"=>$total)));
+                $webVar["data"]=json_encode2($data);
+                $webVar["pipeData"]=json_encode2($pipeData);
+            }else{
+                $webVar["data"]="[]";
+                $webVar["pipeData"]="[]";
+            }
+
+            $webVar['rows']=json_encode2($result);
+            $this->assign($webVar);
+            $this->display("MG_learning:analys");
+        }catch (Exception $e){
+            echo $e->getMessage();
+        }
+    }
 }

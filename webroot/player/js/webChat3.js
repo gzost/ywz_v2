@@ -19,8 +19,7 @@ function webChat(options){
         firstPageLoaded:false,	//已读入第一页
         unresponsive:false, //忽略滚动消息
 		//其它属性
-        continer:".wechat-container",	//对象容器
-        size:0  //显示字体大小，0-正常，1-放大
+        continer:".wechat-container"	//对象容器
     }
     var params = $.extend(defaults,options);	//整合实例化的参数
 
@@ -191,24 +190,6 @@ function webChat(options){
             case "gift":
                 $("#chat-bottom .popup-box").not("#gift-list").hide();
                 $("#gift-list").toggle('gift');
-                break;
-            case "size":
-                var sizeText="";
-                if(params.size==0){
-                    params.size=1;
-                    sizeText="⊛";
-                    $(".chat-item .right-box .msg-text").addClass("textLargeFont");
-                    $(".chat-item .right-box .msg-info").addClass("infoLargeFont");
-                    $(page.blk_chatMsg).scrollTop($(page.blk_chatMsg)[0].scrollHeight);	//滚动到底部
-                }else{
-                    params.size=0;
-                    sizeText="⊕";
-                    $(".chat-item .right-box .msg-text").removeClass("textLargeFont");
-                    $(".chat-item .right-box .msg-info").removeClass("infoLargeFont");
-                }
-                //console.log(sizeText);
-                $(obj).html(sizeText);
-
                 break;
         }
     });

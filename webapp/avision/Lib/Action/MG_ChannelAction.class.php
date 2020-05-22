@@ -392,8 +392,7 @@ class MG_ChannelAction extends AdminBaseAction
             array("key"=>"netBrokenInt", "name"=>"网络中断最长时间(秒)", "gkey"=>"player", "group"=>"播放器特性", "value"=>"120", "editor"=>array("type"=>"numberbox")),
             array("key"=>"version", "name"=>"播放器版本[1|2]", "gkey"=>"player", "group"=>"播放器特性", "value"=>"1", "editor"=>array("type"=>"numberbox")),
             array("key"=>"showCover", "name"=>"显示频道封面[0|1]", "gkey"=>"", "group"=>"其它参数", "value"=>"", "editor"=>array("type"=>"numberbox")),
-            array("key"=>"spreadTarget", "name"=>"成功传播人数要求", "gkey"=>"", "group"=>"其它参数", "value"=>"0", "editor"=>array("type"=>"numberbox")),
-            array("key"=>"chatReview", "name"=>"1-聊天信息审核后发布, 0-直接发布", "gkey"=>"", "group"=>"其它参数", "value"=>"0", "editor"=>array("type"=>"numberspinner","options"=>array("min"=>0,"max"=>1)))
+            array("key"=>"spreadTarget", "name"=>"成功传播人数要求", "gkey"=>"", "group"=>"其它参数", "value"=>"0", "editor"=>array("type"=>"numberbox"))
         );
         $rt=fillExtAttr($dbChannel,array("id"=>$webVar["chnId"]),$attrib);
 //var_dump($rt);

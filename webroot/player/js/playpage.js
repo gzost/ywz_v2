@@ -242,15 +242,6 @@ function Ou_playPage(params) {
     var appPara={chnid:params.chnid,user:{uid:params.uid, userName:params.userName,account:params.account}};
 
     /////// 与其它对象无关联的函数 //////////
-    //取状态
-    this.getStatus=function () {
-        return status;
-    }
-
-    this.isPC=function(){
-        return !(status.isAndroid || status.isIOS);
-    }
-
     //当前(手机屏幕)是纵向还是横向, 横向返回true
     this.isHorizontal=function () {
         if(status.isAndroid || status.isIOS){

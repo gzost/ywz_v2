@@ -116,7 +116,7 @@ class MG_chatAction extends AdminBaseAction{
 
             $click=$_POST["click"];
             if($click=="btnShow" || $click=="btnNoShow"){
-                $idstr=implode(",",array_column($_POST["recs"],"id"));  //要转换记录的id串
+                $idstr=implode(",",array_column($_POST["recs"],"id"));  //要转换记录的id 串
                 $rec=array("isshow"=>($click=="btnShow")?"true":"false");
                 $rt=D("webchat")->where(array("id"=>array("in",$idstr)))->save($rec);
                 if(false===$rt) throw new Exception("数据库写入失败。");

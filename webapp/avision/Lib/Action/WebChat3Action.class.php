@@ -33,7 +33,7 @@ class WebChat3Action extends SafeAction {
 			//return $_SESSION["WebChat"]['IsAdmin'] = true;
 		}
 
-		//是否主播
+		//是否主播或助手
 		$model = new ChannelModel();
 		$isMaster = $model->isMaster($chnId, $this->userId());//$userInfo['userId']
 		//var_dump($anchorId);
@@ -41,7 +41,7 @@ class WebChat3Action extends SafeAction {
 		if($isMaster)
 		{
 			$_SESSION["WebChat"]['IsAdmin'] = true;
-		}
+		}elseif (!empty(C("adminGroup")) && ($this->author->isRole("admin")) ) $_SESSION["WebChat"]['IsAdmin'] = true;
 
 		return $_SESSION["WebChat"]['IsAdmin'];
 	}
@@ -129,13 +129,18 @@ class WebChat3Action extends SafeAction {
 		if(!$this->IsCanChat($para['channelId'])){
 			return "无发送信息权限";
 		}
+
+        $dbChn=D("channel");
+        $chatReview=getExtAttr($dbChn,array("id"=>$para['channelId']),$attrName="chatReview");
+
 		$webchat=D('webchat');
 		$data=array('message'=>htmlspecialchars_decode($msg),'senderid'=>$para['userId'],
 			'sendername'=>$this->userName(), 'chnid'=>$para['channelId']);
+		$data["isshow"]=(empty($chatReview))?"true":"wait";
 		$result=$webchat->add($data);
 //echo $webchat->getLastSql();
 		if(empty($result)) return "聊天信息写入数据库失败";
-		else return "新增两天记录成功";
+		else return "新增聊天记录成功";
 	}
 
 	/**
@@ -153,7 +158,7 @@ class WebChat3Action extends SafeAction {
 
 		//生成查询条件
         $maxRecords=self::MAXRECORD;
-        $cond=array("chnid"=>$chnid, "isshow"=>"true");
+        $cond=array("chnid"=>$chnid);
 		if("n"==$direct){
 		    //取新的聊天记录
             if(0==$being) $maxRecords=20;  //刚进入聊天取最近20条记录
@@ -162,6 +167,8 @@ class WebChat3Action extends SafeAction {
                 $now=time()-$delay;
                 $cond["unix_timestamp(sendtime)"]=array("exp","< $now ");
             }
+            $uid=$this->userId();
+            $cond["_string"]="isshow='true' or senderid=$uid ";
         }else{
 		    //取上一页聊天记录
             $maxRecords=20;

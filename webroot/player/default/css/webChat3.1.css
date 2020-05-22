@@ -165,3 +165,13 @@
 	font-size: 8px;
 	color: #aaa;
 }
+
+.textLargeFont{
+	font-size: 24px !important;
+	line-height: 28px !important;
+}
+
+.infoLargeFont{
+	font-size: 16px !important;
+	line-height: 20px !important;
+}

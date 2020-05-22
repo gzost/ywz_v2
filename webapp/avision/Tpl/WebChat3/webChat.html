@@ -12,6 +12,7 @@
 		<if condition="$showfullurl neq ''">
 			<!-- <div class="func-btn" func="full">📄</div> 单页显示样式问题，暂时停用-->
 		</if>
+		<div class="func-btn" func="size" style="display: none;">⊕</div>
 		<div contenteditable="plaintext-only" class="input-box"></div>
 		<div class="func-btn" func="emoji">☺</div>
 		<!-- <div class="func-btn" func="gift">🎁</div> 等待实现-->
@@ -48,15 +49,23 @@
 	</div>
 </div>
 
-<script type="text/javascript" src="/player/js/webChat3.js"></script>
+<script type="text/javascript" src="/player/js/webChat3.js?v=3.1"></script>
 <script type="text/javascript">
-    //创建交流实例，并设置基本参数
-    var chat=new webChat({
-        canChat:"{$CanChat}",
-        channelId:"{$channelId}",
-        userName:"{$userName}",
-        userId:"{$userId}",
-        isAdmin:"{$isAdmin}",
-        webpage:playPage
+	$(document).ready(function () {
+        //创建交流实例，并设置基本参数
+		var para={
+            canChat:"{$CanChat}",
+            channelId:"{$channelId}",
+            userName:"{$userName}",
+            userId:"{$userId}",
+            isAdmin:"{$isAdmin}",
+            webpage:playPage
+        }
+        var chat=new webChat(para);
+
+		var isPC=playPage.isPC();
+		console.log("isPC",isPC);
+        if("1"==para.isAdmin && isPC) $(".func-btn[func='size']").css('display','block');
     });
+
 </script>

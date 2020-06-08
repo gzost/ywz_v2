@@ -631,7 +631,7 @@ echo 'owner='.$owner;
             $fancyName=$_POST["channelid"]."_".uniqid();
             $fancyName .=".".pathinfo($path,PATHINFO_EXTENSION);
 //var_dump($path,$fancyName); return;
-            $speedLimit=0;//1024*1024;  //限速1M Byte/S
+            $speedLimit=1024*1024;  //限速1M Byte/S
             //$filePath="D:/abc.mp4";
             //$fancyName="";
             Ou_downloadFile($filePath,$fancyName,true,$speedLimit);

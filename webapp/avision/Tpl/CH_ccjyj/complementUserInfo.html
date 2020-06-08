@@ -48,53 +48,20 @@
             height:100%;
             /*min-width:1024px;*/
             /*min-height: 680px;*/
-            max-width: 800px;
+            max-width: 1200px;
             text-align: center;
             /*background: url("../images/home_bg.png") no-repeat center top;*/
             background-size: 100% 100%;
             background-color: #f3f4f5;
         }
 
-        #title {
-            height: 36px;
-            padding:10px 0 0 10px;
-            text-align: left;
-            background-color: #02aaf1;
+        .input_item{
+            margin-top:10px;
         }
-
-        #nav_box{
-            display:flex;
-            padding: 1em;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            align-items: flex-start;
-            align-content: flex-start;
-            background-color: #02aaf1;
+        .msg-box{
+            margin-top: 10px;
+            color: red;
         }
-
-        #nav_box .nav_ico{
-            color:white;
-            width: 5em;
-        }
-        #nav_box .nav_ico .ico_img{
-            font-size: 2.5em;
-        }
-
-        #my-course{
-            /*display:flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            align-items: flex-start;
-            align-content: flex-start;*/
-            padding: 2px 1px;
-        }
-        .subhead{
-            color: #02aaf1;
-            font-size: 1.2em;
-            margin: 5px 0;
-            text-align: left;
-        }
-
         .layer10{
             position: absolute;
             z-index: 10;
@@ -112,19 +79,39 @@
         <img src="__ROOT__/home/CH_ccjyj/images/userbanner.jpg" style="width:100%;object-fit:cover;">
     </div>
     <img  id="my-logo" class="layer10 my-logo" src="__ROOT__/home/CH_ccjyj/images/my_w.png"  >
-
-    <div id="my-course">
-        <div class="subhead">📑 <div style="display: inline-block; border-bottom: 1px dotted #66e; width: 50%;">我的课程</div>
-            <a href="__URL__/index/work/udInf"><div id="updateLink" style="float: right;margin-right: 1em; font-size: 12px;">更新用户资料</div></a>
-        </div>
-        {:R('WD_ChannelList/courseList',array( $uid,$agentid,false),'Widget')}
+    <div>
+        为了准确记录您的学习成绩，需要完善一下用户资料：
     </div>
-    <div style="margin-top: 15px;">
-        <div class="subhead">📑 <div style="display: inline-block; border-bottom: 1px dotted #66e; width: 50%;">全部课程</div></div>
-        {:R('WD_ChannelList/agentChannel',array( $agentid,true),'Widget')}
+    <div  class="msg-box" >
+        {$msg}
+    </div>
+    <div style="margin: 20px 10px;">
+        <form action="__URL__/complementUserInfo" method="post">
+            <div class="input_item">
+                <input class="easyui-textbox" name="realname" value="{$realname}" label="真实姓名:" labelPosition="top" data-options="prompt:'请输入身份证上记载的姓名...',validType:'length[2,40]'" style="width:100%;">
+            </div>
+            <div class="input_item">
+                <input class="easyui-textbox" name="idcard" value="{$idcard}" label="身份证号:" labelPosition="top" data-options="prompt:'请输入身份证号码...',validType:'length[18,18]'" style="width:100%;">
+            </div>
+            <div class="input_item">
+                <input id="company" class="easyui-combobox" name="company" vlaue="{$company}" label="工作单位:" labelPosition="top" style="width:100%;"
+                       data-options="prompt:'请选择工作单位...',valueField:'id',textField:'txt', data: {$companyListJson} " >
+            </div>
+            <input type="hidden" name="work" value="save">
+            <input type="hidden" name="magicId" value="{$magicId}">
+            <div class="input_item">
+                <eq name="work" value="saved">
+                    <a  href="__URL__/index" class="easyui-linkbutton" >资料更新成功，返回首页</a>
+                <else/>
+                    <input type="submit" value="提交资料">
+                </eq>
+
+            </div>
+
+
+        </form>
     </div>
 </div>
-
 <div id="userinfo" class="easyui-navpanel">
     <header>
         <div class="m-toolbar">
@@ -136,28 +123,10 @@
     </header>
     userinfo
 </div>
-
 <script>
-    $(".nav_ico").on('click',function(event){
-        var obj=event.delegateTarget;
-        var func=$(obj).attr('func');
-        console.log(func);
-        switch(func) {
-            case 'login':
-                window.location.href="__URL__/login";
-                break;
-            case 'uinfo':   //显示用户信息，及用户服务
-                $("#userinfo").load('__URL__/userInfo',function () {
-                    $.parser.parse($('#userinfo'));
-                });
-                $("#info_title").html('用户服务');
-                $.mobile.go('#userinfo');
-                break;
-        }
-        console.log(event.delegateTarget);
-
+    $(document).ready(function(){
+        $("#company").combobox('select','{$company}');
     });
-
     $("#my-logo").on('click',function(event){
         $("#userinfo").load('__URL__/userInfo',function () {
             $.parser.parse($('#userinfo'));
@@ -165,7 +134,6 @@
         $("#info_title").html('用户服务');
         $.mobile.go('#userinfo');
     });
-
 </script>
 </body>
 </html>

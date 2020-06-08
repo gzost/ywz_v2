@@ -1,0 +1,6 @@
+服务器要求
+
+在线人数	WEB服务器		DB服务器
+500				2core				2core
+2000			4core				4core
+4000			8core				8core

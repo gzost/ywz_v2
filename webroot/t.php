@@ -2,7 +2,6 @@
 define("appname",3);
 var_dump(defined("appname"));
 $v=appname;
-
 var_dump($v);
 
 exit;

@@ -115,7 +115,7 @@ class CH_ccjyjAction extends ChomeBaseAction
         }else $companyListJson="[]";
         $companyListJson=str_replace('"',"'",$companyListJson);
         $webVar['companyListJson']=$companyListJson;
-//var_dump($companyListJson);
+//var_dump($_POST); die();
 
         $dbUser=D('user');
         if($_POST['work']=='save' && !empty($magicId) && $magicId===$_POST['magicId']){
@@ -126,9 +126,13 @@ class CH_ccjyjAction extends ChomeBaseAction
             if(isset($_POST['realname'])) $webVar['realname']=$userData['realname']=$this->user['realname']=$_POST['realname'];
             if(isset($_POST['idcard']))  $webVar['idcard']=$userData['idcard']=$this->user['idcard']=$_POST['idcard'];
             if(isset($_POST['company']) ) {
+                /*
                 if(isset($listfield['listfield']['company'][$_POST['company']])){
                     $webVar['company']=$userData['company']=$this->user['company']=$listfield['listfield']['company'][$_POST['company']];
                 }else $msg='工作单位错误。<br>';
+                */
+                //不校验单位名称
+                $webVar['company']=$userData['company']=$this->user['company']=$_POST['company'];
             }
             $msg .=$this->validateUserInfo();
             $webVar['magicId']=$_POST['magicId'];
@@ -147,11 +151,13 @@ class CH_ccjyjAction extends ChomeBaseAction
             $webVar['work'] = 'init';
             $webVar['magicId'] = (empty($magicId)) ? 'x' : $magicId;
         }
-//var_dump($this->user);
+//dump($this->user);
             //首次调用时，外部必须已经读入了相应的用户数据
             $webVar['realname']=$this->user['realname'];
             $webVar['idcard']=$this->user['idcard'];
-            $webVar['company']=' '; //不可能的值
+            //$webVar['company']=' '; //不可能的值
+            $webVar['company']=$this->user['company'];
+        /*
             //查找单位名称对应的key
             $company=$this->user['company'];
             if(!empty($company)){
@@ -162,8 +168,8 @@ class CH_ccjyjAction extends ChomeBaseAction
                     }
                 }
             }
-
-
+        */
+//dump($webVar);
         $webVar['msg']=$msg;
         $this->assign($webVar);
         $this->show("complementUserInfo");

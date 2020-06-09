@@ -118,7 +118,7 @@ class WD_ChannelListWidget extends Action
         try {
             $dalChannelreluser=D('channelreluser');
             $dalChn=D("channel");
-            $cond=array('agent'=>$agent);
+            $cond=array('agent'=>$agent, 'status'=>'normal');
             if(!$viewall) $cond['status']='normal';
             //$chnList=$dalChn->where($cond)->field("id,name,attr")->select();
             $chnList=$dalChn->where($cond)->getField("id,name,attr");

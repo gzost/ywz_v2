@@ -18,12 +18,14 @@
 <script>
     $(".channel-list3 .item").on("click",function (event) {
        var obj=event.delegateTarget ;
+       var agentid="{$agentid}";
        console.log(obj);
        var chnid=$(obj).attr('chnid');
         console.log(chnid);
        if(0==chnid) $.messager.alert('提示','此课程已关闭');
        else{
-           window.location.href="__APP__/HDPlayer/play/chnId/"+chnid;
+           //window.location.href="__APP__/HDPlayer/play/chnId/"+chnid;
+           window.location.href="/play.html?ch="+chnid+"&ag="+agentid;
        }
     });
 

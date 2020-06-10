@@ -38,6 +38,7 @@
 <script>
     //$(".channel-list1 .left-box, .channel-list1 .right-box .channel-desc").on("click",function (event) {
     $(".channel-list1").on("click",function (event) {
+        var agentid="{$agentid}";
        var obj=event.delegateTarget;
        var targetClass=$(event.target).attr('class');
 //console.log(obj); console.log(targetClass); //return;
@@ -55,12 +56,14 @@ console.log("chnid="+chnid);
                 $.messager.confirm('确认', '本课程您的学习任务已完成，还要继续学习吗?', function(r){
                     if (r){
                         console.log("jump1");
-                        window.location.href="__APP__/HDPlayer/play/chnId/"+chnid;
+                        //window.location.href="__APP__/HDPlayer/play/chnId/"+chnid;
+                        window.location.href="/play.html?ch="+chnid+"&ag="+agentid;
                     }
                 });
             }else{
                 console.log("jump2");
-                window.location.href="__APP__/HDPlayer/play/chnId/"+chnid;
+                //window.location.href="__APP__/HDPlayer/play/chnId/"+chnid;
+                window.location.href="/play.html?ch="+chnid+"&ag="+agentid;
             }
 
         }

@@ -852,7 +852,7 @@ class ChannelModel extends Model {
 			else
 			{
 				//没有，创建一个频道
-				$this->CreateNew($userId, $sId, $userName.'的频道', $boAttr['viewersPerChannel']);
+				$this->CreateNew($userId, $sId, $userName.'的频道', $boAttr['viewersPerChannel'],$userInfo['agent']);
 			}
 		}
 	}

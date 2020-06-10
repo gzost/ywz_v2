@@ -10,7 +10,7 @@
 require_once COMMON_PATH.'ChomeBaseAction.class.php';
 class CH_ccjyjAction extends ChomeBaseAction
 {
-    static private $agentid=201;    //禅城教育局机构代码
+    static private $agentid=203;    //禅城教育局机构代码
     private $agent=null;    //当前agent记录
     private $user=null;     //当前用户记录
 
@@ -109,7 +109,7 @@ class CH_ccjyjAction extends ChomeBaseAction
             $listfield['listfield']['company']=explode(",",$listfield['listfield']['company']);
             $companyList=array();
             //$companyArr=explode(",",$listfield['listfield']['company']);
-            foreach ($listfield['listfield']['company'] as $key=>$val) $companyList[]=array('id'=>$key,'txt'=>$val);
+            foreach ($listfield['listfield']['company'] as $key=>$val) $companyList[]=array('id'=>$val,'txt'=>$val);
             //foreach ($companyArr as $key=>$val) $companyList[]=array('id'=>$key,'txt'=>$val);
             $companyListJson=json_encode2($companyList);
         }else $companyListJson="[]";

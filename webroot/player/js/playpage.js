@@ -684,6 +684,9 @@ console.log("status.playerReady=",status.playerReady);
                         isTabInit[tabid]=true;
                     }
                     break;
+                case 108:   //首页
+                    window.location.href=params.appUrl+"/Home/goHome?agent="+params.agent;
+                    break;
                 case 109:   //图文直播
                     if(true != isTabInit[tabid]){
                         //未初始化，执行初始化

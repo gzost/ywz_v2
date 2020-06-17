@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c373e6b3-2af5-4bab-bede-a2195dffe403" name="默认更改列表" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webapp/public/aliyun/Sms.Config.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/public/aliyun/Sms.Config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webroot/ccjyj/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/webroot/ccjyj/index.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -55,8 +52,8 @@
       <file leaf-file-name="Sms.Config.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/webapp/public/aliyun/Sms.Config.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="175">
-              <caret line="7" column="2" lean-forward="true" selection-start-line="7" selection-start-column="2" selection-end-line="7" selection-end-column="2" />
+            <state relative-caret-position="100">
+              <caret line="4" selection-start-line="4" selection-end-line="5" selection-end-column="58" />
             </state>
           </provider>
         </entry>
@@ -542,12 +539,12 @@
       <workItem from="1590289680296" duration="22222000" />
       <workItem from="1590507553013" duration="10770000" />
       <workItem from="1591620203265" duration="18019000" />
-      <workItem from="1592360277461" duration="2095000" />
+      <workItem from="1592360277461" duration="2154000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3534874000" />
+    <option name="totallyTimeSpent" value="3534933000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -973,8 +970,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/webapp/public/aliyun/Sms.Config.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="175">
-          <caret line="7" column="2" lean-forward="true" selection-start-line="7" selection-start-column="2" selection-end-line="7" selection-end-column="2" />
+        <state relative-caret-position="100">
+          <caret line="4" selection-start-line="4" selection-end-line="5" selection-end-column="58" />
         </state>
       </provider>
     </entry>

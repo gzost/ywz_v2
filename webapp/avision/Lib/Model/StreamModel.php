@@ -6,9 +6,10 @@ class StreamModel extends Model {
 	 * 
 	 * 通过流字串获取流ID
 	 * @param string $name	流字串
+     * @return int
 	 */
 	public function getIdByName($name){
-		return $this->where(array('idstring'=>$name))->getField(id);
+		return $this->where(array('idstring'=>$name))->getField('id');
 	}
 
 	/**
@@ -24,9 +25,9 @@ class StreamModel extends Model {
 			return false;
 		}
 
-		//TODO: 根据不同的平台进行不同的处理
+		//TODO: 平台1/2需要做状态更新处理
 		if(0==$platform) $platform=$this->where('id='.$streamId)->getfield('platform');
-		if($platform !=3 && $platform !=4) return true;	//outao 2017-12-09 临时返回永远活跃
+		if($platform <3 ) return true;	//outao 2017-12-09 临时返回永远活跃
 		
 		$act = D('activestream');
 		$w = array();

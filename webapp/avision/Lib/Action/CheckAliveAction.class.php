@@ -19,7 +19,7 @@ require_once(APP_PATH.'/Common/stream.class.php');
 class CheckAliveAction extends Action{
 	protected $userInfo=null;
 	function __construct(){
-		set_time_limit(0);
+		set_time_limit(600);
 		parent::__construct();
 		session_start();
 		C('LOG_FILE','checkAlive%m%.log');
@@ -83,49 +83,70 @@ class CheckAliveAction extends Action{
 	 * 
 	 * 主动向收流服务器查询当前活动的流并向数据库更新推流状态
 	 * 此函数为后台调用入口
-	 * 推流服务器列表在数据字典中定义
+	 * 自建推流服务器列表在数据字典中定义
 	 * 所以服务器的流名称为同一名字空间，并作为流的标识
 	 */
 	public function updateStreamStat(){
 		$dbActivestream=D('activestream');
-		//0、处理异步操作请求
+		//1、处理异步操作请求
 		$rt=$dbActivestream->operate();
-		//1、查询当前活动的流
+		//2、查询收流服务器当前活动的流
 		$dbDictionary=D('dictionary');
 		$serverList=$dbDictionary->getPushServerList();
-		
-//dump($serverList);
+        $objStream=new stream();
+echo time();
+dump($serverList);
 		try{
 			if(!is_array($serverList)) throw new Exception('Have no push server.');
+            //服务器循环
 			foreach ($serverList as $attr){
-				//服务器循环
-				$url='http://'.$attr['url'].':'.$attr['statport'].'/stat';
-				logfile($url,LogLevel::INFO);
-				$serverip=gethostbyname($attr['url']);
-echo $url,$serverip,'<br>';					
-				//取收流服务器状态
-				$html = file_get_contents($url);	//nginx输出xml的状态
-				$xml=simplexml_load_string($html, 'SimpleXMLElement', LIBXML_NOCDATA);
-				$stat = json_decode(json_encode($xml),TRUE);
+//dump($attr);
+				switch ($attr['statport']){
+                    case 5:     //阿里云边缘收流
+                        $streamList=$objStream->aliListOnlineStream($attr['url']);
+                        break;
+                    case 8011:      //nginx-rtmp收流
+                        $url='http://'.$attr['url'].':'.$attr['statport'].'/stat';
+                        logfile($url,LogLevel::INFO);
+                        //$serverip=gethostbyname($attr['url']);
+                        //取收流服务器状态
+                        $html = file_get_contents($url);	//nginx输出xml的状态
+                        $xml=simplexml_load_string($html, 'SimpleXMLElement', LIBXML_NOCDATA);
+                        $stat = json_decode(json_encode($xml),TRUE);
 //var_dump($stat);
-				//下钻3层获取流的信息server-->application-->stream
-				$streamList=$this->findStreamStat($stat, 'server');
-//var_dump($streamList);
-				if(null==$streamList) continue;
-				foreach ($streamList as $stream){
-					$stream['serverip']=$serverip;
-					$rt=$dbActivestream->updateStatus($stream);
-					logfile('Updata:'.json_encode($stream).$rt,LogLevel::DEBUG);
-				}
+                        //下钻3层获取流的信息server-->application-->stream
+                        $streamList=$this->findStreamStat($stat, 'server');
+                        break;
+                    default:
+                        $streamList=null;
+                }
 
+dump($streamList);
+				if(null==$streamList) continue;
+				//流循环
+				foreach ($streamList as $rec){
+                    switch ($attr['statport']) {
+                        case 5:     //阿里云边缘收流
+                            $stream=array("name"=>$rec["StreamName"],"serverip"=>$rec["DomainName"],"bw_in"=>0);
+                            break;
+                        case 8011:      //nginx-rtmp收流
+                            $stream=$rec;
+                            $stream['serverip']=$attr['url'];
+                            break;
+                    }
+
+					$rt=$dbActivestream->updateStatus($stream);
+					logfile('Update:'.json_encode($stream).$rt,LogLevel::DEBUG);
+				}
 			}
 		}catch (Exception $e){
 //echo $e->getMessage();
 			logfile($e->getMessage(),LogLevel::WARN);
-			return;
+			//return;   //2020-06-30 还要继续查询其它推流平台，不能退出
 		}
-		
-		//2、将超时没活跃信息的流设为非活动
+
+
+		//3、将超时没活跃信息的流设为非活动
 		//STREAM_ALIVE_INTERVAL
 		$interval=(null==C('STREAM_ALIVE_INTERVAL'))?600:C('STREAM_ALIVE_INTERVAL');	//若无配置取10分钟间隔
 		$deactiveTime=time()-$interval;

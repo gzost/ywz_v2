@@ -1,5 +1,8 @@
 <?php
 class ActivestreamModel extends Model{
+    const REACTIVE_TIME=180;    //重新活跃时间(秒)。推流中断后此时间内重新推流看作同一活跃推流(被每小时结算打断除外)
+    const   DEFAULT_PLATFORM=5; //默认的平台ID
+
 	/**
 	 * 
 	 * 取消费统计
@@ -7,7 +10,7 @@ class ActivestreamModel extends Model{
 	 * @param int $start	消费区间开始时间戳
 	 * @param int $end		消费区间结束时间戳
 	 * 
-	 * @retunr array() 每行数组记录包括：
+	 * @return mixed 每行数组记录包括：
 	 * 		objtype:	消费类型 固定：push
 	 * 		objid:		消费对象ID：streamId
 	 * 		users:		本时段总在线消费人次:1
@@ -36,8 +39,8 @@ class ActivestreamModel extends Model{
 	 * @param int	$endTime 不提供则转移所有offline记录
 	 */
 	public function moveOfflineToLog($endTime=null){
-		$fields='id activeid,streamid,begintime,activetime,sourceip,name';
-		$logFields='activeid,streamid,begintime,activetime,sourceip,name';
+		$fields='id activeid,streamid,begintime,activetime,sourceip,name,serverip';
+		$logFields='activeid,streamid,begintime,activetime,sourceip,name,serverip';
 		$cond='isactive="false"';
 		if(null!=$endTime) $cond .=' and activetime<'.$endTime;
 		$queryStr='insert into '.C('DB_PREFIX').'streamlog('.$logFields.')' .
@@ -50,8 +53,12 @@ class ActivestreamModel extends Model{
 		$result=$this->where($cond)->delete();
 		logfile($result.' records delete from activestream.',5);
 	}
-	
-	//更新活动流的最后活动时间及当前带宽
+
+    /**
+     * 更新活动流的最后活动时间及当前带宽
+     * @param array $data field:name,serverip,bw_in
+     * @return mixed
+     */
 	public function updateStatus($data){
 		$now=time();
 		$cond=array('name'=>$data['name'],'isactive'=>'true','serverip'=>$data['serverip']);
@@ -65,9 +72,17 @@ class ActivestreamModel extends Model{
 			if(null==$result){  //2018-04-13 outao 原来是 != 导致重复生成推流记录
 				//建立新的在线记录
 				$dbStream=D('stream');
-				$streamid=$dbStream->getIdByName($data['name']);
-				$rec['streamid']=(null==$streamid)?0:$streamid;
-				logfile('NOT registered stream===>'.$data['name'],LogLevel::ALERT);
+				//$streamid=$dbStream->getIdByName($data['name']);
+                $streamRec=$dbStream->field("id,platform")->where(array("idstring"=>$data['name']))->find();
+                if(empty($streamRec)){
+                    $rec["streamid"]=$rec["platform"]=0;
+                    logfile('NOT registered stream===>'.$data['name'],LogLevel::ALERT);
+                }
+                else{
+                    $rec["streamid"]=$streamRec["id"];
+                    $rec["platform"]=$streamRec["platform"];
+                }
+
 				$rec['name']=$data['name'];
 				$rec['begintime']=$now-1;
 				$result=$this->add($rec);
@@ -92,7 +107,7 @@ class ActivestreamModel extends Model{
 		return $rt;
 	}
 	
-	//处理表中的异步操作请求
+	//处理表中的异步操作请求。废弃，仅有的调用者CheckAlive->updateStreamStat 将此功能移到stream.class.php中asyOperate
 	public function operate(){
 		$result=$this->where(array('operate'=>array('NEQ','none')))->select();
 //echo $this->getLastSql();		
@@ -109,7 +124,7 @@ class ActivestreamModel extends Model{
 	
 	/**
 	 * 
-	 * 处理切断推流请求
+	 * 处理切断推流请求 准备废弃目前有的调用者：$this->operate, streamService->cutActiveStream
 	 * @param array $rec	活动流记录
 	 */
 	public function doCut($rec){
@@ -131,5 +146,84 @@ class ActivestreamModel extends Model{
 		}
 
 	}
+
+    /**
+     * 建立新的活动推流记录。目前主要针对阿里云推流的callback接口
+     * 若表中已经有相同name的记录，若activetime>time()-REACTIVE_TIME只更新记录
+     * @param array $rec    传入的记录数组包括以下字段：sourceip,name,serverip,statustime
+     *
+     * @return string   none-无需后续处理，cut-通知收流端断流，ban-断流并加入黑名单
+     */
+	public function publish($rec){
+        $ret="none";  //将返回的字串，默认无需后续处理
+        try{
+            if(empty($rec["name"])) throw new Exception("缺少流名称。");
+
+            //1、读stream表，根据此流是否存在以及状态决定operate及返回值
+            $dbStream=D("stream");
+            $streamRec=$dbStream->field("id,status,platform")->where(array("idstring"=>$rec["name"]))->find();
+//dump($streamRec);
+            if(null==$streamRec) {
+                $rec["streamid"]=0;
+                $rec["platform"]=self::DEFAULT_PLATFORM;
+                $ret="ban";
+            }else {
+                $rec["streamid"]=$streamRec["id"];
+                $rec["platform"]=$streamRec["platform"];
+                if($streamRec["status"]=="locked") $ret="cut";
+                elseif ($streamRec["status"]=="ban") $ret="ban";
+            }
+            $rec["operate"]=$ret;
+
+            //2、尝试读取相同流名称的最新一条记录，并根据结果进行处理
+            $now=time();    //当前时间戳
+            try{
+                $this->startTrans();
+                $activeStream=$this->lock(true)->field("id,activetime,statustime")->where(array("name"=>$rec["name"]))->order("id desc")->find();
+//dump($activeStream);
+//dump($rec);
+//var_dump( (null==$activeStream )|| ($activeStream["statustime"]<$rec["statustime"]) && ($activeStream["activetime"]<($now-self::REACTIVE_TIME))  );
+//var_dump(($activeStream["statustime"]<$rec["statustime"]));
+
+                if( (null==$activeStream) || ($activeStream["statustime"]<$rec["statustime"]) && ($activeStream["activetime"]<($now-self::REACTIVE_TIME)) ){
+                    //没有推流或状态时序正确且已超过重新激活时间，新建记录
+
+                    $rec["begintime"]=$now-1;
+                    $rec["activetime"]=$now;
+                    $rec["isactive"]="true";
+                    $rt=$this->add($rec);
+//echo $this->getLastSql();
+                    if(false === $rt) throw new Exception("无法建立活跃推流记录。");
+                }elseif($activeStream["statustime"]<$rec["statustime"]){
+                    //原推流记录时序正确，未超过重新激活时间，重新激活
+                    $rec["activetime"]=$now;
+                    $rec["isactive"]="true";
+                    $rt=$this->where("id=".$activeStream["id"])->save($rec);
+                    if(false === $rt) throw new Exception("无法更新活跃推流记录。");
+                }  //剩下时序不正确的调用忽略
+                $this->commit();
+            }catch (Exception $ex){
+                //无法建立或更新activestream记录
+                $this->rollback();
+                $ret="cut";
+            }
+
+            return $ret;
+        }catch (Exception $e){
+            return $e->getMessage();
+        }
+    }
+
+    /**
+     * 结束推流
+     * @param $stream   流名称
+     * @param $statustime   callback发起端时间戳
+     * @return bool 成功返回true
+     */
+    public function publish_done($stream,$statustime){
+	    $cond=array("name"=>$stream, "isactive"=>"true","statustime"=>array("LT",$statustime));
+	    $rec=array("activetime"=>time(), "isactive"=>"false", "statustime"=>$statustime);
+	    $rt=$this->where($cond)->save($rec);
+	    return (false === $rt)? false : true;
+    }
 }
-?>

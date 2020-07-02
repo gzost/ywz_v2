@@ -2,6 +2,13 @@
 /**
  * 关于流公共功能的类
  */
+require_once APP_PATH.'../../vendor/autoload.php';  //自动载入阿里云API
+//阿里云API相关命名空间
+use AlibabaCloud\Client\AlibabaCloud;
+use AlibabaCloud\Client\Exception\ClientException;
+use AlibabaCloud\Client\Exception\ServerException;
+require_once APP_PATH.'../../secret/OuSecret.class.php';    //各种密钥配置
+
 require_once APP_PATH.'Common/functions.php';
 require_once APP_PATH.'../public/Ou.Function.php';
 require_once LIB_PATH.'Model/UserModel.php';
@@ -12,10 +19,13 @@ require_once LIB_PATH.'Model/DictionaryModel.php';
 require_once APP_PATH.'../public/Pagination.class.php';
 require_once LIB_PATH.'Model/ChannelModel.php';
 
+
+
 class stream {
 	public $message='未能处理的错误。';	//通常用于记录错误信息
 	//public $chnid=0;	//当前授权成功的频道ID
 	protected $streamId;	//当前成功授权的流ID
+    private $streamRec; //当前授权成功流的部分记录字段id,idstring,attr,pushkey,owner,platform
 	
 	/**
 	 * 
@@ -24,13 +34,13 @@ class stream {
 	 * @param string $key		推流密码
 	 * 
 	 * @return array	若成功授权返回授权属性\
-	 * @throws		出错信息。
+	 * @throws	Exception	出错信息。
 	 */
 	public function pushAuthor($stream,$key){
 		$dbstream=D('Stream');
 		$cond=array('idstring'=>$stream,'status'=>'normal');
 
-		$result=$dbstream->field('id,idstring,attr,pushkey,owner')->where($cond)->find();
+		$result=$dbstream->field('id,idstring,attr,pushkey,owner,platform')->where($cond)->find();
 //echo $dbstream->getLastSql();
 //dump($result); echo '  key='.$key;
 		if(null==$result) throw new Exception('Illegal stream! ');
@@ -42,6 +52,7 @@ class stream {
 		if(0>$availableBalance) throw new Exception('Balance<0!'.$availableBalance);
 		
 		$this->streamId=$result['id'];
+		$this->streamRec=$result;
 		$attrArr=json_decode($result['attr'],true);
 		$arr=array();
 		if(null!=$attrArr['bandwidth'])$arr['bandwidth']=$attrArr['bandwidth'];	//带宽限制属性
@@ -60,13 +71,14 @@ class stream {
 	 */
 	public function newActive($stream,$ip,$serverip=''){
 		if(''==$serverip) $serverip=$_SERVER['REMOTE_ADDR'];
+        $activeDb=D('Activestream');
 		try{
+            $activeDb->startTrans();	//事务开始
+
 			if(null==$this->streamId){
 				throw new Exception('Have no stream ID !');
 			}
-			$activeDb=D('Activestream');
-			
-			$activeDb->startTrans();	//事务开始
+
 			//1、若发现同一流正在推到其它服务器设置标识以便异步执行的后台程序终止它
 			
 			$cond=array('streamid'=>$this->streamId,'isactive'=>'true',"serverip"=>array('NEQ',$serverip));
@@ -81,7 +93,7 @@ class stream {
 			//3、添加新的活跃记录
 			$time=time();
 			$record=array("streamid"=>$this->streamId,"begintime"=>$time,"activetime"=>$time+1,
-				"sourceip"=>$ip,"name"=>$stream,"serverip"=>$serverip);
+				"sourceip"=>$ip,"name"=>$stream,"serverip"=>$serverip,"platform"=>$this->streamRec);
 			$result=$activeDb->add($record);
 			if(false==$result) {
 				logfile('newActive: '.$activeDb->getLastSql(),LogLevel::EMERG);
@@ -506,5 +518,161 @@ logfile("videoInfo:".$info,LogLevel::DEBUG);
 		$ret['size'] = filesize($file); // 文件大小
 		return $ret;
 	}
+
+	///// 2020-06-30 之后添加 //////
+
+    /**
+     * 处理activestream表上的断流异步处理请求
+     */
+    public function asyOpera(){
+        $dbActiveStream=D("activestream");
+	    $recs=$dbActiveStream->field("id,name,serverip,flatform,operate")->where(array('isactive'=>'true','operate'=>array('NEQ','none')))->select();
+	    foreach ($recs as $rec){
+            switch ($rec['flatform']){
+                case 4:     //nginx-rtmp收流
+                    $result=$this->doCut($rec);
+                    break;
+                case 5:
+                    $result=$this->blockStream($rec['name'],$rec['operate']);
+                    break;
+                default:
+                    logfile("asyOpera: 不支持断流的平台=".$rec['flatform']." : ".$rec['serverip'],LogLevel::ALERT);
+                    $result=false;
+                    break;
+            }
+            if($result){
+                logfile("asyOpera: 断流成功：".$rec['serverip']." : ".$rec['name'],LogLevel::NOTICE);
+                $rt=$dbActiveStream->where('id='.$rec['id'])->save(array('operate'=>'none','isactive'=>'false'));
+                if(false===$rt) logfile('asyOpera falure:'.$this->getLastSql(),LogLevel::EMERG);
+            }else{
+                logfile("CUT falure: ".$rec['serverip']." : ".$rec['name'],LogLevel::ALERT);
+            }
+        }
+    }
+
+    /**
+     * 切断推流请求。适用于platform4
+     * @param array $rec	活动流记录:name,serverip
+     * @return boolean  true-断流成功，false-断流失败
+     */
+    public function doCut($rec){
+        if(strlen($rec['serverip'])<8) return false;	//没有服务器地址
+        $url="http://".$rec['serverip'].":8011/control/drop/publisher?app=live&name=".$rec['name'];
+        for($i=0;$i!=3;$i++){	//若失败尝试3次
+            $html = file_get_contents($url);
+//echo $url,'<br>',$html;
+            if('1'==$html){
+                //成功则删除cut标志
+                //$result=$this->where('id='.$rec['id'])->save(array('operate'=>'none','isactive'=>'false'));
+                //if(false===$result) logfile('falure:'.$this->getLastSql(),LogLevel::EMERG);
+                break;
+            }
+        }
+        if(3==$i){
+            //尝试了3遍都不成功
+            return false;
+        }else return true;
+
+    }
+
+
+    /**
+     * 列出阿里云平台上指定加速域上的活跃推流
+     * @param $domain
+     * @return mixed 有流返回数组，格式：
+     * array(1) {
+            [0] => array(8) {
+                ["PublishUrl"] => string(26) "rtmp://p2.av365.cn/live/ou"
+                ["StreamName"] => string(2) "ou"
+                ["DomainName"] => string(11) "p2.av365.cn"
+                ["PublishDomain"] => string(11) "p2.av365.cn"
+                ["Transcoded"] => string(2) "no"
+                ["PublishTime"] => string(20) "2020-06-30T08:24:45Z"    //开始推流时刻，UTC格式
+                ["PublishType"] => string(4) "edge"
+                ["AppName"] => string(4) "live"
+             }
+            [1]=>array(8) {
+                ......
+            }
+        }
+     * 没有流返回空数组，出错返回null
+     * @throws ClientException
+     */
+	public function aliListOnlineStream($domain){
+        AlibabaCloud::accessKeyClient(OuSecret::$cfg['LIVE_AliAccKey'], OuSecret::$cfg['LIVE_AliAccSecret'])
+            ->regionId('cn-shanghai')
+            ->asDefaultClient();
+        try {
+            $result = AlibabaCloud::rpc()
+                ->product('live')
+                // ->scheme('https') // https | http
+                ->version('2016-11-01')
+                ->action('DescribeLiveStreamsOnlineList')
+                ->method('POST')
+                ->host('live.aliyuncs.com')
+                ->options([
+                    'query' => [
+                        'RegionId' => "cn-shanghai",
+                        'DomainName' => $domain,
+                    ],
+                ])
+                ->request();
+            return $result->toArray()['OnlineInfo']['LiveStreamOnlineInfo'];
+        } catch (ClientException $e) {
+            $msg= "ClientException:".$e->getErrorMessage() ;
+            logfile($msg,LogLevel::DEBUG);
+        } catch (ServerException $e) {
+            $msg= "ServerException:".$e->getErrorMessage() ;
+            logfile($msg,LogLevel::DEBUG);
+        } catch (Exception $e){
+            $msg= "Exception:".$e->getMessage() ;
+            logfile($msg,LogLevel::DEBUG);
+        }
+        return null;
+    }
+
+    /**
+     * 通知阿里云收流端断流
+     * @param $stream   流名称
+     * @param $opt  cut-单纯断流，ban-断流并加入黑名单
+     * @return boolean  true-成功
+     * @throws ClientException
+     */
+    public function blockStream($stream,$opt="cut"){
+        AlibabaCloud::accessKeyClient(OuSecret::$cfg['LIVE_AliAccKey'], OuSecret::$cfg['LIVE_AliAccSecret'])
+            ->regionId('cn-shanghai')
+            ->asDefaultClient();
+        try {
+            $oneshot=("cut"==$opt)? "yes":"no";
+            $result = AlibabaCloud::rpc()
+                ->product('live')
+                // ->scheme('https') // https | http
+                ->version('2016-11-01')
+                ->action('ForbidLiveStream')
+                ->method('POST')
+                ->host('live.aliyuncs.com')
+                ->options([
+                    'query' => [
+                        'RegionId' => "cn-shanghai",
+                        'DomainName'=> "p2.av365.cn",
+                        'AppName' => "live",
+                        'StreamName' => $stream,
+                        'LiveStreamType' => "publisher",
+                        'Oneshot' => $oneshot,
+                    ],
+                ])
+                ->request();
+            $msg=print_r($result->toArray(),true);
+            logfile($msg,LogLevel::DEBUG);
+            return true;
+        } catch (ClientException $e) {
+            $msg= "ClientException:".$e->getErrorMessage() ;
+            logfile($msg,LogLevel::DEBUG);
+        } catch (ServerException $e) {
+            $msg= "ServerException:".$e->getErrorMessage() ;
+            logfile($msg,LogLevel::DEBUG);
+        }
+        return false;
+    }
 }
 ?>

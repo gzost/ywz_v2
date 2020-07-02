@@ -42,7 +42,7 @@ class platform {
 	 * 装入指定平台的数据，在获取平台属性前必须先调用此属性。
 	 * @param int $platformId	平台ID
 	 * 
-	 * @return 失败返回false，成功返回true
+	 * @return boolean    失败返回false，成功返回true
 	 */
 	public function load($platformId){
 		$cond=array('category'=>'platform', 'ditem'=>$platformId );
@@ -61,6 +61,7 @@ class platform {
 	 * 
 	 * 获取平台属性的原始值
 	 * @param string $attr	属性名称
+     * @return mixed
 	 */
 	public function __get($attr){
 		return $this->m_record[$attr];
@@ -70,12 +71,21 @@ class platform {
 	 * 
 	 * 生成推流地址
 	 * @param string $stream	流名称
-	 * @param string $key	推流密码
+	 * @param string $key	推流密码。对应platform5使用数据字典attr的pkey属性
+     * @return string   推流地址
 	 */
 	public function getPush($stream,$key=''){
 		$str=str_replace('%%stream%%', $stream, $this->m_record['push']);
-		if(''==$key) $str=str_replace('_%%key%%', $key, $str);
-		else $str=str_replace('%%key%%', $key, $str);
+		switch ($this->m_record['ditem']){
+            case '5':
+                $authkey=$this->aliUrlAuthA(180,$this->m_record['pkey'],$stream);
+                $str=str_replace('%%key%%', $authkey, $str);
+                break;
+            default:
+                if(''==$key) $str=str_replace('_%%key%%', $key, $str);
+                else $str=str_replace('%%key%%', $key, $str);
+                break;
+        }
 		return $str;
 	}
 	
@@ -83,12 +93,21 @@ class platform {
 	 * 
 	 * 生成rtmp播放地址
 	 * @param string $stream	流名称
+     * @return string
 	 */
 	public function getRtmp($stream){
 		$str=str_replace('%%stream%%', $stream, $this->m_record['rtmp']);
-		if(false!==strpos($this->m_record['rtmp'], '%%secret%%')){	//需要生成时间戳防盗链
-			$str=$this->secret($stream, $str);
-		}
+        switch ($this->m_record['ditem']) {
+            case '5':
+                $authkey = $this->aliUrlAuthA(1000, $this->m_record['cdnkey'], $stream);
+                $str = str_replace('%%key%%', $authkey, $str);
+                break;
+            default:
+                if (false !== strpos($this->m_record['rtmp'], '%%secret%%')) {    //需要生成时间戳防盗链
+                    $str = $this->secret($stream, $str);
+                }
+                break;
+        }
 		return $str;
 	}
 	
@@ -96,12 +115,21 @@ class platform {
 	 * 
 	 * 生成HLS播放地址
 	 * @param string $stream	流名称
+     * @return string
 	 */
 	public function getHls($stream){
 		$str=str_replace('%%stream%%', $stream, $this->m_record['hls']);
-		if(false!==strpos($this->m_record['rtmp'], '%%secret%%')){	//需要生成时间戳防盗链
-			$str=$this->secret($stream, $str);
-		}
+        switch ($this->m_record['ditem']){
+            case '5':
+                $authkey=$this->aliUrlAuthA(1000,$this->m_record['cdnkey'],$stream.".m3u8");
+                $str=str_replace('%%key%%', $authkey, $str);
+                break;
+            default:
+                if(false!==strpos($this->m_record['rtmp'], '%%secret%%')){	//需要生成时间戳防盗链
+                    $str=$this->secret($stream, $str);
+                }
+                break;
+        }
 		return $str;
 	}
 	
@@ -131,5 +159,21 @@ class platform {
 		$str=str_replace('%%keeptime%%',$keeptime,$str);
 		return $str;
 	}
+
+    /**
+     * 按阿里云URL鉴权A方式计算鉴权字串
+     * @param int $validtime  有效时长(秒), 此有效时长加上阿里控制台上设置的时长才是真正的有效时长
+     * @param string $key   平台上预留的鉴权密码
+     * @param string $stream    流名称
+     * @param string $app   应用名称
+     * @return string 鉴权字串
+     */
+	private function aliUrlAuthA($validtime,$key,$stream,$app='live'){
+        $validtime =intval($validtime)+time();
+        $rand=0;
+        $uid=0;
+        $hash=md5("/$app/$stream-$validtime-$rand-$uid-$key");
+        $authkey="$validtime-$rand-$uid-$hash";
+        return $authkey;
+    }
 }
-?>

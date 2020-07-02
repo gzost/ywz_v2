@@ -24,6 +24,26 @@ require_once APP_PUBLIC.'aliyun/Sms.Class.php';
 
 class TestAction extends Action
 {
+    //取阿里云上的活动推流
+    public function aliPublic(){
+        require_once(APP_PATH.'/Common/stream.class.php');
+        $stream=new stream();
+        $rt=$stream->aliListOnlineStream("p2.av365.cn");
+        dump($rt);
+        $now=time();
+        $time= str_replace(array('T','Z'),' ',$rt[0]['PublishTime']);
+        $utc=strtotime($time)+date('Z');
+        echo "now= ".$now.", UTC=".$utc.", DIF=".($now-$utc);
+    }
+
+    //activestream移动到log测试
+    public function activestreamToLog(){
+        require_once LIB_PATH.'Model/ActivestreamModel.php';
+        $db=D("Activestream");
+        $db->moveOfflineToLog();
+        echo "done";
+    }
+
     //微信分享测试
     public function wxshare(){
         dump($_SERVER);

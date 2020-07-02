@@ -94,7 +94,7 @@ class streamServiceAction  extends Action {
 	 * 	streamKey	推流密码。
 	 */
 	public function pushAuthor(){
-	
+	    $domainTab=array("121.201.127.11"=>"tel.av365.cn");
 		$attribute=$this->getAttr();
 	
 		$streamName=$attribute['stream'];
@@ -106,7 +106,8 @@ class streamServiceAction  extends Action {
 			$stream=new stream();
 			$result=$stream->pushAuthor($streamName, $streamKey);	//出错抛出错误
 	//var_dump($result);
-			$rt=$stream->newActive($streamName,$ip,$_SERVER['REMOTE_ADDR']);
+            $serverDomain=$domainTab[$_SERVER['REMOTE_ADDR']];
+			$rt=$stream->newActive($streamName,$ip,$serverDomain);
 			if(false===$rt) throw new Exception($stream->message);
 			$this->successReturn($result);
 		} catch (Exception $e){

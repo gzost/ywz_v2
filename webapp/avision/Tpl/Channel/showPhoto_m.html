@@ -1,22 +1,3 @@
-
-<div id="album" >
-    <foreach name="photos" item="pt">
-
-            <img data-name="{$pt.imgName}" class="photo ccc masonry-item" src="{$pt.imgsrc}" >
-
-    </foreach>
-
-</div>
-<div style="height: 10px;"></div>
-<div id="detailContent"  style="box-sizing: border-box; padding:20px 10px; background-color: #6f6f6f; display:none; position: fixed ;top:100px;  z-index:1" >
-    <div style="text-align: right;  height:0px;">
-        <img id="hideDetail" src="/player/default/images/close_w.png" width="26px" style="position: relative; right: -10px;top:-10px; opacity: 0.7;">
-    </div>
-    <div id="photoDetail" style="overflow-y:auto;max-height: 100%;">
-    </div>
-</div>
-
-
 <style type="text/css">
     #album, #album * { box-sizing: border-box; }
     #album { margin:0 auto; border: 5px solid #333; position: relative; }
@@ -41,8 +22,33 @@
         display:block; clear: both; float: right;margin-right: 10px;
     }
 
+    #detailContent{
+        box-sizing: border-box; display:none; position: absolute ;top:0; left: 0;
+        width: calc( 100% - 6px );
+        height: calc( 100% - 100px );
+        //max-height: calc( 100% - 50px );
+        padding:20px 10px; background-color: #6f6f6f;
+        margin:8px 3px; z-index:1;
+    }
+</style>
+<div style="height: 100%; overflow-y: auto;">
+<div id="album" >
+    <foreach name="photos" item="pt">
+            <img data-name="{$pt.imgName}" class="photo ccc masonry-item" src="{$pt.imgsrc}" >
+    </foreach>
+</div>
+<div id="albumBottom" style="height: 10px;"></div>
+</div>
+<div id="detailContent"  style="" >
+    <div style="text-align: right;  height:0px;">
+        <img id="hideDetail" src="/player/default/images/close_w.png" width="26px" style="position: relative; right: -10px;top:-10px; opacity: 0.7;">
+    </div>
+    <div id="photoDetail" style="overflow-y:auto;max-height: 100%;">
+    </div>
+</div>
 
- </style>
+
+
 <script src="__PUBLIC__/js/masonry.pkgd.min.js?ver=4.2.2"></script>
 <script src="__PUBLIC__/js/imagesloaded.pkgd.min.js?ver=4.1.4"></script>
 <script type="text/javascript">
@@ -50,12 +56,15 @@
     $(document).ready(function(){
         //setPicWidth();
         //计算原图弹窗的top和height
-        var albumTop=$("#album").offset().top;
-        console.log("albumtop="+albumTop);
-        $("#detailContent").css("top",albumTop+'px');
+        var top=$("#album").offset().top;
+        console.log("albumtop="+top);
+        //$("#detailContent").css("top",top+'px');
+        var left=$("#album").offset().left;
+        //$("#detailContent").css("left",left+'px');
+
         var viewHeight=$(window).height();
         console.log("viewHeight="+viewHeight);
-        $("#detailContent").css("height",viewHeight-albumTop-10+'px');
+        //$("#detailContent").css("max-height",viewHeight-top-50+'px');
 
         /*
         //瀑布流排列图片，等图片全部加载成功后一次性排列
@@ -74,6 +83,8 @@
         });
         $album.imagesLoaded().progress( function() {
             $album.masonry('layout');
+
+            console.log($("#albumBottom").position().top);
         });
 
 

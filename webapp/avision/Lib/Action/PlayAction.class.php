@@ -15,6 +15,7 @@ require_once(LIB_PATH.'Model/UserrelroleModel.php');
 require_once(LIB_PATH.'Model/OnlineModel.php');
 require_once(LIB_PATH.'Model/RecordfileModel.php');
 require_once(LIB_PATH.'Model/UserModel.php');
+require_once COMMON_PATH.'vod/vodBase.class.php';
 
 class PlayAction extends SafeAction{
     const PLAY_TOKEN="playToken";    //页面上下文校验令牌变量名称，此名称要注意与TPL中处理的页面变量名称一致
@@ -454,14 +455,18 @@ class PlayAction extends SafeAction{
      * @param int $vodid
      */
     private function getVodPara(&$webVar,$vodid){
-        $dbRf=D("recordfile");
-        $vodfile=$dbRf->where("id=".$vodid)->find();
         $webVar['vodid']=$vodid;
+        $webVar["playType"]="vod";
+
+        $dbRf=D("recordfile");
+        $vodfile=$dbRf->field("playkey,path,site")->where("id=".$vodid)->find();
+        $vodclass=vodBase::instance($vodfile["site"]);
+        $webVar["cover"]=$vodclass->getCoverUrl($vodid,$vodfile["playkey"],$vodfile["path"]);
+        $webVar["source"]=$vodclass->getVideoUrl($vodid,$vodfile["playkey"],$vodfile["path"]);
+        //$webVar["cover"] = $dbRf->getImgMrl($vodfile['path']);   //海报地址
+        //$webVar["source"]=$dbRf->getVodMrl($vodid);
         //$webVar['title']=$vodfile['name'];
         //$webVar["desc"]=htmlspecialchars($vodfile["descript"]);
-        $webVar["playType"]="vod";
-        $webVar["cover"] = $dbRf->getImgMrl($vodfile['path']);   //海报地址
-        $webVar["source"]=$dbRf->getVodMrl($vodid);
         $dbRf->incAudience($vodid); //记录观看次数
         //dump($webVar);
     }
@@ -554,10 +559,10 @@ class PlayAction extends SafeAction{
     public function vodList(){
         $chnid=intval($_POST["chnid"]);
         $vodid=intval($_POST["vodid"]);
-//$chnid=11223344;
         try{
             if($chnid<1) throw new Exception("缺少频道参数");
             if(!contextToken::verifyToken(self::PLAY_TOKEN,$_POST[self::PLAY_TOKEN])) throw new Exception("非法访问。");
+
             //获取录像文件记录
             $dbVod = D('recordfile');
             $cond=array('channelid'=>$chnid);
@@ -565,8 +570,12 @@ class PlayAction extends SafeAction{
             if(!is_array($data)) throw new Exception("没找到录像资源");
 
             //整理图片地址
+            $vodclass=array();  //建立对象池，不同的site只建立一个对象处理
             foreach($data as $i => $r)   {
-                $data[$i]['imgpath'] = $dbVod->getImgMrl($r['path']);	//由于每次上传图片都会更换名称，因此没必要增加随机链接。
+                $site=$r['site'];
+                if(empty($vodclass[$site]))  $vodclass[$site]=vodBase::instance($site);
+                //$data[$i]['imgpath'] = $dbVod->getImgMrl($r['path']);	//由于每次上传图片都会更换名称，因此没必要增加随机链接。
+                $data[$i]['imgpath']=$vodclass[$site]->getCoverUrl($r['id'],$r["playkey"],$r["path"]);
             }
         }catch (Exception $e){
             //没有频道ID、找不到录像列表、其它错误

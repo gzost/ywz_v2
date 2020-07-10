@@ -19,6 +19,45 @@ use AlibabaCloud\Vod\Vod;
 
 class vodSite5 extends vodBase{
     const VOD_CLIENT_NAME='ywzVodClient';   //阿里云SDK用于识别调用实例
+    private $m_videoInfo=null;      //缓存从阿里云读到的视频信息。数组采用API中getPlayInfo的返回结构
+    /*
+    ["VideoBase"] => array(9) {
+    ["Status"] => string(6) "Normal"
+    ["VideoId"] => string(32) "0e10691d179b4d668aca88f92fa885f9"
+    ["TranscodeMode"] => string(13) "FastTranscode"
+    ["CreationTime"] => string(20) "2020-07-09T08:33:50Z"
+    ["Title"] => string(2) "ou"
+    ["MediaType"] => string(5) "video"
+    ["CoverURL"] => string(192) "http://d2.av365.cn/0e10691d179b4d668aca88f92fa885f9/snapshots/b0cf830a00b54f4ca333fbd199df51b1-00002.jpg?auth_key=1594350355-89730d13fa3d45109eaab62939d6b5a0-0-f2b7089481a205d41d48bb5dbc3f4aef"
+    ["Duration"] => string(5) "12.56"
+    ["OutputType"] => string(3) "cdn"
+  }
+  ["RequestId"] => string(36) "54447996-57F2-4C05-BBA3-901D46E2E337"
+  ["PlayInfoList"] => array(1) {
+    ["PlayInfo"] => array(1) {
+      [0] => array(18) {
+        ["Status"] => string(6) "Normal"
+        ["StreamType"] => string(5) "video"
+        ["Size"] => int(2964226)
+        ["Definition"] => string(2) "SD"
+        ["Fps"] => string(2) "25"
+        ["Duration"] => string(7) "12.6400"
+        ["ModificationTime"] => string(20) "2020-07-09T08:34:24Z"
+        ["Specification"] => string(7) "H264.LD"
+        ["Bitrate"] => string(8) "1876.092"
+        ["Encrypt"] => int(0)
+        ["PreprocessStatus"] => string(12) "UnPreprocess"
+        ["Format"] => string(3) "mp4"
+        ["PlayURL"] => string(212) "http://d2.av365.cn/0e10691d179b4d668aca88f92fa885f9/e232a12e3dd7415e969e8ce7edc4fe68-d663a6c63518fbf13bf910fa4c894cd9-sd.mp4?auth_key=1594350355-d83a6bae96584fc9bb4b0b7f642b17df-0-bbf08ef70eeeb410ccb66ff466abdeae"
+        ["NarrowBandType"] => string(1) "0"
+        ["CreationTime"] => string(20) "2020-07-09T08:33:51Z"
+        ["Height"] => int(352)
+        ["Width"] => int(624)
+        ["JobId"] => string(32) "2344d2fac6c54b399ec2170cdb10c246"
+      }
+    }
+  }
+     */
 
     /**
      * 实例化SDK的vod访问客户端
@@ -136,7 +175,28 @@ class vodSite5 extends vodBase{
     }
     ///// 回调处理函数组结束 /////
 
-    public function getVODPlayInfo($vodId="6b2ce5ac6b6b436c9d673d2b98897b7d"){
+    ///// 父类规定要实现的接口 ////
+
+    public function getCoverUrl($recordid,$videoid,$path){
+        $info=$this->getVODPlayInfo($videoid);
+        if(empty($info) || empty($info["VideoBase"]["CoverURL"])) return self::DEFAULT_VIDEO_COVER;
+        else return $info["VideoBase"]["CoverURL"];
+    }
+
+    /**
+     * @param int $recordid
+     * @param string $videoid
+     * @param string $path
+     * @return string
+     */
+    public function getVideoUrl($recordid,$videoid,$path){
+        $info=$this->getVODPlayInfo($videoid);
+        if(empty($info) || empty($info["PlayInfoList"]["PlayInfo"][0]["PlayURL"])) return "";
+        else return $info["PlayInfoList"]["PlayInfo"][0]["PlayURL"];
+    }
+
+    public function getVODPlayInfo($vodId){
+        if(null!=$this->m_videoInfo && $vodId==$this->m_videoInfo["VideoBase"]["VideoId"]) return $this->m_videoInfo;   //返回缓冲数据
         try {
             $this->initVodClient();
             $playInfo=Vod::v20170321()->getPlayInfo()->client(self::VOD_CLIENT_NAME)
@@ -144,24 +204,54 @@ class vodSite5 extends vodBase{
                 //->withAuthTimeout(3600*24)
                 ->format('JSON')  // 指定返回格式
                 ->request();      // 执行请求
-            dump($playInfo->PlayInfoList->PlayInfo);
-
+            $this->m_videoInfo=$playInfo->toArray();
+            return $this->m_videoInfo;
         }catch (Exception $e){
-            print $e->getMessage()."\n";
+            return array();
         }
     }
 
+    /**
+     * 取视频的体积、封面、说明等信息
+     * @param $videoId  阿里云VOD视频的唯一标识
+     * @return array
+    ["Status"] => string(6) "Normal"
+    ["ModifyTime"] => string(19) "2020-07-09 16:34:24"
+    ["Description"] => string(19) "ou|live|v2.av365.cn"
+    ["VideoId"] => string(32) "0e10691d179b4d668aca88f92fa885f9"
+    ["Size"] => int(973)
+    ["DownloadSwitch"] => string(2) "on"
+    ["CreateTime"] => string(19) "2020-07-09 16:33:50"
+    ["Title"] => string(2) "ou"
+    ["ModificationTime"] => string(20) "2020-07-09T08:34:24Z"
+    ["Duration"] => float(12.56)
+    ["PreprocessStatus"] => string(12) "UnPreprocess"
+    ["AuditStatus"] => string(4) "Init"
+    ["AppId"] => string(11) "app-1000000"
+    ["CreationTime"] => string(20) "2020-07-09T08:33:50Z"
+    ["CoverURL"] => string(192) "http://d2.av365.cn/0e10691d179b4d668aca88f92fa885f9/snapshots/b0cf830a00b54f4ca333fbd199df51b1-00002.jpg?auth_key=1594349536-398f3b2d11f54ef5b6b10965c807187c-0-f29b394957ef0700255b0368bd568a38"
+    ["RegionId"] => string(11) "cn-shanghai"
+    ["StorageLocation"] => string(67) "outin-92fc3d2b8f5011e8a4a500163e1c35d5.oss-cn-shanghai.aliyuncs.com"
+    ["Snapshots"] => array(1) {
+        ["Snapshot"] => array(2) {
+            [0] => string(192) "http://d2.av365.cn/0e10691d179b4d668aca88f92fa885f9/snapshots/b0cf830a00b54f4ca333fbd199df51b1-00001.jpg?auth_key=1594349536-0d89c22afd664846ba1e47e08f655f3b-0-5d340ecfa673a10c98298ec509bf37a8"
+            [1] => string(192) "http://d2.av365.cn/0e10691d179b4d668aca88f92fa885f9/snapshots/b0cf830a00b54f4ca333fbd199df51b1-00002.jpg?auth_key=1594349536-398f3b2d11f54ef5b6b10965c807187c-0-f29b394957ef0700255b0368bd568a38"
+        }
+    }
+    ["TemplateGroupId"] => string(32) "6673fe4ab5913ae02c7b5bdc160fa09c"
+     * 出错或找不到视频返回空数组
+     */
     public function getVideoInfo($videoId){
         try {
             $this->initVodClient();
-            $playInfo=Vod::v20170321()->getVideoInfo()->client(self::VOD_CLIENT_NAME)
+            $info=Vod::v20170321()->getVideoInfo()->client(self::VOD_CLIENT_NAME)
                 ->withVideoId($videoId)    // 指定接口参数
                 ->format('JSON')  // 指定返回格式JSON|XML
                 ->request();      // 执行请求
-            dump($playInfo->toArray());
+            return ($info->toArray()["Video"]);
 
         }catch (Exception $e){
-            print $e->getMessage()."\n";
+            return array();
         }
     }
 }

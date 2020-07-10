@@ -16,6 +16,8 @@ class VODSITE{
     const AliShangHai=5;
 }
 abstract class vodBase{
+    const DEFAULT_VIDEO_COVER='/player/default/images/start.jpg';   //默认的录像文件封面图片
+
     /**
      * @param int $site     vod平台编码
      * @param string $name  指定子类名称，这时忽略$site参数
@@ -44,4 +46,26 @@ abstract class vodBase{
         $time= str_replace(array('T','Z'),' ',$utc);
         return (strtotime($time)+date('Z'));
     }
+
+    ///// 各之类必须实现的接口 //////
+
+    /**
+     * 取指定录像文件封面图片的URL
+     * 以下参数不同的点播平台可能有不同的使用方法，也不一定都需要提供
+     * @param int $recordid     录像数据库记录ID
+     * @param string $videoid   视频ID或播放标识
+     * @param string $path      视频所在相对路径或附加参数
+     * @return string   视频封面URL
+     */
+    abstract public function getCoverUrl($recordid,$videoid,$path);
+
+    /**
+     * 取指定录像文件播放URL
+     * 以下参数不同的点播平台可能有不同的使用方法，也不一定都需要提供
+     * @param int $recordid     录像数据库记录ID
+     * @param string $videoid   视频ID或播放标识
+     * @param string $path      视频所在相对路径或附加参数
+     * @return string   视频播放URL，无法获取返回''
+     */
+    abstract public function getVideoUrl($recordid,$videoid,$path);
 }

@@ -22,9 +22,9 @@ class BE_aliyunAction extends Action{
 
     public function test(){
         $vodobj=vodBase::instance(5);
-
-var_dump($vodobj);
-        $vodobj->getVODPlayInfo();
+        $vodobj->getVODPlayInfo("0e10691d179b4d668aca88f92fa885f9");
+        $rt=$vodobj->getVideoInfo("0e10691d179b4d668aca88f92fa885f9");
+        dump($rt);
     }
     /**
      * 向回调(http)发起者发送回调信息已收到，并通知关闭httplianj

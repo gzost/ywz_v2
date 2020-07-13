@@ -6,8 +6,7 @@ webroot/vodfile/
 webroot/room/
 webroot/block/
 webroot/doc/
-webroot/t/
-webroot/canvasjs/
+webroot/test/
 sslkeys/
 webroot/chunks/
 webroot/Public/jeasyui/
@@ -28,7 +27,6 @@ webapp/avision/Tpl/Home/index_20180908.html
 webapp/avision/Tpl/Home/index - 20180418.html
 document/~$Z修改记录及TODO.docx
 webroot/t.html
-webroot/t/
 webapp/public/aliyun/
 webapp/public/baidu/
 webapp/public/wxpay/

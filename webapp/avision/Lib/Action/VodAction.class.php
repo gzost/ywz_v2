@@ -7,6 +7,9 @@ require_once LIB_PATH.'Model/UserModel.php';
 //require_once APP_PATH.'../public/FileUpload.Class.php';
 require_once APP_PATH.'../public/uploadhandler.php';
 
+require_once APP_PATH.'../../secret/OuSecret.class.php';
+require_once COMMON_PATH.'vod/vodBase.class.php';
+
 class VodAction extends AdminBaseAction {
 
     const VODACTION_TOKEN="vodFileListToken";    //传递页面上下文，的访问令牌，用于校验请求来自fileList方法生成的页面
@@ -108,7 +111,7 @@ class VodAction extends AdminBaseAction {
 
 		//$result["footer"][]=$total;
 		if(null==$result)	echo '[]';
-		else echo json_encode($result);
+		else echo json_encode2($result);
 	}
 	
 	static $modifyField=array(
@@ -198,7 +201,7 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 		foreach ($mf as $key=>$field){
 			$mf[$key]['val']=$rec[$key];
 		}
-//dump($rec);		
+//dump($rec);
 		//关联频道
 		$dbChn=D('channel');
 		$chnList=$dbChn->getListByOwner($rec['owner'],$order='id desc',$fields='id as val,name as txt');
@@ -214,9 +217,11 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 		
 //echo $dbChn->getLastSql();
 //dump($chnList);
+        $vodclass=vodBase::instance($rec['site']);
 		$webVar=$rec;	
 		$webVar['detailFormData']=OUdetailform($mf);
-		$webVar['imageUrl']=RecordfileModel::getImgMrl($rec['path']).'?'.Ouuid();   //$rec['path']为图片文件的URL路径
+		//$webVar['imageUrl']=RecordfileModel::getImgMrl($rec['path']).'?'.Ouuid();   //$rec['path']为图片文件的URL路径
+        $webVar['imageUrl']=$vodclass->getCoverUrl($rec['id'],$rec["playkey"],$rec["path"]);    //取视频封面统一接口
 		$webVar['permitCreate']=($_REQUEST['permitCreate']=='true')?'true':'false';
 		$webVar['permitModify']=($_REQUEST['permitModify']=='true')?'true':'false';
 		if($new){
@@ -230,9 +235,16 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 			$webVar['account']=$rec['account'];
 			$webVar['size']=$rec['size'];
 		}
-
+		if(5==$rec['site']){
+            $tplName= "showDetail_site5";
+            $webVar["AliVodUserId"]=OuSecret::$cfg["VOD_UserId"];
+            $webVar["AliVodRegion"]=OuSecret::$cfg["VOD_Region"];
+        }else {
+            $tplName="showDetail";
+        }
+        $webVar[self::VODACTION_TOKEN]=contextToken::newToken(self::VODACTION_TOKEN);
 		$this->assign($webVar);
-		$this->display('showDetail');
+		$this->display($tplName);
 	}
 	
 	//更新录像记录
@@ -639,6 +651,39 @@ echo 'owner='.$owner;
 	        echo $e->getMessage();
         }
         //Ou_downloadFile("D:/abc.mp4",'',true,100000);
+    }
+
+    /**
+     * 调用SDK获取阿里云VOD图片上传地址和凭证
+     * @param $ImageType string 图片类型。取值范围：default（默认） cover（封面）
+     * @param $ImageExt string  图片文件扩展名。取值范围：png|jpg|jpeg|gif, 默认值：png
+     * 输出Json数组字串，包含：RequestId，UploadAddress，UploadAuth，ImageURL，ImageId 详细参考阿里SDK"获取图片上传地址和凭证"
+     */
+    public function aliCreateUploadImageJson($ImageType,$ImageExt){
+	    try{
+            if(!contextToken::verifyToken(self::VODACTION_TOKEN, $_REQUEST[self::VODACTION_TOKEN])) throw new Exception("非法访问！");
+            $vodobj=vodBase::instance(5);
+            $rt=$vodobj->CreateUploadImage($ImageType,$ImageExt);
+            Oajax::ajaxReturn($rt);
+        }catch (Exception $e){
+            Oajax::errorReturn($e->getMessage());
+        }
+    }
+
+    /**
+     * 修改视频信息
+     * @param $videoId
+     * @param $para
+     */
+    public function aliUpdateVideoInfoJson($videoId, $para){
+        try{
+            if(!contextToken::verifyToken(self::VODACTION_TOKEN, $_REQUEST[self::VODACTION_TOKEN])) throw new Exception("非法访问！");
+            $vodobj=vodBase::instance(5);
+            $rt=$vodobj->updateVideoInfo($videoId,$para);
+            Oajax::ajaxReturn($rt);
+        }catch (Exception $e){
+            Oajax::errorReturn($e->getMessage());
+        }
     }
 }
 

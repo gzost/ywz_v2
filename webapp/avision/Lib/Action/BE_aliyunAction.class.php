@@ -22,8 +22,13 @@ class BE_aliyunAction extends Action{
 
     public function test(){
         $vodobj=vodBase::instance(5);
-        $vodobj->getVODPlayInfo("0e10691d179b4d668aca88f92fa885f9");
-        $rt=$vodobj->getVideoInfo("0e10691d179b4d668aca88f92fa885f9");
+        $rt=$vodobj->CreateUploadImage("cover","jpg");
+
+        //$rt=$vodobj->getVODPlayInfo("0e10691d179b4d668aca88f92fa885f9");
+        //$rt=$vodobj->getVideoInfo("0e10691d179b4d668aca88f92fa885f9");
+
+        //$para=array("Title"=>"测试视频，修改封面","CoverURL"=>"http://www.av365.cn/player/default/images/unstart.jpg" );
+        //$rt=$vodobj->updateVideoInfo("0e10691d179b4d668aca88f92fa885f9",$para);
         dump($rt);
     }
     /**
@@ -220,7 +225,11 @@ class BE_aliyunAction extends Action{
         return ($mySignature===$vodSignature)?1:0;
     }
 
-    //GetVideoPlayAuth
+
+
+
+
+    //以下是测试用的代码
     const VOD_CLIENT_NAME='AliyunVodClientDemo';
     private function initVodClient(){
         $regionId = 'cn-shanghai';
@@ -230,15 +239,16 @@ class BE_aliyunAction extends Action{
             ->timeout(3)
             ->name(self::VOD_CLIENT_NAME);
     }
-    public function getVODPlayInfo($vodId="6b2ce5ac6b6b436c9d673d2b98897b7d"){
+    public function updateVideoInfo($vodId="0e10691d179b4d668aca88f92fa885f9"){
         try {
             $this->initVodClient();
-            $playInfo=Vod::v20170321()->getPlayInfo()->client(self::VOD_CLIENT_NAME)
+            $client=Vod::v20170321()->updateVideoInfo()->client(self::VOD_CLIENT_NAME)
                 ->withVideoId($vodId)    // 指定接口参数
                 //->withAuthTimeout(3600*24)
-                ->format('JSON')  // 指定返回格式
-                ->request();      // 执行请求
-            dump($playInfo->PlayInfoList->PlayInfo);
+                ->withCoverURL("http://www.av365.cn/player/default/images/unstart.jpg")
+                ->format('JSON');  // 指定返回格式
+            $playInfo=$client->request();      // 执行请求
+            dump($playInfo->toArray());
 
         }catch (Exception $e){
             print $e->getMessage()."\n";

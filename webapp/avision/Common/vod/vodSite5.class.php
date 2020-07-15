@@ -195,6 +195,15 @@ class vodSite5 extends vodBase{
         else return $info["PlayInfoList"]["PlayInfo"][0]["PlayURL"];
     }
 
+    //////// 本子类专有函数  ////
+
+    /**
+     * 取视频播放信息。
+     * 包括：播放URL，封面URL，编码方式，码流，分辨率等信息
+     * 内部对信息进行缓冲，多次获取同一视频信息时，从缓冲返回。
+     * @param $vodId
+     * @return array|null
+     */
     public function getVODPlayInfo($vodId){
         if(null!=$this->m_videoInfo && $vodId==$this->m_videoInfo["VideoBase"]["VideoId"]) return $this->m_videoInfo;   //返回缓冲数据
         try {
@@ -252,6 +261,66 @@ class vodSite5 extends vodBase{
 
         }catch (Exception $e){
             return array();
+        }
+    }
+
+    /**
+     * 更新视频信息，包括设置封面图片等
+     * @param string $videoId  //被操作的视频
+     * @param array $para   //key=>value形式的参数，支持的参数有：
+     *  - Title 视频标题，长度不超过128个字符或汉字，UTF8编码。
+     *  - Description   视频描述。长度不超过1024个字符或汉字，UTF8编码。
+     *  - CoverURL  视频封面URL地址。若是有鉴权的CDN地址，必须提供正确的鉴权信息。
+     *  - CateId    视频分类ID。
+     *  - Tags  视频标签。最多不超过16个标签。多个用逗号分隔。单个标签不超过32个字符或汉字。UTF8编码。
+     * @return string   //阿里的请求ID
+     * @throws Exception    抛出出错
+     */
+    public function updateVideoInfo($videoId, $para){
+        try {
+            $this->initVodClient();
+            $client=Vod::v20170321()->updateVideoInfo()->client(self::VOD_CLIENT_NAME)
+                ->withVideoId($videoId)    //被操作的视频
+                //->withCoverURL("http://www.av365.cn/player/default/images/unstart.jpg")
+                ->format('JSON');  // 指定返回格式
+            foreach ($para as $key=>$val){
+                $funcName="with".$key;
+                $client=$client->$funcName($val);
+            }
+            $rt = $client->request();      // 执行请求
+            return $rt->toArray();
+        }catch (Exception $e){
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    /**
+     * 获取图片上传地址和凭证
+     * @param $ImageType    图片类型。取值范围： default（默认）|cover（封面）, 控制台暂时只支持default类型的图片管理。
+     * @param $ImageExt 图片文件扩展名。取值范围：png|jpg|jpeg|gif,  默认值：png
+     * @param $extPara  其它参数：Title，Tags，CateId，Description，StorageLocation，UserData，AppId
+     * @return array
+     *  - RequestId     请求ID
+     *  - UploadAddress 上传地址
+     *  - UploadAuth    上传凭证
+     *  - ImageURL      图片地址
+     *  - ImageId       图片ID
+     * @throws Exception
+     */
+    public function  CreateUploadImage($ImageType,$ImageExt,$extPara){
+        try{
+            $this->initVodClient();
+            $client=Vod::v20170321()->CreateUploadImage()->client(self::VOD_CLIENT_NAME)
+                ->withImageType($ImageType)
+                ->withImageExt($ImageExt);
+            foreach ($extPara as $key=>$val){
+                $funcName="with".$key;
+                $client=$client->$funcName($val);
+            }
+            $rt = $client->request();      // 执行请求
+            return $rt->toArray();
+        }catch (Exception $e){
+            throw new Exception($e->getMessage());
         }
     }
 }

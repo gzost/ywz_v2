@@ -81,13 +81,13 @@
             <ul>
                 <li>{$user.account}</li>
                 <li>昵称：<input class="item-userinfo" name="username" value="{$user.username}"></li>
-                <li>姓名：<input class="item-userinfo" name="realname" value="{$user.realname}" readonly ></li>
-                <li>证件：<input class="item-userinfo" name="idcard" value="{$user.idcard}" readonly></li>
-                <li>单位：<input class="item-userinfo" name="company" value="{$user.company}" readonly></li>
+                <li>姓名：{$user.realname} </li>
+                <li>证件：{$user.idcard} </li>
+                <li>单位：{$user.company}</li>
             </ul>
         </form>
 
-        <button id="btnSaveBaseInfo" style="margin: 10px 0; padding:5px 10px; border-width:1px; border-radius: 3px;">保存用户资料</button>
+        <button id="btnSaveBaseInfo" style="margin: 10px 0; padding:5px 10px; border-width:1px; border-radius: 3px;">修改昵称</button>
     </div>
 
 </div>

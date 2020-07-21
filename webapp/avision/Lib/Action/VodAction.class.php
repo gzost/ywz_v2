@@ -50,8 +50,8 @@ class VodAction extends AdminBaseAction {
 		//修改、删除录像记录权限
 		$webVar['permitModify']=($this->isOpPermit('M'))?'true':'false';
         $webVar['permitDownload']=($this->isOpPermit('S'))?'true':'false';
-		
-//dump($webVar);		
+        $webVar['permitOverride']=($this->isOpPermit('F'))?'true':'false';  //覆盖录像，需要有C才有用
+//dump($webVar);
 		//生成符合Thinkphp语法的查询条件数组
 		$cond=array();
 		if('true'==$webVar['viewSelf']) $cond['owner']=$this->userId();
@@ -79,6 +79,7 @@ class VodAction extends AdminBaseAction {
 	 * 查询数据库字段是datetime类型
 	 * @param string $bd	开始日期
 	 * @param string $ed	结束日期
+     * @return mixed
 	 */
 	protected function betweenDate($bd,$ed){
 //var_dump($bd,$ed);		
@@ -89,7 +90,7 @@ class VodAction extends AdminBaseAction {
 		else return array('BETWEEN',array($bd,$ed));
 	}
 	
-	public function getFileListAjax($page=1,$rows=10,$sort='viewers',$order='desc'){
+	public function getFileListAjax($page=1,$rows=10,$sort='id',$order='desc'){
 		//提取记录数据
 		//$index=pagination::getData(self::VODFILEINDEX,$page,$rows);
 //var_dump($index);
@@ -162,7 +163,7 @@ class VodAction extends AdminBaseAction {
 		return $str;
 	}
 	//显示新增录像文件界面
-	public function addAjax($owner,$account){
+	public function addAjax($owner,$account,$site=5){
 		//要建立了记录后才好上传录像及封面图片
 		$rec=array('owner'=>$owner,'createtime'=>date('Y-m-d H:i:s'));
 		$dbRecord=D('recordfile');
@@ -171,6 +172,7 @@ class VodAction extends AdminBaseAction {
 		$rec['name']='新录像'.date('Y-m-d H:i:s');
 		$rec['size']=0; //size=0作为没有录像文件标志
         $rec['sourceid']=0;
+        $rec['site']=$site;
 		$id=$dbRecord->add($rec);
 		$rec['id']=$id;
 		$rec['account']=$account;
@@ -224,6 +226,8 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
         $webVar['imageUrl']=$vodclass->getCoverUrl($rec['id'],$rec["playkey"],$rec["path"]);    //取视频封面统一接口
 		$webVar['permitCreate']=($_REQUEST['permitCreate']=='true')?'true':'false';
 		$webVar['permitModify']=($_REQUEST['permitModify']=='true')?'true':'false';
+        $webVar['permitOverride']=($_REQUEST['permitOverride']=='true')?'true':'false';
+
 		if($new){
 			$webVar['title']='新上传录像';
 			$webVar['new']='true';
@@ -249,7 +253,7 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 	
 	//更新录像记录
 	public function updateAjax(){
-		$rec=array('owner'=>0,'channelid'=>0,'length'=>'','createtime'=>'','name'=>'','descript'=>'','seq'=>0);
+		$rec=array('owner'=>0,'channelid'=>0,'length'=>'','createtime'=>'','name'=>'','descript'=>'','seq'=>0,'size'=>0,'playkey'=>'');
 		$rec=getRec($rec,TRUE);
 //dump($_REQUEST);
 		$dbUser=D('user');
@@ -266,6 +270,9 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 				$rt=$dbRf->add($rec);
 				if(false===$rt) throw new Exception('新增失败，请通知管理员。');
 			}else{
+			    foreach ($rec as $k=>$v){
+			        if(null===$v) unset($rec[$k]);
+                }
 				$rt=$dbRf->where('id='.$_POST['id'])->save($rec);
 				if(false===$rt) throw new Exception('更新失败，请通知管理员。'.$dbRf->getLastSql());
 			}
@@ -275,6 +282,7 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 			return;
 		}
 //dump($rec);
+//echo $dbRf->getLastSql();
 		Oajax::successReturn();
 		return;		
 	}
@@ -654,11 +662,93 @@ echo 'owner='.$owner;
     }
 
     /**
+     * 调用aliCloudSDK获取上传地址和凭证。内部根据不同的上传内容调用不同的SDK接口。
+     * 本调用只能发生在页面上下文中，因此需要校验上下文令牌
+     * @param $uploadType   string  必须。上传的类型
+     *  - 上传图片：image 普通图片，cover 视频封面图片
+     *  - 上传视频：video
+     *  - 上传辅助媒资：watermark（水印）subtitle（字幕）material（素材）
+     *  - 刷新视频：refresh
+     * @param $fileName string  必须。源文件名。$uploadType=="refresh"时，此参数为：VideoId
+     * @param $title    string  保存到控制台的标题
+     * @param $description  string  保存到控制台的说明
+     *
+     * 输出Json数组字串，包含以下属性：
+     *  - RequestId 请求ID
+     *  - UploadAddress 上传地址
+     *  - UploadAuth    上传凭证
+     *  - MediaId   将在服务端存储的资源ID。上传视频对应：VideoId，上传图片对应：ImageId，上传辅助媒资对应：MediaId
+     *  - MediaURL  将在服务端存储的资源URL。上传视频无此参数，上传图片对应：ImageURL，上传辅助媒资对应：MediaURL
+     *              若点播或CDN开启了URL鉴权，返回时包含了完整的鉴权信息。若超时需重新自助生成鉴权签名
+     *  - FileURL   文件oss地址(不带鉴权)，仅上传辅助媒资提供
+     */
+    public function aliCreateUploadJson($uploadType, $fileName="", $title="", $description=""){
+        try{
+            //var_dump($uploadType, $fileName);
+            if(!contextToken::verifyToken(self::VODACTION_TOKEN, $_REQUEST[self::VODACTION_TOKEN])) throw new Exception("非法访问！");
+            $vodobj=vodBase::instance(5);
+            $retPara=array();
+            switch ($uploadType){
+                //上传图片
+                case "image":
+                case "cover":
+                    $extension=$this->extractFileExt($fileName,"png,jpg,gif,jpeg");
+                    if(empty($extension)) throw new Exception("不支持的文件类型：".$fileName);
+                    if(empty($title)) $title=$fileName;
+                    $para=array("Title"=>$title, "Description"=>$description);
+                    $retPara=$vodobj->CreateUploadImage($uploadType,$extension,$para);
+                    $retPara['MediaId']=$retPara["ImageId"];
+                    $retPara['MediaURL']=$retPara["ImageURL"];
+                    break;
+                //  上传视频
+                case "video":
+                    $extension=$this->extractFileExt($fileName,"mp4,3gp,mp3");
+                    if(empty($extension)) throw new Exception("不支持的文件类型：".$fileName);
+                    if(empty($title)) $title=$fileName;
+                    $retPara=$vodobj->CreateUploadVideo($title,$fileName);
+                    $retPara['MediaId']=$retPara["VideoId"];
+                    break;
+                //刷新视频
+                case "refresh":
+                    $retPara=$vodobj->RefreshUploadVideo($fileName);
+                    $retPara['MediaId']=$retPara["VideoId"];
+                    break;
+                //上传辅助媒资
+                case "watermark":
+                case "subtitle":
+                case "material":
+                    break;
+                default:
+                    throw new Exception("不支持的上传类型：".$uploadType);
+                    break;
+            }
+
+            Oajax::ajaxReturn($retPara);
+        }catch (Exception $e){
+            Oajax::errorReturn($e->getMessage());
+        }
+    }
+
+    /**
+     * 在fileName中提取在extList中存在的扩展名
+     * @param $fileName 文件名列表
+     * @param $extList  用逗号","分隔的扩展名列表
+     * @return string   扩展名，小写字母
+     */
+    private function extractFileExt($fileName,$extList){
+        $extension=strtolower(pathinfo($fileName,PATHINFO_EXTENSION));
+        $extList=$extList.',';
+        if(false===stripos($extList,$extension.',')) return '';
+        else  return $extension;
+    }
+    /**
+     * 废弃
      * 调用SDK获取阿里云VOD图片上传地址和凭证
      * @param $ImageType string 图片类型。取值范围：default（默认） cover（封面）
      * @param $ImageExt string  图片文件扩展名。取值范围：png|jpg|jpeg|gif, 默认值：png
      * 输出Json数组字串，包含：RequestId，UploadAddress，UploadAuth，ImageURL，ImageId 详细参考阿里SDK"获取图片上传地址和凭证"
      */
+    /*
     public function aliCreateUploadImageJson($ImageType,$ImageExt){
 	    try{
             if(!contextToken::verifyToken(self::VODACTION_TOKEN, $_REQUEST[self::VODACTION_TOKEN])) throw new Exception("非法访问！");
@@ -669,6 +759,7 @@ echo 'owner='.$owner;
             Oajax::errorReturn($e->getMessage());
         }
     }
+    */
 
     /**
      * 修改视频信息
@@ -684,6 +775,17 @@ echo 'owner='.$owner;
         }catch (Exception $e){
             Oajax::errorReturn($e->getMessage());
         }
+    }
+
+    public function getVideoUrlJson($recordid=0,$videoid='',$path='',$site=5){
+        try{
+            $vodclass=vodBase::instance($site);
+            $url=$vodclass->getVideoUrl($recordid,$videoid,$path);
+            Oajax::successReturn(array("url"=>$url));
+        }catch (Exception $e){
+            Oajax::errorReturn($e->getMessage()) ;
+        }
+
     }
 }
 

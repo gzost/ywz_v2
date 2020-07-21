@@ -45,7 +45,9 @@ class MG_scoreAction extends AdminBaseAction{
             array("name"=>"title", "text"=>"练习名称", "options"=>"width:200,align:'left',halign:'center'"),
             array("name"=>"username", "text"=>"用户昵称", "options"=>"width:160,align:'left',halign:'center'"),
             array("name"=>"realname", "text"=>"真实姓名", "options"=>"width:100,align:'left',halign:'center'"),
-            array("name"=>"answer", "text"=>"答案", "options"=>"width:200,align:'left',halign:'center',nowrap:false"),
+            array("name"=>"answer", "text"=>"答案", "options"=>"width:200,align:'left',halign:'center',nowrap:false,
+                formatter:function(value,row,index){ 
+                    return '<div class=ansercolume >'+value+'</div>'}"),
             array("name"=>"score", "text"=>"得分", "options"=>"width:80,align:'left',halign:'center',editor:{type:'numberbox'}")
         );
         $webVar["header"]=$header;

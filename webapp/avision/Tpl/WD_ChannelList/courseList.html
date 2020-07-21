@@ -79,17 +79,21 @@ console.log("chnid="+chnid);
             var dataOptionStr=target.attr('data-options');
             if(typeof(dataOptionStr)=='undefined') dataOptionStr='{}';
             var dataOptions=eval('('+dataOptionStr+')')
-            console.log(target.next().html());
-            $.post("__APP__/Channelreluser/saveScoreJson",{score:score, cruId: dataOptions.cruId},function (data) {
-                console.log(data);
+            if(confirm(score+"星，确定提交评价吗？")){
+                console.log(target.next().html());
+                $.post("__APP__/Channelreluser/saveScoreJson",{score:score, cruId: dataOptions.cruId},function (data) {
+                    console.log(data);
+                    if(data.success=='true'){
+                        target.next().html('评价完成');
+                    }else{
+                        target.next().html(data.msg);
+                    }
+                },'json');
+                return false;
+            }else {
+                return true;
+            }
 
-                if(data.success=='true'){
-                    target.next().html('评价完成');
-                }else{
-                    target.next().html(data.msg);
-                }
-            },'json');
-            return false;
         }});
 
 </script>

@@ -24,6 +24,23 @@
 <script type="text/javascript">
 $(document).ready(function(){
 	cn_Pagination($("#dg").datagrid('getPager'));
+    /* js写本地文件方法
+    function download(filename, text) {
+        var pom = document.createElement("a");
+        pom.setAttribute( "href", "data:text/plain;charset=utf-8," + encodeURIComponent(text));
+        pom.setAttribute("download", filename);
+        if (document.createEvent) {
+            var event = document.createEvent("MouseEvents");
+            event.initEvent("click", true, true);
+            pom.dispatchEvent(event);
+        }
+        else
+        {
+            pom.click();
+        }
+    }
+    download("data.txt","hello world");
+    */
 });
 
 function vodfunction(work){
@@ -48,6 +65,7 @@ function vodfunction(work){
 		}
 		para={owner:ownerId};
 		para.account=$("#ownerAccount").val();
+		para.site=$("#newsite").val();
 		console.log(para);
 		break;
 	case "delete":
@@ -76,6 +94,7 @@ function vodfunction(work){
 	}
 	para.permitCreate='{$permitCreate}';
 	para.permitModify='{$permitModify}';
+	para.permitOverride='{$permitOverride}';
     para.viewSelf='{$viewSelf}';
     para.permitDownload='{$permitDownload}';
 	console.log(para);
@@ -221,8 +240,9 @@ function vodfunction(work){
 	<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
 	
 	<!-- 功能按钮 -->
-	<div id="dgbutton" style="width:400px;  ">
+	<div id="dgbutton" style="width:450px;  ">
 	<eq name='permitCreate' value='true'>
+        存储位置<input id="newsite" type="number" name="site" value="5" style="width: 2em;">
 		<a id="Append" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" 
 			onclick="vodfunction('add');">增加</a>
         <a id="Append" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-communication',plain:true"
@@ -248,6 +268,7 @@ function vodfunction(work){
         <li>删除主记录时同时删除视频文件及封面图片，分享的记录将无法访问对于的资源。</li>
         <li>通过分享生成的记录不能再次分享。</li>
         <li>“分享”字段显示数字是本记录的主记录ID；若以*开头表示本记录是主记录，*后面是分享的次数。</li>
+        <li>增加录像文件前必须指定文件属存储位置(1或5)，推荐5，1会逐步停用</li>
     </ol>
 
 

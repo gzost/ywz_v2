@@ -30,7 +30,7 @@ class SIAction  extends Action {
 		parent::__construct();
 		session_start();
 		C('LOG_FILE','SIService%m%.log');
-		C('LOGFILE_LEVEL','9');
+		C('LOGFILE_LEVEL','4');
 		$httpHost=$_SERVER['HTTP_HOST'];	//
 		$account=$_REQUEST['account'];	//SI账号
 		$sec=$_REQUEST['sec'];	//客户端按算法得到的MD5字串

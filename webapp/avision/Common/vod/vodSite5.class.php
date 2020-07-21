@@ -178,9 +178,14 @@ class vodSite5 extends vodBase{
     ///// 父类规定要实现的接口 ////
 
     public function getCoverUrl($recordid,$videoid,$path){
-        $info=$this->getVODPlayInfo($videoid);
-        if(empty($info) || empty($info["VideoBase"]["CoverURL"])) return self::DEFAULT_VIDEO_COVER;
-        else return $info["VideoBase"]["CoverURL"];
+        try{
+            if(empty($videoid)) return self::DEFAULT_VIDEO_COVER;
+            $info=$this->getVODPlayInfo($videoid);
+            if(empty($info) || empty($info["VideoBase"]["CoverURL"])) return self::DEFAULT_VIDEO_COVER;
+            else return $info["VideoBase"]["CoverURL"];
+        }catch (Exception $e){
+            return self::DEFAULT_VIDEO_COVER;
+        }
     }
 
     /**
@@ -317,6 +322,54 @@ class vodSite5 extends vodBase{
                 $funcName="with".$key;
                 $client=$client->$funcName($val);
             }
+            $rt = $client->request();      // 执行请求
+            return $rt->toArray();
+        }catch (Exception $e){
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    /**
+     * 获取视频上传地址和凭证
+     * @param $Title    string  必须。视频标题。长度不超过128个字符或汉字。UTF8编码
+     * @param $FileName string  必须。视频源文件名。必须带扩展名，且扩展名不区分大小写。支持：mp4
+     * @param $opt  array   可选参数。见aliyun文档
+     * @return array
+     *  - RequestId String  请求ID。
+     *  - VideoId   String  视频ID。
+     *  - UploadAddress String  上传地址。
+     *  - UploadAuth    String  上传凭证。
+     * @throws Exception
+     */
+    public function CreateUploadVideo($Title,$FileName,$opt){
+        try{
+            $this->initVodClient();
+            $client=Vod::v20170321()->CreateUploadVideo()->client(self::VOD_CLIENT_NAME)
+                ->withTitle($Title)
+                ->withFileName($FileName);
+            foreach ($opt as $key=>$val){
+                $funcName="with".$key;
+                $client=$client->$funcName($val);
+            }
+            $rt = $client->request();      // 执行请求
+            return $rt->toArray();
+        }catch (Exception $e){
+            throw new Exception($e->getMessage());
+        }
+    }
+
+    /**
+     * 视频文件上传超时后重新获取上传凭证。
+     * 该接口也可用于视频、音频源文件的覆盖上传（即获取到源文件上传地址后重新上传且视频ID保持不变），但可能会自动触发转码和截图。
+     * @param $VideoId
+     * @return mixed
+     * @throws Exception
+     */
+    public function RefreshUploadVideo($VideoId){
+        try{
+            $this->initVodClient();
+            $client=Vod::v20170321()->RefreshUploadVideo()->client(self::VOD_CLIENT_NAME)
+                ->withVideoId($VideoId);
             $rt = $client->request();      // 执行请求
             return $rt->toArray();
         }catch (Exception $e){

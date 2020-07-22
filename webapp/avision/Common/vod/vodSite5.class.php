@@ -376,4 +376,25 @@ class vodSite5 extends vodBase{
             throw new Exception($e->getMessage());
         }
     }
+
+    /**
+     * 删除完整视频（包括其源文件、转码后的流文件、封面截图等），支持批量删除。
+     * @param $videoIds string 视频ID列表。多个用逗号分隔，最多支持20个。
+     * @return array
+     *  - RequestId String  请求ID。
+     *  - NonExistVideoIds  String[]    不存在的视频ID列表。
+     *  - ForbiddenVideoIds String[]    被禁止操作的视频ID列表（一般由于无权限）。
+     * @throws Exception
+     */
+    public function DeleteVideo($videoIds){
+        try{
+            $this->initVodClient();
+            $client=Vod::v20170321()->DeleteVideo()->client(self::VOD_CLIENT_NAME)
+                ->withVideoIds($videoIds);
+            $rt = $client->request();      // 执行请求
+            return $rt->toArray();
+        }catch (Exception $e){
+            throw new Exception($e->getMessage());
+        }
+    }
 }

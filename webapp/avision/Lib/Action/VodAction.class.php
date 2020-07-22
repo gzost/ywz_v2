@@ -203,7 +203,7 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 		foreach ($mf as $key=>$field){
 			$mf[$key]['val']=$rec[$key];
 		}
-//dump($rec);
+//dump($rec); return;
 		//关联频道
 		$dbChn=D('channel');
 		$chnList=$dbChn->getListByOwner($rec['owner'],$order='id desc',$fields='id as val,name as txt');
@@ -301,9 +301,10 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
      *
      */
 	public function deleteAjax($id,$path){
-		//$path='/000/020/173/1.mp4';
+		//dump($_POST); return;
 		$dbRf=D('recordfile');
 		$id=intval($id);
+		$site=intval($_POST['site']);
 		try{
 		    if(!contextToken::verifyToken(self::VODACTION_TOKEN, $_POST[self::VODACTION_TOKEN])) throw new Exception("非法访问！");
 			if(1>$id) throw new Exception('参数错误，丢失频道ID！');
@@ -314,19 +315,27 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
             $conut=$dbOnline->where(array("objtype"=>"vod","refid"=>$id))->count();
             if($conut>0) throw new Exception("该资源还要未完成结算的点播记录，请1小时后再试。");
 
-			//$rt=$dbRf->where(array('id'=>$id,'size'=>0))->delete(); //只能删除新建而没有录像文件的记录。这些记录保证没有消费，因消费结算时需要读录像记录。
-            $dbRf->remove($id); //删除记录。
+            if(5==$site){
+                $vodobj=vodBase::instance($site);
+                $videoIds=$_POST["playkey"];
+                $rt=$vodobj->DeleteVideo($videoIds);
+                $dbRf->remove($id); //删除记录。
+            }else{
+                $dbRf->remove($id); //删除记录。
+                //$rt=$dbRf->where(array('id'=>$id,'size'=>0))->delete(); //只能删除新建而没有录像文件的记录。这些记录保证没有消费，因消费结算时需要读录像记录。
+                $dbRf->remove($id); //删除记录。
 
-			//删除主记录时同时视频文件及图片，共享生成的记录只删除数据表记录不删除录像文件
-			if(intval($_POST['sourceid'])<1){
-				$path=substr($path,0,strrpos($path,'.')+1);
-				$base=(''==C(vodfile_base_path))?'/vodfile':C(vodfile_base_path);
-				$base=$_SERVER['DOCUMENT_ROOT'].$base;
-				$rt=unlink($base.$path.'mp4');
+                //删除主记录时同时视频文件及图片，共享生成的记录只删除数据表记录不删除录像文件
+                if(intval($_POST['sourceid'])<1){
+                    $path=substr($path,0,strrpos($path,'.')+1);
+                    $base=(''==C(vodfile_base_path))?'/vodfile':C(vodfile_base_path);
+                    $base=$_SERVER['DOCUMENT_ROOT'].$base;
+                    $rt=unlink($base.$path.'mp4');
 //var_dump($rt);
-				$rt=unlink($base.$path.'jpg');
-//var_dump($base.$path,$rt);				
-			}
+                    $rt=unlink($base.$path.'jpg');
+//var_dump($base.$path,$rt);
+                }
+            }
 //echo $dbRf->getLastSql();
 		}catch (Exception $e){
 			echo 'Error:',$e->getMessage();

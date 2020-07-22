@@ -203,6 +203,7 @@
                             uploadBlk.find('#authUpload').attr('disabled', false)
                             uploadBlk.find('#status').text('添加文件成功, 等待上传...')
                         }else{
+                            uploadBlk.find('#authUpload').attr('disabled', true)
                             uploadBlk.find('#status').text('文件不符合要求，上传终止。')
                         }
 
@@ -320,10 +321,10 @@
             uploader = createUploader()
             // 首先调用 uploader.addFile(event.target.files[i], null, null, null, userData)
             console.log(uploader)
-            uploader.addFile(file, null, null, null, userData)
             uploadBlk.find('#authUpload').attr('disabled', false)
             uploadBlk.find('#pauseUpload').attr('disabled', true)
             uploadBlk.find('#resumeUpload').attr('disabled', true)
+            uploader.addFile(file, null, null, null, userData)
         })
 
         // 第一种方式 UploadAuth 上传
@@ -397,6 +398,10 @@
         webVar.site="{$site}";
         console.log("detail webVar=",webVar);
 
+        var videoAcceptType="video/mp4,";   //上传视频文件允许的类型，用逗号","分隔
+        var videoMaxSize=800*1014*1024;    //视频文件最大byte
+        var coverAcceptType="image/jpeg,image/png,image/gif,";     //上传封面图片允许的类型，用逗号","分隔
+        var coverMaxSize=500*1024;      //视频封面最大byte
         try{
 
             if(webVar.permitCreate == 'true'){
@@ -433,6 +438,16 @@
                         },
                         postAddFile:function (uploadInfo) {
                             console.log("postAddFile",uploadInfo)
+                            try{
+                                var fileType=uploadInfo.file.type;
+                                var fileSize=uploadInfo.file.size;
+                                if(fileSize > videoMaxSize ) throw "不能上传超过 "+ videoMaxSize/1024 +" KB的文件。";
+                                if( videoAcceptType.indexOf(fileType) <0 ) throw "允许上传的文件类型为："+videoAcceptType;
+                            }catch (e) {
+                                alert(e);
+                                return false;
+                            }
+
                             return true;
                         },
                     });
@@ -462,7 +477,20 @@
                             },'json')
                             var timestamp=new Date().getTime();
                             $("#coverimg").attr('src',voucher.FileURL+'?'+timestamp.toString());    //刷新本页面显示的图片
-                        }
+                        },
+                        postAddFile:function (uploadInfo) {
+                            console.log("postAddFile",uploadInfo)
+                            try{
+                                var fileType=uploadInfo.file.type;
+                                var fileSize=uploadInfo.file.size;
+                                if(fileSize > coverMaxSize ) throw "不能上传超过 "+ coverMaxSize/1024 +" KB的文件。";
+                                if( coverAcceptType.indexOf(fileType) <0 ) throw "允许上传的文件类型为："+coverAcceptType;
+                            }catch (e) {
+                                alert(e);
+                                return false;
+                            }
+                            return true;
+                        },
                     });
                 }
             }

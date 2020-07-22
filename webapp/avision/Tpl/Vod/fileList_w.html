@@ -84,7 +84,11 @@ function vodfunction(work){
         para.target=target;  //增加目标频道参数
         break;
     case "download":
-        openPostWin("__APP__/Vod/downloadFile",para,"download","height=110,width=250");
+        if(para.site==5){
+            alert("请在预览视频时，在预览窗口按右键下载");
+        }else{
+            openPostWin("__APP__/Vod/downloadFile",para,"download","height=110,width=250");
+        }
         return;
         break;
 	default:

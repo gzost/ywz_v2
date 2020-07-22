@@ -176,7 +176,7 @@ class PlayAction extends SafeAction{
         $webVar["desc"]=htmlspecialchars($this->channel["descript"]);
         $webVar["entrytimes"]=$this->channel["entrytimes"];
         $webVar["logoImg"]="http://".$_SERVER["HTTP_HOST"].$this->dbChannel->getLogoImgUrl($chnAttr, $this->chnid);
-
+        $webVar["hiddenLeftTime"]=(empty($chnAttr["hiddenLeftTime"]))?0:$chnAttr["hiddenLeftTime"]; //隐藏开播倒计时及信号状态
         /*
         //3.1 处理系统公告
         if(!isset($this->para["nc"])){

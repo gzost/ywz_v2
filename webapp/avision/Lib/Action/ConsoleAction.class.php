@@ -20,6 +20,7 @@ require_once LIB_PATH.'Model/StreamDetailViewModel.php';
 require_once LIB_PATH.'Action/ChannelAction.class.php';
 require_once APP_PUBLIC.'aliyun/Sms.Class.php';
 require_once(LIB_PATH.'Model/UserPassModel.php');
+require_once LIB_PATH.'Model/DictionaryModel.php';
 
 class ConsoleAction extends AdminBaseAction {
 	
@@ -244,6 +245,7 @@ class ConsoleAction extends AdminBaseAction {
  			$webVar['viewSelf']='true';
  			$webVar['ownerAccount']=$this->getUserInfo('account');	//默认只查找当前用户所属频道/VOD的用户
  		}
+ 		$webVar['defaultPlatform']=D("dictionary")->getDefaultPlatform();   //取默认推流平台
  		//初始查询
 		$_REQUEST['ownerAccount']=$webVar['ownerAccount'];
 		$stream=new stream();

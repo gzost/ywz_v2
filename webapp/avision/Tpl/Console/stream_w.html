@@ -119,6 +119,10 @@ function makeIdStream(account){
 			//默认属主账号
 			var ed=$(this).edatagrid('getEditor',{ index:index,field:'account'});
 			if(null!=ed) $(ed.target).textbox('setValue',account);
+			//默认推流平台
+			var defaultPlatform='{$defaultPlatform}';
+			var ed=$(this).edatagrid('getEditor',{ index:index,field:'platform'});
+			if(null!=ed) $(ed.target).textbox('setValue',defaultPlatform);
 		},
 		onEdit:function(index,row){
 			if('true'!={$isAdmin} ){

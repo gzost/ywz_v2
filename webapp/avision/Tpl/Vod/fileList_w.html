@@ -102,8 +102,9 @@ function vodfunction(work){
     para.viewSelf='{$viewSelf}';
     para.permitDownload='{$permitDownload}';
 	console.log(para);
+    $("#detail").html("loading...");
 	$.ajaxSetup({
-        cache:false
+        cache:false, async:true
     });
 	$.post(url,para,function(data){
 		$("#detail").html(data);

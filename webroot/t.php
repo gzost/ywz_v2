@@ -1,4 +1,5 @@
 <?php
+phpinfo();
 define("appname",3);
 var_dump(defined("appname"));
 $v=appname;
@@ -20,7 +21,7 @@ setcookie("PHPSESSID", "", $expire,'/');
 echo "<BR>".time();
 
 exit;
-phpinfo();
+
 error_reporting(E_ALL ^ E_NOTICE);
 ob_implicit_flush();
 

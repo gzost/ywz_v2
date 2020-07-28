@@ -9,7 +9,7 @@ require_once APP_PATH.'../public/uploadhandler.php';
 
 require_once APP_PATH.'../../secret/OuSecret.class.php';
 require_once COMMON_PATH.'vod/vodBase.class.php';
-
+require_once APP_PATH.'../public/alivoduploadsdk/Autoloader.php';
 class VodAction extends AdminBaseAction {
 
     const VODACTION_TOKEN="vodFileListToken";    //传递页面上下文，的访问令牌，用于校验请求来自fileList方法生成的页面

@@ -1,0 +1,81 @@
+阿里云VOD服务端上传SDK
+
+功能介绍
+使用此上传SDK可实现以下功能：
+
+主要功能
+1. 可上传各种媒体文件到点播：视频(含音频)、图片、辅助媒资(如水印、字幕文件)。
+2. 上传本地媒体文件到点播，默认使用分片上传，最大支持48.8TB的单个文件；暂不支持断点续传。
+3. 上传网络媒体文件到点播，最大支持48.8TB的单个文件，会先下载到本地临时目录再上传；暂不支持断点续传。
+4. 上传M3U8视频，同时提供解析M3U8索引文件得到分片地址列表的接口；也可自行指定分片文件地址。
+
+其它功能
+1. 上传进度条功能，支持默认进度回调和自定义进度回调。
+2. 可指定上传脚本部署的ECS区域，如果和点播存储区域相同，则自动使用内网上传，上传更快且更省公网流量。
+3. 可指定点播中心（默认为上海）和存储区域，便于海外上传。
+4. 支持上传时设置元数据(标题等)，以及StorageLocation、UserData、转码模板等。
+
+环境要求
+1. PHP 5.3+，可通过php -v命令查看当前的PHP版本。若未安装，请到 PHP官网 下载合适的版本安装。
+2. 确认已安装并启用相应扩展：php-mbstring、php_curl
+3. 支持 Linux/Unix/Mac/Windows 多平台
+
+上传SDK下的文档结构（VodUploadSDK-PHP目录）如下：
+
+VodUploadSDK-PHP
+└───voduploadsdk
+│   │   ChangeLog.txt
+│   │   Autoloader.php
+│   │
+│   └───uploader
+│   │   │   UploadVideoRequest.php
+│   │   │   UploadImageRequest.php
+│   │   │   UploadAttachedMediaRequest.php
+│   │   │   
+│   │   │   AliyunVodUploader.php
+│   │   │   AliyunVodUtils.php
+│   │   
+│   └───aliyun-php-sdk-core
+│   └───aliyun-php-sdk-oss
+│   └───aliyun-php-sdk-vod
+│   
+└───samples
+    │   uploadVideo.php
+    │   uploadImage.php
+    │   uploadAttachedMedia.php
+辅助文件
+ChangeLog.txt 版本发布记录，首行即为当前SDK的版本号和发布日期。
+Autoloader.php 类文件加载器，使用SDK时只需require此文件即可。
+
+主体代码
+UploadVideoRequest.php
+
+UploadVideoRequest，上传视频的请求类，字段参考 获取视频上传地址和凭证。
+UploadImageRequest.php
+
+UploadImageRequest，上传图片的请求类，字段参考 获取图片上传地址和凭证。
+UploadAttachedMediaRequest.php
+
+UploadAttachedMediaRequest，上传辅助媒资的请求类，字段参考 获取辅助媒资上传地址和凭证。
+AliyunVodUploader.php，主要是AliyunVodUploader类
+
+__construct，构造函数，可设置上传的 AccessKey 和 点播接入区域。
+uploadLocalVideo，上传本地视频的接口。
+uploadWebVideo，上传网络视频的接口。
+uploadLocalImage，上传本地图片。
+uploadWebImage，上传网络图片。
+uploadLocalAttachedMedia，上传本地辅助媒资文件。
+uploadWebAttachedMedia，上传网络辅助媒资文件。
+uploadLocalM3u8，上传本地m3u8视频。
+uploadWebM3u8，上传网络m3u8视频。
+parseM3u8File，解析m3u8索引文件得到分片地址列表。
+setEcsRegionId，设置上传脚本部署的ECS区域(如有)，如与点播存储同一区域会自动启用内网上传。
+setEnableSSL，是否启用SSL(网络请求使用HTTPS)，默认不启用，以避免相关扩展未安装或配置异常时无法使用。
+uploadProgressCallback，上传进度回调函数，可重写。
+AliyunVodUtils.php
+
+AliyunVodUtils，工具类，提供截取字符串、获取扩展名、获取文件名等静态函数。
+AliyunVodLog，实现简单打印的日志类，$logSwitch为日志开关。
+AliyunVodDownloader，实现下载网络文件。
+AliyunVodReportUpload，实现上传进度汇报。
+AliyunVodError，定义错误码。

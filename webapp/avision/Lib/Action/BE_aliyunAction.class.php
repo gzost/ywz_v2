@@ -21,8 +21,8 @@ use AlibabaCloud\Vod\Vod;
 class BE_aliyunAction extends Action{
 
     public function test(){
-        $vodobj=vodBase::instance(5);
-        $rt=$vodobj->CreateUploadImage("cover","jpg");
+        //$vodobj=vodBase::instance(5);
+        //$rt=$vodobj->CreateUploadImage("cover","jpg");
 
         //$rt=$vodobj->getVODPlayInfo("0e10691d179b4d668aca88f92fa885f9");
         //$rt=$vodobj->getVideoInfo("0e10691d179b4d668aca88f92fa885f9");
@@ -161,11 +161,11 @@ class BE_aliyunAction extends Action{
         C('LOG_FILE','pushcallback.log');
         C('LOGFILE_LEVEL',LogLevel::SQL);   //为调试提到最高记录级别
 
-        $msg=print_r($_SERVER,true);
-        logfile($msg,LogLevel::DEBUG);
+        //$msg=print_r($_SERVER,true);
+        //logfile($msg,LogLevel::DEBUG);
         //参数以请求体Json格式发送，PHP不能解析为$_POST数组，只能读请求体获得参数。
         $msg=file_get_contents('php://input');
-        logfile($msg,LogLevel::DEBUG);
+        //logfile($msg,LogLevel::DEBUG);
         $para=json_decode($msg,true);   //把json转换成参数数组
         $msg=print_r($para,true);
         logfile($msg,LogLevel::DEBUG);

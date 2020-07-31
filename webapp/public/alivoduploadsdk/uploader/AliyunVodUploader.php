@@ -69,9 +69,11 @@ class AliyunVodUploader
      * @return string, $videoId
      * @throws Exception
      */
-    public function uploadLocalVideo($uploadVideoRequest)
+    public function uploadLocalVideo($uploadVideoRequest, $uploadInfo=null)
     {
-        $uploadInfo = $this->createUploadVideo($uploadVideoRequest);
+        //$uploadInfo = $this->createUploadVideo($uploadVideoRequest);
+        if(null==$uploadInfo)  $uploadInfo = $this->createUploadVideo($uploadVideoRequest); //outao 2020-07-28
+
         $headers = $this->getUploadHeaders($uploadVideoRequest);
         $this->uploadOssObject($uploadVideoRequest->getFilePath(), $uploadInfo->UploadAddress->FileName, $uploadInfo, $headers);
         return $uploadInfo->VideoId;
@@ -381,7 +383,7 @@ class AliyunVodUploader
         return array('x-oss-notification' => base64_encode($userData));
     }
 
-    private function createUploadVideo($uploadVideoRequest)
+    public function createUploadVideo($uploadVideoRequest)
     {
         $request = new vod\CreateUploadVideoRequest();
         $title = AliyunVodUtils::subString($uploadVideoRequest->getTitle(), AliyunVodUtils::VOD_MAX_TITLE_LENGTH);

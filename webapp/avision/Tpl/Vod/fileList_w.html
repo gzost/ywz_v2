@@ -91,6 +91,17 @@ function vodfunction(work){
         }
         return;
         break;
+    case "move":
+        console.log(para);
+        try{
+            if(para.site ==5 ) throw "录像已经存储在区域5，无需转存。";
+            if(para.size==0 || ''==para.path) throw "本记录还没有录像文件。";
+            uploadVideo2Ali(para);
+        }catch (e) {
+            alert(e);
+        }
+        return;
+        break;
 	default:
 		alert("内部错误："+work);
 		return false;
@@ -133,6 +144,50 @@ function vodfunction(work){
         _form.trigger("submit");
         //表单删除
         _form.remove();
+    }
+
+    //在表头的信息行显示信息
+    function showMsg($msg){
+	    $("#msg").html($msg);
+    }
+    function uploadVideo2Ali(para) {
+        var url="__URL__/uploadVideo2AliJson";
+        var uploadFinish=false;
+        var timer=null;
+        showMsg("正在上传...");
+
+        $.post(url,para,function (data) {
+            clearTimeout(timer);
+            uploadFinish=true;
+            if(data.success=="true"){
+                //上传成功
+                $("#dg").datagrid("reload");
+                showMsg("上传完成。");
+            }else{
+                //上传失败
+                if(typeof(data.msg)=="string") showMsg(data.msg);
+            }
+        },'json').fail(function (response) {
+            uploadFinish=true;
+            showMsg('Error: ' + response.responseText);
+        });
+
+        function showProgress(para) {
+            return function(){
+                console.log("showProgress",uploadFinish)
+                var url="__URL__/getUploadProgessJson";
+                $.post(url,{recordfileId:para.id, vodFileListToken:para.vodFileListToken},function (data) {
+                    console.log("showProgress  ret",uploadFinish,data)
+                    if(!uploadFinish) {
+                        if(data.success=="true") showMsg("正在上传..."+data.progress);
+                        else showMsg("正在上传..."+data.msg);
+                        timer=setTimeout(showProgress(para),5000);
+                    }
+                },'json');
+            }
+        }
+        console.log("setTimeout")
+        timer=setTimeout(showProgress(para),5000);
     }
 }
 
@@ -202,6 +257,7 @@ function vodfunction(work){
 		toolbar:'#tb',pagination:true,  pageSize:10,
 		onSelect:function(index,row){
 			//$('#detail').html('');
+			$('#msg').html('');
 			vodfunction('modify');
 		}	" >
 	<thead>
@@ -245,9 +301,9 @@ function vodfunction(work){
 	<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
 	
 	<!-- 功能按钮 -->
-	<div id="dgbutton" style="width:450px;  ">
+	<div id="dgbutton" style="width:500px;  ">
 	<eq name='permitCreate' value='true'>
-        存储位置<input id="newsite" type="number" name="site" value="5" style="width: 2em;">
+        存储区域<input id="newsite" type="number" name="site" value="5" style="width: 2em;">
 		<a id="Append" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" 
 			onclick="vodfunction('add');">增加</a>
         <a id="Append" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-communication',plain:true"
@@ -258,6 +314,8 @@ function vodfunction(work){
 	    	onclick="vodfunction('delete');">删除</a>
 	    <a id="Save" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true"
 	    	onclick="vodfunction('modify');">修改</a>
+        <a id="Save" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true"
+           onclick="vodfunction('move');">转储</a>
     </eq>
     <eq name='permitDownload' value='true'>
         <a id="Save" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-down',plain:true"

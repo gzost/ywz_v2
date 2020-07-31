@@ -10,13 +10,24 @@ require_once APP_PATH.'../public/uploadhandler.php';
 require_once APP_PATH.'../../secret/OuSecret.class.php';
 require_once COMMON_PATH.'vod/vodBase.class.php';
 require_once APP_PATH.'../public/alivoduploadsdk/Autoloader.php';
+
+use vod\Request\V20170321 as vod;
+
 class VodAction extends AdminBaseAction {
 
     const VODACTION_TOKEN="vodFileListToken";    //传递页面上下文，的访问令牌，用于校验请求来自fileList方法生成的页面
 	public function  t(){
-		$db=D('Recordfile');
-		$str=$db->getVodMrl(10197);
-		dump($str);
+        $consumedBytes=56789123;
+        $totalBytes=66789123;
+        $s=sprintf("已上传 %.02f/%.02fMB， %s%s",round(($consumedBytes)/1024/1024,2),round(($totalBytes)/1024/1024,2),round(36, 0), '%');
+	    var_dump($s); die();
+	    echo "uploadstart";
+	    ob_flush();
+	    flush();
+        $filePath="D:/3cf78696-1736b8af8bd.mp4";
+        //$filePath="/home/www/ou.mp4";
+        $rt=$this->uploadLocalVideoJson($filePath);
+        dump($rt);
 	}
 	/**
 	 * 
@@ -224,6 +235,7 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 		$webVar['detailFormData']=OUdetailform($mf);
 		//$webVar['imageUrl']=RecordfileModel::getImgMrl($rec['path']).'?'.Ouuid();   //$rec['path']为图片文件的URL路径
         $webVar['imageUrl']=$vodclass->getCoverUrl($rec['id'],$rec["playkey"],$rec["path"]);    //取视频封面统一接口
+        if(1==$rec['site']) $webVar['imageUrl'].="?".time();
 		$webVar['permitCreate']=($_REQUEST['permitCreate']=='true')?'true':'false';
 		$webVar['permitModify']=($_REQUEST['permitModify']=='true')?'true':'false';
         $webVar['permitOverride']=($_REQUEST['permitOverride']=='true')?'true':'false';
@@ -323,15 +335,14 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
             }else{
                 $dbRf->remove($id); //删除记录。
                 //$rt=$dbRf->where(array('id'=>$id,'size'=>0))->delete(); //只能删除新建而没有录像文件的记录。这些记录保证没有消费，因消费结算时需要读录像记录。
-                $dbRf->remove($id); //删除记录。
-
+//var_dump(intval($_POST['sourceid']));
                 //删除主记录时同时视频文件及图片，共享生成的记录只删除数据表记录不删除录像文件
                 if(intval($_POST['sourceid'])<1){
                     $path=substr($path,0,strrpos($path,'.')+1);
                     $base=(''==C(vodfile_base_path))?'/vodfile':C(vodfile_base_path);
                     $base=$_SERVER['DOCUMENT_ROOT'].$base;
                     $rt=unlink($base.$path.'mp4');
-//var_dump($rt);
+//var_dump($rt,$base,$path);
                     $rt=unlink($base.$path.'jpg');
 //var_dump($base.$path,$rt);
                 }
@@ -633,7 +644,9 @@ echo 'owner='.$owner;
                 "path"=>$_POST["path"],
                 "name"=>$_POST["name"],
                 "descript"=>$_POST["descript"],
-                "sourceid"=>$sourceId
+                "sourceid"=>$sourceId,
+                "playkey"=>$_POST['playkey'],
+                "site"=>$_POST['site']
             );
             $recId=$dbRf->add($newRecord);
             if(false==$recId) throw new Exception("共享失败，请检查目标频道是否已经有了此录像。");
@@ -794,7 +807,169 @@ echo 'owner='.$owner;
         }catch (Exception $e){
             Oajax::errorReturn($e->getMessage()) ;
         }
+    }
 
+    /**
+     * 上传本地视频文件到指定的储存区域，目前只支持区域5，这个函数作为测试用
+     * @param $filePath 文件路径
+     * @param int $site 存储区域
+     * 以ajax形式输出json数组
+     */
+    public function uploadLocalVideoJson($filePath,$site=5){
+        date_default_timezone_set('PRC');
+        try{
+            //if(!contextToken::verifyToken(self::VODACTION_TOKEN, $_REQUEST[self::VODACTION_TOKEN])) throw new Exception("非法访问！");
+            $uploader = new myAliyunVodUploader(OuSecret::$cfg['VOD_AliAccKey'], OuSecret::$cfg['VOD_AliAccSecret']);
+            $uploadVideoRequest = new UploadVideoRequest($filePath, 'testUploadLocalVideo via PHP-SDK');
+dump($uploadVideoRequest);
+            //$uploadVideoRequest->setCateId(1);
+            //$uploadVideoRequest->setCoverURL("http://www.av365.cn/IMG_2811.JPG");
+            //$uploadVideoRequest->setTags('test1,test2');
+            //$uploadVideoRequest->setStorageLocation('outin-xx.oss-cn-beijing.aliyuncs.com');
+            //$uploadVideoRequest->setTemplateGroupId('6ae347b0140181ad371d197ebe289326');
+            $userData = array(
+                //"MessageCallback"=>array("CallbackURL"=>"http://www.av365.cn/home.php/Vod/aliUploadProcessMessageCallback"), //上传完成后的回调，这个参数会覆盖控制台的设置
+                "Extend"=>array("localId"=>"xxx123", "test"=>"www")
+            );
+            $uploadVideoRequest->setUserData(json_encode($userData));
+            $uploadInfo=$uploader->createUploadVideo($uploadVideoRequest);
+dump(json_decode( json_encode( $uploadInfo),true))      ;
+            $res = $uploader->uploadLocalVideo($uploadVideoRequest,$uploadInfo);
+            Oajax::successReturn(array("upload"=>$res));
+        }catch (Exception $e){
+            Oajax::errorReturn($e->getMessage());
+        }
+    }
+
+    /**
+     * 将指定录像记录的视频上传到存储区域5，成功后修改记录使用存储区域5进行点播
+     * 若记录有封面图片同时上传
+     * 前端post需上传的recordfile记录内容，以及上下文令牌
+     */
+    public function uploadVideo2AliJson(){
+        date_default_timezone_set('PRC');
+        try{
+            if(!contextToken::verifyToken(self::VODACTION_TOKEN, $_REQUEST[self::VODACTION_TOKEN])) throw new Exception("非法访问！");
+            session_write_close();  //不操作session先关闭，避免等待上传阻塞其它同session的进程
+
+            //读取前端传递的有用参数
+            $recordfileId=$_POST['id']; //记录ID
+            $ownerId=$_POST["owner"];   //属主用户ID
+            $path=$_POST["path"];   //录像文件相对路径
+            $title=$ownerId.'_'.$_POST["name"];  //录像标题
+
+            //整理参数
+            $basePath=(''==C(vodfile_base_path))?'/vodfile':C(vodfile_base_path);   //视频文件的基础URL
+            $filePath=$_SERVER['DOCUMENT_ROOT'].$basePath.$path;
+            if(!is_file($filePath)) throw new Exception("找不到源文件");
+
+            //var_dump($_POST);     die();
+            $uploader = new myAliyunVodUploader(OuSecret::$cfg['VOD_AliAccKey'], OuSecret::$cfg['VOD_AliAccSecret']);
+            $uploadVideoRequest = new UploadVideoRequest($filePath, $title);
+            //dump($uploadVideoRequest);
+            //$uploadVideoRequest->setCateId(1);
+            //$uploadVideoRequest->setCoverURL("http://www.av365.cn/IMG_2811.JPG");
+            //$uploadVideoRequest->setTags('test1,test2');
+            //$uploadVideoRequest->setStorageLocation('outin-xx.oss-cn-beijing.aliyuncs.com');
+            //$uploadVideoRequest->setTemplateGroupId('6ae347b0140181ad371d197ebe289326');
+            $userData = array(
+                //"MessageCallback"=>array("CallbackURL"=>"http://www.av365.cn/home.php/Vod/aliUploadProcessMessageCallback"), //上传完成后的回调，这个参数会覆盖控制台的设置
+                "Extend"=>array("recordfileId"=>$recordfileId, "action"=>"move") //带给上传完成回调的信息
+            );
+            $uploadVideoRequest->setUserData(json_encode($userData));
+            $uploadInfo=$uploader->createUploadVideo($uploadVideoRequest);  //取得视频上传凭证，可获得媒体ID
+            /* $uploadInfo=
+             * array(8) {
+    ["UploadAddress"] => array(3) {
+    ["Endpoint"] => string(36) "https://oss-cn-shanghai.aliyuncs.com"
+    ["Bucket"] => string(38) "outin-92fc3d2b8f5011e8a4a500163e1c35d5"
+    ["FileName"] => string(48) "sv/23867cb3-1739af2345b/23867cb3-1739af2345b.mp4"
+  }
+  ["VideoId"] => string(32) "b1022c54e6a9433b9ab238f90b716c62"
+  ["RequestId"] => string(36) "C759B14F-DEF9-4F64-AE76-22EA7F25639B"
+  ["UploadAuth"] => array(6) {
+    ["SecurityToken"] => string(960) "CAIS..."
+    ["AccessKeyId"] => string(29) "STS.NUofWJy7iqCzutjybAQgFLPCC"
+    ["ExpireUTCTime"] => string(20) "2020-07-29T15:20:31Z"
+    ["AccessKeySecret"] => string(44) "EW23MrGEWKaioiqGheRhX15e2P3YWvyLKX5QGryir9g9"
+    ["Expiration"] => string(4) "3600"
+    ["Region"] => string(11) "cn-shanghai"
+  }
+  ["OriUploadAddress"] => string(220) "eyJF..."
+  ["OriUploadAuth"] => string(1564) "eyJTZ..."
+  ["MediaType"] => string(5) "video"
+  ["MediaId"] => string(32) "b1022c54e6a9433b9ab238f90b716c62"
+}
+             */
+
+            //记录VideoId
+            $dbRf=D("recordfile");
+            $info=json_decode( json_encode( $uploadInfo),true);
+            $rt=$dbRf->where("id=".$recordfileId)->save(array("playkey"=>$info["VideoId"], "progress"=>"."));
+            if(false===$rt) throw new Exception("更改录像记录失败:".$dbRf->getLastSql());
+
+            //上传视频文件
+            $res = $uploader->uploadLocalVideo($uploadVideoRequest,$uploadInfo);    //上传录像成功返回VideoId
+
+            //视频文件完成上传，点播记录指向site5
+            $rt=$dbRf->where("id=".$recordfileId)->save(array("site"=>5, "progress"=>"上传封面图片"));
+            if(false===$rt) throw new Exception("视频完成上传但无法同步数据库:".$dbRf->getLastSql());
+
+            //上传封面图片
+            $coverfile=substr($filePath,0,strripos($filePath,'.')).'.jpg';  //封面文件的路径
+            if(is_file($coverfile)){
+                //有封面图片才上传
+                $uploadImageRequest = new UploadImageRequest($coverfile, $title);
+                $uploadImageRequest->setImageType("cover");
+                /**
+                 * uploadLocalImage正常返回数组：array("ImageId":"...", "ImageURL":"...")
+                 */
+                $res = $uploader->uploadLocalImage($uploadImageRequest);
+                //var_dump($res,$info["VideoId"]); die();
+                //修改视频封面
+                $vodobj=vodBase::instance(5);
+                $para=array("CoverURL"=>$res["ImageURL"]);
+                $rt=$vodobj->updateVideoInfo($info["VideoId"],$para);
+            }
+            $rt=$dbRf->where("id=".$recordfileId)->save(array("site"=>5, "progress"=>""));
+            Oajax::successReturn(array("upload"=>$res));
+        }catch (Exception $e){
+            Oajax::errorReturn($e->getMessage());
+        }
+    }
+
+    public function getUploadProgessJson($recordfileId){
+        try{
+            if(!contextToken::verifyToken(self::VODACTION_TOKEN, $_REQUEST[self::VODACTION_TOKEN])) throw new Exception("非法访问！");
+            session_write_close();
+            $progress=D("recordfile")->where("id=".$recordfileId)->getField("progress");
+            if(null===$progress) throw new Exception("找不到进度数据");
+            Oajax::successReturn(array("progress"=>$progress));
+        }catch (Exception $e){
+            Oajax::errorReturn($e->getMessage());
+        }
+    }
+}
+
+/**
+ * 继承AliyunVodUploader类主要是重载上传进度回调函数
+ */
+class myAliyunVodUploader extends AliyunVodUploader{
+    //回调获取的信息，先存储到数据库中，由前端定时查询显示
+    public function uploadProgressCallback($mediaId, $consumedBytes, $totalBytes){
+        C('LOG_FILE','pushcallback.log');
+        C('LOGFILE_LEVEL',LogLevel::SQL);   //为调试提到最高记录级别
+        if ($totalBytes > 0) {
+            $rate = 100 * (floatval(($consumedBytes) / floatval($totalBytes)));
+        }
+        else {
+            $rate = 0;
+        }
+        $s=sprintf("已上传:  %.02f/%.02fMB， %s%s",round(($consumedBytes)/1024/1024,2),round(($totalBytes)/1024/1024,2),round($rate, 0), '%');
+        $dbRf=D("recordfile");
+        $rt=$dbRf->where(array("playkey"=>$mediaId))->save(array("progress"=>$s));
+        logfile($s.$rt,LogLevel::DEBUG);
+        logfile($dbRf->getLastSql(),LogLevel::SQL);
     }
 }
 
@@ -960,4 +1135,3 @@ function Ou_downloadFile($fileName, $fancyName = '', $forceDownload = true, $spe
     }
     return true;
 }
-?>

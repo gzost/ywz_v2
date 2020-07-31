@@ -40,7 +40,7 @@
 		'entry'=>array('Home/index', 'Home/login', 'Index/index', 'HDPlayer/play', 'Home/rechargepay','Home/wxLogin',
             'Home/rechargePaySucess', 'HDPlayer/billPostSucess','HDPlayer/chnRegiste','HDPlayer/chnBill','HDPlayer/getMrl',
             'Home/error', 'Home/logout' ),   //项目允许的进入点（直接在浏览器输入URL访问），其它的action必须通过可信域跳转访问
-        'trustHost'=>array('live.av365.cn','www.av365.cn'),   //可信主机
+        'trustHost'=>array('live.av365.cn','www.av365.cn','ou.av365.cn'),   //可信主机
 
     	//云直播相关配置
     	'adminGroup'=>1,		//系统管理员角色id

@@ -2,14 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c373e6b3-2af5-4bab-bede-a2195dffe403" name="默认更改列表" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Conf/config.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Conf/config.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/BE_aliyunAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/BE_aliyunAction.class.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/Vod/fileList_w.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Vod/fileList_w.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/Vod/showDetail.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/Vod/showDetail.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/public/alivoduploadsdk/uploader/AliyunVodUploader.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/public/alivoduploadsdk/uploader/AliyunVodUploader.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/public/alivoduploadsdk/uploader/AliyunVodUtils.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/public/alivoduploadsdk/uploader/AliyunVodUtils.php" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webroot/Public/kindeditor/article.css" beforeDir="false" afterPath="$PROJECT_DIR$/webroot/Public/kindeditor/article.css" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -76,7 +69,7 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="VodAction.class.php" pinned="false" current-in-tab="true">
+      <file leaf-file-name="VodAction.class.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="393">
@@ -84,6 +77,15 @@
               <folding>
                 <element signature="n#Ou_downloadFile#0;n#!!top" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="article.css" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/webroot/Public/kindeditor/article.css">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="506">
+              <caret line="33" selection-start-line="33" selection-end-line="33" />
             </state>
           </provider>
         </entry>
@@ -194,7 +196,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/webapp/avision/Tpl/CH_ccjyj/complementUserInfo.html" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Model/ChannelModel.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/CH_ccjyjAction.class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/WD_ChannelList/agentChannel.html" />
@@ -245,6 +246,7 @@
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/Vod/fileList_w.html" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/BE_aliyunAction.class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php" />
+        <option value="$PROJECT_DIR$/webroot/Public/kindeditor/article.css" />
       </list>
     </option>
   </component>
@@ -388,6 +390,45 @@
               <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
               <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="webroot" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
+              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="webroot" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="player" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
+              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="webroot" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="player" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="default" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
+              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="webroot" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="player" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="default" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="css" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
+              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="webroot" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Public" type="2a2b976b:PhpTreeStructureProvider$1" />
+            </path>
+            <path>
+              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
+              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
+              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="webroot" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="Public" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="kindeditor" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
               <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
@@ -641,12 +682,12 @@
       <workItem from="1595495790793" duration="2742000" />
       <workItem from="1595598679550" duration="1266000" />
       <workItem from="1595648834807" duration="74186000" />
-      <workItem from="1596165560240" duration="600000" />
+      <workItem from="1596165560240" duration="1936000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3887311000" />
+    <option name="totallyTimeSpent" value="3888647000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -659,16 +700,15 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
-    <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49185336" visible="true" weight="0.21917808" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.49185336" visible="true" weight="0.21917808" />
       <window_info id="TODO" order="2" sideWeight="0.54083663" side_tool="true" weight="0.16280295" />
       <window_info anchor="bottom" id="Docker" order="6" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="8" show_stripe_button="false" side_tool="true" weight="0.32925585" />
       <window_info anchor="right" id="Database" order="3" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info active="true" id="Structure" order="3" sideWeight="0.50814664" side_tool="true" visible="true" weight="0.21917808" />
+      <window_info id="Structure" order="3" sideWeight="0.50814664" side_tool="true" visible="true" weight="0.21917808" />
       <window_info id="Terminal" internal_type="SLIDING" order="1" type="SLIDING" />
       <window_info id="Favorites" order="4" sideWeight="0.5641548" side_tool="true" weight="0.21654373" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -725,13 +765,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/ChannelAction.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="343">
-          <caret line="1643" column="48" selection-start-line="1643" selection-start-column="48" selection-end-line="1643" selection-end-column="48" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/secret/OuSecret.class.php">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="375">
@@ -1088,6 +1121,13 @@
           <folding>
             <element signature="n#Ou_downloadFile#0;n#!!top" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webroot/Public/kindeditor/article.css">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="506">
+          <caret line="33" selection-start-line="33" selection-end-line="33" />
         </state>
       </provider>
     </entry>

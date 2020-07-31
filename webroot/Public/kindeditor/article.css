@@ -44,3 +44,5 @@
 	border-bottom: 3px double;
 	font-size: 0.8em;
 }
+
+.article a{text-decoration:none;}

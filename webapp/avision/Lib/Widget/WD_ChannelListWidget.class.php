@@ -79,6 +79,7 @@ class WD_ChannelListWidget extends Action
                     else{
                         $chnList[$key]['classFinish']=(empty($attr['classFinish']))?'0':$attr['classFinish'];
                     }
+                    $chnList[$key]['percentage']=sprintf("%.2f%%", $finishHours/$attr['classHours']*100);
                 }
 
                 //是否可修改评分
@@ -95,6 +96,7 @@ class WD_ChannelListWidget extends Action
             $webVar['chnList']=$chnList;
             $webVar['totalClassHours']=$totalClassHours;
             $webVar['totalFinishHours']=$totalFinishHours;
+            if(!empty($totalClassHours)) $webVar['totalPercentage']=sprintf("%.2f%%", $totalFinishHours/$totalClassHours*100);
 //dump($webVar);
             $this->assign($webVar);
             $this->display('WD_ChannelList:courseList');

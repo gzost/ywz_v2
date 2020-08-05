@@ -22,7 +22,7 @@ class MG_chatAction extends AdminBaseAction{
         $this->params["agent"] = $this->getUserInfo("agent"); //当前用户所在机构
         $this->params["rightA"] = $this->isOpPermit("A"); //可管理所有频道[true|false]
         $this->params["rightG"] = $this->isOpPermit("G"); //可管理机构频道
-        $this->params["rightS"] = $this->isOpPermit("S"); //可编辑成绩
+        $this->params["rightS"] = $this->isOpPermit("R"); //R是管理自己频道功能，程序中用S做权限，这是基本的操作功能
         $func=$this->params["func"];
         $this->$func();
     }
@@ -35,7 +35,7 @@ class MG_chatAction extends AdminBaseAction{
         $webVar = $this->params;
         $webVar["right"]["A"]=$this->isOpPermit("A");
         $webVar["right"]["G"]=$this->isOpPermit("G");
-        $webVar["right"]["S"]=$this->isOpPermit("D");
+        $webVar["right"]["S"]=$this->isOpPermit("R");
         $webVar["account"]=$this->getUserInfo('account');   //当前用户的账号
         $webVar["contextToken"]=session_id();   //上下文标识
         //默认的查询条件

@@ -356,7 +356,7 @@ class TPlayAction extends SafeAction{
         //dump($_POST);
         //var_dump( IsAndroid());
         //var_dump( IsWxBrowser());
-
+$webVar['now1']=time();
         $this->assign($webVar);
         $this->show("TPlay:play");
 

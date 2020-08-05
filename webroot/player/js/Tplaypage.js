@@ -380,7 +380,9 @@ console.log("isHorizontal",_this.isHorizontal());
         //playerOpt.cover=cover;
         playerOpt=$.extend(playerOpt,options);
 //playerOpt.source="/vodfile/000/000/001/13288_5c9f740976775.mp4";    //for test
-playerOpt.source="/m.mp4";
+playerOpt.source="/m.mp4";  ////for test
+playerOpt.playType="vod";
+//alert("playType="+playerOpt.playType);
         if("live"==playerOpt.playType){
             playerOpt.isLive=true;
         }else{
@@ -415,9 +417,12 @@ playerOpt.source="/m.mp4";
             //错误消息处理
             player.on("error",function (e) {
                 console.log('player error!!====',e,playerOpt.playType);
+                alert("player error");
+                /*
                 Ou_OnlineTable.setOffline(playerOpt.playType);
                 $(".prism-ErrorMessage").hide(); //隐藏出错信息
                 player.setCover(params.cover);   //显示封面
+                */
             });
             player.on("canplay",function(){
                 console.log("canplay=======");
@@ -605,6 +610,8 @@ console.log("status.playerReady=",status.playerReady);
 
         //左右拖动时,由于浏览器自带滑动特效，touchend后还会继续滚动，因此只能监听scroll事件，并延迟处理
         tabBlk.scroll(function() {
+            var isHorizontal=_this.isHorizontal();
+            if(!isHorizontal)    return;
             //console.log("scroll even");
             if(status.tabScrolling) return;
             clearTimeout($.data(this, 'scrollTimer'));
@@ -624,6 +631,7 @@ console.log("status.playerReady=",status.playerReady);
         */
         var isTabInit={};   //记录已经初始化的tab，{tabid:true,...}
         tabBlk.bind("tabActive",function(event,tabid,para) {
+            //alert("activ:"+tabid); return;
             var blkItem=$("#"+params.tabItemPrefix+tabid);
             console.log("recive event:"+tabid);
             switch (tabid){
@@ -666,7 +674,7 @@ console.log("status.playerReady=",status.playerReady);
                 case 104:   //视频点播
                     if(true != isTabInit[tabid]){
                         //未初始化，执行初始化
-                        blkItem.load(params.appUrl+"/Play/vodlist",{chnid:params.chnid,vodid:params.vodid,playToken:params.playToken});
+                        blkItem.load(params.appUrl+"/TPlay/vodlist",{chnid:params.chnid,vodid:params.vodid,playToken:params.playToken});
                         isTabInit[tabid]=true;
                     }
                     break;
@@ -700,7 +708,7 @@ console.log("status.playerReady=",status.playerReady);
                 case 110:   //频道介绍
                     if(true != isTabInit[tabid]){
                         //未初始化，执行初始化
-                        blkItem.load(params.appUrl+"/Play/showChnInfo",{chnid:params.chnid});
+                        blkItem.load(params.appUrl+"/TPlay/showChnInfo",{chnid:params.chnid});
                         isTabInit[tabid]=true;
                     }
                     break;
@@ -714,10 +722,12 @@ console.log("status.playerReady=",status.playerReady);
             firstActive=false;
         });
         //其它扩展的tab功能
+        /*
         tabBlk.bind("tabActive",function(event,tabid,para) {
             //console.log(tabid);
             //console.log(para);
         });
+        */
 
         //初始化，必须要放在此对象的最后
         var firstActive=true;   //触发第一次active后设为false,避免直播为默认tab时且播放类型是直播时，多取一次直播数据

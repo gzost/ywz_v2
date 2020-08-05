@@ -179,7 +179,14 @@
     </div>
     <!--<button  style="z-index:3999; position: fixed; left:50px; bottom:100px;" onclick="playPage.send({},function(){ alert('send callback');})">send data</button>-->
     <!-- 高度随内容变化，可显示广告或滚动通知 -->
-    <div id="blkAdwin" style="position: relative; width: 100%; border:0; margin:0;padding: 0; flex:none; display: none;"></div>
+    <div id="blkAdwin" style="position: relative; width: 100%; border:0; margin:0;padding: 0; flex:none; display: block;">
+        <div id="vodtest" style=" font-size: 30px;">vod</div>
+    </div>
+    <script>
+        $("#vodtest").on("click",function () {
+            playPage.getPlayer().play();
+        })
+    </script>
     <!-- 与多功能窗口不同时显示，显示弹出内容，如即兴题目等 -->
     <div id="blkSouthFix" style="position: relative; width: 100%; height:200px; background-color: #FFF; flex: auto; overflow-x: auto;overflow-y:hidden;white-space: nowrap; display: none;">
     </div>
@@ -214,7 +221,7 @@
 <script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/de/prismplayer/2.8.7/aliplayer-h5-min.js" ></script>
 <load href="__PUBLIC__/js/publicFunction.js" />
 <!--<load href="__ROOT__/player/js/playpage3.7.min.js" />-->
-<script src="__ROOT__/player/js/Tplaypage.js?t=3.7.3" ></script>
+<script src="__ROOT__/player/js/Tplaypage.js?t={$now1}" ></script>
 <script>
     //本页面的全局JS对象，除页面的主功能还提供个plugin的公共服务
     var playPage=null;

@@ -605,7 +605,8 @@ console.log("status.playerReady=",status.playerReady);
 
         //左右拖动时,由于浏览器自带滑动特效，touchend后还会继续滚动，因此只能监听scroll事件，并延迟处理
         tabBlk.scroll(function() {
-            //console.log("scroll even");
+            var isHorizontal=_this.isHorizontal();
+            if(!isHorizontal)    return;    //横屏状态不处理滚动消息，避免全屏时触发，跳转到第一个Tab
             if(status.tabScrolling) return;
             clearTimeout($.data(this, 'scrollTimer'));
             $.data(this, 'scrollTimer', setTimeout(function() {

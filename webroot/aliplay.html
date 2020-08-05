@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>阿里云WEB播放器测试</title>
+    <link rel="stylesheet" href="https://g.alicdn.com/de/prismplayer/2.8.7/skins/default/aliplayer-min.css" />
+</head>
+<body>
+阿里云WEB播放器测试
+<div id="prismPlayer" style="display: block; position: relative; width: 640px; height: 360px;"></div>
+
+<script src="/Public/jeasyui/jquery.min.js" ></script>
+<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/de/prismplayer/2.8.7/aliplayer-h5-min.js" ></script>
+
+<script>
+
+    var initPlayer=function (container, options) {
+        var playerOpt={
+            "id": "prismPlayer",
+            "width": "100%",  "height":"100%",
+            "autoplay": false,
+            "isLive": true, //false,
+            //"skinLayout":false,
+            //"skinLayout": [],
+            "rePlay": false,
+            "playsinline": true,
+            "preload": false,
+            "autoplay":false,
+            "cover":"/t/1.jpg",
+            "controlBarVisibility": "click",//控制面板的实现 ‘click’ 点击出现、‘hover’ 浮动出现、‘always’ 一直在
+            "useH5Prism": true,
+            //"x5_type":"h5",
+            "x5_fullscreen":true,
+            "x5_video_position":"top"
+        }
+        //playerOpt.id=container;
+        //playerOpt.source=source;
+        //playerOpt.cover=cover;
+        playerOpt=$.extend(playerOpt,options);
+//playerOpt.source="/vodfile/000/000/001/13288_5c9f740976775.mp4";    //for test
+playerOpt.playType="vod";
+playerOpt.source="/m.mp4";
+        if("live"==playerOpt.playType){
+            playerOpt.isLive=true;
+        }else{
+            playerOpt.isLive=false;
+        }
+
+        if(""==playerOpt.source){
+            playerOpt.skinLayout= [];
+            $(local.blkLeftTime).html("没有信号");
+        }else{
+            playerOpt.skinLayout= [
+                { "name": "bigPlayButton", "align": "cc", "x": 30, "y": 80 },
+                { "name": "H5Loading", "align": "cc" },
+                { "name": "errorDisplay", "align": "tlabs", "x": 0, "y": 0 },
+                { "name": "infoDisplay" },
+                { "name": "tooltip", "align": "blabs", "x": 0, "y": 56 },
+                { "name": "thumbnail" },
+                {
+                    "name": "controlBar", "align": "blabs", "x": 0, "y": 0,
+                    "children": [
+                        { "name": "progress", "align": "blabs", "x": 0, "y": 44 },
+                        { "name": "playButton", "align": "tl", "x": 15, "y": 12 },
+                        { "name": "timeDisplay", "align": "tl", "x": 10, "y": 7 },
+                        { "name": "fullScreenButton", "align": "tr", "x": 10, "y": 12 },
+                    ]
+                }
+            ]
+        }
+        return new Aliplayer(playerOpt,function (player) {
+            console.log('player ready!');
+            status.playerReady=true;
+            //错误消息处理
+            player.on("error",function (e) {
+                console.log('player error!!====',e,playerOpt.playType);
+
+            });
+            player.on("canplay",function(){
+                console.log("canplay=======");
+            });
+            player.on("play",function (e) {
+                console.log("player On play.====",playerOpt);
+
+            });
+
+        });
+    }
+    $(document).ready(function () {
+        console.log("befor init player.");
+        var player=initPlayer("prismPlayer",{});
+        console.log("post initPlayer",player);
+    })
+
+
+</script>
+</body>
+</html>

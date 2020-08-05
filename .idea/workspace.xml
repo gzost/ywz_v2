@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="c373e6b3-2af5-4bab-bede-a2195dffe403" name="默认更改列表" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_chatAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_chatAction.class.php" afterDir="false" />
-    </list>
+    <list default="true" id="c373e6b3-2af5-4bab-bede-a2195dffe403" name="默认更改列表" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,16 +31,16 @@
       <content type="file-editors">
         <state>
           <leaf>
-            <file leaf-file-name="play.html" pinned="false" current-in-tab="false">
+            <file leaf-file-name="play.html" pinned="false" current-in-tab="true">
               <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Play/play.html">
                 <provider selected="true" editor-type-id="text-editor">
-                  <state relative-caret-position="-19">
-                    <caret line="171" column="14" selection-start-line="171" selection-start-column="14" selection-end-line="171" selection-end-column="14" />
+                  <state relative-caret-position="150">
+                    <caret line="6" selection-start-line="6" selection-end-line="6" selection-end-column="106" />
                   </state>
                 </provider>
               </entry>
             </file>
-            <file leaf-file-name="playpage.js" pinned="false" current-in-tab="true">
+            <file leaf-file-name="playpage.js" pinned="false" current-in-tab="false">
               <entry file="file://$PROJECT_DIR$/webroot/player/js/playpage.js">
                 <provider selected="true" editor-type-id="text-editor">
                   <state relative-caret-position="600">
@@ -53,6 +50,15 @@
                       <element signature="n#!!doc;n#Ou_KeepAlive#0" />
                       <element signature="n#!!block;n#Ou_KeepAlive#0" />
                     </folding>
+                  </state>
+                </provider>
+              </entry>
+            </file>
+            <file leaf-file-name="play.html" pinned="false" current-in-tab="false">
+              <entry file="file://$PROJECT_DIR$/webroot/play.html">
+                <provider selected="true" editor-type-id="text-editor">
+                  <state relative-caret-position="500">
+                    <caret line="133" selection-start-line="133" selection-end-line="133" selection-end-column="54" />
                   </state>
                 </provider>
               </entry>
@@ -67,44 +73,14 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="aliplay.html" pinned="false" current-in-tab="false">
+      <file leaf-file-name="aliplay.html" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/webroot/aliplay.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-100">
-              <caret line="8" column="93" selection-start-line="8" selection-start-column="93" selection-end-line="8" selection-end-column="93" />
+            <state relative-caret-position="125">
+              <caret line="5" column="110" selection-start-line="5" selection-start-column="110" selection-end-line="5" selection-end-column="110" />
               <folding>
                 <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="init.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_chat/init.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="525">
-              <caret line="75" column="52" selection-start-line="75" selection-start-column="43" selection-end-line="75" selection-end-column="52" />
-              <folding>
-                <element signature="n#style#0;n#div#1;n#div#1;n#block#1;n#!!top" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="MG_chatAction.class.php" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/MG_chatAction.class.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="650">
-              <caret line="43" column="2" selection-start-line="43" selection-start-column="2" selection-end-line="43" selection-end-column="2" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="play.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webroot/play.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="500">
-              <caret line="133" selection-start-line="133" selection-end-line="133" selection-end-column="54" />
             </state>
           </provider>
         </entry>
@@ -241,8 +217,8 @@
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Widget/WD_ChannelListWidget.class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/WD_ChannelList/courseList.html" />
         <option value="$PROJECT_DIR$/webroot/play.html" />
-        <option value="$PROJECT_DIR$/webroot/aliplay.html" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/MG_chatAction.class.php" />
+        <option value="$PROJECT_DIR$/webroot/aliplay.html" />
       </list>
     </option>
   </component>
@@ -739,12 +715,12 @@
       <workItem from="1596340449557" duration="2833000" />
       <workItem from="1596423782146" duration="1332000" />
       <workItem from="1596508333214" duration="1019000" />
-      <workItem from="1596616647986" duration="3602000" />
+      <workItem from="1596616647986" duration="5110000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3898050000" />
+    <option name="totallyTimeSpent" value="3899558000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -1129,17 +1105,20 @@
     <entry file="file://$PROJECT_DIR$/webroot/p.html">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/webroot/play.html">
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/MG_chatAction.class.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="500">
-          <caret line="133" selection-start-line="133" selection-end-line="133" selection-end-column="54" />
+        <state relative-caret-position="650">
+          <caret line="43" column="2" selection-start-line="43" selection-start-column="2" selection-end-line="43" selection-end-column="2" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Play/play.html">
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_chat/init.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-19">
-          <caret line="171" column="14" selection-start-line="171" selection-start-column="14" selection-end-line="171" selection-end-column="14" />
+        <state relative-caret-position="525">
+          <caret line="75" column="52" selection-start-line="75" selection-start-column="43" selection-end-line="75" selection-end-column="52" />
+          <folding>
+            <element signature="n#style#0;n#div#1;n#div#1;n#block#1;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1155,30 +1134,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/webroot/play.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="500">
+          <caret line="133" selection-start-line="133" selection-end-line="133" selection-end-column="54" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Play/play.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="150">
+          <caret line="6" selection-start-line="6" selection-end-line="6" selection-end-column="106" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/webroot/aliplay.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-100">
-          <caret line="8" column="93" selection-start-line="8" selection-start-column="93" selection-end-line="8" selection-end-column="93" />
+        <state relative-caret-position="125">
+          <caret line="5" column="110" selection-start-line="5" selection-start-column="110" selection-end-line="5" selection-end-column="110" />
           <folding>
             <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/MG_chat/init.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="525">
-          <caret line="75" column="52" selection-start-line="75" selection-start-column="43" selection-end-line="75" selection-end-column="52" />
-          <folding>
-            <element signature="n#style#0;n#div#1;n#div#1;n#block#1;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/MG_chatAction.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="650">
-          <caret line="43" column="2" selection-start-line="43" selection-start-column="2" selection-end-line="43" selection-end-column="2" />
         </state>
       </provider>
     </entry>

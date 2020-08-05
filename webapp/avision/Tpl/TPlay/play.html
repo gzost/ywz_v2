@@ -1,0 +1,269 @@
+<!--
+    播放器主页面，结构：
+
+    通过ThinkPHP传入的页面变量：
+
+-->
+<link rel="stylesheet" href="https://g.alicdn.com/de/prismplayer/2.8.7/skins/default/aliplayer-min.css" />
+<!--<link rel="stylesheet" href="__PUBLIC__/aliplayer/aliplayer2.8.7.css" />-->
+<link href="__PUBLIC__/kindeditor/article.css" rel="stylesheet" >
+<style>
+    .fullScreen{
+        position: absolute;
+        top:0;
+        width: 100vw; height: 100vh;
+    }
+
+    .layerPopup{ z-index: 51; }     /* 弹出窗口层 */
+    .layerForce { z-index: 50; }    /* 频道强制操作层, 同时作为marsk层 */
+    /* 阿里视频窗口的z-index=11 */
+    .layerVideoTop1 { z-index: 21; } /* 视频窗口之上的显示层1，显示固定于视频之上的内容 */
+    .layerVideoTop2 { z-index: 20; } /* 视频窗口之上的显示层2，视频开始播放后不显示 */
+    .layerMain { z-index: 0; }  /* 频道主显示层 */
+
+    #blkCover{
+
+        background-color: #ff3;
+        overflow-y: auto;
+        display:none;
+    }
+
+    #blkForceLayer{
+        display:none;
+        background-color: rgba(120,120,120,.6); color: #fff;">
+    }
+
+    /****视频播放窗口相关样式****/
+    video {
+        /* width:100%;
+        object-position: 0 50% !important;
+        object-fit: contain !important; */
+        object-position: center top !important;
+    }
+    video::-webkit-media-controls {
+        position: absolute;
+        bottom: 0;
+    }
+
+    /**	 中部导航栏的样式定义  */
+    .func-tabs{
+        /* 导航条容器 */
+        position: relative;
+        box-sizing: border-box;
+        white-space: nowrap;
+        overflow: hidden;
+        padding-top:2px;
+        /*margin: 4px 0;	 拉开距离是为了显示阴影效果*/
+        box-shadow: inset 0 0px 3px 0px #aab;
+        border: 0;
+        width: 100%;
+        font-size: 13px;
+        color: #3a3a3a;
+        line-height: 24px;
+        background-color: #fcfdfe;
+        height: 30px;
+    }
+    .tab-list{
+        display:inline-flex;
+        /* width: calc(100% - 37px); 有more菜单 */
+        width: calc(100% - 1px);
+        flex-flow:row nowrap;
+        white-space: nowrap;
+        /* justify-content:space-around; */
+        overflow-x: scroll;
+    }
+    .more-menu{
+        display: inline-block;
+        width: 36px;
+        text-align: center;
+        border-left: 1px solid #eee;
+        border-bottom: 1px solid #f1f2f3;
+    }
+    .tab-list div{
+        flex-grow: 1;
+        padding: 0 0.6em;
+        text-align: center;
+    }
+    .tab-list .tab-selected{
+        border-bottom: 2px solid #02aaf1;
+        color:#028ae1;
+    }
+
+    .tabContiner{
+        display:inline-block;position:relative;
+        vertical-align: top;
+        width: 100%;height: 100%;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .layerVideoTop2 .blk_leftTime{
+       position: absolute;  font-size: 14px; color:#fff; background-color: rgba(80, 80, 80, .5);
+        /*bottom: 10px; right: 10px;*/
+        left:50%; top:50%;
+        transform: translate(-50%, -50%);
+        border-radius: 7px;
+        padding: 1px 5px;
+        animation: changeColor 15s linear infinite;
+    }
+    @keyframes changeColor {
+        0% {
+            color: transparent;
+            background-color: transparent;
+        }
+        10% {
+            color: #FFFFFF;
+            background-color: rgba(80, 80, 80, .5);
+        }
+        25% {
+            color: #FFFFFF;
+            background-color: rgba(80, 80, 80, .5);
+        }
+        30% {
+            color: transparent;
+            background-color: transparent;
+        }
+        40% {
+            color: #333333;
+            background-color: rgba(255, 255, 255, .5);
+        }
+        55% {
+            color: #333333;
+            background-color: rgba(255, 255, 255, .5);
+        }
+        60% {
+            color: transparent;
+            background-color: transparent;
+        }
+        100% {
+            color: transparent;
+            background-color: transparent;
+        }
+    }
+</style>
+
+<!-- 强制操作层 按$forceLayer指示执行不同的操作 -->
+<div id="blkForceLayer" class="fullScreen layerForce" style="">
+    {$forceLayerHtml}
+</div>
+
+<!-- 播放器层 -->
+<div id="blkMain" class="fullScreen layerMain" style="display: flex; flex-flow:column nowrap;justify-content:flex-start; overflow: hidden;">
+    <!-- 视频窗口 -->
+    <div  class="blk_video"  style="position: relative;width:100%; height:0;padding-top: 56.25%; flex:none; overflow: hidden;">
+        <div  class="prism-player" id="prismPlayer" style="position: absolute;width:100%; height:100%; top:0;"></div>
+        <!-- 视频叠加层 1 不整块叠加避免遮挡下部视频的操作按钮 -->
+        <!--<div class="layerVideoTop1" style="position: absolute; top:0;width: 100%; height: 100%;">-->
+            <div class="layerVideoTop1 blk_heat" style="position: absolute; bottom: 40px; left:10px; line-height: 14px; font-size: 14px;">
+                <img src="__PUBLIC__/images/fire32.png" style="height: 16px; vertical-align: middle;">
+                <span style="display: inline-block; padding: 2px 5px; background-color: rgba(255,255,255, .4); border-radius: 8px;">{$entrytimes}</span>
+            </div>
+            <div class="layerVideoTop1 blk_my" style="position: absolute; top:10px; right: 15px;">
+                <img src="__PUBLIC__/images/my_white.png" style="height: 20px;">
+            </div>
+        <!--</div>-->
+        <!-- 视频叠加层 2-->
+        <div class="layerVideoTop2" style="position: absolute; top:0; width: 100%; height: 100%; ">
+            <div class="blk_airTime" style="position: absolute; bottom: 40px; right: 10px; font-size: 16px; color:#fff; background-color: rgba(100,100,120,.3);"></div>
+            <div id="blk_leftTime" class="layerVideoTop2 blk_leftTime"></div>
+        </div>
+    </div>
+    <!-- 中部导航条 -->
+    <div id="blkNavigate" class="func-tabs" style="flex:none;">
+        <div id="tabBar" class="tab-list">
+            <assign name="tabOrder" value="0" />
+            <foreach name="tabs" key="tabid" item="tabtext">
+                <div tabid="{$tabid}" tabOrder="{$tabOrder++}">{$tabtext}</div>
+            </foreach>
+        </div>
+    </div>
+    <!--<button  style="z-index:3999; position: fixed; left:50px; bottom:100px;" onclick="playPage.send({},function(){ alert('send callback');})">send data</button>-->
+    <!-- 高度随内容变化，可显示广告或滚动通知 -->
+    <div id="blkAdwin" style="position: relative; width: 100%; border:0; margin:0;padding: 0; flex:none; display: none;"></div>
+    <!-- 与多功能窗口不同时显示，显示弹出内容，如即兴题目等 -->
+    <div id="blkSouthFix" style="position: relative; width: 100%; height:200px; background-color: #FFF; flex: auto; overflow-x: auto;overflow-y:hidden;white-space: nowrap; display: none;">
+    </div>
+    <!-- 下部多功能窗口，导航条上每个TAB对应一个水平排列的显示容器，通过水平滚动显示不同TAB的内容 -->
+    <div id="blkSouth" style="position: relative; width: 100%; height:200px; background-color: #FFF; flex: auto; overflow-x: auto;overflow-y:hidden;white-space: nowrap;">
+        <foreach name="tabs" key="tabid" item="tabtext">
+            <div class="tabContiner" id="tabItem{$tabid}" >
+                <div style="position: relative; margin: 30% auto; text-align: center">
+                    <img src="Public/images/loading.gif" style="width: 128px;">
+                    <div>{$tabtext} loading...</div>
+                </div>
+
+            </div>
+        </foreach>
+    </div>
+
+    <!-- 图文直播容器-->
+    <div id="pictxt" style="position: relative; bottom:0; height:100%; width:100%;  background-color: #FFF;display:none; overflow-x: hidden; overflow-y: auto; white-space: normal;">Loading...</div>
+
+    <!-- 弹出窗口，放在这里是为了避免，非同层播放时被视频遮挡 -->
+    <div id="win_popup" class="layerPopup" style="position: fixed; display:none; top:65vw; left:0; right:0; margin: 0 auto; width: 96%; min-height: 57vw;
+        box-shadow: 0 0 3px 1px #999 inset; border-radius:14px; background-color: #feffff; padding: 15px; text-align: center;">
+        <div class="win_notify" style="margin-top: 16px; font-size: 18px; color: #444;"> </div>
+        <div class="blk_button" style="position: absolute; width: 95%; bottom: 30px; text-align:center; ">
+            <button style="border-radius:5px; padding:2px 15px; font-size:16px;">确定</button>
+        </div>
+    </div>
+
+</div>
+<script src="http://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+<!--<script charset="utf-8" type="text/javascript" src="__PUBLIC__/aliplayer/aliplayer2.8.7-h5-min.js" ></script>-->
+<script charset="utf-8" type="text/javascript" src="https://g.alicdn.com/de/prismplayer/2.8.7/aliplayer-h5-min.js" ></script>
+<load href="__PUBLIC__/js/publicFunction.js" />
+<!--<load href="__ROOT__/player/js/playpage3.7.min.js" />-->
+<script src="__ROOT__/player/js/Tplaypage.js?t=3.7.3" ></script>
+<script>
+    //本页面的全局JS对象，除页面的主功能还提供个plugin的公共服务
+    var playPage=null;
+    $(document).ready(function () {
+        var params={
+            showCover: "{$showCover}" == "1" ? true : false,    //是否显示频道封面
+            showNotice:"{$showNotice}"=="1"? true:false,    //是否显示系统公告
+            chnid: "{$chnid}",   //当前频道ID
+            vodid: "{$vodid}",   //需要播放的VOD文件ID
+            uid: "{$uid}",       //当前用户ID
+            userName:"{$userName}", //用户昵称
+            account:"{$account}",   //用户账号
+            agent: "{$agent}",
+            playType: "{$playType}", //播放类型 [live|vod]
+            activetab: "{$activetab}",   //默认活跃的tabID
+            source: "{$source}",     //要播放的视频源
+            //source: "http://v2.av365.cn/live/ou.m3u8",     //要播放的视频源
+            cover: "{$cover}",       //视频区封面图片
+            logoImg: "{$logoImg}",  //频道图标路径
+            forceLayer: "{$forceLayer}", //强制操作层显示内容
+            onlineid: "{$onlineid}",     //本web页面的onlineid，在线表中另有副本
+            playToken: "{$playToken}",   //有权播放令牌
+            aliveTime: "{$aliveTime}",    //最长通讯时间间隔(秒)
+            operatorIdleInt: "{$operatorIdleInt}",   //播放终端最长不操作时间(秒)
+            homeUrl: "{$homeUrl}",       //首页地址
+            airTime: "{$airTime}",       //开始直播时间
+            airDuration: "{$airDuration}",   //播出时长
+            isAdmin: "{$isAdmin}",       //是否特权用户
+            title: "{$title}",       //页面标题
+            desc: "{$desc}",     //频道或点播视频的说明
+            appUrl: "__APP__",       //应用基本地址
+            getgetSignUrl:"__APP__/BE_wxjssdk/getSignJson",       //取JSSDK签名URL地址
+            tabItemPrefix: "tabItem",     //多功能窗口内各tab容器子窗口的id前缀
+            hiddenLeftTime:"{$hiddenLeftTime}", //隐藏开播倒计时及信号状态
+        }
+
+        //保证阿里播放器对象及微信jssdk载入后才实例化页面对象
+        !function waitLoad() {
+            if("undefined"!=typeof(Aliplayer) && "undefined"!=typeof(wx) ) {
+                playPage = new Ou_playPage(params);
+                //console.log("******",typeof(Aliplayer),typeof(wx));
+            }
+            else setTimeout(waitLoad,200);
+        }();
+       //playPage = new Ou_playPage(params);
+        if("1"==params.hiddenLeftTime)   $("#blk_leftTime").remove();//css("display","none");//隐藏开播倒计时及信号状态
+        console.log("hiddenLeftTime="+("1"==params.hiddenLeftTime));
+        console.log($("#blk_leftTime").css("display"))
+    });
+
+
+</script>

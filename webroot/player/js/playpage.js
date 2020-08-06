@@ -441,6 +441,15 @@ console.log("isHorizontal",_this.isHorizontal());
                 console.log("player ended.====",playerOpt.playType);
                 Ou_OnlineTable.setOffline(playerOpt.playType);
             });
+            player.on("requestFullScreen",function () {
+                //alert("requestFullScreen1");
+                status.tabScrolling=true;
+            });
+            player.on("cancelFullScreen",function () {
+                //alert("cancelFullScreen1");
+                status.tabScrolling=false;
+                $("#blkSouth").trigger("correctPosition");
+            });
         });
     }
 console.log("befor init player.");
@@ -572,8 +581,12 @@ console.log("status.playerReady=",status.playerReady);
         var tabBar=$("#"+tabPara.tabBar);   //导航条JQ对象
         var tabBlk=$("#"+tabPara.tabBlk);   //tab内容容器JQ对象
 
-        //设置指定的tab为活动tab
-        var setActive=function(tabOrder){
+        /**
+         * 设置指定的tab为活动tab
+         * @param int tabOrder  tab序号
+         * @param string action 激发setActive的事件[click|scroll|init] 分别是：点击标签，滑动窗口，播放页面初始化
+         */
+        var setActive=function(tabOrder,action){
             var scrollWidth=tabBlk.width();
             console.log("scrollWidth="+scrollWidth);
             var tabid=tabBar.find(">div[tabOrder='"+tabOrder+"']").attr("tabid");
@@ -588,8 +601,8 @@ console.log("status.playerReady=",status.playerReady);
             status.tabScrolling=true;   //避免其它滚动事件响应
             $("#blkSouth").animate({scrollLeft:(tabOrder*scrollWidth)},300,function () {
                 //滚动完成再发送tab激活消息
-                tabBlk.trigger("tabActive",[tabid,tabPara]);
-                setTimeout(function(){status.tabScrolling=false;},100); //为了避免执行滚动事件响应
+                tabBlk.trigger("tabActive",[tabid,tabPara,action]);
+                setTimeout(function(){status.tabScrolling=false;},200); //为了避免执行滚动事件响应
                 //console.log("animate end");
             });
         }
@@ -600,23 +613,46 @@ console.log("status.playerReady=",status.playerReady);
             console.log(obj);
             //var tabid=$(obj).attr("tabid");
             var tabOrder=$(obj).attr("tabOrder");
-            setActive(tabOrder);
+            setActive(tabOrder, 'click');
         });
 
         //左右拖动时,由于浏览器自带滑动特效，touchend后还会继续滚动，因此只能监听scroll事件，并延迟处理
         tabBlk.scroll(function() {
-            var isHorizontal=_this.isHorizontal();
-            if(!isHorizontal)    return;    //横屏状态不处理滚动消息，避免全屏时触发，跳转到第一个Tab
+            //return;
+            //var isHorizontal=_this.isHorizontal();
+            //if(!isHorizontal)    return;    //横屏状态不处理滚动消息，避免全屏时触发，跳转到第一个Tab
             if(status.tabScrolling) return;
             clearTimeout($.data(this, 'scrollTimer'));
             $.data(this, 'scrollTimer', setTimeout(function() {
+                if(status.tabScrolling) return;
                 var scrollLeft=tabBlk.scrollLeft(); //取滚动条位置
                 var scrollWidth=tabBlk.width();
                 var tabOrder=Math.round(scrollLeft/scrollWidth);
-                setActive(tabOrder);
+                setActive(tabOrder, 'scroll');
             }, 250));
         });
 
+        //当修改了横竖屏后，需要重新定位多功能窗口
+        tabBlk.bind("correctPosition",function(){
+            //return;
+            status.tabScrolling=true;
+            clearTimeout($.data(this, 'PositionTimer'));
+            $.data(this, 'PositionTimer', setTimeout(function() {
+                var tabOrder=tabBar.find(">div[tabid='"+activetab+"']").attr('taborder');
+                var scrollWidth=tabBlk.width();
+                //alert("correctPosition="+tabOrder+"width="+scrollWidth);
+                tabBlk.scrollLeft(tabOrder*scrollWidth);
+                status.tabScrolling=false;
+            },500));
+
+        });
+        //针对手机，屏幕选择时，不处理滚动事件，重新变成垂直状态，调整多功能窗口
+        $(window).on('orientationchange', function(){
+            status.tabScrolling=true;
+            var isHorizontal=_this.isHorizontal();
+            if(!isHorizontal) tabBlk.trigger("correctPosition");
+            //setTimeout(function(){status.tabScrolling=false;},500); //为了避免执行滚动事件响应
+        });
         //////////处理tab激活消息//////////
         /*
         101=>'视频直播', 102=>'互动聊天', 103=>'排行榜', 104=>'点播资源', 105=>'图片直播', 106=>'会员' ,107=>'分享',
@@ -624,7 +660,7 @@ console.log("status.playerReady=",status.playerReady);
         (501=>"送礼",502=>"抽奖",503=>"红包");	//频道使用的扩展功能
         */
         var isTabInit={};   //记录已经初始化的tab，{tabid:true,...}
-        tabBlk.bind("tabActive",function(event,tabid,para) {
+        tabBlk.bind("tabActive",function(event,tabid,para,action) {
             var blkItem=$("#"+params.tabItemPrefix+tabid);
             console.log("recive event:"+tabid);
             switch (tabid){
@@ -637,7 +673,8 @@ console.log("status.playerReady=",status.playerReady);
                         isTabInit[tabid]=true;
                     }
                     //此if避免直播为默认tab时且播放类型是直播时，多取一次直播数据
-                    if((!firstActive) || params.playType!='live'){
+                    if("click"==action || "init"==action){
+                    ///if((!firstActive) || params.playType!='live'){
                         //取直播播放地址及cover
                         console.log("取直播播放地址及cover");
                         var postData={"chnid":params.chnid, "agent":params.agent,"playToken":params.playToken};
@@ -653,9 +690,8 @@ console.log("status.playerReady=",status.playerReady);
                                 }
                             }
                         },"json");
+                        $(local.layerVideoTop2).show();
                     }
-
-                    $(local.layerVideoTop2).show();
                     break;
                 case 102:   //互动聊天
                     if(true != isTabInit[tabid]){
@@ -724,7 +760,7 @@ console.log("status.playerReady=",status.playerReady);
         var firstActive=true;   //触发第一次active后设为false,避免直播为默认tab时且播放类型是直播时，多取一次直播数据
         var activeOrder=tabBar.find(">div[tabid='"+activetab+"']").attr("taborder");  //addClass('tab-selected');
         if(typeof(activeOrder)=="undefined") activeOrder=0;
-        setActive(activeOrder);
+        setActive(activeOrder,'init');
     }({ tabBar:"tabBar",tabBlk:"blkSouth",activetab:params.activetab });
 
     //////////强制操作层处理///////////

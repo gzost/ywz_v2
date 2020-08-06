@@ -10,7 +10,12 @@
 	console.log("url=",url);
 	url=url+"?ch=1098&vf=2345";
     history.replaceState(null,null,url);    //当URL内有&时必须要在url后加点东西，否则在手机上会跳转
-
+	console.log("set");
+    clearTimeout($.data(this, 'scrollTimer'));
+    $.data(this, 'scrollTimer', setTimeout(function() {
+        console.log("timer");
+    }, 3000));
+    console.log("pass");
 
 
 function tt(){

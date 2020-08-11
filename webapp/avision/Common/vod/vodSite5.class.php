@@ -121,11 +121,15 @@ class vodSite5 extends vodBase{
                 "name"=>$streamRec["name"]."录像".date("m-d H:i:s",$recordStartTime),
                 "descript"=>"录像时间：".date("Y-m-d H:i:s",$recordStartTime)." 至 ".date("Y-m-d H:i:s",$recordEndTime),
                 "site"=>VODSITE::AliShangHai);
+
+            //调用接口取视频信息
+            //这时还在转码，无法获取完整的视频信息，需要在转码完成信息中实现
+
             $rt=$dbRf->add($record);
             if(false===$rt) throw new Exception("无法新建录像记录，稍后通过后台功能找回。");
             $dbRf->commit();
 
-            logfile("新录像记录，ID=".$rt,LogLevel::NOTICE);
+            logfile("新录像记录，ID=".$rt.$dbRf->getLastSql(),LogLevel::NOTICE);
             //$this->getVODPlayInfo($videoId);
             //$this->getVideoInfo($videoId);
         }catch (Exception $ex){
@@ -164,6 +168,40 @@ class vodSite5 extends vodBase{
      */
     public function Cb_UploadByURLComplete($para){
 
+    }
+
+    /**
+     * 视频的某个清晰度、某种格式的流（如：标清的MP4格式）转码完成时会产生此事件。
+     * @param array $para
+     * EventTime	String	事件产生时间, 为UTC时间：yyyy-MM-ddTHH:mm:ssZ
+    EventType	String	事件类型，固定为StreamTranscodeComplete
+    VideoId	String	视频ID
+    Status	String	视频流转码状态，取值：success(成功)，fail(失败)
+    Bitrate	String	视频流码率，单位Kbps
+    Definition	String	视频流清晰度定义, 取值：FD(流畅)，LD(标清)，SD(高清)，HD(超清)，OD(原画)，2K(2K)，4K(4K)，AUTO(自适应码流)
+    Duration	Float	视频流长度，单位秒
+    Encrypt	Boolean	视频流是否加密流
+    ErrorCode	String	视频流转码出错的时候，会有该字段表示出错代码
+    ErrorMessage	String	视频流转码出错的时候，会有该字段表示出错信息
+     * @throws Exception
+     */
+    public function Cb_StreamTranscodeComplete($para){
+        if($para["Status"]=="fail") throw new Exception("转码失败：".$para["VideoId"].$para["ErrorMessage"]);
+
+        //解析参数
+        $videoId=$para["VideoId"];
+        $size=$para["Size"];    //文件大小，单位byte
+        if(empty($videoId)) throw new Exception("缺少videoId");
+
+        $dbRf=D("recordfile");
+        //更新视频参数
+        unset($para["EventType"],$para["EventTime"]);
+        $rec=array(
+            "size"=>ceil($size/(1024*1024)), //文件大小单位转成MByte
+            "mediainfo"=>json_encode2($para)
+        );
+        $rt=$dbRf->where(array("playkey"=>$videoId))->save($rec);
+        logfile("StreamTranscodeComplete: update recordfile ret:".$rt.$dbRf->getLastSql(),LogLevel::SQL);
     }
 
     /**
@@ -391,6 +429,43 @@ class vodSite5 extends vodBase{
             $this->initVodClient();
             $client=Vod::v20170321()->DeleteVideo()->client(self::VOD_CLIENT_NAME)
                 ->withVideoIds($videoIds);
+            $rt = $client->request();      // 执行请求
+            return $rt->toArray();
+        }catch (Exception $e){
+            throw new Exception($e->getMessage(),$e->getCode());
+        }
+    }
+
+    /**
+     * 取源文件信息
+     * @param $VideoId
+     * @return array
+     * array(2) {
+    ["RequestId"] => string(36) "204C2F04-55C1-4741-8DCD-3F612EE286C9"
+    ["Mezzanine"] => array(14) {
+    ["Status"] => string(6) "Normal"
+    ["VideoId"] => string(32) "a2ebbec25ad548e8a6bb32a187c29ffd"
+    ["CRC64"] => string(0) ""
+    ["Size"] => int(1401940)
+    ["FileName"] => string(108) "liveRecord/6673fe4ab5913ae02c7b5bdc160fa09c/live/admin_LX_GDD3Q/2020-08-10-23-01-12_2020-08-10-23-01-37.m3u8"
+    ["Fps"] => string(4) "25.0"
+    ["Duration"] => string(5) "25.64"
+    ["Bitrate"] => string(7) "437.423"
+    ["PreprocessStatus"] => string(12) "UnPreprocess"
+    ["FileURL"] => string(215) "http://d2.av365.cn/liveRecord/6673fe4ab5913ae02c7b5bdc160fa09c/live/admin_LX_GDD3Q/2020-08-10-23-01-12_2020-08-10-23-01-37.m3u8?auth_key=1597114142-52f8de4006d94ceb811a99a1773bb35d-0-170ed312d644cfb073f4e0f308b38356"
+    ["CreationTime"] => string(20) "2020-08-10T15:04:39Z"
+    ["Height"] => int(352)
+    ["Width"] => int(624)
+    ["OutputType"] => string(3) "cdn"
+    }
+    }
+     * @throws Exception
+     */
+    public function GetMezzanineInfo($VideoId){
+        try{
+            $this->initVodClient();
+            $client=Vod::v20170321()->GetMezzanineInfo()->client(self::VOD_CLIENT_NAME)
+                ->withVideoId($VideoId);
             $rt = $client->request();      // 执行请求
             return $rt->toArray();
         }catch (Exception $e){

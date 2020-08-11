@@ -113,11 +113,11 @@ class StreamModel extends Model {
 	 */
 	public function getHls($streamId)
 	{
-		$rs = $this->where('id='.$streamId)->field('platform, idstring')->find();
+		$rs = $this->where('id='.$streamId)->field('platform, idstring,app')->find();
 
 		$pf=new platform();
     	$pf->load($rs['platform']);
-		return $pf->getHls($rs['idstring']);
+		return $pf->getHls($rs['idstring'],$rs['app']);
 	}
 
 	/**
@@ -125,11 +125,11 @@ class StreamModel extends Model {
 	 */
 	public function getPush($streamId)
 	{
-		$rs = $this->where('id='.$streamId)->field('platform, idstring,pushkey')->find();
+		$rs = $this->where('id='.$streamId)->field('platform, idstring,pushkey,app')->find();
 
 		$pf = new platform();
     	$pf->load($rs['platform']);
-		return $pf->getPush($rs['idstring'], $rs['pushkey']);
+		return $pf->getPush($rs['idstring'], $rs['pushkey'],$rs['app']);
 	}
 
 	/**
@@ -137,11 +137,11 @@ class StreamModel extends Model {
 	 */
 	public function getRtmp($streamId)
 	{
-		$rs = $this->where('id='.$streamId)->field('platform, idstring')->find();
+		$rs = $this->where('id='.$streamId)->field('platform, idstring,app')->find();
 
 		$pf = new platform();
     	$pf->load($rs['platform']);
-		return $pf->getRtmp($rs['idstring']);
+		return $pf->getRtmp($rs['idstring'],$rs['app']);
 	}
 
 	/**

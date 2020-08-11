@@ -330,7 +330,13 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
             if(5==$site){
                 $vodobj=vodBase::instance($site);
                 $videoIds=$_POST["playkey"];
-                $rt=$vodobj->DeleteVideo($videoIds);
+                try{
+                    $rt=$vodobj->DeleteVideo($videoIds);
+                }catch (Exception $ex){
+                    if(404 != $ex->getCode()) throw new Exception($ex->getMessage(),$ex->getCode());
+                    logfile("视频已经丢失：".$videoIds,LogLevel::NOTICE);
+                }
+                //若是404，
                 $dbRf->remove($id); //删除记录。
             }else{
                 $dbRf->remove($id); //删除记录。
@@ -349,7 +355,7 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
             }
 //echo $dbRf->getLastSql();
 		}catch (Exception $e){
-			echo 'Error:',$e->getMessage();
+			echo 'Error:',$e->getMessage().'*'.$e->getCode();
 			return;
 		}
 		echo '删除成功！';

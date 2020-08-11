@@ -21,11 +21,25 @@ use AlibabaCloud\Vod\Vod;
 class BE_aliyunAction extends Action{
 
     public function test(){
-        //$vodobj=vodBase::instance(5);
+        $vodobj=vodBase::instance(5);
+        $para=array(
+            "Status" => "success",
+"VideoId" => "a2ebbec25ad548e8a6bb32a187c29ffd",
+"StreamName" => "admin_LX_GDD3Q",
+"RecordStartTime" => "2020-08-10T15:01:11Z",
+"EventType" => "AddLiveRecordVideoComplete",
+"DomainName" => "v2.av365.cn",
+"RecordEndTime" => "2020-08-10T15:01:37Z",
+"UserId" => "20816433",
+"EventTime" => "2020-08-10T15:04:39Z",
+"AppName" => "live"
+
+        );
+        //$rt=$vodobj->Cb_AddLiveRecordVideoComplete($para);
         //$rt=$vodobj->CreateUploadImage("cover","jpg");
 
-        //$rt=$vodobj->getVODPlayInfo("0e10691d179b4d668aca88f92fa885f9");
-        //$rt=$vodobj->getVideoInfo("0e10691d179b4d668aca88f92fa885f9");
+        $rt=$vodobj->GetMezzanineInfo("5984a477443d43f994b9e5fcbdbfaf37");
+        //$rt=$vodobj->getVideoInfo("c675ff03021b4f179ecbc893012ef92e");
 
         //$para=array("Title"=>"测试视频，修改封面","CoverURL"=>"http://www.av365.cn/player/default/images/unstart.jpg" );
         //$rt=$vodobj->updateVideoInfo("0e10691d179b4d668aca88f92fa885f9",$para);

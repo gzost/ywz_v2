@@ -1218,7 +1218,7 @@ if(null==$list) logfile("list==null");
 		$this->display('fullMsg');
 	}
 
-	public function getPushUrlAjax($idstring,$pushkey,$platform){
+	public function getPushUrlAjax($idstring,$pushkey,$platform,$app){
 		$isShowPullUrl=$this->author->isOperStr('Console','stream','A');
 //var_dump($isShowPullUrl);	
 		if(true==$isShowPullUrl){
@@ -1232,7 +1232,7 @@ if(null==$list) logfile("list==null");
 			
 		$pf=new platform();
 		$pf->load($platform);
-		echo '推流地址：'.$pf->getPush($idstring,$pushkey).'<br>'.$hls;
+		echo '推流地址：'.$pf->getPush($idstring,$pushkey,$app).'<br>'.$hls;
 	}
 
 	public function phoneVerify()

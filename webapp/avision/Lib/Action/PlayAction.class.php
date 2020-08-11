@@ -494,7 +494,7 @@ class PlayAction extends SafeAction{
                 //有推流
                 $pf = new platform();
                 $pf->load($row['platform']);
-                $webVar["source"] = $pf->getHls($row['idstring']);
+                $webVar["source"] = $pf->getHls($row['idstring'],$row['app']);
             }else{
                 $webVar["source"]="";
             }

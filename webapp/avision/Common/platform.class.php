@@ -72,13 +72,15 @@ class platform {
 	 * 生成推流地址
 	 * @param string $stream	流名称
 	 * @param string $key	推流密码。对应platform5使用数据字典attr的pkey属性
+     * @param string $app
      * @return string   推流地址
 	 */
-	public function getPush($stream,$key=''){
+	public function getPush($stream,$key='',$app='live'){
 		$str=str_replace('%%stream%%', $stream, $this->m_record['push']);
+        $str=str_replace('%%app%%', $app, $str);
 		switch ($this->m_record['ditem']){
             case '5':
-                $authkey=$this->aliUrlAuthA(180,$this->m_record['pkey'],$stream);
+                $authkey=$this->aliUrlAuthA(180,$this->m_record['pkey'],$stream,$app);
                 $str=str_replace('%%key%%', $authkey, $str);
                 break;
             default:
@@ -93,13 +95,15 @@ class platform {
 	 * 
 	 * 生成rtmp播放地址
 	 * @param string $stream	流名称
+     * @param string $app
      * @return string
 	 */
-	public function getRtmp($stream){
+	public function getRtmp($stream,$app='live'){
 		$str=str_replace('%%stream%%', $stream, $this->m_record['rtmp']);
+        $str=str_replace('%%app%%', $app, $str);
         switch ($this->m_record['ditem']) {
             case '5':
-                $authkey = $this->aliUrlAuthA(1000, $this->m_record['cdnkey'], $stream);
+                $authkey = $this->aliUrlAuthA(1000, $this->m_record['cdnkey'], $stream,$app);
                 $str = str_replace('%%key%%', $authkey, $str);
                 break;
             default:
@@ -115,13 +119,15 @@ class platform {
 	 * 
 	 * 生成HLS播放地址
 	 * @param string $stream	流名称
+     * @param string $app
      * @return string
 	 */
-	public function getHls($stream){
+	public function getHls($stream,$app='live'){
 		$str=str_replace('%%stream%%', $stream, $this->m_record['hls']);
+        $str=str_replace('%%app%%', $app, $str);
         switch ($this->m_record['ditem']){
             case '5':
-                $authkey=$this->aliUrlAuthA(1000,$this->m_record['cdnkey'],$stream.".m3u8");
+                $authkey=$this->aliUrlAuthA(1000,$this->m_record['cdnkey'],$stream.".m3u8",$app);
                 $str=str_replace('%%key%%', $authkey, $str);
                 break;
             default:

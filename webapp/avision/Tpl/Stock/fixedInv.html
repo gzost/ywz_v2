@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+    <load href="__PUBLIC__/jeasyui/themes/default/easyui.css" />
+    <load href="__PUBLIC__/jeasyui/themes/icon.css" />
+    <load href="__ROOT__/admin/{$theme|default='default'}/css/base.css" />
+
+    <title>定投回报分析</title>
+
+    <style>
+        body { font-size: 14px; box-sizing: border-box;}
+        form>.item { padding: 5px;}
+    </style>
+</head>
+<body>
+    <div>
+        <div style="padding:10px; text-align: center;font-size: 1.4em;">定投回报分析</div>
+        <div>
+            <form method="post">
+                <div class="item">市场[sz|sh]：<input type="text" name="market" value="{$market}"></div>
+                <div class="item">股票代码：<input type="number" name="stockCode" value="{$stockCode}"></div>
+                <div class="item">开始日期[yyyymmdd]：<input type="number" name="begindate" value="{$begindate}"> </div>
+                <div class="item">结束日期[yyyymmdd]：<input type="number" name="enddate" value="{$enddate}"> </div>
+                <div class="item">投资间隔n日：<input type="number" name="skipday" value="{$skipday}"></div>
+                <div class="item">起始总资金(万)：<input type="number" name="amt" value="{$amt}"></div>
+                <div class="item">每次投入资金(万)：<input type="number" name="unit" value="{$unit}"></div>
+                <div class="item">目标收益率(%)：<input type="number" name="yield" value="{$yield}"></div>
+                <input type="hidden" name="func" value="fixedInvCalc">
+                <input type="submit">
+            </form>
+        </div>
+
+    </div>
+</body>
+<load href="__PUBLIC__/jeasyui/jquery.min.js" />
+<load href="__PUBLIC__/jeasyui/jquery.easyui.min.js" />
+</html>

@@ -14,6 +14,7 @@ webroot/Public/jeasyui_old/
 vendor/
 secret/
 ssl证书/
+document/
 *.bak
 *.log
 *.mp4
@@ -25,7 +26,6 @@ webapp/avision/Lib/Action/HDPlayerAction.class_OLD.php
 webapp/avision/Tpl/Home/index - 20180418.html
 webapp/avision/Tpl/Home/index_20180908.html
 webapp/avision/Tpl/Home/index - 20180418.html
-document/~$Z修改记录及TODO.docx
 webroot/t.html
 webapp/public/aliyun/
 webapp/public/baidu/
@@ -55,3 +55,4 @@ webapp/avision/Tpl/CH_ccjyj.2020_06_08/userInfo.html
 webapp/avision/Lib/Action/CH_ccjyjAction.class.2020_06_08
 webapp/public/aliyun/
 webapp/public/aliyun/Sms.Config.php
+*.docx

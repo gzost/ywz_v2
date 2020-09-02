@@ -728,4 +728,10 @@ function safeCheck($data)
     return $new;
 }
 
+//在浏览器上立即输出$str
+function OUwrite($str){
+    echo $str;
+    ob_flush();
+    flush();
+}
 ?>

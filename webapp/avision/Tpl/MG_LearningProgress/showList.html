@@ -1,0 +1,90 @@
+<!-- 学习进度一览表主界面 -->
+<extend name="common:AdminBase" />
+<block name="bl_north">
+    <include file="Home:header_w" />
+    <include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+    <div style="padding: 15px;">
+        <div id="blkFilter" style="padding: 5px 15px; border: 1px solid #ccf; border-radius: 7px;">
+            <form method="post" style="display: inline-block">
+                <span class="cond-item">机构：<input class="easyui-combobox"  name="agent" value="{$agent}" style="width: 150px; height: 25px;"
+                                                  data-options="valueField:'id',textField:'name', data: {$agentListJson}, readonly:{$agentReadonly}">
+                </span>
+                <span class="cond-item">
+                    时间范围：
+                    从<input class="easyui-datebox" name="bDate" value="{$bDate}" style="width:120px;height:28px;"
+                        data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+                    至<input class="easyui-datebox" name="eDate" value="{$eDate}" style="width:120px;height:28px;"
+                        data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+                </span>
+                <span class="cond-item">
+                    课程名称：<input class="easyui-textbox" name="chnName" value="{$chnName}" style="width:150px; height: 25px;" />
+                </span>
+                <input type="hidden" name="contextToken" value="{$contextToken}">
+                <input type="hidden" name="func" value="showList">
+            </form>
+            <div id="btn_chnsearch" class="easyui-linkbutton" iconCls="icon-search" style="height: 25px; margin-right: 2em;" >查询</div>
+            <div id="btn_fillUserInfo" class="easyui-linkbutton" iconCls="icon-search" style="height: 25px; margin-right: 2em; display: none;" >智能用户信息填充</div>
+        </div>
+        <div>{$msg}</div>
+        <div id="progressList" style="margin-top:5px; width: 100%; visibility: hidden;">
+            <table id="dg" class="easyui-datagrid"  style="width:99%"
+                data-options="rownumbers:true,singleSelect:false,checkOnSelect:true,
+		            toolbar:'#tb',pagination:true, pageSize:20" >
+                <thead>
+                    <foreach name="header" item="row">
+                        <tr>
+                            <foreach name="row" item="col">
+                                <th  data-options="field:'{$col.name}',{$col.data-options}" >{$col.text}</th>
+                            </foreach>
+                        </tr>
+                    </foreach>
+                </thead>
+            </table>
+        </div>
+
+        <div id="tb">
+            <div id="btn_saveExcel" class="easyui-linkbutton" iconCls="icon-down" data-options="plain:true">另存为Excel</div>
+        </div>
+    </div>
+
+    <load href="__PUBLIC__/js/jeasyui_formatter_ext.js" />
+    <script>
+        $(document).ready(function () {
+            var showData="{$showData}";
+            var contextToken="{$contextToken}";
+            var fillUserInfo="{$fillUserInfo}"; //是否可填充用户信息"true"|"false";
+
+            if("true"==fillUserInfo){
+                $("#btn_fillUserInfo").css("display","inline-block");
+                $("#btn_fillUserInfo").on("click",function(){
+                    $("#blkFilter input[name='func']").val('fillUserInfo');
+                    $("#blkFilter form").submit();
+                });
+            }
+
+            $("#btn_chnsearch").on("click",function(){
+                $("#blkFilter input[name='func']").val('showList');
+                $("#blkFilter form").submit();
+            });
+
+            if('1'==showData){
+                $("#progressList").css("visibility","visible");
+                cn_Pagination($("#dg").datagrid('getPager'));
+                var op = $("#dg").datagrid("options");//获取 option设置对象
+                op.url="__URL__/main";
+                op.queryParams={"func":"loadDataJson","contextToken":contextToken};
+                $("#dg").datagrid("load");
+            }
+
+            $("#btn_saveExcel").on("click",function () {
+                $("#blkFilter input[name='func']").val('saveExcel');
+                $("#blkFilter form").submit();
+            });
+        });
+
+
+    </script>
+</block>

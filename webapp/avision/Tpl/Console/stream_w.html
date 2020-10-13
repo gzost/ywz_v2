@@ -127,7 +127,7 @@ function makeIdStream(account){
 		onEdit:function(index,row){
 			if('true'!={$isAdmin} ){
 				var ed=$(this).edatagrid('getEditor',{ index:index,field:'idstring'});
-				$(ed.target).textbox({editable:false});	//禁止修改
+				//$(ed.target).textbox({editable:false});	//禁止修改
 				
 				if('ban'==row.status){
 					var ed=$(this).edatagrid('getEditor',{ index:index,field:'status'});
@@ -182,10 +182,10 @@ function makeIdStream(account){
 				if('true'==value) return '推流中';
 				else return '断流';
 			} ">推流状态</th>
-		<eq name="isAdmin" value="true"> 
+
 			<th data-options="field:'platform', width:80,align:'center', halign:'center',
 			editor:'textbox' ">平台</th>
-		</eq>
+
 		<th data-options="field:'app'">APP</th>
 	</tr>
 	</thead>

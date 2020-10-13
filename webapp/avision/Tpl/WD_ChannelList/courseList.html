@@ -4,7 +4,8 @@
 </style>
 <div style="text-align: left; font-size: 0.8em; color: #4f5f6f; margin: 5px;">
     总学习进度：
-    <meter min="0" max="{$totalClassHours}" value="{$totalFinishHours}"></meter> <!--{$totalFinishHours}/{$totalClassHours} -->{$totalPercentage}
+    <meter min="0" max="{$totalClassHours}" value="{$totalFinishHours}"></meter> {$totalFinishHours}/{$totalClassHours} <!-- 显示已完成课时及总课时 -->
+    <!-- <meter min="0" max="{$totalClassHours}" value="{$totalFinishHours}"></meter> {$totalPercentage} -->    <!-- 以百分比显示完成课时情况 -->
     <div style="font-size: 8px;color: #9f9faf;">学习进度2小时更新一次</div>
 </div>
 <foreach name="chnList" item="chn">
@@ -21,7 +22,8 @@
             <div class="progress">
                 学习进度：
                 <meter min="0" max="{$chn.classHours}" value="{$chn.finishHours}"></meter>
-                <!-- {$chn.finishHours}/{$chn.classHours},-->{$chn.percentage}
+                {$chn.finishHours}/{$chn.classHours} <!-- 显示已完成课时及总课时 -->
+                <!-- {$chn.percentage} --> <!-- 以百分比显示完成课时情况 -->
             </div>
             </eq>
 

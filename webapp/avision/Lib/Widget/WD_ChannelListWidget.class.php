@@ -22,6 +22,7 @@ class WD_ChannelListWidget extends Action
      */
     public function courseList($uid=0,$agent='',$viewall=true){
         $webVar=array();
+        $usePercentateMeter=false;  //计算百分比显示进度
         try{
             if($uid==0 || $uid==C('anonymousUserId') ) throw new Exception('您还未登录！');
 
@@ -79,7 +80,7 @@ class WD_ChannelListWidget extends Action
                     else{
                         $chnList[$key]['classFinish']=(empty($attr['classFinish']))?'0':$attr['classFinish'];
                     }
-                    $chnList[$key]['percentage']=sprintf("%.2f%%", $finishHours/$attr['classHours']*100);
+                    if($usePercentateMeter) { $chnList[$key]['percentage']=sprintf("%.2f%%", $finishHours/$attr['classHours']*100); }
                 }
 
                 //是否可修改评分
@@ -96,7 +97,7 @@ class WD_ChannelListWidget extends Action
             $webVar['chnList']=$chnList;
             $webVar['totalClassHours']=$totalClassHours;
             $webVar['totalFinishHours']=$totalFinishHours;
-            if(!empty($totalClassHours)) $webVar['totalPercentage']=sprintf("%.2f%%", $totalFinishHours/$totalClassHours*100);
+            if($usePercentateMeter) { if(!empty($totalClassHours)) $webVar['totalPercentage']=sprintf("%.2f%%", $totalFinishHours/$totalClassHours*100); }
 //dump($webVar);
             $this->assign($webVar);
             $this->display('WD_ChannelList:courseList');

@@ -14,6 +14,7 @@ require_once APP_PATH.'../public/aliyun/Sms.Config.php';
 require_once APP_PATH.'../public/CommonFun.php';
 require_once APP_PATH.'../public/Ou.Function.php';
 require_once LIB_PATH.'Model/MessageModel.php';
+require_once APP_PATH.'../../secret/OuSecret.class.php';
 //use Aliyun\DySDKLite\SignatureHelper;
 
 class Sms
@@ -69,8 +70,10 @@ class Sms
         $security = false;
 
 		// fixme 必填: 请参阅 https://ak-console.aliyun.com/ 取得您的AK信息
-		$accessKeyId = ALI_AccKey;
-		$accessKeySecret = ALI_AccSecret;
+		//$accessKeyId = ALI_AccKey;
+		//$accessKeySecret = ALI_AccSecret;
+        $accessKeyId = OuSecret::$cfg['SMS_AliAccKey'];
+        $accessKeySecret = OuSecret::$cfg['SMS_AliAccSecret'];;
 
 		// fixme 必填: 短信接收号码
 		$params["PhoneNumbers"] = $phone;

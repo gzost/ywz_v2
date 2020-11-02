@@ -109,7 +109,7 @@ class MG_LearningProgressAction extends AdminBaseAction{
 
         //2、统计用户观看时长，并提取用户信息
         $Model = new Model();
-        $sql="select S.userid,S.chnid,account,username,phone,realname,company, sum(duration) duration from __PREFIX__statchannelviews as S 
+        $sql="select S.userid,S.chnid,account,username,phone,realname,idcard,company, sum(duration) duration from __PREFIX__statchannelviews as S 
               left join __PREFIX__user as U on U.id=S.userid 
               where S.chnid in ($chnids) and ( S.rq between '$btime' and '$etime') group by S.userid,S.chnid order by company";
         $sql=str_replace("__PREFIX__",C("DB_PREFIX"),$sql);
@@ -167,6 +167,7 @@ class MG_LearningProgressAction extends AdminBaseAction{
                 array("name"=>"username", "text"=>"昵称", "data-options"=>"rowspan:2", "rowspan"=>2),
                 array("name"=>"phone", "text"=>"手机号码", "data-options"=>"rowspan:2", "rowspan"=>2),
                 array("name"=>"realname", "text"=>"姓名", "data-options"=>"rowspan:2", "rowspan"=>2),
+                array("name"=>"idcard", "text"=>"证件号", "data-options"=>"rowspan:2", "rowspan"=>2),
                 array("name"=>"company", "text"=>"工作单位", "data-options"=>"rowspan:2", "rowspan"=>2),
             ),
             1=>array()

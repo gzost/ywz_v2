@@ -44,12 +44,12 @@
         if(now>params.endtime){
             //已经过了交卷时间
             $("#blkbiaoti").html("已经截止答题，您的最后答案是：");
-            var html="<textarea rows='3' maxlength='1000' name='A' readonly style='width: 100%; font-size: 14px;'>"+prvAnswer+"</textarea> ";
+            var html="<textarea rows='5' maxlength='1000' name='A' readonly style='width: 100%; font-size: 16px;'>"+prvAnswer+"</textarea> ";
             $("#blkDaan").append(html);
             $("#blkButtons").remove();
         }else{
             if(1== params.qt){
-                var html="<textarea rows='3' maxlength='1000' name='A' style='width: 100%; font-size: 14px;'>"+prvAnswer+"</textarea> ";
+                var html="<textarea rows='5' maxlength='1000' name='A' style='width: 100%; font-size: 16px;'>"+prvAnswer+"</textarea> ";
                 $("#blkDaan").append(html);
             }else {
                 for(var charCode=65; charCode<65+ params.qt; ++charCode){

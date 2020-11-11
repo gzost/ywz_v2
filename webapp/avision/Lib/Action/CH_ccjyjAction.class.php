@@ -53,7 +53,7 @@ class CH_ccjyjAction extends ChomeBaseAction
 
     public function login(){
         setPara('acceptUrl',U('index'));
-        setPara('coverImg','__ROOT__/home/CH_ccjyj/images/guestbanner.jpg');
+        setPara('coverImg','__ROOT__/home/CH_ccjyj/images/guestbanner2.jpg');
         $this->redirect("Home/login");
     }
 
@@ -115,7 +115,7 @@ class CH_ccjyjAction extends ChomeBaseAction
         }else $companyListJson="[]";
         $companyListJson=str_replace('"',"'",$companyListJson);
         $webVar['companyListJson']=$companyListJson;
-//var_dump($_POST); die();
+//var_dump($webVar); die();
 
         $dbUser=D('user');
         if($_POST['work']=='save' && !empty($magicId) && $magicId===$_POST['magicId']){

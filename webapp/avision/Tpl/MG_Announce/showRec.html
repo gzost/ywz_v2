@@ -1,0 +1,177 @@
+<style>
+    #blk_Record, #blk_Record *{
+        box-sizing: border-box;
+    }
+    #blk_Record .item{
+        flex:none;
+        align-items: flex-start;
+        box-sizing: border-box;
+        margin-right: 5px;
+        width: 600px;
+
+        background-color: #FFF;
+        border-bottom: 1px solid #00bcd4;
+        overflow: hidden;
+    }
+    #blk_Record .item .itemName,#blk_Record .item .itemValue,#blk_Record .item .itemSubName{
+        display: inline-block;
+        box-sizing: border-box;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        height: 100%;
+    }
+    #blk_Record .item .itemName,#blk_Record .item .itemSubName{
+        padding-right: 10px;
+        text-align: right;
+        color:#fff;
+        background-color: #369;
+    }
+    #blk_Record .item .itemName{
+
+        width: 200px;
+        vertical-align: bottom;
+    }
+    #blk_Record .item .itemValue{
+        text-align: left;
+        padding-left: 5px;
+    }
+    #blk_Record .item .itemSubName{
+        margin-left: 2em;
+        padding-left: 10px;
+    }
+    #blk_Record .item  .itemNote{
+
+        color:#9cc;
+        font-size: 0.8em;
+    }
+
+    .itemValue input{
+        outline: none;
+    }
+</style>
+<form id="frm_record" method="post">
+<div id="blk_Record" style="display: flex; flex-wrap: wrap; justify-content:flex-start;">
+
+    <div class="item">
+        <div class="itemName">消息内容或图片说明</div>
+        <div class="itemValue"><input class="easyui-textbox" value="{$rec.content}" name="content" data-options="width:360"/></div>
+    </div>
+    <div class="item">
+        <div class="itemName">消息类型</div>
+        <div class="itemValue">
+            <input class="easyui-combobox" name="type" value="{$rec.type}"
+                   data-options="editable:false,width:100,valueField:'val',textField:'text',
+                        data:[{val:1,text:'文字'},{val:2,text:'图片'}]" >
+            <span style="margin-left: 2em">显示模式</span>
+            <input class="easyui-combobox" name="zone" value="{$rec.zone}"
+                   data-options="editable:false,width:100,valueField:'val',textField:'text',
+                        data:[{val:1,text:'蛇形弹出'},{val:2,text:'走马灯'}]" >
+            <div class="itemNote">目前尚未支持图片及蛇形弹出</div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="itemName">显示时间</div>
+        <div class="itemValue">
+            从<input class="easyui-datetimebox" name="btime" data-options="showSeconds:false" value="{$rec.btime}" style="width:160px">
+            至<input class="easyui-datetimebox" name="etime" data-options="showSeconds:false" value="{$rec.etime}" style="width:160px">
+        </div>
+    </div>
+    <div class="item">
+        <div class="itemName">关联机构</div>
+        <div class="itemValue"><input type="text" name="agentid" value="{$rec.agentid}" readonly style="width: 8em" /> {$rec.agentName}
+            <div class="itemNote">机构消息只能关联到机构，不能再关联播主或频道</div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="itemName">关联播主</div>
+        <div class="itemValue"><input type="text" name="ownerid" value="{$rec.ownerid}" readonly style="width: 8em" /> {$rec.ownerName}
+            <div class="itemNote">播主消息只能关联到播主，不能再关联频道</div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="itemName">关联频道</div>
+        <div class="itemValue"><input type="text" name="chnid" value="{$rec.chnid}" readonly style="width: 8em" /> {$rec.channelName}
+            <div class="itemNote">关联到频道后，与机构或播主的关联无效</div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="itemName">系统推送</div>
+        <div class="itemValue">
+            <select class="easyui-combobox" name="systempush" value="{$rec.systempush}" data-options="editable:false,width:100">
+                <option value="0">否</option>
+                <option value="1">是</option>
+            </select>
+        </div>
+    </div>
+    <div class="item">
+        <div class="itemName">最后修改时间</div>
+        <div class="itemValue">{$rec.createtime} </div>
+        <div class="itemSubName" > 修改人</div>
+        <div class="itemValue">{$rec.createrName}</div>
+    </div>
+
+    <!--以下为扩展属性-->
+    <div class="item">
+        <div class="itemName">循环显示次数</div>
+        <div class="itemValue"><input type="text" class="easyui-numberbox" name="loop" value="{$rec.loop|default='3'}" data-options="min:0,precision:0">
+            <div class="itemNote">0或不提供为无限次</div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="itemName">滚动速度</div>
+        <div class="itemValue">
+            <input type="text" class="easyui-numberbox" name="speed" value="{$rec.speed|default='100'}" data-options="min:5,max:5000,precision:0">
+            <div class="itemNote">滚动速度5~5000，越大速度越快，默认100</div>
+        </div>
+    </div>
+    <div class="item">
+        <div class="itemName">颜色</div>
+        <div class="itemValue">
+            文字<input type="color" name="color" value="{$rec.color|default='#FFFFFF'}"/>
+            背景<input type="color" name="backgrand" value="{$rec.backgrand|default='#003366'}" />
+        </div>
+    </div>
+    <div class="item">
+        <div class="itemName">超链接</div>
+        <div class="itemValue"><input class="easyui-textbox" value="{$rec.href}" name="href" data-options="width:360"/></div>
+    </div>
+    <!--
+    <div class="item">
+        <div class="itemName">图片</div>
+        <div class="itemValue">vvvvvv</div>
+    </div>
+    -->
+    <input type="hidden" name="id" value="{$rec.id}" />
+</div>
+</form>
+<div style="text-align: center; margin-top: 20px;">
+    <div class="OUI-btn" id="btn_saveRec" style="background-color: #9c3; color: #fff"> 保 存 </div>
+</div>
+<script>
+    (function () {
+        var range="{$range}";
+        var contextToken="{$contextToken}";
+        $("#btn_saveRec").on("click",function () {
+            var paras=$("#frm_record").serializeArray();
+            paras.push({name:"range",value:range});
+            paras.push({name:"contextToken",value:contextToken});
+            paras.push({name:"func",value:"saveRec"});
+            console.log(paras);
+            $.post("__URL__/main",paras,function (data) {
+                console.log(data,data.id);
+                if('false'==data.success){
+                    if('string'==typeof(data.msg) ) alert(data.msg);
+                    else alert('保存时出现未知错误。');
+                }else{
+                    if('undefined'==data.id) alert('服务器没返回正确的数据。');
+                    else {
+                        $(window).trigger('event_flashRec',{id:data.id});
+                        $.messager.alert('','保存成功','info');
+                    }
+                }
+            },'json');
+        });
+
+    })();
+
+</script>

@@ -6,11 +6,12 @@
  * Time: 22:19
  */
 
-
+/*
 //test
 $gd=new gdPaint(array('height'=>30,'width'=>90));
 $text=$gd->generateString(4,false);
 $gd->verifyPicture($text);
+*/
 
 /**
  * Class gdPaint
@@ -95,6 +96,7 @@ class gdPaint {
             $fontfile = $this->para['fontfile'];
             //$str = 'qwertyuipasdfghjklzxcvbnmQWERTYUIPASDFGHJKLZXCVBNM123456789';
             //$text = $str[mt_rand(0, strlen($str)-1)];
+
             imagettftext($img, $size, $angle, $x, $y, $color, $fontfile,$text[$i] );
         }
 //6、保存

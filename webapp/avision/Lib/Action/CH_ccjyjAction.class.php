@@ -8,6 +8,8 @@
  */
 
 require_once COMMON_PATH.'ChomeBaseAction.class.php';
+require_once LIB_PATH.'Model/AnnounceModel.php';
+
 class CH_ccjyjAction extends ChomeBaseAction
 {
     static private $agentid=203;    //禅城教育局机构代码
@@ -26,7 +28,6 @@ class CH_ccjyjAction extends ChomeBaseAction
             return;
         }
 
-
         //2、检查用户信息是否符合要求
         $dbAgent=D("agent");
         $this->agent=$dbAgent->find(SELF::$agentid);
@@ -44,8 +45,15 @@ class CH_ccjyjAction extends ChomeBaseAction
             return;
         }
 
+        $userid=intval($this->userId());
+        //取要显示的信息
+        $dbAnnounce=D("Announce");
+        $showItems=$dbAnnounce->getShowItem(self::$agentid,$userid);
+
+
         $webVar=array();
-        $webVar['uid']=($this->isLogin=='false')?0:$this->userId();
+        $webVar['showItems']=(empty($showItems))?"[]":json_encode2($showItems);
+        $webVar['uid']=($this->isLogin=='false')?0:$userid;
         $webVar['agentid']=self::$agentid;
         $this->assign($webVar);
         $this->show('index');
@@ -53,7 +61,7 @@ class CH_ccjyjAction extends ChomeBaseAction
 
     public function login(){
         setPara('acceptUrl',U('index'));
-        setPara('coverImg','__ROOT__/home/CH_ccjyj/images/guestbanner2.jpg');
+        setPara('coverImg','__ROOT__/home/CH_ccjyj/images/guestbanner.jpg');
         $this->redirect("Home/login");
     }
 

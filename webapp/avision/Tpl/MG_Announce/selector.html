@@ -1,0 +1,51 @@
+<!-- 输出选择器页面 -->
+<div style="text-align: center; white-space: nowrap;font-size: 16px;">
+    {$itemName}:<input id="cond_value" value="{$cond_value}"  style="width:180px">
+</div>
+<div style="margin-top: 15px;">
+    <table id="dg_list"  style="width:100%;">
+        <thead>
+            <tr>
+                <foreach name="header" item="col">
+                    <th  data-options="field:'{$col.name}',{$col.data-options}" >{$col.text}</th>
+                </foreach>
+            </tr>
+        </thead>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        var contextToken="{$contextToken}";
+        var agentid="{$agentid}";
+        var ownerid="{$ownerid}";
+
+        //通过js构造UI对象
+        $("#cond_value").textbox({
+            icons: [{
+                iconCls:'icon-search',
+                handler:function (e) {
+                    reloadList();
+                }
+            }],
+        });
+        var cond_value=$("#cond_value").textbox("getValue");
+
+        $("#dg_list").datagrid({
+            queryParams:{contextToken:contextToken,cond_value:cond_value,agentid:agentid,ownerid:ownerid},
+            url:'{$dataUrl}',
+
+            pagination:true,pageSize:10,
+            onClickRow:function (index,row) {
+                console.log(row);
+                $(window).trigger("selectedRow",row);
+            }
+        });
+        var pager=$("#dg_list").datagrid('getPager');
+        pager.pagination({displayMsg:"",showPageList:false,showRefresh:false,beforePageText:'第', afterPageText: '页，共 {pages} 页'});
+
+        function reloadList() {
+            cond_value=$("#cond_value").textbox("getValue");
+            $("#dg_list").datagrid("load",{contextToken:contextToken,cond_value:cond_value,agentid:agentid,ownerid:ownerid});
+        }
+    });
+</script>

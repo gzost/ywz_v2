@@ -1,4 +1,4 @@
- <?php
+<?php
 require_once COMMON_PATH.'charging/ChargeBase.class.php';
 class ConsumpModel extends Model {
 	
@@ -272,4 +272,3 @@ logfile("ConsumpModel:".$this->getLastSql(),LogLevel::SQL);
 		$this->addRec($record);
 	}
 }
-?>

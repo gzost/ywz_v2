@@ -1,0 +1,280 @@
+<extend name="common:AdminBase" />
+<block name="bl_north">
+    <include file="Home:header_w" />
+    <include file="Console:north_w" />
+</block>
+<block name="bl_main">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/OUI.css" />
+    <style>
+        .searchFilter,.conditionIte, .conditionItem .conditio{
+            box-sizing: border-box;
+        }
+        .searchFilter{
+            position: relative;
+            /*margin: 5px 15px;*/
+            padding: 10px 15px;
+            /*border: 1px solid #99CCFF;
+            border-radius: 5px;
+            */
+        }
+        .conditionItem{
+            display: inline-block;
+            margin-right: 1em;
+            height: 24px;
+            border: 1px solid #90C0F0;
+            border-radius: 5px;
+        }
+        .conditionItem .condition{
+            display: inline-block;
+            margin: 2px;
+            height: calc( 100% - 4px );
+            border: 0 none transparent;
+            outline:none;
+        }
+        .conditionItem .icon{
+            display: inline-block;
+            padding: 4px;
+            height: calc( 100% - 8px );
+            border-left: 1px solid #90C0F0;
+            vertical-align: top;
+        }
+        #blk_outer{
+            width: calc( 100% - 0px );
+        }
+    </style>
+
+    <div style="position:relative; padding: 5px;">
+        <div class="easyui-panel" style="padding:5px 15px; width: 95%">
+            <span>请选择消息范围：</span>
+            <eq name="rightA" value="1"><a href="#" class="easyui-linkbutton" range="A" data-options="toggle:true,group:'g2',plain:false">全局消息</a></eq>
+            <eq name="rightG" value="1"><a href="#" class="easyui-linkbutton" range="G" data-options="toggle:true,group:'g2',plain:false">机构消息</a></eq>
+            <a href="#" class="easyui-linkbutton" range="O" data-options="toggle:true,group:'g2',plain:false">播主消息</a>
+            <a href="#" class="easyui-linkbutton" range="C" data-options="toggle:true,group:'g2',plain:false">频道消息</a>
+        </div>
+    </div>
+
+    <div class="searchFilter" id="searchFilter">
+        <span id="item_agent">
+            机构：
+            <div class="conditionItem" id="agent" name="agent" data-options="title:'选择机构', itemName:'机构名称',dataUrl:'__URL__/getAgentListJson'">
+                <input class="condition"  name="agent" key="{$agentid}" value="{$agentName}"  placeholder="输入机构名称" style="width: 10em;" />
+                <!--<img class="icon" src="__PUBLIC__/images/search.png" />-->
+            </div>
+        </span>
+        <span id="item_owner">
+            播主：
+            <div class="conditionItem" name="owner" data-options="title:'选择播主', itemName:'播主账号', dataUrl:'__URL__/getOwnerListJson',
+                header:[{name:'id',text:'编号'},{name:'name',text:'帐号'},{name:'username',text:'昵称'}]">
+                <input class="condition" name="owner" key="{$uid}" value="{$account}" placeholder="输入播主账号" style="width: 10em;" />
+            </div>
+        </span>
+        <span id="item_channel">
+            频道：
+            <div class="conditionItem"  name="channel" data-options="title:'选择频道', itemName:'频道名称', dataUrl:'__URL__/getChannelListJson'">
+                <input class="condition" name="channel" key="" value="" placeholder="输入频道名称" style="width: 10em;" />
+            </div>
+        </span>
+
+        消息：
+        <div class="conditionItem"  name="announce" >
+            <input class="condition" name="announce" key="" value="" placeholder="输入要查找的消息内容" style="width: 10em;" />
+        </div>
+        <div class="OUI-btn" id="btn_search" style="background-color:#666;">查询</div>
+        <div style="padding-top: 8px;">
+            <a id="btn_append" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:false" >增加新消息</a>
+            <a id="btn_remove" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:false">删除</a>
+            <span style="margin-left: 2em; color:#888; ">双击消息记录可显示记录详情并编辑</span>
+        </div>
+    </div>
+    <div id="searchWindow" class="easyui-window" title="查询窗口" data-options="modal:true,closed:true,collapsible:false,minimizable:false,maximizable:false,border:'thin',footer:'#footer'"
+         style="width:400px;height:520px;padding:10px;">
+        <div id="blk_searchContainer"></div>
+    </div>
+    <div id="footer" style="padding:5px;">点击选中记录</div>
+
+    <div id="blk_announceList" style="position:relative; padding: 5px; display: none;">
+        <table class="easyui-datagrid" id="dg" style="width:95%" data-options="toolbar:'#searchFilter',singleSelect:true,pagination:true,pageSize:10 ">
+            <thead>
+            <tr>
+                <th data-options="field:'btime'">开始显示时间</th>
+                <th data-options="field:'etime'">结束显示时间</th>
+                <th data-options="field:'type'">类型</th>
+                <th data-options="field:'content'">消息内容或图片说明</th>
+            </tr>
+            </thead>
+        </table>
+        <div style="height: 5px;"></div>
+        <div id="blk_detail" class="easyui-panel" title="新增及修改消息" style="width: 95%;" data-options="closed:true" >
+            <div id="rec_contain" style="padding:5px;">记录内容</div>
+        </div>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            var contextToken="{$contextToken}";
+            var rightA="{$rightA}";
+            var rightG="{$rightG}";
+            console.log(rightA,rightG);
+            //在每个查询项后附加图标
+            var searchIcon='<img class="icon" src="__PUBLIC__/images/search.png" />';
+            $(".searchFilter .conditionItem[name='channel']").append(searchIcon);
+
+            if("1"!=rightA) $(".searchFilter input[name='agent']").attr("readonly","1");
+            else $(".searchFilter .conditionItem[name='agent']").append(searchIcon);
+            if("1"!=rightG) $(".searchFilter input[name='owner']").attr("readonly","1");
+            else $(".searchFilter .conditionItem[name='owner']").append(searchIcon);
+
+            var searchWindow=$("#searchWindow");    //查询窗口的jq对象
+            var currentItem=null;   //当前在查询的项
+
+            //响应查询项上点击查询图标，弹出查询窗口
+            $(".conditionItem .icon").on("click",function(event) {
+                var name=$(this).parent().attr("name");
+                var options="{"+$(this).parent().attr("data-options")+"}";  //不同查询项的查询入口不同
+                options=eval('('+options+')');
+                currentItem=$(this).prev("input");
+                var value=currentItem.val();
+
+
+                if("string"==typeof(options.title))
+                    searchWindow.window({title:options.title});
+
+                var url="__URL__/selector"
+                    //调用后台产生弹出窗口中的查询列表等内容
+                    options.value=value;    //当前项的查询条件
+                    options.contextToken=contextToken;
+                    options.agentid=$(".searchFilter input[name='agent']").attr("key"); //选中的机构ID
+                    options.ownerid=$(".searchFilter input[name='owner']").attr("key"); //选中的播主ID
+                    $("#blk_searchContainer").load(url,options,function () {
+                        //$.parser.parse($('#blk_searchContainer'));
+                    });
+
+                searchWindow.window('open');
+            });
+
+            //查询窗口选择记录后，触发消息并传送选择结果{id:选中记录的ID, name:选中的文本名称}
+            $(window).on("selectedRow",function (event,row) {
+                currentItem.val(row.name);
+                currentItem.attr("key",row.id);
+                searchWindow.window('close');
+            });
+
+            //当手动输入了查询条件后，key值清空
+            $(".conditionItem .condition").change(function () {
+               console.log("change");
+               $(this).attr("key","");
+            });
+
+            //查询消息列表需要的公共变量
+            var range="C";  //当前查询的消息范围：R-全局 G-机构 O-播主 C-频道
+            var dataUrl="__URL__/main";
+            //点击消息范围按钮的处理
+            $(".easyui-panel a").on("click",function () {
+                range=$(this).attr("range");
+                switch (range){
+                    case "A":
+                        $("#item_agent").css("display","none");
+                        $("#item_owner").css("display","none");
+                        $("#item_channel").css("display","none");
+                        break;
+                    case "G":
+                        $("#item_agent").css("display","inline");
+                        $("#item_owner").css("display","none");
+                        $("#item_channel").css("display","none");
+                        break;
+                    case "O":
+                        $("#item_agent").css("display","inline");
+                        $("#item_owner").css("display","inline");
+                        $("#item_channel").css("display","none");
+                        break;
+                    case "C":
+                        $("#item_agent").css("display","inline");
+                        $("#item_owner").css("display","inline");
+                        $("#item_channel").css("display","inline");
+                        break;
+                }
+                $("#blk_announceList").css("display","block");
+                $("#blk_detail").panel('close');
+                loadData();
+            });
+            $("#btn_search").on("click",function () {
+                loadData();
+            });
+            function loadData() {
+                var queryParams={func:'getAnnounceJson',contextToken:contextToken,range:range};
+                queryParams.agentid=$(".searchFilter input[name='agent']").attr("key"); //选中的机构ID
+                queryParams.ownerid=$(".searchFilter input[name='owner']").attr("key"); //选中的播主ID
+                queryParams.channelid=$(".searchFilter input[name='channel']").attr("key"); //选中的频道ID
+                queryParams.announce=$(".searchFilter input[name='announce']").val();   //消息内容或图片说明
+                console.log(queryParams);
+                $("#dg").datagrid({
+                    queryParams:queryParams,
+                    url:dataUrl
+                });
+            }
+
+            //处理单记录显示块
+            //设置panel参数
+            $("#blk_detail").panel({
+                closable:true,
+                onClose:function(){
+                    $('#dg').datagrid('getPanel').panel('open');
+                    $('#dg').datagrid('load');
+                }
+            });
+            //添加新消息按钮
+            $("#btn_append").on("click",function () {
+                $("#dg").datagrid("getPanel").panel("close");
+                $("#blk_detail").panel("open");
+                $("#blk_detail").panel({width:'100%'});
+                loadRecord(0);
+            });
+            //删除消息按钮
+            $("#btn_remove").on("click",function () {
+                var selectedRow=$("#dg").datagrid('getSelected');
+                if(null==selectedRow) alert("请先选中要删除的记录。");
+                else{
+                    var paras={contextToken:contextToken,func:'removeRec',id:selectedRow.id};
+                    $.post('__URL__/main',paras,function (data) {
+                        if('true'==data.success){
+                            $("#blk_detail").panel("close");
+                            var rowIndex=$("#dg").datagrid('getRowIndex',selectedRow);
+                            $("#dg").datagrid('deleteRow',rowIndex);
+                            $.messager.alert('','删除成功','info');
+                        }else {
+                            $.messager.alert('',data.msg,'error');
+                        }
+
+                    },'json');
+                }
+            });
+            //装入id指定的详细记录页面
+            function loadRecord(id) {
+                var url='__URL__/main';
+                var queryParams={contextToken:contextToken,id:id,range:range,func:'showRec'};
+                queryParams.agentid=$(".searchFilter input[name='agent']").attr("key"); //选中的机构ID
+                queryParams.ownerid=$(".searchFilter input[name='owner']").attr("key"); //选中的播主ID
+                queryParams.channelid=$(".searchFilter input[name='channel']").attr("key"); //选中的频道ID
+console.log("loadRec:",queryParams);
+                $("#rec_contain").load(url,queryParams,function () {
+                    $.parser.parse("#rec_contain");
+                });
+
+            }
+
+            $('#dg').datagrid({
+                onClickRow:function (index,row) {
+                    $("#blk_detail").panel("open");
+                    $("#blk_detail").panel({width:'95%'});
+                    //$("#dg").datagrid("getPanel").panel("close");
+                    loadRecord(row.id);
+                }
+            });
+            $(window).on('event_flashRec',function (event,para) {
+                console.log(para,typeof para.id);
+                if('number'==typeof(para.id) ) loadRecord(para.id);
+            });
+            //loadRecord(0);
+        });
+    </script>
+</block>

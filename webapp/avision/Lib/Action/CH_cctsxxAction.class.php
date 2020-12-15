@@ -8,6 +8,7 @@
  */
 
 require_once COMMON_PATH.'ChomeBaseAction.class.php';
+require_once LIB_PATH.'Model/AnnounceModel.php';
 class CH_cctsxxAction extends ChomeBaseAction
 {
     static private $agentid=202;    //禅城教育局特殊教育学校的机构代码
@@ -44,8 +45,14 @@ class CH_cctsxxAction extends ChomeBaseAction
             return;
         }
 
+        $userid=intval($this->userId());
+        //取要显示的信息
+        $dbAnnounce=D("Announce");
+        $showItems=$dbAnnounce->getShowItem(self::$agentid,$userid);
+
         $webVar=array();
-        $webVar['uid']=($this->isLogin=='false')?0:$this->userId();
+        $webVar['showItems']=(empty($showItems))?"[]":json_encode2($showItems);
+        $webVar['uid']=($this->isLogin=='false')?0:$userid;
         $webVar['agentid']=self::$agentid;
         $this->assign($webVar);
         $this->show('index');

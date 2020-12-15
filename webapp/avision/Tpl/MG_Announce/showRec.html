@@ -97,10 +97,9 @@
     <div class="item">
         <div class="itemName">系统推送</div>
         <div class="itemValue">
-            <select class="easyui-combobox" name="systempush" value="{$rec.systempush}" data-options="editable:false,width:100">
-                <option value="0">否</option>
-                <option value="1">是</option>
-            </select>
+            <input class="easyui-combobox" id="cb_systempush" name="systempush" value="{$rec.systempush}"
+                   data-options="editable:false,width:100,valueField:'val',textField:'text',
+                        data:[{val:0,text:'否'},{val:1,text:'是'}]" >
         </div>
     </div>
     <div class="item">
@@ -151,7 +150,16 @@
     (function () {
         var range="{$range}";
         var contextToken="{$contextToken}";
+        var rightS="{$rightS}";
+        if("1"!=rightS) $("#cb_systempush").combobox({readonly:true});
+
         $("#btn_saveRec").on("click",function () {
+            var systempush=$("#cb_systempush").combobox('getValue');
+console.log("systempush="+systempush);
+            if((1==systempush) && ("1"!=rightS)){
+                $.messager.alert('','您没权修改系统推送的消息','warning');
+                return;
+            }
             var paras=$("#frm_record").serializeArray();
             paras.push({name:"range",value:range});
             paras.push({name:"contextToken",value:contextToken});

@@ -104,14 +104,23 @@
             right:10px;
             width:24px;
         }
+        #blk-announce {
+            display: none;
+            width: 100%;
+            height: 28px;
+            background-color: #003366;
+            border-top: 1px solid #CCCCCC;
+        }
     </style>
 </head>
 <body>
 <div id="container" class="easyui-navpanel">
     <div style="width: 100%">
-        <img src="__ROOT__/home/CH_cctsxx/images/userbanner.jpg" style="width:100%;object-fit:cover;">
+        <img src="__ROOT__/home/CH_cctsxx/images/userbanner.jpg" style="width:100%;object-fit:cover;vertical-align:top;">
     </div>
     <img  id="my-logo" class="layer10 my-logo" src="__ROOT__/home/CH_cctsxx/images/my_w.png"  >
+
+    <div id="blk-announce" >  </div>
 <!--
     <div id="title">
         <img src="__ROOT__/home/CH_cctsxx/images/logo.png"  >
@@ -159,7 +168,7 @@
     </header>
     userinfo
 </div>
-
+<script src="__PUBLIC__/js/OU_margquee.js"></script>
 <script>
     $(".nav_ico").on('click',function(event){
         var obj=event.delegateTarget;
@@ -189,6 +198,16 @@
         $.mobile.go('#userinfo');
     });
 
+    $(document).ready(function () {
+        var marquee=new OU_margquee("blk-announce",{});
+        var showItems={$showItems}; //后台传入的走马灯内容数组，必须有内容，不然会出错。日后可添加定时更新走马灯内容的模块。
+        console.log(showItems);
+
+        for(var i=0, len=showItems.length; i<len; i++){
+            if("object"==typeof(showItems[i]) && showItems[i].zone==2 ) marquee.appendItem(showItems[i]);   //走马灯显示加入显示队列中
+        }
+        marquee.show();
+    });
 </script>
 </body>
 </html>

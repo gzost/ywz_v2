@@ -223,12 +223,15 @@ class MG_AnnounceAction extends AdminBaseAction
         }
     }
 
+    /**
+     * 输出显示/编辑记录页面，包括新增空白记录页面
+     */
     private function showRec(){
         //接收POST参数，若无传入采用默认值
         $paras=array("id"=>0,"range"=>"","agentid"=>0,"ownerid"=>0,"channelid"=>0,"announce"=>"");
         $paras=ouArrayReplace($paras,$_POST);
 //$paras['channelid']=1098;
-        $webVar=array();
+        $webVar=$this->params;
         try{
             if($_POST["contextToken"] != session_id()) throw new Exception("非法调用");
             if(empty($paras['range'])) throw new Exception("缺少range参数");
@@ -276,6 +279,10 @@ class MG_AnnounceAction extends AdminBaseAction
         }
     }
 
+    /**
+     * 新增或修改一条记录
+     * 传入id=0做新增处理
+     */
     private function saveRec(){
         //记录模板，接收前端POST的值，缺少的删除
         $recTpl=array('btime'=>'','etime'=>'','zone'=>'2','content'=>'','type'=>1,'systempush'=>0);
@@ -291,8 +298,11 @@ class MG_AnnounceAction extends AdminBaseAction
             $attr=ouArrayReplace($attrTpl,$_POST,'unset');
             if(is_array($attr)) $rec['attr']=json_encode2($attr);
             $rec['creater']=$this->params['uid'];
+
+            if(!$this->params['rightS']) $rec['systempush']=0;   //没有权限强制为系统推送为'否'
             if(0===$id){
                 //新增记录
+                $rec['chnid']=$rec['ownerid']=$rec['agentid']=0;
                 switch ($_POST['range']){
                     case 'C':
                         $rec['chnid']=intval($_POST['chnid']);
@@ -302,6 +312,9 @@ class MG_AnnounceAction extends AdminBaseAction
                         break;
                     case 'G':
                         $rec['agentid']=intval($_POST['agentid']);
+                        break;
+                    case 'A':
+                        $rec['chnid']=$rec['ownerid']=$rec['agentid']=0;
                         break;
                     default:
                         throw new Exception('不可识别的消息范围。');

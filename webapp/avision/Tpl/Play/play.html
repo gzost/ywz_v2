@@ -140,6 +140,15 @@
             background-color: transparent;
         }
     }
+
+    #blkAdwin {
+        position: relative; width: 100%;
+        border:0; margin:0;padding: 0;
+        flex:none; display: none;
+        height: 28px;
+        background-color: #003366;
+        color:#FFFFFF;
+    }
 </style>
 
 <!-- 强制操作层 按$forceLayer指示执行不同的操作 -->
@@ -168,6 +177,8 @@
             <div id="blk_leftTime" class="layerVideoTop2 blk_leftTime"></div>
         </div>
     </div>
+    <!-- 高度随内容变化，可显示广告或滚动通知 -->
+    <div id="blkAdwin" ></div>
     <!-- 中部导航条 -->
     <div id="blkNavigate" class="func-tabs" style="flex:none;">
         <div id="tabBar" class="tab-list">
@@ -178,8 +189,7 @@
         </div>
     </div>
     <!--<button  style="z-index:3999; position: fixed; left:50px; bottom:100px;" onclick="playPage.send({},function(){ alert('send callback');})">send data</button>-->
-    <!-- 高度随内容变化，可显示广告或滚动通知 -->
-    <div id="blkAdwin" style="position: relative; width: 100%; border:0; margin:0;padding: 0; flex:none; display: none;"></div>
+
     <!-- 与多功能窗口不同时显示，显示弹出内容，如即兴题目等 -->
     <div id="blkSouthFix" style="position: relative; width: 100%; height:200px; background-color: #FFF; flex: auto; overflow-x: auto;overflow-y:hidden;white-space: nowrap; display: none;">
     </div>
@@ -215,6 +225,7 @@
 <load href="__PUBLIC__/js/publicFunction.js" />
 <!--<load href="__ROOT__/player/js/playpage3.7.min.js" />-->
 <script src="__ROOT__/player/js/playpage.js?t=3.7.6" ></script>
+<script src="__PUBLIC__/js/OU_margquee.js"></script>
 <script>
     //本页面的全局JS对象，除页面的主功能还提供个plugin的公共服务
     var playPage=null;
@@ -251,14 +262,23 @@
             hiddenLeftTime:"{$hiddenLeftTime}", //隐藏开播倒计时及信号状态
         }
 
+        //走马灯显示消息对象
+        var marquee=new OU_margquee("blkAdwin",{});
+        var showItems={$showItems}; //后台传入的走马灯内容数组，必须有内容，不然会出错。日后可添加定时更新走马灯内容的模块。
+        for(var i=0, len=showItems.length; i<len; i++){
+            if("object"==typeof(showItems[i]) && showItems[i].zone==2 ) marquee.appendItem(showItems[i]);   //走马灯显示加入显示队列中
+        }
+
         //保证阿里播放器对象及微信jssdk载入后才实例化页面对象
         !function waitLoad() {
             if("undefined"!=typeof(Aliplayer) && "undefined"!=typeof(wx) ) {
                 playPage = new Ou_playPage(params);
                 //console.log("******",typeof(Aliplayer),typeof(wx));
+                marquee.show();
             }
             else setTimeout(waitLoad,200);
         }();
+
        //playPage = new Ou_playPage(params);
         if("1"==params.hiddenLeftTime)   $("#blk_leftTime").remove();//css("display","none");//隐藏开播倒计时及信号状态
         console.log("hiddenLeftTime="+("1"==params.hiddenLeftTime));

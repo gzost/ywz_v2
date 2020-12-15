@@ -504,6 +504,7 @@ console.log("status.playerReady=",status.playerReady);
                     countDownStr=h+":"+m+":"+s;
                     $(local.blkLeftTime).html("开播倒计时："+countDownStr);
                     if(params.isAdmin !=1)  $(".blk_video .prism-big-play-btn").css("display","none");
+
                 }else{
                     clearInterval(airTimer);
                     if(params.airDuration.length>1){
@@ -835,12 +836,38 @@ console.log("status.playerReady=",status.playerReady);
         params[key]=value;
     }
 
+    var prefixTitle=function (title) {
+        var prefix='';
+        if("live"==params.playType && params.airTime.length >2){
+            //直播且设置了开播时间
+
+            var endDate = new Date(Date.parse(params.airTime.replace(/-/g, "/")));   //new Date(params.airTime);
+            var end = Math.floor(endDate.getTime()/1000);   //开始播出时间转换成秒的时间戳
+            var date = new Date();  //获取当前时间
+            var now = Math.floor(date.getTime() / 1000);
+            var leftTime = end - now;   //时间差
+            if(leftTime>0){
+                //未开始直播
+                prefix='预告：';
+            }else {
+                if (params.airDuration.length > 1) {
+                    var duration = parseInt(params.airDuration);   //秒
+                    if (end + duration > now) prefix = '直播中：';    //播出期间
+                    else prefix = '回看：';
+                }
+            }
+        }
+        return prefix+title;
+    }
+
     //页面初始时运行的东西集中在这里
     var initPage=function () {
         //若是直播，显示开播信息
         if(params.playType=="live") showAirTime();
         //修改页面标题
+        params.title=prefixTitle(params.title);
         $("title").text(params.title);
+//console.log("title="+params.title,params);
         _this.setUrl();
         var ex=new Ou_Exercise({ playPage:_this,    //播放器页面对象
             container:"blkSouthFix",     //堂上练习显示容器

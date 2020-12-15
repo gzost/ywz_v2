@@ -43,6 +43,14 @@
         overflow-x: hidden;
         overflow-y: auto;
     }
+    #blkAdwin {
+        position: relative; width: 100%;
+        border:0; margin:0;padding: 0;
+        flex:none; display: none;
+        height: 28px;
+        background-color: #003366;
+        color:#FFFFFF;
+    }
 </style>
 
 <!-- 强制操作层 按$forceLayer指示执行不同的操作 -->
@@ -101,6 +109,7 @@
                 <div  class="blk_video"  style="position: relative;width:100%; height:0;padding-top: 56.25%; flex:none; overflow: hidden;border: 5px solid transparent;">
                     <div  class="prism-player" id="prismPlayer" style="position: absolute;width:100%; height:100%; top:0;"></div>
                 </div>
+                <div id="blkAdwin" ></div>
             </div>
             <!-- 与多功能窗口不同时显示，显示弹出内容，如即兴题目等 -->
             <div id="blkSouthFix" style="position: relative; margin-top:2px; margin-right:2px; width: 640px; height:100%; background-color: #FFF; flex: none; overflow-x: hidden;overflow-y:hidden;display: none;">
@@ -128,6 +137,7 @@
 <load href="__PUBLIC__/js/publicFunction.js" />
 <!--<load href="__ROOT__/player/js/playpage3.7.min.js" />-->
 <script src="__ROOT__/player/js/playpage.js?t=3.7.3" ></script>
+<script src="__PUBLIC__/js/OU_margquee.js"></script>
 <script>
     var playPage;
     $(document).ready(function () {
@@ -161,11 +171,19 @@
             getgetSignUrl:"__APP__/BE_wxjssdk/getSignJson",       //取JSSDK签名URL地址
             tabItemPrefix: "tabItem"     //多功能窗口内各tab容器子窗口的id前缀
         }
+        //走马灯显示消息对象
+        var marquee=new OU_margquee("blkAdwin",{});
+        var showItems={$showItems}; //后台传入的走马灯内容数组，必须有内容，不然会出错。日后可添加定时更新走马灯内容的模块。
+        for(var i=0, len=showItems.length; i<len; i++){
+            if("object"==typeof(showItems[i]) && showItems[i].zone==2 ) marquee.appendItem(showItems[i]);   //走马灯显示加入显示队列中
+        }
+
         //保证阿里播放器对象及微信jssdk载入后才实例化页面对象
         !function waitLoad() {
             if("undefined"!=typeof(Aliplayer) && "undefined"!=typeof(wx) ) {
                 playPage = new Ou_playPage(params);
                 //console.log("******",typeof(Aliplayer),typeof(wx));
+                marquee.show();
             }
             else setTimeout(waitLoad,200);
         }();

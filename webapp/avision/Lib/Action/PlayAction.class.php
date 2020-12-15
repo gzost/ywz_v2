@@ -16,6 +16,7 @@ require_once(LIB_PATH.'Model/OnlineModel.php');
 require_once(LIB_PATH.'Model/RecordfileModel.php');
 require_once(LIB_PATH.'Model/UserModel.php');
 require_once COMMON_PATH.'vod/vodBase.class.php';
+require_once LIB_PATH.'Model/AnnounceModel.php';
 
 class PlayAction extends SafeAction{
     const PLAY_TOKEN="playToken";    //页面上下文校验令牌变量名称，此名称要注意与TPL中处理的页面变量名称一致
@@ -346,6 +347,12 @@ class PlayAction extends SafeAction{
         $inc=intval($chnAttr["viewIncRand"]);
         if($inc>1) $inc=mt_rand(1,$inc);
         $this->dbChannel->where("id=".$this->chnid)->setInc("entrytimes",$inc);
+
+        //10、取要显示的消息
+        $dbAnnounce=D("Announce");
+        //var_dump($agent,$this->channel['owner'],$this->chnid);
+        $showItems=$dbAnnounce->getShowItem(intval($agent),intval($this->channel['owner']),intval($this->chnid));
+        $webVar['showItems']=(empty($showItems))?"[]":json_encode2($showItems);
 
         //其它前端需要的参数
         $webVar["aliveTime"]=(empty(C("aliveTime")))? 10:C("aliveTime");    //最大通讯时间间隔(秒)

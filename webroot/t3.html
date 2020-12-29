@@ -6,86 +6,49 @@
 <script type="text/javascript" src="http://ywz.av365.cn/Public/js/jquery.min.js"></script>
 
 <script type="text/javascript">
-	var url=window.location.href;
-	console.log("url=",url);
-	url=url+"?ch=1098&vf=2345";
-    history.replaceState(null,null,url);    //当URL内有&时必须要在url后加点东西，否则在手机上会跳转
-	console.log("set");
-    clearTimeout($.data(this, 'scrollTimer'));
-    $.data(this, 'scrollTimer', setTimeout(function() {
-        console.log("timer");
-    }, 3000));
-    console.log("pass");
-
 
 function tt(){
 	//alert($("#inner").height());
-	alert($("#inner").outerHeight());
-	alert($("#inner").outerHeight(true));
+	console.log($("#inner").outerHeight());
+    console.log($("#inner").outerHeight(true));
+    console.log($("#inner").height());
 	//alert($("#inner").innerHeight());
 	var position=$("#inner").position();
-	alert("bottom: " + position.bottom + ", top: " + position.top );
+    console.log(position );
 }
+$(document).ready(function () {
+    var contain=$("#inner");
+    var img=$("<img  style='max-width: 100%;'/>");
+    img.attr("src","/files/announce/000/000/029/weixin9.jpg");
+    contain.html(img);
+	setTimeout(function () {
+        tt();
+    },21);
+});
+
 </script>
 <style type="text/css"> 
 #outer{
 	border: 1px solid #333;
  	background-color: #8ee;
- 	height:400px; width: 500px;
+ 	height:38px; width: 500px;
+	position:relative;
+	overflow: hidden;
 }
 #inner{
+	position:relative;
 	border: 2px solid #333;
  	background-color: #7aa;
- 	height:300px; width: 400px;
-	padding: 5px;
-	margin:3px;
+	text-align: center;
 }
-	div{
-		border: 1px solid #0E2D5F;
-		margin: 5px;
-	}
-	.box{
-		display:flex;
-		flex-direction: row;
-		flex-wrap: wrap;
-		justify-content:space-around;
-	}
+
 </style>
 </head>
 <body>
-<form method="post">
-	<input type="checkbox" name="A[]"> AA
-	<input type="checkbox" name="A[]">BB
-	<input type="submit">
-</form>
-
-<div class="box">
-	<div>
-		11111
-	</div>
-	<div>
-		11111<br>
-		2222
-	</div>
-	<div>
-		11111
-	</div>
-	<div>
-		11111
-	</div>
-	<div>
-		11111
-	</div>
-</div>
-
 <div id="outer">
-T33333333333333
 	<div id="inner">
-		11111<br>
-		2222
+		<!-- <img src="/files/announce/000/000/029/weixin9.jpg" style="max-width: 100%;"> -->
 	</div>
-bbbb
 </div>
-<a  href="#" onClick="tt()">ss</a>
 </body>
 </html>

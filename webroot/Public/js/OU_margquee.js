@@ -122,6 +122,7 @@ function OU_margquee(blk,options){
         background:"#003366",   //背景颜色
         autoHide:true,  //没内容显示自动隐藏显示容器
         speed:100,  //滚动速度1~1000，数字越大滚动越快
+        height:"28px",  //滚动条高度
     }
     var params=$.extend(defaults,options);
 
@@ -130,6 +131,7 @@ function OU_margquee(blk,options){
     //初始化
     var container=$("#"+blk);   //容器JQ对象
     var containerWidth=container.width();  //容器宽度
+
 
     //设置容器的固定CSS参数
     container.css({position:'relative',overflow: 'hidden','text-align': 'left'});
@@ -149,38 +151,63 @@ function OU_margquee(blk,options){
             return;
         }
 
-        //组装滚动内容HTML
-        var contain=$("<div style='position: relative;display: inline-block;padding-top: 2px;font-size: 16px;white-space: nowrap;'></div>");
-        contain.html(nextItem.element.content);
-        container.html(contain)
-
-        //一次计算滚动时间
-        var containWidth= contain.width();
-        //var speed=("number"==typeof(nextItem.element.speed))?nextItem.element.speed:params.speed;
-        var speed=parseInt(nextItem.element.speed)||params.speed;
-        if( speed<5 || speed>5000 ) speed=params.speed;
-        var moveTime=(containWidth+containerWidth)*2000/speed;
-        console.log("speed=",speed);
-
         //设置文字大小、颜色及背景颜色
         var font_size=("string"==typeof(nextItem.element.font_size))?nextItem.element.font_size:params.font_size;
         var color=("string"==typeof(nextItem.element.color))?nextItem.element.color:params.color;
         var background=("string"==typeof(nextItem.element.background))?nextItem.element.background:params.background;
+        var height=nextItem.element.height||defaults.height;
+        var speed=parseInt(nextItem.element.speed)||params.speed;
+        if( speed<5 || speed>5000 ) speed=params.speed;
 //console.log("color=",color,"background=",background);
-        container.css({"font-size":font_size,color:color,"background-color":background});
+        container.css({"font-size":font_size,color:color,"background-color":background,"height":height});
 
-        //处理超链接
-        if("string"==typeof(nextItem.element.href) ){
-            var link=$("<a  style='color:inherit;'></a>");
-            link.attr("href",nextItem.element.href);
-            console.log("href=",nextItem.element.href," len=",nextItem.element.href.length);
-            contain.wrap(link);
+        var containerHeight=container.height();  //容器高度
+        if(nextItem.element.type==1){
+            //组装滚动内容HTML
+            var contain=$("<div style='position: relative;display: inline-block;padding-top: 2px;white-space: nowrap;'></div>");
+            contain.html(nextItem.element.content);
+            container.html(contain);
+
+            //一次计算滚动时间
+            var containWidth= contain.width();
+
+            var moveTime=(containWidth+containerWidth)*2000/speed;
+            console.log("speed=",speed);
+
+
+            //处理超链接
+            if("string"==typeof(nextItem.element.href) && (nextItem.element.href.length>1) ){
+                var link=$("<a  style='color:inherit;'></a>");
+                link.attr("href",nextItem.element.href);
+                console.log("href=",nextItem.element.href," len=",nextItem.element.href.length);
+                contain.wrap(link);
+            }
+            //启动动画显示
+            contain.css("left",(containerWidth-50)+"px");
+            contain.animate({left: (0-containWidth)+'px'},moveTime,"linear",function () {
+                showNext(nextItem); //一个项目显示完后回调
+            });
+        }else{
+            //组装滚动内容HTML
+            var contain=$("<div style='position: relative;display: block;padding-top: 0;white-space: nowrap; text-align: center;'></div>");
+            var img=$("<img  style='max-width: 100%;'/>");  //图片最大宽度为容器宽度
+            img.attr("src",nextItem.element.imgurl);
+            contain.html(img);
+            container.html(contain);
+
+            //计算向上滚动的距离及时间，延时一点时间等浏览器渲染好，才能准确获得新增加元素的高度
+            setTimeout(function () {
+                var containHeight=contain.height();
+                var distance=containerHeight-containHeight;   //容器高度与图片高度之差
+                contain.animate({top: distance},Math.abs(distance)*speed/2,"linear",function () {
+                    //滚动完后停留5秒
+                    setTimeout(function () {
+                        showNext(nextItem);
+                    },5000);
+                });
+            },100);
         }
-        //启动动画显示
-        contain.css("left",(containerWidth-50)+"px");
-        contain.animate({left: (0-containWidth)+'px'},moveTime,"linear",function () {
-            showNext(nextItem); //一个项目显示完后回调
-        });
+
         //已显示项定义了循环显示次数则减1，<=0时删除已显示节点
         if(("object"==typeof(nextItem.element)) && ("number"==typeof(nextItem.element.loop) ) ){
             nextItem.element.loop--;

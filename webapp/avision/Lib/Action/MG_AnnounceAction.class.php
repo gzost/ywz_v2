@@ -16,6 +16,8 @@
 
 require_once COMMON_PATH.'AdminBaseAction.class.php';
 require_once APP_PATH.'../public/Ou.Function.php';
+require_once LIB_PATH.'Model/AnnounceModel.php';
+
 class MG_AnnounceAction extends AdminBaseAction
 {
     private $params=array();
@@ -232,17 +234,18 @@ class MG_AnnounceAction extends AdminBaseAction
         $paras=ouArrayReplace($paras,$_POST);
 //$paras['channelid']=1098;
         $webVar=$this->params;
+        $dbannounce=D('announce');
         try{
             if($_POST["contextToken"] != session_id()) throw new Exception("非法调用");
             if(empty($paras['range'])) throw new Exception("缺少range参数");
             if(0==$paras['id']){
                 //显示新增记录
-                $rec=array("id"=>0,"btime"=>date("Y:m:d H:i"), "etime"=>date("Y:m:d H:i",time()+3600*24), "createtime"=>date("Y:m:d H:i")
+                $rec=array("id"=>0,"btime"=>date("Y-m-d H:i"), "etime"=>date("Y-m-d H:i",strtotime('+1 day')), "createtime"=>date("Y:m:d H:i")
                     ,"zone"=>2, "type"=>1, "systempush"=>0, "creater"=>$this->params['uid'], "createrName"=>$this->userName(),"content"=>"新消息"
                     ,"agentid"=>$paras['agentid'],"ownerid"=>$paras['ownerid'],"chnid"=>$paras['channelid']
-                    ,"loop"=>3,"speed"=>100,"color"=>"#FFFFFF","backgrand"=>"#003366");
+                    ,"loop"=>3,"speed"=>100,"color"=>"#FFFFFF","backgrand"=>"#003366","height"=>"28px");
             }else{
-                $rec=D('announce')->where('id='.$paras['id'])->find();
+                $rec=$dbannounce->where('id='.$paras['id'])->find();
                 if(empty($rec)) throw new Exception('找不到指定的记录。');
                 $attr=json_decode($rec['attr'],true);
                 if(is_array($attr)) $rec=array_merge($rec,$attr);
@@ -267,6 +270,10 @@ class MG_AnnounceAction extends AdminBaseAction
                     throw new Exception("Range参数错误。");
                     break;
             }
+            //拼接图片URL前缀
+            if(!empty($rec['imgurl'])){
+                $rec['imgurl']=$dbannounce->getImgUrlPrefix().$rec['imgurl'];
+            }
             $webVar['rec']=$rec;
             $webVar['contextToken']=session_id();
             $webVar['range']=$paras['range'];
@@ -286,7 +293,7 @@ class MG_AnnounceAction extends AdminBaseAction
     private function saveRec(){
         //记录模板，接收前端POST的值，缺少的删除
         $recTpl=array('btime'=>'','etime'=>'','zone'=>'2','content'=>'','type'=>1,'systempush'=>0);
-        $attrTpl=array('loop'=>1,'speed'=>100,'color'=>'#FFFFFF','backgrand'=>'#003366','href'=>'','imgurl'=>'');
+        $attrTpl=array('loop'=>1,'speed'=>100,'color'=>'#FFFFFF','backgrand'=>'#003366','href'=>'','height'=>'28px','font_size'=>'16px');
         $id=intval($_POST['id']);
         $successPara=array();   //成功时的附加参数，如新记录的ID等
 
@@ -296,9 +303,10 @@ class MG_AnnounceAction extends AdminBaseAction
 
             $rec=ouArrayReplace($recTpl,$_POST,'unset');
             $attr=ouArrayReplace($attrTpl,$_POST,'unset');
-            if(is_array($attr)) $rec['attr']=json_encode2($attr);
+            //if(is_array($attr)) $rec['attr']=json_encode2($attr);   //由于要处理上传文件等，扩展属性在更新/新建完记录后再独立处理
             $rec['creater']=$this->params['uid'];
 
+            $dbannounce=D('announce');
             if(!$this->params['rightS']) $rec['systempush']=0;   //没有权限强制为系统推送为'否'
             if(0===$id){
                 //新增记录
@@ -320,15 +328,54 @@ class MG_AnnounceAction extends AdminBaseAction
                         throw new Exception('不可识别的消息范围。');
                         break;
                 }
-                $newRecId=D('announce')->add($rec);
+
+                $newRecId=$dbannounce->add($rec);
                 if($newRecId==false) throw new Exception('新增记录失败。');
                 $successPara['id']=$newRecId;
             }else{
                 //修改旧记录
-                $rt=D('announce')->where('id='.$id)->save($rec);
+                $rt=$dbannounce->where('id='.$id)->save($rec);
                 if(false===$rt) throw new Exception('修改记录失败。');
                 $successPara['id']=$id;
             }
+            if(empty($successPara['id'])) throw new Exception("无法定位记录。");
+
+            //处理上传文件及扩展属性
+            $uploadVarName="imagefile"; //对应前端上传文件input标签的name属性：<input type="file" name="imagefile" id="imagefile" >
+            $uploadInfo=$_FILES[$uploadVarName];
+            /*
+             * $_FILES是PHP的全局变量，记录上传文件的如下属性：
+             *  name:源文件名称，不带路径
+             *  type:文件类型。如：image/jpeg, image/png, image/gif等
+             *  tmp_name:文件在服务端的临时存放全路径的文件名
+             *  error:错误代码
+             *  size:文件大小
+             */
+            if(!empty($uploadInfo["size"])){
+                //有文件上传
+                $imgurl=$dbannounce->getImgUrlPath($successPara['id'],true).'/'.$dbannounce->genImgFileName($uploadInfo['type']);    //获取永久存储图片的url子路径及文件
+                $fullPath=$_SERVER['DOCUMENT_ROOT'].$dbannounce->getImgUrlPrefix().$imgurl;   //物理路径及文件
+                //$imgFileName=$dbannounce->genImgFileName();
+                if(!rename($uploadInfo['tmp_name'],$fullPath)) throw new Exception("转储上传文件失败。");
+
+                $attr['imgSourceName']=$uploadInfo['name'];
+                $attr['imgSize']=$uploadInfo['size'];
+                $attr['imgurl']=$imgurl;
+                $successPara['imgurl']=$dbannounce->getImgUrlPrefix().$imgurl;  //将图片URL传到前端以便显示
+
+                //删除旧的文件
+                $dbannounce->removeImgFile($successPara['id']);
+            }
+            //将扩展属性调整符合接口标准
+            $para=array();
+            foreach ($attr as $key=>$val){
+                $para[]=array('key'=>$key,'value'=>$val);
+            }
+
+            $rt=updateAttributes($dbannounce,array("id"=>$successPara['id']),$para,'attr');
+            if(false===$rt) throw new Exception("扩展属性未能更新。".$dbannounce->getLastSql());
+
+
 
             Oajax::successReturn($successPara);
         }catch (Exception $e){
@@ -350,6 +397,10 @@ class MG_AnnounceAction extends AdminBaseAction
         }
     }
 
+    public function uploadfiles(){
+        var_dump($_REQUEST);
+        var_dump($_FILES);
+    }
     public function test(){
         $this->baseAssign();
         $this->display();

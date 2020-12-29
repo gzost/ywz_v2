@@ -1,9 +1,30 @@
 <?php
-phpinfo();
-define("appname",3);
-var_dump(defined("appname"));
-$v=appname;
-var_dump($v);
+
+$url=array(
+    "https://www.meipian.cn/3bmpvig0",    //冰岛5
+    "https://www.meipian.cn/3bl11lft",    //冰岛4
+    "https://www.meipian.cn/3bkbqdwk",    //冰岛3
+    "https://www.meipian.cn/3bjwt7jh",    //冰岛2
+    "https://www.meipian.cn/3bhhbluk",    //冰岛1
+
+    "https://www.meipian.cn/399qofn5",    //稻城2
+    "https://www.meipian.cn/3984eecm",    //稻城1
+    "https://www.meipian.cn/38dhs4r6",      //坝上2
+    "https://www.meipian.cn/38gctxik",
+    "https://www.meipian.cn/38g9nvw1",
+    "https://www.meipian.cn/35tvgv6u",
+    "https://www.meipian.cn/38a8za19"
+);
+$len=count($url)-1;
+for($i=0; $i<502; $i++){
+    $od=mt_rand(0,$len);
+    printf("%04d %02d  \t,",$i,$od);
+
+    ob_flush();
+    flush();
+    $fh= file_get_contents($url[$od]);
+    usleep(mt_rand(500,3000));
+}
 
 exit;
 var_dump($_SERVER);

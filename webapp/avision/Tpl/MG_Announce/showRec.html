@@ -49,7 +49,7 @@
         outline: none;
     }
 </style>
-<form id="frm_record" method="post">
+<form id="frm_record" name="frm_record" method="post">
 <div id="blk_Record" style="display: flex; flex-wrap: wrap; justify-content:flex-start;">
 
     <div class="item">
@@ -66,7 +66,7 @@
             <input class="easyui-combobox" name="zone" value="{$rec.zone}"
                    data-options="editable:false,width:100,valueField:'val',textField:'text',
                         data:[{val:1,text:'蛇形弹出'},{val:2,text:'走马灯'}]" >
-            <div class="itemNote">目前尚未支持图片及蛇形弹出</div>
+            <div class="itemNote">目前尚未支持蛇形弹出</div>
         </div>
     </div>
     <div class="item">
@@ -131,15 +131,30 @@
         </div>
     </div>
     <div class="item">
-        <div class="itemName">超链接</div>
-        <div class="itemValue"><input class="easyui-textbox" value="{$rec.href}" name="href" data-options="width:360"/></div>
+        <div class="itemName">高度</div>
+        <div class="itemValue">
+            文字<input type="text" class="easyui-textbox" name="font_size" value="{$rec.font_size|default='16px'}" style="width: 100px;">
+            滚动条<input type="text" class="easyui-textbox" name="height" value="{$rec.height|default='28px'}" style="width: 100px;">
+            <div class="itemNote">高度必须带有css定义的单位如：px,em等。默认16px/28px</div>
+        </div>
     </div>
-    <!--
+    <div class="item">
+        <div class="itemName">超链接</div>
+        <div class="itemValue">
+            <input class="easyui-textbox" value="{$rec.href}" name="href" data-options="width:360"/>
+            <div class="itemNote">点击消息跳转到此地址，不跳转请留空</div>
+        </div>
+    </div>
     <div class="item">
         <div class="itemName">图片</div>
-        <div class="itemValue">vvvvvv</div>
+        <div class="itemValue" >
+            <div  style="position:relative; width: 360px; " >
+                <img src="{$rec.imgurl}" alt="找不到图片" style="max-width: 100%;"/>
+            </div>
+            更换图片请：<input type="file" name="imagefile" id="imagefile" accept="image/gif, image/jpeg, image/png" multiple="multiple" />
+            <!-- <div class="OUI-btn" id="btn_upload" style="font-size: 14px; background-color: #669;">上传</div> -->
+        </div>
     </div>
-    -->
     <input type="hidden" name="id" value="{$rec.id}" />
 </div>
 </form>
@@ -153,6 +168,7 @@
         var rightS="{$rightS}";
         if("1"!=rightS) $("#cb_systempush").combobox({readonly:true});
 
+        //保存消息按钮
         $("#btn_saveRec").on("click",function () {
             var systempush=$("#cb_systempush").combobox('getValue');
 console.log("systempush="+systempush);
@@ -160,13 +176,23 @@ console.log("systempush="+systempush);
                 $.messager.alert('','您没权修改系统推送的消息','warning');
                 return;
             }
-            var paras=$("#frm_record").serializeArray();
-            paras.push({name:"range",value:range});
-            paras.push({name:"contextToken",value:contextToken});
-            paras.push({name:"func",value:"saveRec"});
-            console.log(paras);
-            $.post("__URL__/main",paras,function (data) {
-                console.log(data,data.id);
+ 
+            var fm=new FormData($('#frm_record')[0]);   //读取form标签数据构造上传数据对象
+            fm.append("contextToken",contextToken); //附加数据对象属性
+            fm.append("range",range);
+            fm.append("func","saveRec");
+            fm.append("contextToken",contextToken);
+            $.ajax({
+                type:'post',
+                dataType:'json',
+                url:"__URL__/main",
+                data:fm,
+                cache:false,
+                processData: false, //使数据不做处理
+                contentType: false, //不要设置Content-Type请求头
+            }).success(function (data) {
+                //alert(data);
+                console.log(data);
                 if('false'==data.success){
                     if('string'==typeof(data.msg) ) alert(data.msg);
                     else alert('保存时出现未知错误。');
@@ -177,7 +203,9 @@ console.log("systempush="+systempush);
                         $.messager.alert('','保存成功','info');
                     }
                 }
-            },'json');
+            }).error(function () {
+                alert("上传失败");
+            });
         });
 
     })();

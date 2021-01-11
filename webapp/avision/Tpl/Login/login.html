@@ -107,9 +107,11 @@
             $("#password").val("");
             $("form:first").submit();
         });
-
+		setTimeout(function () {
+            if('1'==serverPara.popupMsg) alert(serverPara.message);	//弹出服务端要求显示的信息
+        },200);
         //在完成所有初始化工作后执行
-        if('1'==serverPara.popupMsg) alert(serverPara.message);	//弹出服务端要求显示的信息
+
 
     });
 

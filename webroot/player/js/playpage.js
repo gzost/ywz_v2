@@ -389,7 +389,7 @@ console.log("isHorizontal",_this.isHorizontal());
 
         if(""==playerOpt.source){
             playerOpt.skinLayout= [];
-            $(local.blkLeftTime).html("没有信号");
+            $(local.blkLeftTime).html("直播暂停");
         }else{
             playerOpt.skinLayout= [
             { "name": "bigPlayButton", "align": "cc", "x": 30, "y": 80 },

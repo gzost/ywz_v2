@@ -1,5 +1,5 @@
 <?php
-
+//https://www.meipian/c/8526240 //美篇ID
 $url=array(
     "https://www.meipian.cn/3bmpvig0",    //冰岛5
     "https://www.meipian.cn/3bl11lft",    //冰岛4

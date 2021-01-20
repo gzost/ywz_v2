@@ -11,16 +11,14 @@ function SmsHelper()
 {
 	//发送频率限制在60秒内
 	this.timelimit = 120;
+	this.sendUrl = '';	//后台发送短信接口地址
+	this.product='易网真';		//短信中携带的产品名称
+	this.smsTpl='SMS_37125132';		//短信模板编码
 
-	this.sendUrl = '';
-
-	this.count = 120;
-
-	this.btnId = '';
-
-	this.txtOrigin = '';
-
-	this.isCounting = false;
+	this.count = 120;	//发送按钮冷却计数值
+	this.btnId = '';	//发送按钮DOM id属性
+	this.txtOrigin = '';	//发送按钮原始字串
+	this.isCounting = false;	//发送按钮冷却中
 
 	this.Init = function(url, btnId)
 	{
@@ -61,18 +59,28 @@ function SmsHelper()
 	this.disCount = function()
 	{
 		this.count--;
+		var sendBtn=$('#'+this.btnId);
 		if(0 == this.count)
 		{
 			//倒计完
-			$('#'+this.btnId).linkbutton({ text : this.txtOrigin })
-			$('#'+this.btnId).linkbutton('enable');
+			if("Function"==sendBtn.linkbutton){
+                sendBtn.linkbutton({ text : this.txtOrigin });
+                $('#'+this.btnId).linkbutton('enable');
+			}else{
+                sendBtn.html(this.txtOrigin);
+			}
 			this.isCounting = false;
 		}
 		else
 		{
 			this.isCounting = true;
-			$('#'+this.btnId).linkbutton('disable');
-			$('#'+this.btnId).linkbutton({ text : this.txtOrigin+'('+this.count+')' })
+            if("Function"==sendBtn.linkbutton){
+                sendBtn.linkbutton('disable');
+                sendBtn.linkbutton({ text : this.txtOrigin+'('+this.count+')' });
+            }else{
+                sendBtn.html(this.count);
+			}
+
 			setTimeout('window.smsTimer()', 1000);
 		}
 	}
@@ -80,7 +88,7 @@ function SmsHelper()
 	//发送短信
 	this.SendSms = function (phone)
 	{
-		var postData={ "phone": phone};
+		var postData={ "phone": phone, "product":this.product, "smsTpl":this.smsTpl};
 		this.txtOrigin = $('#'+this.btnId).text();
 		this.count = this.timelimit;
 

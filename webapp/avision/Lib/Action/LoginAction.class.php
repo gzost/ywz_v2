@@ -6,8 +6,10 @@
 
 require_once APP_PATH.'../public/Authorize.Class.php';
 require_once APP_PATH.'../public/Ou.Function.php';
-require_once APP_PUBLIC.'Authorize.Class.php';
+require_once APP_PATH.'Common/functions.php';
 require_once APP_PUBLIC.'gd.php';
+require_once APP_PUBLIC.'aliyun/Sms.Class.php';
+require_once LIB_PATH.'Model/UserModel.php';
 //require_once WEB_ROOT.'/test/gd.php';
 
 class LoginAction extends Action {
@@ -50,7 +52,7 @@ class LoginAction extends Action {
 	    $webVar=array("contextid"=>session_id(), "popupMsg"=>'0');
 	    $work=$_POST['work'];   //申请的登录功能，没定义为初始化
         $webVar['title']=(empty($_REQUEST['title']))? self::DEF_TITLE:$_REQUEST['title'];
-
+        $webVar['smsUrl']=U('Login/smsSend');
         if(empty($work)){
             $acceptUrl=(empty($_REQUEST['acceptUrl']))? self::DEF_ACCEPTURL :$_REQUEST['acceptUrl'];
 //$acceptUrl = "/play.html?ch=1098";
@@ -63,11 +65,27 @@ class LoginAction extends Action {
             $webVar["account"]=$account=$_POST["account"];
             $password=$_POST["MD5password"];
             $keepLogin=$_POST["keepLogin"];
+            $loginMode=$_POST['loginMode']; //登录模式：account-账号登录；sms-短信登录
+            $phone=$_POST['phone']; //电话号码
+            $code=$_POST['code'];   //验证码
 
             $webVar['acceptUrl']=urlencode(getPara(self::PARA_ACCEPTURL));
             try{
                 if($contextid !== session_id()) throw new Exception("数据错误！");
-                if(strlen($account) < self::MIN_ACCOUNT_LEN || strlen($password) < self::MIN_PASSWORD_LEN ) throw new Exception("用户名或密码不符合规定。");
+                if($loginMode=='account'){
+                    if(strlen($account) < self::MIN_ACCOUNT_LEN || strlen($password) < self::MIN_PASSWORD_LEN ) throw new Exception("用户名或密码不符合规定。");
+                }else{
+                    //短信登录
+                    $sms = new Sms();
+                    $smsCheck = $sms->Check($phone, $code);
+                    if(!$smsCheck) throw new Exception("验证码错误");
+                    //若同一电话号码关联了多个账号，只查找第一个
+                    $userRec=D('user')->where(array('phone'=>$phone))->field('account,password')->find();
+                    if(empty($userRec)) throw new Exception("没找到此电话号码关联的账号，请先注册。");
+                    $account=$userRec['account'];
+                    $password=$userRec['password'];
+                }
+
                 $auth=new authorize();
                 $ret=$auth->issue($account,$password);
                 if(!$ret) throw new Exception("用户名或密码错误！");
@@ -90,7 +108,7 @@ class LoginAction extends Action {
 
 	public function test(){
         $acceptUrl=urlencode("/play.html?ch=1098");
-        header("location:/home.php/Login/login.html?acceptUrl=".$acceptUrl."&title=".urlencode("测试?<H>"));
+        header("location:/home.php/Login/login.html?acceptUrl=".$acceptUrl."&title=".urlencode("测试?"));
         return;
     }
 	public function logout(){
@@ -104,5 +122,128 @@ class LoginAction extends Action {
         $text=$gd->generateString(4,false);
         $text="33Pw";
         $gd->verifyPicture($text);
+    }
+
+    /**
+     * 发送验证短信
+     * @param $phone    string 手机号码
+     * @param $product  string 短信上显示的产品名称
+     * @param $smsTpl   string 阿里云短信发送模板code
+     * @return string
+     */
+    public function smsSend($phone = '',$product='易网真',$smsTpl='SMS_37125132',$ajax=true)
+    {
+        $sms = new Sms();
+        //生成6位随机数字
+        $code = RandNum(6, null, null, 'num');
+        $rtJson=$sms->SendRegSms($phone, $code, $ip = getip(),$product,$smsTpl);
+        if($ajax)  echo $rtJson;
+        else return $rtJson;
+    }
+
+    /**
+     * 输出注册登记页面
+     * 可通过POST或GET传递以下参数
+     *  acceptUrl - 登录成功后要跳转的页面
+     *  suid - 推荐人编号
+     */
+    public function signup(){
+	    $webVar=$_REQUEST;
+	    $webVar['smsUrl']=U('Login/smsSend');
+	    $webVar['contextid']=session_id();
+        if(!empty($webVar['acceptUrl'])) $webVar['acceptUrl']=urldecode($webVar['acceptUrl']);
+
+        $this->assign($webVar);
+        $this->display("signup");
+    }
+
+    //执行注册,以Json返回结果
+    public function doRegisterJson(){
+        //读取前端变量
+        $contextid=$_POST["contextid"];
+        $account=$_POST["account"];
+        $phone=$_POST["phone"];
+        $password=$_POST["MD5password"];
+        $code=$_POST["code"];
+        $suid=intval($_POST['suid']);
+
+        try{
+            if($contextid != session_id()) throw new Exception("非法调用");
+            if(strlen($account)<6) throw new Exception("用户账号最少应有6个字符。");
+            if(strlen($phone)<11 || strlen($code)!=6) throw new Exception("缺少手机号码或验证码");
+
+            $sms = new Sms();
+            $smsCheck = $sms->Check($phone, $code);
+            if(!$smsCheck) throw new Exception("验证码错误");
+
+            $record=array(
+                'account'=>$account,
+                'password'=>$password,
+                'status'=>'正常',
+                'bozhu'=>'no',
+                'phone'=>$phone
+            );
+            $userid=D("user")->adduser($record);    //建立用户记录
+
+        }catch (Exception $e){
+            Oajax::errorReturn($e->getMessage());
+            return;
+        }
+
+        //以下处理忽略错误
+        try{
+            //记录传播者id
+            if($suid > 0){
+                $record=array(
+                    'chnid'=>0,
+                    'suid'=>$suid,
+                    'tuid'=>$userid,
+                    'activety'=>1
+                );
+                D('spread')->add($record);
+            }
+        }catch (Exception $e){
+
+        }
+	    Oajax::successReturn();
+    }
+
+    public function resetPassword(){
+        $webVar=$_REQUEST;
+        $webVar['smsUrl']=U('Login/smsSend');
+        $webVar['contextid']=session_id();
+        if(!empty($webVar['acceptUrl'])) $webVar['acceptUrl']=urldecode($webVar['acceptUrl']);
+
+        $this->assign($webVar);
+        $this->display("resetPassword");
+    }
+
+    public function doResetPasswordJson(){
+        try{
+            if($_POST['contextid']!=session_id()) throw new Exception('上下文错误');
+            $account=$_POST['account'];
+            $phone=$_POST['phone'];
+            if('step1'==$_POST['work']){
+                if(empty($account)||empty($phone)) throw new Exception('缺少参数');
+                $userid=D("user")->where(array('account'=>$account,'phone'=>$phone))->getField('id');
+                if($userid <1) throw new Exception('账号不存在或手机号码错误');
+
+                $rt=$this->smsSend($phone,'易网真','SMS_37125136',false);    //发送身份认证短信
+            }elseif('step2'==$_POST['work']){
+                $code=$_POST['code'];
+                $password=$_POST['MD5password'];
+
+                $sms = new Sms();
+                $smsCheck = $sms->Check($phone, $code);
+                if(!$smsCheck) throw new Exception("验证码错误");
+
+                $rt=D("user")->where(array('account'=>$account))->setField('password',$password);
+                if(false===$rt) throw new Exception('重置密码失败');
+            }
+        }catch (Exception $e){
+            Oajax::errorReturn($e->getMessage());
+            return;
+        }
+        Oajax::successReturn();
     }
 }

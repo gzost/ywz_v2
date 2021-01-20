@@ -62,7 +62,11 @@ class CH_ccjyjAction extends ChomeBaseAction
     public function login(){
         setPara('acceptUrl',U('index'));
         setPara('coverImg','__ROOT__/home/CH_ccjyj/images/guestbanner.jpg');
-        $this->redirect("Home/login");
+        //$this->redirect('Home/login');
+        //return;
+        $url=U("Login/login");
+        $url .= "?title=禅城区教师再教育平台&acceptUrl=".U("index");
+        redirect($url);
     }
 
     public function userInfo(){

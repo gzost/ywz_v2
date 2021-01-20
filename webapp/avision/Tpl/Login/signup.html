@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<!-- 重置密码页面 -->
+<!-- 用户登录页面 -->
 <html>
 <head>
 	<meta charset="UTF-8">
 	<meta name="keywords" content="易网真,视频直播" />
-	<meta name="description" content="重置密码" />
+	<meta name="description" content="用户注册" />
 	<meta name="author" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 	<meta name="apple-mobile-web-app-capable" content="yes">
@@ -28,51 +28,47 @@
 <body class="login">
 <div class="account-container login stacked">
 	<div class="content clearfix">
-		<form  method="post" id="fm_resetPassword">
-			<h1>重置密码</h1>
+		<form  method="post" id="fm_signup">
+			<h1>免费注册</h1>
 			<div class="login-fields">
 				<div class="field">
 					<label for="account">用户账号:</label>
-					<p class="field_desc">①请输入账号及在平台上预留的手机号码</p>
+					<p class="field_desc">账号：6个以上的英文字母及数字</p>
 					<input type="text" id="account" name="account" value="{$account}" placeholder="输入账号" class="login username-field" />
 				</div> <!-- /field -->
-				<div class="field">
-					<label for="phone">手机号码:</label>
-					<input type="text" id="phone" name="phone" value="" placeholder="输入手机号码" class="login phone-field"/>
-				</div>
-			</div>
-			<div class="login-actions">
-				<div id="btn-step1" class="button btn btn-primary">下一步</div>
-			</div>
 
-			<div class="login-fields step2" style="display: none;">
-				<div class="field">
-					<label for="code"></label>
-					<p class="field_desc">②我们已经发送了验证码到您的手机上</p>
-					<input type="text" id="code" name="code" value="" placeholder="输入验证码" class="login" style="display:inline-block;width: 90px; padding: 10px;"/>
-				</div>
 				<div class="field">
 					<label for="password">密码:</label>
-                    <p class="field_desc">新密码：至少包括英文字母，数字，特殊字符中的两种</p>
+                    <p class="field_desc">密码：至少包括英文字母，数字，特殊字符中的两种</p>
 					<input type="password" id="password" name="password" value="" placeholder="最少6个字符" class="login password-field"/>
 				</div> <!-- /password -->
                 <div class="field">
                     <label for="password2">密码:</label>
                     <input type="password" id="password2" name="password2" value="" placeholder="再次输入密码" class="login password-field"/>
                 </div> <!-- /password 2-->
+                <div class="field">
+                    <label for="phone">手机号码:</label>
+                    <p class="field_desc">我们将发送验证短信到此手机上，忘记密码时也可以通过此手机找回</p>
+                    <input type="text" id="phone" name="phone" value="" placeholder="输入手机号码" class="login phone-field"/>
+                </div>
+                <div class="field">
+                    <p class="field_desc">验证码有效时间为10分钟</p>
+                    <input type="text" id="code" name="code" value="" placeholder="输入验证码" class="login" style="display:inline-block;width: 90px; padding: 10px;"/>
+                    <div id="smsBtn" class="btn btn-primary" >发送验证码</div>
+                </div>
 			</div> <!-- /login-fields -->
 
-			<div class="login-actions step2" style="display: none;">
-				<div id="btn-step2" class="button btn btn-warning btn-large">重置密码</div>
+			<div class="login-actions">
+				<div id="btn-signup" class="button btn btn-warning btn-large">注册</div>
 			</div> <!-- .actions -->
-
+			<input type="hidden" name="contextid" value="{$contextid}">	<!-- 跟踪登录上下文页面 -->
             <!-- <input type="hidden" name="MD5password" value="*"> 	 经过MD5运算后的密码串 -->
-
+			<input type="hidden" name="work" value="signup">
 		</form>
 
 
 		<div class="login-extra" style="border-top: 1px dotted #ccc; padding-top: 10px;">
-			<div id="btn_signup" style="white-space: nowrap; float: left;">想起来了? <a href="#" onclick="$('#fm_login').submit();">登录</a></div>
+			<div id="btn_signup" style="white-space: nowrap; float: left;">已经有账号? <a href="#" onclick="$('#fm_login').submit();">登录</a></div>
 
 		</div> <!-- /login-extra -->
 	</div> <!-- /content -->
@@ -81,7 +77,7 @@
 <div id="blk_popup" class="easyui-window" style="width: 300px; height: 160px;"
     data-options="border:'thin',title:'',collapsible:false,minimizable:false,maximizable:false,modal:true,closed:true">
     <div style="text-align: center; padding-top: 40px; font-size: 16px;">
-        <p>密码重置成功，请登录系统</p>
+        <p>注册成功，请登录系统</p>
         <form id='fm_login' action="__URL__/login" method="post">
             <input type="hidden" name="acceptUrl" value="{$acceptUrl}" >
             <input type="hidden" name="title" value="{$title}" >
@@ -93,97 +89,24 @@
 <script src="__PUBLIC__/jeasyui/jquery.min.js" ></script>
 <script type="text/javascript" src="__PUBLIC__/js/jquery.md5.js"></script>
 <load href="__PUBLIC__/jeasyui/jquery.easyui.min.js" />
+<script type="text/javascript" src="__PUBLIC__/js/sms.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function () {
         var serverPara={	//服务端传递的变量
-            contextid:"{$contextid}",
             popupMsg:"{$popupMsg}",		//='1'弹出提示框，显示message
             message:"{$message}",
+            suid:"{$suid}",     //推荐人ID
+            smsUrl:"{$smsUrl}",      //用于发送短信的URL
             acceptUrl:"{$acceptUrl}",   //登录成功跳转地址
-            doUrl:"__URL__/doResetPasswordJson"    //执行注册ajax调用
+            registerUrl:"__URL__/doRegisterJson"    //执行注册ajax调用
 		};
         serverPara.message=$('<div />').html(serverPara.message).text();	//解码可能存在的html实体
 
-        //第一步按钮
-		$("#btn-step1").on("click",function () {
-            var formdata= new FormData();
-            formdata.set('contextid',serverPara.contextid);
-            formdata.set('work','step1');
-			formdata.set('account',$("#fm_resetPassword input[name='account']").val());
-            formdata.set('phone',$("#fm_resetPassword input[name='phone']").val());
-            $.ajax({
-                type:'post',
-                url:serverPara.doUrl,
-                data:formdata,
-                dataType:'json',
-                cache:false,
-                processData:false,
-                contentType:false,
-                success:function(json){
-                    console.log(json);
-                    if(json.success=='true'){
-                        $("#btn-step1").parent().hide();
-                        $(".step2").show();
-                        $("#account").attr("readonly",true);
-                        $("#phone").attr("readonly",true);
-					}
-                    else{
-                        $.messager.alert('','出错了：'+json.msg,'error');
-                    }
-                }
-            });
-        });
+        var sms = new SmsHelper();
+        sms.Init(serverPara.smsUrl, 'smsBtn');
 
-		//第二步按钮
-		$("#btn-step2").on("click",function () {
-            try{
-                //验证码是否已输入
-                var code=$("#code").val();
-                if(code.length !=6) throw "请输入手机短信收到的6位验证码。";
-
-                //校验密码
-                var count=0;
-                var password=$("#password").val();
-                if(password.length<6) throw "密码不能短于6个字符";
-                if(null != password.match(/[a-z]/)) count++;
-                if(null != password.match(/[A-Z]/)) count++;
-                if(null != password.match(/\d/)) count++;
-                if(null != password.match(/[~!@#$%^&*()_+=-`{},.<>:";'\\|]/)) count++;
-                if(count<2) throw "密码至少包括小写字母、大写字母、数字、符号中的两种";
-                var password2=$("#password2").val();
-                if(password != password2) throw "两次输入的密码不一致";
-
-                var formdata= new FormData();
-                formdata.set('contextid',serverPara.contextid);
-                formdata.set('work','step2');
-                formdata.set('account',$("#fm_resetPassword input[name='account']").val());
-                formdata.set('phone',$("#fm_resetPassword input[name='phone']").val());
-                formdata.set('code',code);
-                formdata.set('MD5password',$.md5(password));
-                $.ajax({
-                    type:'post',
-                    url:serverPara.doUrl,
-                    data:formdata,
-                    dataType:'json',
-                    cache:false,
-                    processData:false,
-                    contentType:false,
-                    success:function(json){
-                        console.log(json);
-                        if(json.success=='true'){
-                            $("#blk_popup").window('open');
-                        }
-                        else{
-                            $.messager.alert('','出错了：'+json.msg,'error');
-                        }
-                    }
-                });
-            }catch (err) {
-                $.messager.alert('',err,'warning');
-            }
-        });
-        //处理发送短信按钮
+        //处理注册按钮
         $("#btn-signup").on("click",function () {
 
             try{

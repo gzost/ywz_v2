@@ -238,6 +238,9 @@ body.login {
 .login-fields .password-field {
     background: url(../images/signin/password.png) no-repeat;
 }
+.login-fields .phone-field {
+    background: url(../images/signin/phone.png) no-repeat;
+}
 .login-actions {
     /* float: left; */
     position: relative;
@@ -328,11 +331,9 @@ span.login-checkbox > input[type='checkbox']:checked + label {
 }
 .fb {
     width: 162px;
-    background: url(../images/signin/fb_btn.png) no-repeat;
+    background: url(../images/signin/sms_btn.png) no-repeat;
 }
-.fb a {
-    padding: 5px 0 0 31px;
-}
+
 .button {
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
@@ -371,6 +372,7 @@ span.login-checkbox > input[type='checkbox']:checked + label {
     .login-fields input {
         width: 160px;
     }
+
     .login-social {
         width: 100%;
     }

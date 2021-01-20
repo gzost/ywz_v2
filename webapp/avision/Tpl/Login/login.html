@@ -14,24 +14,59 @@
 	<link rel="stylesheet" href="__PUBLIC__/css/bootstrap.css">
 	<link type="text/css" rel="stylesheet" href="__PUBLIC__/css/login.css" />
 
+	<style>
+		.login-mode span{
+			display: inline-block;
+			padding: 10px 0;
+			margin-bottom: 10px;
+		}
 
+		.login-mode .active-mode{
+			font-size: 2em;
+			font-weight: bold;
+			color: #001122;
+			border-bottom: 2px solid #006699;
+		}
+		@media (max-width: 480px) {
+
+		}
+	</style>
 </head>
 <body class="login">
 <div class="account-container login stacked">
 	<div class="content clearfix">
 		<form  method="post">
-			<h1>登录</h1>
-			<div class="login-fields">
-				<p>易网真账号登录:</p>
-				<div class="field">
-					<label for="username">用户名:</label>
-					<input type="text" id="username" name="account" value="{$account}" placeholder="用户名" class="login username-field" />
-				</div> <!-- /field -->
+			<div class="login-mode">
+				<span id="mode_account" class="active-mode" >账号登录</span>
+				<span style="width: 1em;"> </span>
+				<span id="mode_sms">短信登录</span>
+			</div>
 
-				<div class="field">
-					<label for="password">密码:</label>
-					<input type="password" id="password" name="password" value="" placeholder="密码" class="login password-field"/>
-				</div> <!-- /password -->
+			<div class="login-fields">
+				<p> </p>
+				<div id="account-login-field">
+					<div class="field">
+						<label for="username">用户名:</label>
+						<input type="text" id="username" name="account" value="{$account}" placeholder="账号" class="login username-field" />
+					</div> <!-- /field -->
+
+					<div class="field">
+						<label for="password">密码:</label>
+						<input type="password" id="password" name="password" value="" placeholder="密码" class="login password-field"/>
+					</div> <!-- /password -->
+				</div>
+				<div id="sms-login-field" style="display: none;">
+					<div class="field">
+						<label for="phone">手机号码:</label>
+						<p class="field_desc">我们将发送验证短信到此手机上</p>
+						<input type="text" id="phone" name="phone" value="" placeholder="输入手机号码" class="login phone-field"/>
+					</div>
+					<div class="field">
+						<p class="field_desc">验证码有效时间为10分钟</p>
+						<input type="text" id="code" name="code" value="" placeholder="输入验证码" class="login" style="display:inline-block;width: 90px; padding: 10px;"/>
+						<div id="smsBtn" class="btn btn-primary" >发送验证码</div>
+					</div>
+				</div>
 
 			</div> <!-- /login-fields -->
 
@@ -45,6 +80,7 @@
 			<input type="hidden" name="contextid" value="{$contextid}">	<!-- 跟踪登录上下文页面 -->
 			<input type="hidden" name="MD5password" value="*"> 	<!-- 经过MD5运算后的密码串 -->
 			<input type="hidden" name="work" value="auth">
+			<input type="hidden" name="loginMode" value="account">	<!-- 登录模式 -->
 		</form>
 
 		<div class="login-social">
@@ -54,18 +90,18 @@
 				<a href="/home.php/Home/wxLogin.html?backUrl={$acceptUrl}" class="btn_1">微信登录</a>
 			</div>
 			<!--
-                            <div class="btn_extlogin fb">
-                                <a href="#" class="btn_2">Facebook</a>
-                            </div>
-            -->
+			<div class="btn_extlogin fb">
+				<a href="__URL__/smsLogin??backUrl={$acceptUrl}" class="btn_2"> 短信登录</a>
+			</div>
+			-->
 		</div>
 		<!--
 		<img src="/home.php/Login/verifyPicture.html" alt="验证码" />
 		-->
 
 		<div class="login-extra">
-			<div style="white-space: nowrap; float: left;">还没账号? <a href="./signup.html">注册</a></div>
-			<div style="white-space: nowrap; float: right;" >忘记密码? <a href="#">找回</a></div>
+			<div id="btn_signup" style="white-space: nowrap; float: left;">还没账号? <a href="#">注册</a></div>
+			<div id="btn_resetPassword" style="white-space: nowrap; float: right;" >忘记密码? <a href="#">找回</a></div>
 		</div> <!-- /login-extra -->
 
 	</div> <!-- /content -->
@@ -74,27 +110,53 @@
 		登录中...
 	</div>
 </div> <!-- /account-container -->
+<div style="display: none">
+	<!-- 用于注册POST相关参数-->
+	<form id="fm_signup" method="post" action="__URL__/signup.html">
+		<input type="text" name="title" value="{$title}">
+		<input type="text" name="acceptUrl" value="{$acceptUrl}">
+	</form>
+
+	<!-- 用于重置密码POST相关参数-->
+	<form id="fm_resetPassword" method="post" action="__URL__/resetPassword.html">
+		<input type="text" name="title" value="{$title}">
+		<input type="text" name="acceptUrl" value="{$acceptUrl}">
+	</form>
+</div>
 
 <script src="__PUBLIC__/jeasyui/jquery.min.js" ></script>
 <script type="text/javascript" src="__PUBLIC__/js/jquery.md5.js"></script>
+<script type="text/javascript" src="__PUBLIC__/js/sms.js"></script>
 
 <script type="text/javascript">
     $(document).ready(function () {
         var serverPara={	//服务端传递的变量
-            popupMsg:"{$popupMsg}",
-            message:"{$message}"
+            popupMsg:"{$popupMsg}",		//='1'弹出提示框，显示message
+            message:"{$message}",
+			smsUrl:"{$smsUrl}"      //用于发送短信的URL
 		};
         serverPara.message=$('<div />').html(serverPara.message).text();	//解码可能存在的html实体
 
-        //"登录"按钮处理
+        var sms = new SmsHelper();
+        sms.Init(serverPara.smsUrl, 'smsBtn');
+        var loginMode='account';	//登录模式[account|sms]
 
+        //"登录"按钮处理
         $("#btn-login").on("click",function () {
             var username=$("#username").val();
             var password=$("#password").val();
+            var phone=$("#phone").val();
+            var code=$("#code").val();
 
             try{
-            	if( username.length<5 ) throw "用户名必须多于5个字符。";
-            	if( password.length<6 ) throw "密码必须多于6个字符。";
+                if(loginMode=='account'){
+                    if( username.length<3 ) throw "用户名必须多于5个字符。";
+                    //if( password.length<6 ) throw "密码必须多于6个字符。";
+				}else{
+                    if(phone.length!=11) throw "请输入11位手机号码。";
+					if(code.length != 6) throw "请输入短信收到的6位验证码";
+				}
+
 			}catch (e) {
                 alert(e);
 				return;
@@ -112,7 +174,44 @@
         },200);
         //在完成所有初始化工作后执行
 
-
+		$(".login-mode").on("click",function (event) {
+		    var active=event.target;
+		    var id=active.id;
+			if(active.id=='mode_sms'){
+			    $("#mode_account").removeClass('active-mode');
+			    $("#account-login-field").hide();
+			    $("#sms-login-field").show();
+			    loginMode='sms';
+			}else{
+                $("#mode_sms").removeClass('active-mode');
+                $("#account-login-field").show();
+                $("#sms-login-field").hide();
+                loginMode='account';
+			}
+            $(active).addClass('active-mode');
+            $("form:first").find("[name='loginMode']").val(loginMode);
+        });
+        //发送验证码按钮
+        $("#smsBtn").on("click",function () {
+            var phone=$("#phone").val();    //取电话号码
+            try{
+                if(phone.length != 11) throw "请输入11位的中国大陆手机号码";
+                if(sms.isCounting) throw "不可频繁发送验证码，请等待倒计时结束。";
+                sms.smsTpl='SMS_37125134';	//登录验证短信
+                sms.btnClick(phone);
+            }catch(err){
+                alert(err);
+                return;
+            }
+        });
+		//注册链接
+		$("#btn_signup").on("click",function () {
+			$("#fm_signup").submit();
+        });
+		//找回密码链接
+        $("#btn_resetPassword").on("click",function () {
+            $("#fm_resetPassword").submit();
+        });
     });
 
 </script>

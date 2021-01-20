@@ -19,8 +19,8 @@ require_once APP_PATH.'../../secret/OuSecret.class.php';
 
 class Sms
 {
-	//验证码30分钟内有效
-	protected $timeout = 1800;
+	//验证码10分钟内有效
+	protected $timeout = 600;
 	//限制120秒内只能发送一次短讯
 	protected $timelimit = 60;
 	//message中的task
@@ -218,10 +218,20 @@ logfile('SMS send ret:'.json_encode2($content),LogLevel::DEBUG);
 		return $m;
 	}
 
-	/*
-	 * 发送验证短讯
+	/**
+	 * 发送验证吗短讯
+	 * @param $phone    string  手机号码
+	 * @param $code int 验证码
+     * @param $ip
+     * @param $smsProduct   string 短信模板中的 $product变量
+     * @param $smsTplCode   string  短信模板代码
+     *  SMS_37125132    用户注册验证码
+     *  SMS_37125133    登录异常验证码
+     *  SMS_37125134    登录确认验证码
+     *  SMS_37125136    身份验证验证码
+     * @return string json
 	 */
-	public function SendRegSms($phone, $code, $ip = '')
+	public function SendRegSms($phone, $code, $ip = '',$smsProduct='易网真',$smsTplCode='SMS_37125132')
 	{
 		if('' == $ip)	{
 			$ip = getip();
@@ -255,7 +265,7 @@ logfile('SMS send ret:'.json_encode2($content),LogLevel::DEBUG);
 				$parm = array();
 				$parm['code'] = $code;
 				$parm['product'] = '易网真';
-				$msg = $this->sendSmsCom($phone, '易网真', 'SMS_37125132', $parm);
+				$msg = $this->sendSmsCom($phone, $smsProduct, $smsTplCode, $parm);
 				//$msg = null;
 				if(empty($msg))
 				{

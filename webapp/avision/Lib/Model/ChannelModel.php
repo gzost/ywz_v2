@@ -658,7 +658,10 @@ class ChannelModel extends Model {
 		$item['type'] = 'day30';
 		$item['memo'] = '支付成功后30天内有效';
 		$list[] = $item;
-
+        $item['name'] = '100天套餐';
+        $item['type'] = 'day100';
+        $item['memo'] = '支付成功后100天内有效';
+        $list[] = $item;
 		if($isArray)
 		{
 			return $list;
@@ -789,7 +792,26 @@ class ChannelModel extends Model {
 
 			$item['totalfee'] = $v;
 		}
-
+        else if('day100' == $t)
+        {
+            $item['t'] = 'day100';
+            $item['itemName'] = '100天套餐';
+            $item['start'] = time();
+            $item['days'] = $num;
+            if(1 == $num)
+            {
+                $item['meno'] = '支付成功后100天内有效。';
+                $item['end'] = strtotime(' +100 day');
+            }
+            else
+            {
+                $item['meno'] = '支付完成到第'.($num*100).'天的同一时间可收看。';
+                $item['end'] = strtotime(' +'.($num*100).' day');
+            }
+            //通过num计算fee
+            $v = $fee * $num;
+            $item['totalfee'] = $v;
+        }
 		//echo date('Y-m-d H:i:s', $item['start']);
 		//echo date('Y-m-d H:i:s', $item['end']);
 		return $item;

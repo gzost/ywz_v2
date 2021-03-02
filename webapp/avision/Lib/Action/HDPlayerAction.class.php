@@ -1461,6 +1461,8 @@ var_dump($location);
 	 */
 	function billPostSucess($t)
 	{
+		C('LOGFILE_LEVEL',3);
+		logfile('start POST bill',3);
 		try
 		{
 			$msgDal = new MessageModel();
@@ -1476,7 +1478,7 @@ var_dump($location);
 				$prepay = new PrepayModel();
 				$p = $prepay->where(array('tradeno'=>$attr['tradeno']))->find();
 				$pAttr = json_decode($p['attr'], true);
-
+logfile('getPrepay OK');
 				//获取用户信息
 				$userDal = new UserModel();
 				$u = $userDal->where(array('id'=>$p['userid']))->find();
@@ -1489,22 +1491,22 @@ var_dump($location);
 				$dbConsump = new ConsumpModel();
 				//NOTE:$p['totalfee']是以分来计算，同网真点的转换率一致，如果以后不一致请变更
 				$dbConsump->recharge($p['userid'], $p['totalfee'], $p['totalfee'], $pAttr['bill']['itemName'], 'wxPay', $p['id']);
-
+logfile('充值完成');
 				//消费网真点，添加用户包月或包日票据
 				$record=array('userid'=>$p['userid'], 'receipt'=>0,
 							'objtype'=>ConsumpModel::$TYPE['cash'],'qty'=>$p['totalfee'],
 							'happen'=>date('Y-m-d H:i:s'),'operator'=>$u['username'],'note'=>$pAttr['bill']['meno']);
 				$dbConsump->addRec($record);
-
+logfile('添加消费记录完成');
 				//写入票据
 				$chnUserDal = new ChannelreluserModel();
 				$chnUserDal->appendTicket($pAttr['bill']['chnId'], $p['userid'], $pAttr['bill']['start'], $pAttr['bill']['end']);
-
+logfile('写入票据完成');
 				//写入播主现金收支表
 				$cashMemo = '订购['.$chnInfo['name'].']到'.date('Y-m-d H:i:s', $pAttr['bill']['end']).'结束。';
 				$cashDal = new CashFlowModel($chnInfo['owner']);
 				$cashDal->bookChn($p['userid'], $u['username'], ((float)$p['totalfee'])/100, $pAttr['bill']['days'], $pAttr['bill']['chnId'], $cashMemo);
-
+logfile('写入播主现金收支表完成');
 				//logfile($cashDal->getLastSQL());
 				//传播者记录
 				if(!empty($pAttr['userpass']))
@@ -1517,7 +1519,7 @@ var_dump($location);
 						$ret = $upDal->CreateRec($up);
 					}
 				}
-
+logfile('传播者记录');
 				$msgDal->UpdateMsgStep(null, $t, -1);
 				//事务结束
 				$msgDal->commit();

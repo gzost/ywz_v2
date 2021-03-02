@@ -150,7 +150,10 @@ class ConsumpModel extends Model {
 			$values .=(isset($record[$f])?$record[$f]:'0').',';
 		}
 		foreach ($sfields as $f){
-			$values .=(isset($record[$f])?"'".$record[$f]."'":'""').',';
+		    if(isset($record[$f])) $fieldstr="'".mb_ereg_replace("'","\'",$record[$f])."'";
+		    else $fieldstr='""';
+            $values .= $fieldstr.',';
+			//$values .=(isset($record[$f])?"'".$record[$f]."'":'""').',';
 		}
 //dump($record);
 		$values .=$cu.' +balance ';

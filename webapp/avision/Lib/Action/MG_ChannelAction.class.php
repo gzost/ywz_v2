@@ -232,22 +232,32 @@ class MG_ChannelAction extends AdminBaseAction
             $targetMaxId=$dbChnRelUsr->where($cond)->Max("id");   //目标频道当前最大记录ID，目的是反向同步时，不用考虑之后的记录
             $sql = "insert into __PREFIX__channelreluser(chnid,uid,`type`,status,begindate,enddate,note,classify,note2) ";
             $sql.= "select $chnId,A.uid,A.`type`,status,A.begindate,A.enddate,A.note,A.classify,A.note2 from __PREFIX__channelreluser A left join";
-            $sql.= " (select uid  from __PREFIX__channelreluser where chnid= $chnId and `type`='会员') as B";
-            $sql.= " on A.uid=B.uid where A.chnid=$soureChnId and B.uid is NULL and A.`type`='会员' and A.status='正常' ";
+            //$sql.= " (select uid  from __PREFIX__channelreluser where chnid= $chnId and `type`='会员') as B";
+            //$sql.= " on A.uid=B.uid where A.chnid=$soureChnId and B.uid is NULL and A.`type`='会员' and A.status='正常' ";
+
+            //同时同步订购的观众
+            $sql.= " (select uid,type  from __PREFIX__channelreluser where chnid= $chnId and `type` in('会员','订购')) as B";
+            $sql.= " on A.uid=B.uid and A.type=B.type where A.chnid=$soureChnId and B.uid is NULL and A.`type` in('会员','订购') and A.status='正常' ";
+
             $sql=str_replace("__PREFIX__",C("DB_PREFIX"),$sql);
             $db=new Model();
             $result=$db->execute($sql);
-            //echo $db->getLastSql();
+//echo $db->getLastSql();
             echo "从选择的频道中同步了 $result 条会员记录到当前频道中。<br>";
             if($sync2source){
                 //echo "同步会员到源频道<br>";
                 $sql = "insert into __PREFIX__channelreluser(chnid,uid,`type`,status,begindate,enddate,note,classify,note2) ";
                 $sql.= "select $soureChnId,A.uid,A.`type`,status,A.begindate,A.enddate,A.note,A.classify,A.note2 from __PREFIX__channelreluser A left join";
-                $sql.= " (select uid  from __PREFIX__channelreluser where chnid= $soureChnId and `type`='会员') as B";
-                $sql.= " on A.uid=B.uid where A.chnid=$chnId and A.id<=$targetMaxId and B.uid is NULL and A.`type`='会员' and A.status='正常' ";
+
+                //$sql.= " (select uid  from __PREFIX__channelreluser where chnid= $soureChnId and `type`='会员') as B";
+                //$sql.= " on A.uid=B.uid where A.chnid=$chnId and A.id<=$targetMaxId and B.uid is NULL and A.`type`='会员'  and A.status='正常' ";
+                $sql.= " (select uid,type  from __PREFIX__channelreluser where chnid= $soureChnId and `type` in('会员','订购')) as B";
+                $sql.= " on A.uid=B.uid and A.type=B.type where A.chnid=$chnId and A.id<=$targetMaxId and B.uid is NULL and A.`type` in('会员','订购') and A.status='正常' ";
+
                 $sql=str_replace("__PREFIX__",C("DB_PREFIX"),$sql);
                 $db=new Model();
                 $result=$db->execute($sql);
+//echo $db->getLastSql();
                 echo "从当前频道同步了 $result 条会员记录到选择的频道中。<br>";
             }
             echo "<br>同步完成<br>";

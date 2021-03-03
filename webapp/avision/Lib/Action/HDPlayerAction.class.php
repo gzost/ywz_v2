@@ -1461,7 +1461,7 @@ var_dump($location);
 	 */
 	function billPostSucess($t)
 	{
-		C('LOGFILE_LEVEL',3);
+		C('LOGFILE_LEVEL',5);
 		logfile('start POST bill',3);
 		try
 		{
@@ -1519,7 +1519,7 @@ logfile('写入播主现金收支表完成');
 						$ret = $upDal->CreateRec($up);
 					}
 				}
-logfile('传播者记录');
+logfile('传播者记录:'.print_r($pAttr,true));
 				$msgDal->UpdateMsgStep(null, $t, -1);
 				//事务结束
 				$msgDal->commit();

@@ -1,6 +1,8 @@
 <?php
 //https://www.meipian/c/8526240 //美篇ID
 $url=array(
+    "https://www.meipian.cn/3ettkiqf",   //2019李华
+    "https://www.meipian.cn/3enrsqqe",   //2021梨花
     "https://www.meipian.cn/3bmpvig0",    //冰岛5
     "https://www.meipian.cn/3bl11lft",    //冰岛4
     "https://www.meipian.cn/3bkbqdwk",    //冰岛3
@@ -23,7 +25,7 @@ for($i=0; $i<502; $i++){
     ob_flush();
     flush();
     $fh= file_get_contents($url[$od]);
-    usleep(mt_rand(500,3000));
+    usleep(mt_rand(800,3000));
 }
 
 exit;

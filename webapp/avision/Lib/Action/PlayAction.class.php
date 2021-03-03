@@ -313,7 +313,9 @@ class PlayAction extends SafeAction{
                     $this->redirect('Play/showChnRegister',array('chnid'=>$this->chnid,"vodid"=>$this->vodid, "tab"=>$activetab, "agent"=>$this->para["ag"]));
                     break;
                 case 'subscribe':   //付费频道订阅(subscribe)
-                    $this->redirect('HDPlayer/chnbill', array('chnId'=>$this->chnid));
+                    $subscribePara=array('chnId'=>$this->chnid);
+                    if(!empty($this->para['du'])) $subscribePara['userpass']=$this->para['du'];
+                    $this->redirect('HDPlayer/chnbill', $subscribePara);
                     break;
                 case 'spread':
                     $webVar["spreadLoginUrl"]=U('Home/login',array('chnId'=>$this->chnid, 'wxonly'=>$wxOnly,  'bozhu'=>0, 'acceptUrl'=>$acceptUrl ));

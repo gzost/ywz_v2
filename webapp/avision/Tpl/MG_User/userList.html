@@ -43,14 +43,15 @@
         <table id="dg">
             <thead><tr>
                 <eq name="fixOrg" value="false">
-                    <th field="agentname" >{$fieldName.agentname}</th>
+                    <th field="agentname" editor="{type:'textbox'}">{$fieldName.agentname}</th>
+                    <th field="agent" editor="{type:'textbox'}" data-options="hidden:true">{$fieldName.agent}</th>
                 </eq>
-                <th field="account" data-options="halign:'center',sortable:true">{$fieldName.account}</th>
-                <th field="username" >{$fieldName.username}</th>
-                <th field="status" width="60" editor="{type:'combobox',options:{valueField:'label',textField:'value', data:[{label:'正常',value:'正常'},{label:'锁定',value:'锁定'}]}}">{$fieldName.status}</th>
-                <th field="password" width="150" editor="{type:'text'}" data-options="formatter:function(){ return '***';}">{$fieldName.password}</th>
-                <th field="phone" editor="{type:'text'}">{$fieldName.phone}</th>
-                <th field="idcard" editor="{type:'text'}">{$fieldName.idcard}</th>
+                <th field="account" editor="{type:'text'}" data-options="halign:'center',sortable:true,width:120">{$fieldName.account}</th>
+                <th field="username" editor="{type:'text'}">{$fieldName.username}</th>
+                <th field="status" width="80" editor="{type:'combobox',options:{valueField:'label',textField:'value', data:[{label:'正常',value:'正常'},{label:'锁定',value:'锁定'}]}}">{$fieldName.status}</th>
+                <th field="password" width="120" editor="{type:'text'}" data-options="formatter:function(){ return '***';}">{$fieldName.password}</th>
+                <th field="phone" width="120" editor="{type:'text'}">{$fieldName.phone}</th>
+                <th field="idcard" width="120" editor="{type:'text'}">{$fieldName.idcard}</th>
                 <th field="company" editor="{type:'text'}">{$fieldName.company}</th>
                 <th field="realname" editor="{type:'text'}">{$fieldName.realname}</th>
                 <th field="groups" editor="{type:'text'}">{$fieldName.groups}</th>
@@ -60,16 +61,16 @@
     <div id="tb" style="padding:5px;">
         <form id="ff" method="post" style="display: inline-block;">
             <span class="cond-item">机构:
-                <input class="easyui-combobox" name="agent" value="{$agent}" style=""
+                <input id="cb_agent" class="easyui-combobox" name="agent" value="{$agent}" style=""
                        data-options="width:100, height:24,
                        readonly:{$fixOrg},
                        valueField:'id',textField:'name',data:{$agentList}
                 " >
             </span>
-            <span class="cond-item" >{$fieldName.account}: <input class="easyui-textbox" name="account" value="{$account}" style="" data-options="width:80, height:24" ></span>
-            <span class="cond-item">{$fieldName.realname}: <input class="easyui-textbox" name="realname" value="{$realname}" style="" data-options="width:80, height:24" ></span>
-            <span class="cond-item">{$fieldName.phone}: <input class="easyui-textbox" name="phone" value="{$phone}" style="" data-options="width:80, height:24" ></span>
-            <span class="cond-item">{$fieldName.company}: <input class="easyui-textbox" name="company" value="{$company}" style="" data-options="width:80, height:24" ></span>
+            <span class="cond-item" >{$fieldName.account}: <input class="easyui-textbox" name="account" value="{$account}" style="" data-options="width:120, height:24" ></span>
+            <span class="cond-item">{$fieldName.realname}: <input class="easyui-textbox" name="realname" value="{$realname}" style="" data-options="width:120, height:24" ></span>
+            <span class="cond-item">{$fieldName.phone}: <input class="easyui-textbox" name="phone" value="{$phone}" style="" data-options="width:120, height:24" ></span>
+            <span class="cond-item">{$fieldName.company}: <input class="easyui-textbox" name="company" value="{$company}" style="" data-options="height:24" ></span>
             <span class="cond-item">{$fieldName.groups}: <input class="easyui-textbox" name="groups" value="{$groups}" style="" data-options="width:80, height:24" ></span>
         </form>
         <span class="cond-item" style="margin-right: 3em;"><a href="javascript:void(0)" class="easyui-linkbutton c8" onclick="$('#ff').submit();" style="width:80px; height: 22px;">查找</a></span>
@@ -79,7 +80,7 @@
                 <a id="Append" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true"
                     onclick="$('#dg').edatagrid('addRow');">增加</a>
             </eq>
-            <eq name="canDestroy" value="true">
+            <eq name="canDestroy" value="true 暂时不支持删除">
                 <a id="Remove" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true"
                     onclick="$('#dg').edatagrid('destroyRow');">删除</a>
             </eq>
@@ -146,8 +147,29 @@
             if(c=='true') return true;
             else return false;
         },
-        onBeforeSave:function(){
+        onAdd:function(index){
+            var agentName=$("#cb_agent").combobox("getText");    //读取当前选择的机构名称
+            var agentid=$("#cb_agent").combobox("getValue");
+            console.log('agenName='+agentName,agentid);
+
+            var ed= $("#dg").edatagrid("getEditor",{index:index,field:'agentname'});
+            $(ed.target).textbox('setValue',agentName);
+
+            var ed= $("#dg").edatagrid("getEditor",{index:index,field:'agent'});
+            $(ed.target).textbox('setValue',agentid);
+
+            var ed= $(this).edatagrid("getEditor",{index:index,field:'status'});
+            $(ed.target).combobox('setValue','正常');
+        },
+        onBeforeSave:function(index){
             var rt=confirm('要保存更改吗？');
+console.log("index=",index);
+            if(rt){
+                var agentid=$("#cb_agent").combobox("getValue");    //读取当前选择的机构id
+                if(agentid<1) agentid=10;   //没选择采用默认值
+                //$("#dg").edatagrid('updateRow',{index:index,row:{agent:agentid}});
+                //console.log("fd====",rt);
+            }
             return rt;
         },
         //当后台返回{"isError" :true }时跳触发

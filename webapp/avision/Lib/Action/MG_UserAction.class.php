@@ -64,6 +64,7 @@ class MG_UserAction extends AdminBaseAction{
                 $this->updateRecord();
                 break;
             case "save":
+                $this->save();
                 break;
         }
 
@@ -286,5 +287,32 @@ class MG_UserAction extends AdminBaseAction{
             echo json_encode2(array('isError' => true,'msg' => $e->getMessage() ));
             return;
         }
+    }
+
+    /**
+     * 保存新记录
+     */
+    private function save(){
+        $fields=array("account","username","password","agent","phone","idcard","company","realname","groups");
+        $record=array();
+        try{
+            if(empty($_POST['account'])||strlen($_POST['account'])<6) throw new Exception('账号应至少有6个字符');
+            if(empty($_POST['password'])||strlen($_POST['password'])<6) throw new Exception('密码应至少有6个字符');
+            foreach ($fields as $key){
+                $record[$key]=$_POST[$key];
+            }
+            if(!empty($record['password'])) $record['password']=md5($record['password']);
+            if(empty($record['username'])) $record['username']=$record['account'];
+            $db=D("user");
+            $id=$db->add($record);
+            if($id<1) throw new Exception('无法建立账号，更换账号名称试试！'.$db->getLastSql());
+            $record['id']=$id;
+        }catch (Exception $e){
+            $record['isError']=true;
+            $record['msg']=$e->getMessage();
+        }
+        Oajax::ajaxReturn($record);
+
+
     }
 }

@@ -1200,10 +1200,11 @@ var_dump($location);
 
 	/**
 	 * 某频道的支付界面，支付提醒及支付选项
-	 * $chnId 频道ID
-	 * $userpass 传播者ID
+	 * @param int $chnId 频道ID
+	 * @param int $userpass 传播者ID
+	 * @param string $pUrl	 V3播放器开始使用，付款成功后跳转地址
 	 */
-	public function chnbill($chnId=0, $userpass=0)
+	public function chnbill($chnId=0, $userpass=0, $pUrl='')
 	{
 		if(0 < $chnId)
 		{
@@ -1216,8 +1217,16 @@ var_dump($location);
 			{
 				//未登录，请先登录
 				//跳回到播放页面处理
-				$this->redirect('play',array('chnId'=>$chnId, 'u'=>$userpass));
+                if(empty($pUrl))
+                    $this->redirect('play',array('chnId'=>$chnId, 'u'=>$userpass));
+                else{
+                    redirect($pUrl);
+                }
+
 			}
+if($chnId==1098){
+    echo($pUrl);//exit();
+}
 
 			//读取可以购买
 			$chnDal = new ChannelModel();
@@ -1254,13 +1263,19 @@ var_dump($location);
 				$this->assign('isWx', 'false');
 			}
 
+			//根据不同播放器版本生成不同的付款成功跳转URL
+			if(empty($pUrl))
+				$viewUrl=U('play', array('chnId'=>$chnId, 'u'=>$userInfo['userId']));
+			else{
+				$viewUrl=$pUrl;
+			}
 			$this->assign('chnId', $chnId);
 			$this->assign('userpass', $userpass);
 			$this->assign('billPostUrl', U('billPost'));
 			$this->assign('billGetInfoUrl', U('billItemInfo'));
 			$this->assign('billPayCode', U('billPayCode'));
 			$this->assign('billPayCodeCheck', U('billPayCodeCheck'));
-			$this->assign('viewUrl', U('play', array('chnId'=>$chnId, 'u'=>$userInfo['userId'])));
+			$this->assign('viewUrl', $viewUrl);
 			$this->display('chnbill');
 		}
 	}

@@ -1,0 +1,187 @@
+<style>
+    .ticketItem{
+        display:inline-block;
+        position: relative;
+        padding: 10px 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+    }
+    .lineBreak{
+        margin: 10px 0;
+    }
+
+    .ticketItem select, .ticketItem input,.ticketItem textarea{
+        height: 30px;
+        padding: 0 4px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        font: 14px "Microsoft YaHei UI Light";
+    }
+</style>
+<div style="text-align: center; margin: 0px 0px;padding: 5px;box-sizing:border-box;">
+    <div class="chn-header" style="margin: 10px 5px;">
+        当前频道：{$chnName}({$chnId})
+    </div>
+
+    <!-- 工作数据框 -->
+    <div style="border: 1px solid #ddd; text-align: left;position: relative;">
+        <form id="fmTicket" method="post">
+            <div style="display:inline-block; margin:10px; padding-right: 30px; font-size: 1.2em;">
+                <input id="cbBill" type="checkbox" name="isBill" >收费频道
+
+            </div>
+            <a id="btnSave" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-save',plain:true">保存，使修改生效</a>
+            <div id="ticketList" style="margin:10px 20px 10px 10px;">
+                <div id="tickets">
+
+                </div>
+                <div style="text-align: left">
+                    <a id="btnAppend" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">增加</a>
+                </div>
+            </div>
+        </form>
+
+    </div>
+
+    <!-- 门票编辑显示模板 -->
+    <div id="ticketTpl" style="display: none;">
+        <div class="ticketItemG">
+            <div class="ticketItem">
+                <div style="white-space: nowrap;">
+                    门票类型：
+                    <select  name="type[]"   style="width: 120px;">
+                        <option value="day">日票</option>
+                        <option value="month">月票</option>
+                        <option value="define">自定义</option>
+                    </select>
+                    <div style="float: right">
+                        <a  href="javascript:void(0)" class="easyui-linkbutton " data-options="iconCls:'icon-remove',plain:true">删除</a>
+                    </div>
+
+                    <div class="lineBreak itemQty">
+                        定价(元)： <input type="text" name="amt[]" style="margin-right:40px; width:120px;" >
+                        时间长度：<input type="number" name="qty[]" min="1" style="width: 120px" >
+                    </div>
+                    <div class="lineBreak itemDate">
+                        有效时间从 <input type="datetime-local" name="bdate[]" >
+                        至 <input type="datetime-local" name="edate[]"  >
+                    </div>
+                    <div>
+                        门票说明：<textarea name="explain[]" style="width: 400px; height:60px; vertical-align:text-top; padding: 4px;"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div style="height: 10px;"></div>
+        </div>
+    </div>
+    <div style="text-align: left;">
+        说明：
+        <ul>
+            <li>不勾选 [收费频道] 不保存对门票的修改</li>
+            <li>[时间长度] 对于“日票”是天数，对于“月票”是自然月数，结束时间是自然月最后一天的24时</li>
+            <li>“日票，月票”的有效时间根据购票时间自动计算，无需指定有效时间范围</li>
+            <li>“自定义”门票需指定有效时间范围，无需设置 [时间长度]</li>
+
+        </ul>
+    </div>
+
+</div>
+
+
+
+<script>
+
+    (function () {
+        //获取页面传递过来的参数
+        //var tickectType={$tickectType|default=[]};  //门票类型列表[{"key":"","txt":""},...]
+        var tickect={$ticket|default=[]};   //频道当前可用门票列表[{},{}]
+        var isBill="{$isbill}";   //后台传递1-收费，0-不收费
+        var contextToken="{$contextToken}"; //上下文令牌
+        var chnId="{$chnId}";
+        //var paraStr="/contextToken/"+contextToken+"/chnId/"+chnId;  //附加到datagrid增删改URL的参数
+        console.log(tickect);
+
+        //公共参数
+        var billCheck=("1"==isBill)?true:false; //界面是否勾选了收费
+        var updateUrl="__URL__/set_ticketUpdateAjax";
+        var _this=this;
+
+        //根据后台数据设置初始显示页面
+        if("1"==isBill){
+            $("#cbBill").prop("checked",true);
+            $("#ticketList").show();
+        }else{
+            $("#cbBill").prop("checked",false);
+            $("#ticketList").hide();
+        }
+
+        //显示门票
+        var showTickets=function(tickects){
+            console.log(tickects.length);
+            $("#tickets").empty();
+            var length=tickects.length;
+            for( var i in tickects){
+                var targetObj = $("#ticketTpl>.ticketItemG").clone().appendTo("#tickets");
+                console.log(tickects[i]);
+
+                $(targetObj).find("select[name='type[]']").val(tickects[i].type);
+                $(targetObj).find("input[name='amt[]']").val(tickects[i].amt);
+                $(targetObj).find("textarea[name='explain[]']").val(tickects[i].explain);
+                $(targetObj).find("input[name='qty[]']").val(tickects[i].qty);
+                $(targetObj).find("input[name='bdate[]']").val(tickects[i].bdate);
+                $(targetObj).find("input[name='edate[]']").val(tickects[i].edate);
+            }
+        }
+
+        //增加一种门票
+        $("#btnAppend").on("click",function (event) {
+            console.log("append");
+            var targetObj = $("#ticketTpl>.ticketItemG").clone().appendTo("#tickets");
+            //$.parser.parse(targetObj);
+        });
+
+        //处理删除，获取tickets的所有点击，对点击“删除”按钮进行删除
+        $("#tickets").on('click',function (event) {
+            var triggerObj=event.target;
+            //console.log(triggerObj);
+            if($(triggerObj).text()=='删除'){
+                var item=$(triggerObj).parentsUntil('.ticketItemG');
+                //console.log(item);
+                $(item).remove();
+            }
+        });
+
+        //勾选收费频道事件
+        $("#cbBill").on("click",function () {
+            billCheck=$(this).is(':checked');
+            if(billCheck) $("#ticketList").show();
+            else $("#ticketList").hide();
+        });
+
+        //保存设置
+        $("#btnSave").on("click",function (event) {
+            console.log("save");
+            var postParam=$("#fmTicket").serializeArray();
+            postParam.push({name:'contextToken',value:contextToken});
+            postParam.push({name:'chnId',value:chnId});
+            //postParam.push({name:'func',value:'set_ticketUpdateAjax'});
+            console.log(postParam);
+
+            $.post(updateUrl,postParam,function (data) {
+                console.log("return",data);
+                if('object'==typeof(data)){
+                    if('true'==data.success) $.messager.alert("","保存成功","info");
+                    else{
+                        var msg="";
+                        if('string'==typeof(data.msg)) msg=data.msg;
+                        else msg="保存出错";
+                        $.messager.alert("",msg,"error");
+                    }
+                }
+            },'json');
+        });
+
+        //列出当前的门票种类列表
+        showTickets(tickect);
+     })();
+</script>

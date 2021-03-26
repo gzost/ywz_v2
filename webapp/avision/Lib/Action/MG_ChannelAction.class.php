@@ -411,4 +411,73 @@ class MG_ChannelAction extends AdminBaseAction
         $webVar["propertyData"]=$propertyData;
         return;
     }
+
+    /**
+     * 设置频道可购买的门票
+     * @param $webVar
+     */
+    private function set_ticket(&$webVar){
+        $dbChn=D("channel");
+        //$webVar['tickectType']=$dbChn->getTicketType(); //门票类型列表
+
+        //取本频道可用门票列表
+        $billAttr=getExtAttr($dbChn,array('id'=>$webVar['chnId']));
+        $webVar['isbill']=($billAttr['userbill']['isbill']=='true')?'1':'0'; //是1，否0 收费
+        $webVar['ticket']=(is_array($billAttr['ticket']))? json_encode2($billAttr['ticket']):'{}';
+
+        $webVar['contextToken']=session_id();
+        //dump($webVar);
+    }
+
+    /**
+     * 更新收费频道及门票信息
+     */
+    public function set_ticketUpdateAjax(){
+        //dump($_POST);
+        try{
+            if($_POST['contextToken'] != session_id()) throw new Exception("非法调用！");
+            $chnId=intval($_POST['chnId']);
+            if( $chnId<1) throw new Exception("缺少频道ID参数");
+            $numberOfTickets=count($_POST['type']);
+            //throw new Exception("数=".$numberOfTickets);
+            $ticket=array();
+            for($i=0; $i<$numberOfTickets; $i++){
+                $type=$_POST['type'][$i];
+                $explain=$_POST['explain'][$i]; //htmlspecialchars($_POST['explain'][$i]);
+                $amt=floatval($_POST['amt'][$i]);
+                if($amt <=0 ) throw new Exception("门票价格错误");
+                if('day'==$type || 'month'==$type ){
+                    $qty=intval($_POST['qty'][$i]);
+                    if($qty<1) throw new Exception("时间长度错误");
+                    if(empty($explain)) {
+                        if('day'==$type) $explain=sprintf("从购买之日起 %d 天有效。",$qty);
+                        else $explain=sprintf("从购买当月起 %d 个月有效。",$qty);
+                    }
+                    $ticket['T'.$i]=array('type'=>$type, 'amt'=>$amt, 'qty'=>$qty, 'explain'=>$explain);
+                }elseif ('define'==$type){
+                    $bdate=$_POST['bdate'][$i];
+                    $edate=$_POST['edate'][$i];
+                    if($bdate<'2000' || $edate <date("Y-m-d H:i")) throw new Exception("门票有效期错误");
+                    if(empty($explain)) $explain=sprintf("门票有效时间从 %s 至 %s ",$bdate,$edate);
+                    $ticket['T'.$i]=array('type'=>$type, 'amt'=>$amt, 'bdate'=>$bdate, 'edate'=>$edate, 'explain'=>$explain);
+                }else{
+                    throw new Exception('门票类型错误');
+                }
+            }
+            $dbChannel=D("channel");
+            $channelAttr=$dbChannel->getAttrArray($chnId);
+            if('on'==$_POST['isBill']){
+                $channelAttr['userbill']['isbill']='true';
+                $channelAttr['ticket']=$ticket;
+            }else{
+                $channelAttr['userbill']['isbill']='false';
+            }
+            $str=json_encode2($channelAttr);
+            $rt=$dbChannel->where("id=".$chnId)->save(array('attr'=>$str));
+            if(false===$rt) throw new Exception('无法更新数据');
+        }catch (Exception $e){
+            Oajax::errorReturn($e->getMessage());
+        }
+        Oajax::successReturn();
+    }
 }

@@ -91,12 +91,14 @@ class ChannelreluserModel extends Model {
 		$w['status'] = '正常';
 		$tickets = $this->where($w)->order('id desc')->select();
 		$vaildId = 0;
+		$rt=false;
+logfile('appendTicket'.print_r($w,true));
 		if(null == $tickets)
 		{
 			//直接添加
 			$w['begindate'] = date('Y-m-d H:i:s', $start);
 			$w['enddate'] = date('Y-m-d H:i:s', $end);
-			$this->add($w);
+			$rt=$this->add($w);
 		}
 		else
 		{
@@ -115,7 +117,7 @@ class ChannelreluserModel extends Model {
 						//延长票据时间
 						$tik['enddate'] = $end - $start + strtotime($tik['enddate']);
 						$tik['enddate'] = date('Y-m-d H:i:s', $tik['enddate']);
-						$this->where(array('id'=>$tik['id']))->save($tik);
+                        $rt=$this->where(array('id'=>$tik['id']))->save($tik);
 					}
 				}
 				else
@@ -123,11 +125,11 @@ class ChannelreluserModel extends Model {
 					//票据无效，修改票据
 					$tik['begindate'] = date('Y-m-d H:i:s', $start);;
 					$tik['enddate'] = date('Y-m-d H:i:s', $end);
-					$this->where(array('id'=>$tik['id']))->save($tik);
+                    $rt=$this->where(array('id'=>$tik['id']))->save($tik);
 				}
 			}
 		}
-
+        return $rt;
 	}
 
     /**

@@ -676,10 +676,54 @@ class ChannelModel extends Model {
 	 * 计算各套餐的具体内容
 	 * $t 套餐类型
 	 * $fee 预设价钱
+	 * $rec 门票记录，若提供此参数按新的门票参数计算2021-03-26, 这时仍然是门票的ID
 	 */
-	public function getBillCal($t='', $fee='', $num=1)
+	public function getBillCal($t='', $fee='', $num=1,$rec='')
 	{
 		$item = array();
+
+		//2021-03-26补丁
+		if(''!=$rec){
+            //$today=date('Y-m-d H:i');	//当前时间
+            try{
+                $qty=intval($rec['qty']);
+                $amt=floatval($rec['amt']);
+                $explain=$rec['explain'];
+                switch ($rec['type']){
+                    case 'day':
+                        $bdate=time();
+                        //$edate=date('Y-m-d 00:00',strtotime($bdate.sprintf(' +%d day',$qty)));
+                        $edate=strtotime(date('Y-m-d 00:00',$bdate).sprintf(' +%d day',$qty));
+                        break;
+                    case 'month':
+                        $bdate=time();
+                        $firstDay=date('Y-m-01 00:00',time());
+                        $edate=strtotime($firstDay.sprintf(' +%d month',$qty));	//n月后的1号0点
+                        break;
+                    case 'define':
+                        $bdate=strtotime($rec['bdate']);
+                        $edate=strtotime($rec['edate']);
+                        break;
+                    default:
+                        throw new Exception('错误的门票信息');
+                        break;
+                }
+                //组织传递到前端的门票数据
+                $item=array(
+                    't'=>$t,	//不同门票的识别ID
+                    'itemName'=>$rec['type'],	//为了与之前兼容，新界面不使用
+                    'start'=>$bdate,	//门票有效时间
+                    'end'=>$edate,		//失效时间
+                    'days'=>$qty,		//为了与之前兼容，新界面不使用
+                    'totalfee'=>$amt,	//门票价格
+                    'meno'=>$explain	//门票说明
+                );
+            }catch (Exception $e){
+                return array();
+            }
+            return $item;
+		}
+
 		if('day' == $t)
 		{
 			$item['t'] = 'day';
@@ -1130,5 +1174,6 @@ class ChannelModel extends Model {
 		}
 
 	}
+
 }
 ?>

@@ -1224,9 +1224,6 @@ var_dump($location);
                 }
 
 			}
-if($chnId==1098){
-    echo($pUrl);//exit();
-}
 
 			//读取可以购买
 			$chnDal = new ChannelModel();
@@ -1237,145 +1234,164 @@ if($chnId==1098){
 			if(is_array($attr['userbill']))
 			{
 				$chnDal = new ChannelModel();
-				$list = $chnDal->getBillNameList(true);
-				foreach($list as $key => $item)
-				{
-					$tt = $item['type'];
-					//是否已设置这选项
-					if(isset($attr['userbill']['bill'.$tt]) 
-						&& 0 < $attr['userbill']['bill'.$tt])
-					{
-						$v = $attr['userbill']['bill'.$tt];
-						$bill = $chnDal->getBillCal($tt, $v);
-						$billInfo[] = $bill;
-					}
+				if($chnId==1098){	//为灰度测试
+					foreach ($attr['ticket'] as $key=>$item){
+                        $bill = $chnDal->getBillCal($key, 0,0,$item);
+                        if(!empty($bill)) $billInfo[] = $bill;
+                    }
+                }else{
+                    $list = $chnDal->getBillNameList(true);
+                    foreach($list as $key => $item)
+                    {
+                        $tt = $item['type'];
+                        //是否已设置这选项
+                        if(isset($attr['userbill']['bill'.$tt])
+                            && 0 < $attr['userbill']['bill'.$tt])
+                        {
+                            $v = $attr['userbill']['bill'.$tt];
+                            $bill = $chnDal->getBillCal($tt, $v);
+                            $billInfo[] = $bill;
+                        }
 
-				}
-				$this->assign('billInfo', $billInfo);
-			}
+                    }
+                }
 
-			if(isWxbrowser())
-			{
-				$this->assign('isWx', 'true');
-			}
-			else
-			{
-				$this->assign('isWx', 'false');
-			}
+                $this->assign('billInfo', $billInfo);
+            }
 
-			//根据不同播放器版本生成不同的付款成功跳转URL
-			if(empty($pUrl))
-				$viewUrl=U('play', array('chnId'=>$chnId, 'u'=>$userInfo['userId']));
-			else{
-				$viewUrl=$pUrl;
-			}
-			$this->assign('chnId', $chnId);
-			$this->assign('userpass', $userpass);
-			$this->assign('billPostUrl', U('billPost'));
-			$this->assign('billGetInfoUrl', U('billItemInfo'));
-			$this->assign('billPayCode', U('billPayCode'));
-			$this->assign('billPayCodeCheck', U('billPayCodeCheck'));
-			$this->assign('viewUrl', $viewUrl);
-			$this->display('chnbill');
-		}
-	}
+            if(isWxbrowser())
+            {
+                $this->assign('isWx', 'true');
+            }
+            else
+            {
+                $this->assign('isWx', 'false');
+            }
 
-	//生成支付二维码
-	public function billPayCode($chnId, $t, $num, $userpass)
-	{
-		//是否已登录
-		//初始化认证模块
-		$this->author = new authorize();
-		//用户信息
-		$userInfo=$this->author->getUserInfo();
+            //根据不同播放器版本生成不同的付款成功跳转URL
+            if(empty($pUrl))
+                $viewUrl=U('play', array('chnId'=>$chnId, 'u'=>$userInfo['userId']));
+            else{
+                $viewUrl=$pUrl;
+            }
+            $this->assign('userName',$userInfo['userName']);
+            $this->assign('chnId', $chnId);
+            $this->assign('userpass', $userpass);
+            $this->assign('billPostUrl', U('billPost'));
+            $this->assign('billGetInfoUrl', U('billItemInfo'));
+            $this->assign('billPayCode', U('billPayCode'));
+            $this->assign('billPayCodeCheck', U('billPayCodeCheck'));
+            $this->assign('viewUrl', $viewUrl);
+            if($chnId==1098){
+                $this->display('chnbill2');
+            }else{
+                $this->display('chnbill');
+            }
 
-		if(null == $userInfo)
-		{
-			echo '';
-			exit;
-		}
+        }
+    }
 
-		$chnDal = new ChannelModel();
-		$attr = $chnDal->getAttrArray($chnId);
-		$v = $attr['userbill']['bill'.$t];
-		if(isset($v))
-		{
-			$bill = $chnDal->getBillCal($t, $v, $num);
+    //生成支付二维码
+    public function billPayCode($chnId, $t, $num, $userpass)
+    {
+        //是否已登录
+        //初始化认证模块
+        $this->author = new authorize();
+        //用户信息
+        $userInfo=$this->author->getUserInfo();
 
-			$para = array();
-			$para['userId'] = $userInfo['userId'];
-			$para['userName'] = $userInfo['userName'];
-			$para['total'] = $bill['totalfee']*100;
-			$para['callback'] = "http://".$_SERVER['HTTP_HOST'].'/player.php/HDPlayer/billPostSucess';//支付成功后，回调的方法
-			$para['list'][0]['detail'] = $bill['meno'];
-			$para['list'][0]['fee'] = $bill['totalfee']*100;
-			$para['list'][0]['img'] = "http://".$_SERVER['HTTP_HOST'].'/wxpay/default/images/gift.png';
-			$para['body'] = $bill['itemName'].':'.$bill['meno'];
-			//需要传递下去的信息
-			$pt = array();
-			$bill['chnId'] = $chnId;
-			$bill['userId'] = $userInfo['userId'];
-			$pt['bill'] = $bill;
-			$up = array();
-			$up['chnid'] = $chnId;
-			$up['uid'] = $userpass;
-			$up['rid'] = $userInfo['userId'];
-			$pt['userpass'] = $up;
+        if(null == $userInfo)
+        {
+            echo '';
+            exit;
+        }
 
-			//$para['extpara'] = json_encode($pt);
-			$para['extpara'] = $pt;
-			//支付成功后前端跳转到的页面
-			//$para['successback'] = "http://".$_SERVER['HTTP_HOST'].U('play', array('chnId'=>$chnId));
+        $chnDal = new ChannelModel();
+        $attr = $chnDal->getAttrArray($chnId);
+        $billRec=$attr['ticket'][$t];	//2021-03-26兼容新的门票记录
+        $v = $attr['userbill']['bill'.$t];
+        if(isset($v)|| !empty($billRec))
+        {
+            $bill = $chnDal->getBillCal($t, $v, $num,$billRec);
 
-			//添加message记录
-			$msgDal = new MessageModel();
-			$t = $msgDal->AddMsgRandStr('WxPay', 'payCode', json_encode($para));
-			$url = "http://".$_SERVER['HTTP_HOST'].U('billPayCodeAct', array('t'=>$t));
-			echo '{"payurl":"'.$url.'"}';
-			exit;
-		}
-	}
+            $para = array();
+            $para['userId'] = $userInfo['userId'];
+            $para['userName'] = $userInfo['userName'];
+            $para['total'] = $bill['totalfee']*100;
+            $para['callback'] = "http://".$_SERVER['HTTP_HOST'].'/player.php/HDPlayer/billPostSucess';//支付成功后，回调的方法
+            $para['list'][0]['detail'] = $bill['meno'];
+            $para['list'][0]['fee'] = $bill['totalfee']*100;
+            $para['list'][0]['img'] = "http://".$_SERVER['HTTP_HOST'].'/wxpay/default/images/gift.png';
+            $para['body'] = $bill['itemName'].':'.$bill['meno'];
+if($chnId==1098){
+    //var_dump($bill); exit();
+}
 
-	//微信扫码支付响应
-	public function billPayCodeAct($t)
-	{
-		//读取message记录
-		$msgDal = new MessageModel();
-		$r = $msgDal->where(array('keystr'=>$t))->find();
-		if(is_array($r) && 0 == $r['step'])
-		{
-			$para = json_decode($r['attr'], true);
-			$payApi = new JsapiAction();
-			$payApi->gotoPay($para);
-		}
-	}
+            //需要传递下去的信息
+            $pt = array();
+            $bill['chnId'] = $chnId;
+            $bill['userId'] = $userInfo['userId'];
+            $pt['bill'] = $bill;
+            $up = array();
+            $up['chnid'] = $chnId;
+            $up['uid'] = $userpass;
+            $up['rid'] = $userInfo['userId'];
+            $pt['userpass'] = $up;
 
-	//检查是否已获取票据
-	public function billPayCodeCheck($chnId)
-	{
-		//TODO:这样判断会有问题，当是追加订购的时间有判断错误。
-		$has = $this->IsHaveTicket($chnId);
-		if($has)
-		{
-			echo '{"has":"true"}';
-		}
-		else
-		{
-			echo '{"has":"false"}';
-		}
-		exit;
-	}
+            //$para['extpara'] = json_encode($pt);
+            $para['extpara'] = $pt;
+            //支付成功后前端跳转到的页面
+            //$para['successback'] = "http://".$_SERVER['HTTP_HOST'].U('play', array('chnId'=>$chnId));
 
-	public function billPay($chnId = 0)
-	{
-		//echo 'billPay';
-		$this->assign('url', U('billPageList', array('chnId'=>$chnId)));
-		$this->display('billPay');
-	}
+            //添加message记录
+            $msgDal = new MessageModel();
+            $t = $msgDal->AddMsgRandStr('WxPay', 'payCode', json_encode($para));
+            $url = "http://".$_SERVER['HTTP_HOST'].U('billPayCodeAct', array('t'=>$t));
+            echo '{"payurl":"'.$url.'"}';
+            exit;
+        }
+    }
 
-	/**
-	 * 获取频道套餐列表
-	 */
+    //微信扫码支付响应
+    public function billPayCodeAct($t)
+    {
+        //读取message记录
+        $msgDal = new MessageModel();
+        $r = $msgDal->where(array('keystr'=>$t))->find();
+        if(is_array($r) && 0 == $r['step'])
+        {
+            $para = json_decode($r['attr'], true);
+            $payApi = new JsapiAction();
+            $payApi->gotoPay($para);
+        }
+    }
+
+    //检查是否已获取票据
+    public function billPayCodeCheck($chnId)
+    {
+        //TODO:这样判断会有问题，当是追加订购的时间有判断错误。
+        $has = $this->IsHaveTicket($chnId);
+        if($has)
+        {
+            echo '{"has":"true"}';
+        }
+        else
+        {
+            echo '{"has":"false"}';
+        }
+        exit;
+    }
+
+    public function billPay($chnId = 0)
+    {
+        //echo 'billPay';
+        $this->assign('url', U('billPageList', array('chnId'=>$chnId)));
+        $this->display('billPay');
+    }
+
+    /**
+     * 获取频道套餐列表
+     */
 	public function billPageList($chnId = 0)
 	{
 		//echo 'billPageList';
@@ -1437,9 +1453,11 @@ if($chnId==1098){
 		$chnDal = new ChannelModel();
 		$attr = $chnDal->getAttrArray($chnId);
 		$v = $attr['userbill']['bill'.$t];
-		if(isset($v))
+		$billRec=$attr['ticket'][$t];	//2021-03-26兼容新的门票记录
+//dump($billRec); exit();
+		if(isset($v)|| !empty($billRec))
 		{
-			$bill = $chnDal->getBillCal($t, $v, $num);
+			$bill = $chnDal->getBillCal($t, $v, $num,$billRec);
 
 			$para['userId'] = $userInfo['userId'];
 			$para['userName'] = $userInfo['userName'];
@@ -1464,7 +1482,11 @@ if($chnId==1098){
 			//$para['extpara'] = json_encode($pt);
 			$para['extpara'] = $pt;
 			//支付成功后前端跳转到的页面
-			$para['successback'] = "http://".$_SERVER['HTTP_HOST'].U('play', array('chnId'=>$chnId));
+			//if($chnId==1098){
+                $para['successback'] = $_SERVER['REQUEST_SCHEME']."://".$_SERVER['HTTP_HOST'].'/play.html?ch='.$chnId;
+                if(!empty($userpass)) $para['successback'] .= '&du='.$userpass;
+			//}else
+				//$para['successback'] = "http://".$_SERVER['HTTP_HOST'].U('play', array('chnId'=>$chnId));
 
 			$payApi = new JsapiAction();
 			$payApi->gotoPay($para);
@@ -1493,6 +1515,7 @@ if($chnId==1098){
 				$prepay = new PrepayModel();
 				$p = $prepay->where(array('tradeno'=>$attr['tradeno']))->find();
 				$pAttr = json_decode($p['attr'], true);
+logfile(print_r($pAttr,true));
 logfile('getPrepay OK');
 				//获取用户信息
 				$userDal = new UserModel();
@@ -1505,18 +1528,19 @@ logfile('getPrepay OK');
 				//充网真点
 				$dbConsump = new ConsumpModel();
 				//NOTE:$p['totalfee']是以分来计算，同网真点的转换率一致，如果以后不一致请变更
-				$dbConsump->recharge($p['userid'], $p['totalfee'], $p['totalfee'], $pAttr['bill']['itemName'], 'wxPay', $p['id']);
-logfile('充值完成');
+				$rt=$dbConsump->recharge($p['userid'], $p['totalfee'], $p['totalfee'], $pAttr['bill']['itemName'], 'wxPay', $p['id']);
+logfile('充值完成:'.$rt);
 				//消费网真点，添加用户包月或包日票据
 				$record=array('userid'=>$p['userid'], 'receipt'=>0,
 							'objtype'=>ConsumpModel::$TYPE['cash'],'qty'=>$p['totalfee'],
 							'happen'=>date('Y-m-d H:i:s'),'operator'=>$u['username'],'note'=>$pAttr['bill']['meno']);
-				$dbConsump->addRec($record);
-logfile('添加消费记录完成');
+				$rt=$dbConsump->addRec($record);
+logfile('添加消费记录完成:'.$rt);
 				//写入票据
 				$chnUserDal = new ChannelreluserModel();
-				$chnUserDal->appendTicket($pAttr['bill']['chnId'], $p['userid'], $pAttr['bill']['start'], $pAttr['bill']['end']);
-logfile('写入票据完成');
+				$rt=$chnUserDal->appendTicket($pAttr['bill']['chnId'], $p['userid'], $pAttr['bill']['start'], $pAttr['bill']['end']);
+logfile($chnUserDal->getLastSql());
+logfile('写入票据完成:'.$rt);
 				//写入播主现金收支表
 				$cashMemo = '订购['.$chnInfo['name'].']到'.date('Y-m-d H:i:s', $pAttr['bill']['end']).'结束。';
 				$cashDal = new CashFlowModel($chnInfo['owner']);
@@ -1538,6 +1562,7 @@ logfile('传播者记录:'.print_r($pAttr,true));
 				$msgDal->UpdateMsgStep(null, $t, -1);
 				//事务结束
 				$msgDal->commit();
+logfile('事务结束');
 				JsapiAction::handleReturn();
 			}
 			else

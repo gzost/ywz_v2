@@ -1,0 +1,371 @@
+<!doctype html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="renderer" content="webkit">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+<title>支付频道套餐</title>
+<meta name="keywords" content="易网真,易网真直播间,avision视频直播系统" />
+<link href="__PUBLIC__/jeasyui/themes/default/easyui.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/icon.css" rel="stylesheet" type="text/css">
+<link href="__PUBLIC__/jeasyui/themes/color.css" rel="stylesheet" type="text/css">
+<load href="__PUBLIC__/jeasyui/jquery.min.js"/>
+<load href="__PUBLIC__/jeasyui/jquery.easyui.min.js"/>
+<!-- <load href="__PUBLIC__/js/bill.js"/> -->
+<load href="__PUBLIC__/js/qrcode.js" />
+<load href="__PUBLIC__/js/jquery.qrcode.js" />
+<script type="text/javascript" src="__PUBLIC__/js/publicFunction.js"></script>
+<link rel="stylesheet" type="text/css" href="/player/default/css/info.css">
+
+<script type="text/javascript">
+
+    /**
+     * 购买套餐界面控制器
+     */
+
+    window.BillCaller = null;
+
+    function BillHelper()
+    {
+        window.BillCaller = this;
+
+        this.getInfoUrl = null;
+        this.getCodeUrl = null;
+        this.billCode3Recv = null;
+
+
+
+        //提交表单，准备付款
+        this.bill = function(t)
+        {
+            $('#form'+t).submit();
+        }
+
+        this.billCode = function(t)
+        {
+            $.ajax({
+                url: this.getCodeUrl,
+                type: 'post',
+                data: $('#form'+t).serialize(),
+                cache: false,
+                timeout:5000,
+                dataType: 'json',
+                success:function(data){
+                    try{
+                        $('#billcode'+t).qrcode({
+                            text: data.payurl,
+                            width: 200,
+                            height: 200,
+                        });
+
+                        $('#billcodem'+t).show();
+                    }
+                    catch(e){
+                        alert(e);
+                    }
+                },
+                complete:function(){	//无论是否成功都会调用
+                },
+                error:function(){
+                    alert('网络或服务中断！');
+                }
+            });
+        }
+
+        this.checkCodePay = function(checkUrl, checkToken, successUrl)
+        {
+            $.ajax({
+                url: checkUrl,
+                type: 'post',
+                data: 't=' + checkToken,
+                cache: false,
+                timeout:5000,
+                dataType: 'json',
+                success:function(data){
+                    try{
+                        if('true' == data.has)
+                        {
+                            //已购票成功
+                            location.replace(successUrl);
+                        }
+                    }
+                    catch(e){
+                        alert(e);
+                    }
+                },
+                complete:function(){	//无论是否成功都会调用
+                },
+                error:function(){
+                    alert('网络或服务中断！');
+                }
+            });
+        }
+
+        this.billCode2 = function(submitUrl, formId, qrcodeId, messageId)
+        {
+            $.ajax({
+                url: submitUrl,
+                type: 'post',
+                data: $('#'+formId).serialize(),
+                cache: false,
+                timeout:5000,
+                dataType: 'json',
+                success:function(data){
+                    try{
+                        $('#'+qrcodeId).qrcode({
+                            text: data.payurl,
+                            width: 200,
+                            height: 200,
+                        });
+
+                        if(null != messageId)
+                        {
+                            $('#'+messageId).show();
+                        }
+                    }
+                    catch(e){
+                        alert(e);
+                    }
+                },
+                complete:function(){	//无论是否成功都会调用
+                },
+                error:function(){
+                    alert('网络或服务中断！');
+                }
+            });
+        }
+
+        this.billCode3 = function(submitUrl, urlPara)
+        {
+            $.ajax({
+                url: submitUrl,
+                type: 'post',
+                data: urlPara,
+                cache: false,
+                timeout:5000,
+                dataType: 'json',
+                success:function(data){
+                    try{
+                        if(null != window.BillCaller.billCode3Recv)
+                        {
+                            window.BillCaller.billCode3Recv(data);
+                        }
+                    }
+                    catch(e){
+                        alert(e);
+                    }
+                },
+                complete:function(){	//无论是否成功都会调用
+                },
+                error:function(){
+                    alert('网络或服务中断！');
+                }
+            });
+        }
+
+
+
+
+        this.numchange = function(_a, t, chnId, newValue)
+        {
+            this.getInfo(t, chnId);
+        }
+
+        this.reduce = function(t, chnId)
+        {
+            var numObj = $('#' + t + 'num');
+            var num = parseInt(numObj.numberbox('getValue'));
+            if( 1 == num)
+            {
+                return;
+            }
+            num -= 1;
+            numObj.numberbox('setValue', num);
+        }
+
+        this.add = function(t, chnId)
+        {
+            var numObj = $('#' + t + 'num');
+            var num = parseInt(numObj.numberbox('getValue'));
+            num += 1;
+            numObj.numberbox('setValue', num);
+            num = numObj.numberbox('getValue', num);
+        }
+
+        //由于数量变化，获取变化后的信息
+        this.getInfo = function(t, chnId)
+        {
+            var numObj = $('#' + t + 'num');
+            var num = parseInt(numObj.numberbox('getValue'));
+
+            $.ajax({
+                url: this.getInfoUrl,
+                type: 'post',
+                data: 't=' + t + "&chnId=" + chnId + "&num=" + num,
+                cache: false,
+                timeout:5000,
+                dataType: 'json',
+                success:function(data){
+                    try{
+                        $('#bill' + t + ' span[class=totalfee]').text(data.totalfee);
+                        $('#bill' + t + ' span[class=itemmeno]').text(data.meno);
+                        $('#form' + t + ' input[name=num]').val(num);
+                    }
+                    catch(e){
+                        alert(e);
+                    }
+                },
+                complete:function(){	//无论是否成功都会调用
+                },
+                error:function(){
+                    alert('网络或服务中断！');
+                }
+            });
+        }
+
+    }
+
+
+var isWx = '{$isWx}';
+var bi = new BillHelper();
+bi.getInfoUrl = '{$billGetInfoUrl}';
+bi.getCodeUrl = '{$billPayCode}';
+
+var payCheckUrl = '{$billPayCodeCheck}';
+var viewUrl = '{$viewUrl}';
+
+$(document).ready(function(){
+	DivLoadHtml('__APP__/HDPlayer/infoPage/chnId/{$chnId}', 'divMore');
+});
+
+function pay(t)
+{
+	if('true' == isWx)
+	{
+		bi.bill(t);
+	}
+	else
+	{
+		bi.billCode(t);
+		payCheck();
+	}
+}
+
+function payCheck()
+{
+
+	$.ajax({
+		url: payCheckUrl,
+		type: 'post',
+		data: 'chnId={$chnId}',
+		cache: false,
+		timeout:1000,
+		dataType: 'json',
+		success:function(data){
+			try{
+				if('true' == data.has)
+				{
+					//已购票成功
+					//alert('goto:'+viewUrl);
+					location.replace(viewUrl);
+				}
+			}
+			catch(e){
+				alert(e);
+			}
+		},
+		complete:function(){	//无论是否成功都会调用
+		},
+		error:function(){
+			//alert('网络或服务中断！');
+		}
+	});
+
+
+	setTimeout("payCheck()", 1000);
+}
+
+</script>
+<style type="text/css">
+.itemName{
+	background-color:burlywood;
+	color:#293745;
+	font-weight:bold;
+	padding:0.2em;
+}
+
+
+
+body{
+	font-size:16px;margin:0;padding:0;background-color:#FFF; position: relative;
+	background-image: url("__PUBLIC__/images/bg.png");
+	color: #3a4a5a;
+}
+
+.subTitle{
+	font-weight:bold;
+	text-align:center;
+	font-size:1.2em;
+	padding:0.5em 1em;
+	background-color: #99cccc;
+	color:#4a4a4a;
+}
+	.compatableContainer{
+		position: relative;
+		margin: 0px auto;
+		height: 100%;
+		width: 100%;
+		max-width: 640px;
+		overflow: hidden auto;
+		background-color: #f0f0f0;
+	}
+	.ticketItem{
+		position: relative;
+		margin: 5px 10px;
+		padding: 5px 10px;
+		border-radius: 5px;
+		height: 4.5em;
+		background-color: #CCFF99;
+		overflow: hidden;
+		display: flex;
+		flex-flow: row nowrap;
+	}
+</style>
+<body style="">
+<div class="compatableContainer" style="">
+	<div class="subTitle">付费频道，请选择订购方式</div>
+
+	<div > <!-- 门票列表容器 -->
+		<foreach name="billInfo" item="vo">
+			<div class="ticketItem">
+				<div style="flex: auto;white-space: pre-line;">{$vo.meno}</div>
+				<div style="flex: none;padding-left: 10px;">
+					<a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-device'" onclick="pay('{$vo.t}')">购买</a>
+					<div style="font-size:14px; color:#999933; margin: 5px">票价：{$vo.totalfee}</div>
+				</div>
+
+			</div>
+			<form action="{$billPostUrl}" id="form{$vo.t}" method="post">
+				<input type="hidden" name="chnId" value="{$chnId}"/>
+				<input type="hidden" name="t" value="{$vo.t}"/>
+				<input type="hidden" name="num" value="1"/>
+				<input type="hidden" name="userpass" value="{$userpass}"/>
+			</form>
+			<div id="billcode{$vo.t}" style="padding-left:10px;">
+			</div>
+			<div id="billcodem{$vo.t}" style="padding-left:25px;display:none;">请使用微信扫码支付
+			</div>
+		</foreach>
+	</div> <!-- 门票列表结束 -->
+	<div style="padding: 2px 10px; text-align: right; font-size: 12px; color:#aab;">
+		{$userName}
+		<form action="__APP__/Login/login" style="display: inline-block; margin:5px 10px;">
+			<input type="hidden" name="acceptUrl" value="/play.html?ch={$chnId}" >
+			<input type="submit" value="更换账号" style="border-width:0 0 1px ">
+		</form>
+	</div>
+	<div class="subTitle">频道介绍</div>
+	<div id="divMore" style="width:100%;"></div>
+</div>
+
+</body></html>

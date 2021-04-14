@@ -1234,7 +1234,7 @@ var_dump($location);
 			if(is_array($attr['userbill']))
 			{
 				$chnDal = new ChannelModel();
-				if($chnId==1098){	//为灰度测试
+				if(true || $chnId==1098){	//2021-04-06 灰度测试结束
 					foreach ($attr['ticket'] as $key=>$item){
                         $bill = $chnDal->getBillCal($key, 0,0,$item);
                         if(!empty($bill)) $billInfo[] = $bill;
@@ -1282,7 +1282,7 @@ var_dump($location);
             $this->assign('billPayCode', U('billPayCode'));
             $this->assign('billPayCodeCheck', U('billPayCodeCheck'));
             $this->assign('viewUrl', $viewUrl);
-            if($chnId==1098){
+            if(true || $chnId==1098){	//2021-04-06 灰度测试结束
                 $this->display('chnbill2');
             }else{
                 $this->display('chnbill');
@@ -1482,7 +1482,7 @@ if($chnId==1098){
 			//$para['extpara'] = json_encode($pt);
 			$para['extpara'] = $pt;
 			//支付成功后前端跳转到的页面
-			//if($chnId==1098){
+			//if($chnId==1098){	//2021-04-06 灰度测试结束
                 $para['successback'] = $_SERVER['REQUEST_SCHEME']."://".$_SERVER['HTTP_HOST'].'/play.html?ch='.$chnId;
                 if(!empty($userpass)) $para['successback'] .= '&du='.$userpass;
 			//}else

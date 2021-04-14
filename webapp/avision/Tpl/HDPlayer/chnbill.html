@@ -85,22 +85,46 @@ function payCheck()
 	padding:0.2em;
 }
 
-div{
-	#width:100%;
+
+
+body{
+	font-size:16px;margin:0;padding:0;background-color:#FFF; position: relative;
+	background-image: url("__PUBLIC__/images/bg.png");
+	color: #3a4a5a;
 }
 
 .subTitle{
 	font-weight:bold;
-	#width:100%;
 	text-align:center;
 	font-size:1.2em;
-	padding:0.2em;
+	padding:0.5em 1em;
+	background-color: #99cccc;
+	color:#4a4a4a;
 }
+	.compatableContainer{
+		position: relative;
+		margin: 0px auto;
+		height: 100%;
+		width: 100%;
+		max-width: 640px;
+		overflow: hidden auto;
+		background-color: #f0f0f0;
+	}
+	.ticketItem{
+		position: relative;
+		margin: 5px 10px;
+		padding: 5px 10px;
+		border-radius: 5px;
+		height: 4em;
+		background-color: #CCFF99;
+		display: flex;
+		flex-flow: row nowrap;
+	}
 </style>
-<body class="" style="font-size:16px;margin:0;padding:0;background-color:#FFF;">
-<div class="" style="">
-	<div class="subTitle">付费频道，您可以购买以下套餐</div>
-	<div class="flex-between-item" style="padding-bottom:0.2em;">
+<body style="">
+<div class="compatableContainer" style="">
+	<div class="subTitle">付费频道，请选择订购方式</div>
+	<div > <!-- 门票列表容器 -->
 		<foreach name="billInfo" item="vo">
 			<div id="bill{$vo.t}">
 				<div class="itemName">{$vo.itemName}</div>
@@ -129,8 +153,10 @@ div{
 				</div>
 			</div>
 		</foreach>
-	</div>
+
+	</div> <!-- 门票列表结束 -->
+	<div class="subTitle">频道介绍</div>
+	<div id="divMore" style="width:100%;"></div>
 </div>
-<div id="divMore" style="width:100%;">
-</div>
+
 </body></html>

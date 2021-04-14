@@ -1248,7 +1248,8 @@ class ChannelAction extends AdminBaseAction
 
 	public function TypeComboxData()
 	{
-		echo '[{"value":"public","name":"公开"},{"value":"charge","name":"收费"},{"value":"protect","name":"认证"},{"value":"private","name":"会员"}]';
+		//echo '[{"value":"public","name":"公开"},{"value":"charge","name":"收费"},{"value":"protect","name":"认证"},{"value":"private","name":"会员"}]';
+        echo '[{"value":"public","name":"公开"},{"value":"protect","name":"认证"},{"value":"private","name":"会员"}]';	//2021-04-14 outao
 	}
 
 	public function StatusComboxData()

@@ -42,10 +42,25 @@ $(document).ready(function(){
     download("data.txt","hello world");
     */
 });
-
-function vodfunction(work){
-	var para=$('#dg').datagrid('getSelected');
-
+function batFunc(work) {
+    var checked=$('#dg').datagrid('getChecked');  //当前页面的所有行
+    console.log(checked);
+    var length=checked.length;  //元素个数
+    if(length<1){
+        alert("请先勾选需要批量删除的记录。");
+        return;
+    }
+    for(var i=0; i<length;i++){
+        vodfunction(work,checked[i]);
+    }
+}
+function vodfunction(work,row=null){
+	var para;
+	console.log(row);
+	if(null==row)
+	    para=$('#dg').datagrid('getSelected');
+	else para=row;
+//console.log(work,para); return;
 	if('add' != work && null==para){
 		alert("请先单击选定录像记录。");
 		return false;
@@ -255,6 +270,7 @@ function vodfunction(work){
 <table id="dg" class="easyui-datagrid"  style="width:98%;"
 	data-options="url:'__APP__/Vod/getFileListAjax',rownumbers:true,singleSelect:true,
 		toolbar:'#tb',pagination:true,  pageSize:10,
+		checkOnSelect:false, selectOnCheck:false,
 		onSelect:function(index,row){
 			//$('#detail').html('');
 			$('#msg').html('');
@@ -262,6 +278,7 @@ function vodfunction(work){
 		}	" >
 	<thead>
 	<tr>
+        <th data-options="field:'ck',checkbox:true"></th>
 		<th data-options="field:'id', width:80,align:'center',sortable:true, order:'desc' ">ID</th>
 		<eq name="viewSelf" value="false"> 
 			<th data-options="field:'account', width:120,align:'left', halign:'center',sortable:true, order:'desc' ">属主</th>
@@ -302,7 +319,7 @@ function vodfunction(work){
 	<div class="easyui-linkbutton" iconCls="icon-search" onclick="$('#cond').submit();">查询</div>
 	
 	<!-- 功能按钮 -->
-	<div id="dgbutton" style="width:500px;  ">
+	<div id="dgbutton" style=" margin: 5px 0; ">
 	<eq name='permitCreate' value='true'>
         存储区域<input id="newsite" type="number" name="site" value="5" style="width: 2em;">
 		<a id="Append" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true" 
@@ -313,9 +330,11 @@ function vodfunction(work){
 	<eq name='permitModify' value='true'>
 	    <a id="Remove" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true" 
 	    	onclick="vodfunction('delete');">删除</a>
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true"
+           onclick="batFunc('delete');">😱批量删除</a>
 	    <a id="Save" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true"
 	    	onclick="vodfunction('modify');">修改</a>
-        <a id="Save" href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true"
+        <a href="javascript:void(0)" class="easyui-linkbutton" data-options="iconCls:'icon-redo',plain:true"
            onclick="vodfunction('move');">转储</a>
     </eq>
     <eq name='permitDownload' value='true'>
@@ -332,7 +351,8 @@ function vodfunction(work){
         <li>删除主记录时同时删除视频文件及封面图片，分享的记录将无法访问对于的资源。</li>
         <li>通过分享生成的记录不能再次分享。</li>
         <li>“分享”字段显示数字是本记录的主记录ID；若以*开头表示本记录是主记录，*后面是分享的次数。</li>
-        <li>增加录像文件前必须指定文件属存储位置(1或5)，推荐5，1会逐步停用</li>
+        <li>增加录像文件前必须指定文件属存储区域(1或5)，推荐5，1会逐步停用</li>
+        <li>【批量删除】功能批量删除勾选的的记录</li>
     </ol>
 
 

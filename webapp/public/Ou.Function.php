@@ -382,11 +382,18 @@ function result2string($reslut,$field,$separator=','){
 }
 
 //对于支持的版本不转义斜杠及中文
+function replace_unicode_escape_sequence($match) {
+    return mb_convert_encoding(pack('H*', $match[1]), 'UTF-8', 'UCS-2BE');
+}
 function json_encode2($attr){
     if(version_compare(PHP_VERSION,'5.4.0')>=0)
         return json_encode($attr,JSON_UNESCAPED_SLASHES|JSON_UNESCAPED_UNICODE);
-    else
-        return json_encode($attr);
+    else{
+        $data=json_encode($attr);
+        //汉字unicode编码范围2E80~9FEF
+        $rs = preg_replace_callback('/\\\\u([1-9a-f][0-9a-f]{3})/i', 'replace_unicode_escape_sequence', $data);
+        return $rs;
+    }
 }
 /**
  * 

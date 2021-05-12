@@ -14,7 +14,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
 
     <meta charset="UTF-8">
-    <title>禅城区教师再教育平台</title>
+    <title>市场监督管理局</title>
     <load href="__PUBLIC__/jeasyui/themes/material/easyui.css" />
     <load href="__PUBLIC__/jeasyui/themes/icon.css" />
     <load href="__PUBLIC__/jeasyui/themes/color.css" />
@@ -97,7 +97,14 @@
                 <input id="company" class="easyui-combobox" name="company" vlaue="{$company}" label="工作单位:" labelPosition="top" style="width:100%;"
                        data-options="prompt:'请输入工作单位...', panelHeight:100,valueField:'id',textField:'txt', data: {$companyListJson} " >
             </div>
-
+            <div class="input_item">
+                <input class="easyui-textbox" name="udef1" value="{$udef1}" label="岗位:" labelPosition="top" data-options="prompt:'',validType:'length[2,40]'" style="width:100%;">
+            </div>
+            <div class="input_item">
+                <input id="groups" class="easyui-combobox" name="groups" vlaue="{$groups}" label="所属片区:" labelPosition="top" style="width:100%;"
+                       data-options="prompt:'请输入所属片区...', editable:false, panelHeight:100,valueField:'id',textField:'txt',
+                            data: [{id:'禅城区', txt:'禅城区'},{id:'南海区', txt:'南海区'}, {id:'顺德区', txt:'顺德区'},{id:'高明区',txt:'高明区'},{id:'三水区',txt:'三水区'},{id:'其它',txt:'其它'}] " >
+            </div>
             <input type="hidden" name="work" value="save">
             <input type="hidden" name="magicId" value="{$magicId}">
             <div class="input_item">
@@ -127,6 +134,7 @@
 <script>
     $(document).ready(function(){
         $("#company").combobox('select','{$company}');
+        $("#groups").combobox('select','{$groups}');
     });
     $("#my-logo").on('click',function(event){
         $("#userinfo").load('__URL__/userInfo',function () {

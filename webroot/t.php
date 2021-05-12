@@ -1,4 +1,15 @@
 <?php
+echo '<pre>';
+print_r(json_decode('{"type":"remote","notify":"http:\/\/live.av365.cn\/wxpay.php\/Jsapi\/notify\/t\/9939b2c7ed321a6aef8f","jsNfyRmt":"","notifyRmt":"http:\/\/www.av365.cn\/wxpay.php\/Jsapi\/notifyB\/t\/9939b2c7ed321a6aef8f","openid":"","body":"day:\u4ece\u8d2d\u4e70\u4e4b\u65e5\u8d77 5 \u5929\u6709\u6548\u3002[20210326210517173602]","out_trade_no":"20210326210517173602","total_fee":3,"proList":[{"detail":"\u4ece\u8d2d\u4e70\u4e4b\u65e5\u8d77 5 \u5929\u6709\u6548\u3002","fee":3,"img":"http:\/\/www.av365.cn\/wxpay\/default\/images\/gift.png"}]}',true));
+
+$str='2021-03-21T15:37';
+$i=2;
+$arr=date("Y-m-d\T00:01",strtotime($str.sprintf(' +%d day',$i)));
+print_r($arr); //exit();
+echo date("Y-m-d H:i",strtotime($arr));
+$b=$arr>'2000';var_dump($b);
+$b= $arr<'2000';var_dump($b);
+echo '</pre>';
 //https://www.meipian/c/8526240 //美篇ID
 $url=array(
     "https://www.meipian.cn/3ettkiqf",   //2019李华

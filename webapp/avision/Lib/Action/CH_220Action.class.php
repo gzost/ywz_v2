@@ -93,8 +93,9 @@ class CH_220Action extends ChomeBaseAction
         $msg='';
         if(mb_strlen($this->user['realname'])<2) $msg .='请输入真实姓名。<br>';
         if(strlen($this->user['idcard'])!=18) $msg .='需要输入正确的身份证号码。<br>';
-        if(mb_strlen($this->user['company'])<4) $msg .='请输入工作单位全称。<br>';
-
+        if(mb_strlen($this->user['company'])<2) $msg .='请输入工作单位全称。<br>';
+        if(mb_strlen($this->user['groups'])<2) $msg .='请输入所属片区。<br>';
+        if(mb_strlen($this->user['udef1'])<2) $msg .='请输入工作岗位。<br>';
         return $msg;
     }
 
@@ -146,6 +147,8 @@ class CH_220Action extends ChomeBaseAction
                 //不校验单位名称
                 $webVar['company']=$userData['company']=$this->user['company']=$_POST['company'];
             }
+            if(isset($_POST['udef1']))  $webVar['udef1']=$userData['udef1']=$this->user['udef1']=$_POST['udef1'];
+            if(isset($_POST['groups']))  $webVar['groups']=$userData['groups']=$this->user['groups']=$_POST['groups'];
             $msg .=$this->validateUserInfo();
             $webVar['magicId']=$_POST['magicId'];
 //var_dump($webVar,$msg);
@@ -167,8 +170,9 @@ class CH_220Action extends ChomeBaseAction
             //首次调用时，外部必须已经读入了相应的用户数据
             $webVar['realname']=$this->user['realname'];
             $webVar['idcard']=$this->user['idcard'];
-            //$webVar['company']=' '; //不可能的值
             $webVar['company']=$this->user['company'];
+        $webVar['udef1']=$this->user['udef1'];
+        $webVar['groups']=$this->user['groups'];
         /*
             //查找单位名称对应的key
             $company=$this->user['company'];

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+
+<!--
+    佛山禅城教育局教师再教育平台定制首页
+
+    create: 2019-07-04 by outao
+-->
+
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+    <meta charset="UTF-8">
+    <title>禅城区教师再教育平台</title>
+    <load href="__PUBLIC__/jeasyui/themes/material/easyui.css" />
+    <load href="__PUBLIC__/jeasyui/themes/icon.css" />
+    <load href="__PUBLIC__/jeasyui/themes/color.css" />
+    <link rel="stylesheet"  href="__PUBLIC__/jeasyui/themes/mobile.css">
+
+    <load href="__ROOT__/widget/css/channelList.css" />
+    <load href="__PUBLIC__/jeasyui/jquery.min.js" />
+    <load href="__PUBLIC__/jeasyui/jquery.easyui.min.js" />
+    <script src="__PUBLIC__/jeasyui/jquery.easyui.mobile.js"></script>
+
+    <style>
+
+        * { box-sizing: border-box; }
+        body{
+            position: absolute;
+            background-color: #f6f7f8;
+            margin: 0px auto;
+            width:100%; height: 100%;
+            text-align: center;vertical-align:middle;
+            /* font-family: "微软雅黑","宋体",verdana,helvetica,arial,sans-serif; */
+            font-size:12px;
+            font-family: "Microsoft YaHei",Arial;
+            color: #353535;
+        }
+        a {	text-decoration:none;}
+        a:link, a:visited, a:active{ color: #353535;}
+
+        #container{
+            position:relative;
+            margin: 0 auto;
+            height:100%;
+            /*min-width:1024px;*/
+            /*min-height: 680px;*/
+            max-width: 1200px;
+            text-align: center;
+            /*background: url("../images/home_bg.png") no-repeat center top;*/
+            background-size: 100% 100%;
+            background-color: #f3f4f5;
+        }
+
+        .input_item{
+            margin-top:10px;
+        }
+        .msg-box{
+            margin-top: 10px;
+            color: red;
+        }
+        .layer10{
+            position: absolute;
+            z-index: 10;
+        }
+        .my-logo{
+            top:10px;
+            right:10px;
+            width:24px;
+        }
+    </style>
+</head>
+<body>
+<div id="container" class="easyui-navpanel">
+    <div style="width: 100%">
+        <img src="__ROOT__/home/CH_220/images/userbanner.jpg" style="width:100%;object-fit:cover;">
+    </div>
+    <img  id="my-logo" class="layer10 my-logo" src="__ROOT__/home/CH_220/images/my_w.png"  >
+    <div>
+        为了准确记录您的学习成绩，需要完善一下用户资料：
+    </div>
+    <div  class="msg-box" >
+        {$msg}
+    </div>
+    <div style="margin: 20px 10px;">
+        <form action="__URL__/complementUserInfo" method="post">
+            <div class="input_item">
+                <input class="easyui-textbox" name="realname" value="{$realname}" label="真实姓名:" labelPosition="top" data-options="prompt:'请输入身份证上记载的姓名...',validType:'length[2,40]'" style="width:100%;">
+            </div>
+            <div class="input_item">
+                <input class="easyui-textbox" name="idcard" value="{$idcard}" label="身份证号:" labelPosition="top" data-options="prompt:'请输入身份证号码...',validType:'length[18,18]'" style="width:100%;">
+            </div>
+            <div class="input_item">
+                <input id="company" class="easyui-combobox" name="company" vlaue="{$company}" label="工作单位:" labelPosition="top" style="width:100%;"
+                       data-options="prompt:'请输入工作单位...', panelHeight:100,valueField:'id',textField:'txt', data: {$companyListJson} " >
+            </div>
+
+            <input type="hidden" name="work" value="save">
+            <input type="hidden" name="magicId" value="{$magicId}">
+            <div class="input_item">
+                <eq name="work" value="saved">
+                    <a  href="__URL__/index" class="easyui-linkbutton" >资料更新成功，返回首页</a>
+                <else/>
+                    <input type="submit" value="提交资料">
+                </eq>
+
+            </div>
+
+
+        </form>
+    </div>
+</div>
+<div id="userinfo" class="easyui-navpanel">
+    <header>
+        <div class="m-toolbar">
+            <span id="info_title" class="m-title">__</span>
+            <div class="m-left">
+                <a href="javascript:void(0)" class="easyui-linkbutton m-back" plain="true" outline="true" onclick="$.mobile.back()">返回</a>
+            </div>
+        </div>
+    </header>
+    userinfo
+</div>
+<script>
+    $(document).ready(function(){
+        $("#company").combobox('select','{$company}');
+    });
+    $("#my-logo").on('click',function(event){
+        $("#userinfo").load('__URL__/userInfo',function () {
+            $.parser.parse($('#userinfo'));
+        });
+        $("#info_title").html('用户服务');
+        $.mobile.go('#userinfo');
+    });
+</script>
+</body>
+</html>

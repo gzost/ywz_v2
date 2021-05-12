@@ -1,0 +1,31 @@
+<!--
+    显示用户信息网页控件模板
+    本页面适用手机单页应用
+-->
+<style>
+.userInfo-cmdlist{
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    color:#001122;
+    font-size: 1.2em;
+    line-height: 2.5em;
+}
+.userInfo-cmdlist li{
+    padding: 0 10px;
+    background-color: #f6f6ff;
+    border-color: #ddd;
+    border-style: solid;
+    border-width:1px 0 0 0;
+}
+.userInfo-cmdlist li:hover{
+    background-color: #f8f6f6;
+}
+.userInfo-cmdlist li:last-child{
+    border-bottom-width:1px;
+}
+.userInfo-cmdlist li:before{
+    content: "▷ ";
+}
+</style>
+{:R('My/userInfo',array( $uid,0,$agentid ))}

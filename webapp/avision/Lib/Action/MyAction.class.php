@@ -29,9 +29,9 @@ class MyAction extends SafeAction
         $this->assign("chnid",$chnid);
         $this->display('showMyInfo2');
         $uid=$this->userId();
-        if($uid>0) $this->userInfo($uid,$chnid);
-        if($chnid>0 && $uid>0 && $uid!=C('anonymousUserId') )  $this->Subscriber($chnid);
-
+        //if($uid>0) $this->userInfo($uid,$chnid);
+        //if($chnid>0 && $uid>0 && $uid!=C('anonymousUserId') )  $this->Subscriber($chnid);
+        if($chnid>0 && $uid>0 && $uid!=C('anonymousUserId') )  $this->chnRegiste($chnid);
     }
     /**
      * 显示用户对频道的订阅状态

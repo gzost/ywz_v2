@@ -195,6 +195,18 @@ class MyAction extends SafeAction
             else $webVar['agent']=0;
 
             $webVar['username']=$this->userName();
+            if(!empty($chnAttr['classHours'])){
+                $webVar['classHours']='本课程学时(分钟)：'.$chnAttr['classHours'];
+                //统计此用户的学习时间
+                $termBeginDate=(empty($chnAttr['termBeginDate']))? '2000-01-01':$chnAttr['termBeginDate'];
+                $termEndDate=(empty($chnAttr['termEndDate']))? '3000-12-31':$chnAttr['termEndDate'];
+                $cond=array('chnid'=>$chnid, 'userid'=>$uid, 'rq'=>array('between',array($termBeginDate,$termEndDate)));
+                $viewTime=D('statchannelviews')->where($cond)->sum('duration');
+                if(!empty($viewTime)) $webVar['classHours'] .='，你已学习了：'.$viewTime;
+            }else{
+                $webVar['classHours']='';
+            }
+
 
             $work=$_REQUEST['work'];
             if('save'==$work){

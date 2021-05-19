@@ -196,13 +196,13 @@ class MyAction extends SafeAction
 
             $webVar['username']=$this->userName();
             if(!empty($chnAttr['classHours'])){
-                $webVar['classHours']='本课程学时(分钟)：'.$chnAttr['classHours'];
+                $webVar['classHours']='课程总学时(分钟)：'.$chnAttr['classHours'];
                 //统计此用户的学习时间
                 $termBeginDate=(empty($chnAttr['termBeginDate']))? '2000-01-01':$chnAttr['termBeginDate'];
                 $termEndDate=(empty($chnAttr['termEndDate']))? '3000-12-31':$chnAttr['termEndDate'];
                 $cond=array('chnid'=>$chnid, 'userid'=>$uid, 'rq'=>array('between',array($termBeginDate,$termEndDate)));
                 $viewTime=D('statchannelviews')->where($cond)->sum('duration');
-                if(!empty($viewTime)) $webVar['classHours'] .='，你已学习了：'.$viewTime;
+                if(!empty($viewTime)) $webVar['classHours'] .='，截止2小时前您已学习了：'.$viewTime;
             }else{
                 $webVar['classHours']='';
             }
@@ -223,8 +223,10 @@ class MyAction extends SafeAction
                     //自动审核
                     foreach ($chnAttr['signQuest'] as $k=>$v){
                         if(0<strlen($chnAttr['signQuestAns'][$k]) && 0<>strcmp($chnAttr['signQuestAns'][$k],$qna[$v]['answer']) ){
+                            $needle = ','.$qna[$v]['answer'].',';
+                            if(strpos($chnAttr['signQuestAns'][$k],$needle) !== false ) break;  //与任意子答案匹配也算正确
                             $status='禁用';
-                            $webVar['msg']='自动审核失败，请修改注册信息或等待人工审核。';
+                            $webVar['msg']=sprintf("<span style='color:#F00;font-weight: bold'> [%s] 回答错误，请核对！</span><p>",$v);
                             break;
                         }
                     }
@@ -232,7 +234,7 @@ class MyAction extends SafeAction
                     $status='禁用';
                 }
                 $rt=$dbChnUser->saveAnswer($chnid,$uid,$qna,$status);   //更新数据库
-                $webVar['msg'].=(false===$rt)?'更新失败':'更新成功';
+                $webVar['msg'].=(false===$rt)?'答案未保存':'答案已保存';
             }
 
             //读频道注册需填写的资料

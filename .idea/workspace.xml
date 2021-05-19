@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="c373e6b3-2af5-4bab-bede-a2195dffe403" name="默认更改列表" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/MyAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/MyAction.class.php" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/webapp/avision/Tpl/My/chnRegiste.html" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Tpl/My/chnRegiste.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -34,39 +34,30 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="HomeAction.class.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/HomeAction.class.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state>
-              <caret line="88" column="20" selection-start-line="88" selection-start-column="20" selection-end-line="88" selection-end-column="20" />
-            </state>
-          </provider>
+      <file leaf-file-name="WxPay.Config.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/webapp/public/wxpay/WxPay.Config.php">
+          <provider selected="true" editor-type-id="text-editor" />
         </entry>
       </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Home/index.html">
-          <provider selected="true" editor-type-id="text-editor" />
+      <file leaf-file-name="JsapiAction.class.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/webapp/wxpay/Lib/Action/JsapiAction.class.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="609">
+              <caret line="737" column="33" selection-start-line="737" selection-start-column="29" selection-end-line="737" selection-end-column="33" />
+            </state>
+          </provider>
         </entry>
       </file>
       <file leaf-file-name="MyAction.class.php" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/MyAction.class.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="643">
-              <caret line="204" column="82" selection-start-line="204" selection-start-column="82" selection-end-line="204" selection-end-column="82" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="showMyInfo2.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/My/showMyInfo2.html">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file leaf-file-name="chnRegiste.html" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/My/chnRegiste.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="37" column="25" selection-start-line="37" selection-start-column="25" selection-end-line="37" selection-end-column="25" />
+            <state relative-caret-position="443">
+              <caret line="226" column="110" selection-start-line="226" selection-start-column="110" selection-end-line="226" selection-end-column="110" />
+              <folding>
+                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+                <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -84,13 +75,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>login-fields input</find>
-      <find>getip</find>
-      <find>fm_signup</find>
-      <find>twitter</find>
-      <find>h1</find>
-      <find>sendUrl</find>
-      <find>fm_login</find>
       <find>khxz</find>
       <find>upflow</find>
       <find>append</find>
@@ -114,12 +98,18 @@
       <find>flowInvo</find>
       <find>授权码</find>
       <find>$_SESSION['complementUserInfoMagicId']</find>
+      <find>statchannel</find>
+      <find>200</find>
+      <find>关闭</find>
+      <find>Request</find>
+      <find>Client</find>
+      <find>Client</find>
+      <find>FAIL</find>
     </findStrings>
     <replaceStrings>
       <replace />
     </replaceStrings>
     <dirStrings>
-      <dir>D:\MyProject\reform\approot\mdcflow\Tpl</dir>
       <dir>D:\MyProject\reform\approot\mdcflow\Lib\Action</dir>
       <dir>D:\MyProject\ywz\webapp\avision\Conf</dir>
       <dir>D:\MyProject\ywz\webroot\player\winter\css</dir>
@@ -140,15 +130,16 @@
       <dir>D:\MyProject\ywz\webapp\avision\Tpl\TPlay</dir>
       <dir>D:\MyProject\ywz\webapp\public\aliyun</dir>
       <dir>D:\MyProject\ywz\webapp\avision\Tpl</dir>
-      <dir>D:\MyProject\ywz\webapp\avision\Lib\Action</dir>
       <dir>D:\MyProject\ywz\webapp\avision\Lib</dir>
       <dir>D:\MyProject\ywz\webroot</dir>
       <dir>D:\MyProject\reform\approot\mdcflow\Common</dir>
       <dir>D:\MyProject\ywz\webapp</dir>
-      <dir>D:\MyProject\ywz\webapp\avision</dir>
       <dir>D:\MyProject\reform\approot</dir>
       <dir>D:\MyProject\reform\approot\mdcflow</dir>
       <dir>D:\MyProject\ywz</dir>
+      <dir>D:\MyProject\ywz\webapp\avision\Lib\Action</dir>
+      <dir>D:\MyProject\ywz\webapp\avision</dir>
+      <dir>D:\MyProject\ywz\webapp\wxpay</dir>
     </dirStrings>
   </component>
   <component name="Git.Settings">
@@ -157,7 +148,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/webroot/Public/css/login.css" />
         <option value="$PROJECT_DIR$/webapp/public/aliyun/Sms.Class.php" />
         <option value="$PROJECT_DIR$/webroot/Public/js/sms.js" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/Login/signup.html" />
@@ -207,6 +197,7 @@
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/CH_220Action.class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/CH_220/complementUserInfo.html" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/My/chnRegiste.html" />
+        <option value="$PROJECT_DIR$/webapp/wxpay/Lib/Action/JsapiAction.class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/MyAction.class.php" />
       </list>
     </option>
@@ -233,7 +224,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -281,26 +271,7 @@
               <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
               <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Lib" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Model" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Tpl" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Tpl" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="My" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="public" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
               <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
@@ -308,6 +279,7 @@
               <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="public" type="2a2b976b:PhpTreeStructureProvider$1" />
+              <item name="wxpay" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
               <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
@@ -349,6 +321,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -651,12 +624,16 @@
       <workItem from="1619581070141" duration="59000" />
       <workItem from="1620704864706" duration="16487000" />
       <workItem from="1620829359145" duration="968000" />
-      <workItem from="1620893685292" duration="2928000" />
+      <workItem from="1620893685292" duration="3292000" />
+      <workItem from="1620913838554" duration="2679000" />
+      <workItem from="1621041791106" duration="3591000" />
+      <workItem from="1621257677509" duration="2217000" />
+      <workItem from="1621408181945" duration="2457000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4652898000" />
+    <option name="totallyTimeSpent" value="4664206000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -671,14 +648,14 @@
     <frame x="-8" y="-8" width="1936" height="1066" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.43991855" visible="true" weight="0.17597471" />
+      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.43584523" visible="true" weight="0.17597471" />
       <window_info id="TODO" order="2" sideWeight="0.54083663" side_tool="true" weight="0.16280295" />
       <window_info anchor="bottom" id="Docker" order="6" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="8" show_stripe_button="false" side_tool="true" weight="0.32925585" />
       <window_info anchor="right" id="Database" order="3" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="9" />
-      <window_info id="Structure" order="3" sideWeight="0.5600815" side_tool="true" visible="true" weight="0.17597471" />
+      <window_info active="true" id="Structure" order="3" sideWeight="0.5641548" side_tool="true" visible="true" weight="0.17597471" />
       <window_info id="Terminal" internal_type="SLIDING" order="1" type="SLIDING" />
       <window_info id="Favorites" order="4" sideWeight="0.5641548" side_tool="true" weight="0.21654373" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -755,10 +732,10 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/HDPlayer/chnbill.html">
+    <entry file="file://$PROJECT_DIR$/webapp/wxpay/Lib/Action/JsapiAction.class.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="306">
-          <caret line="130" column="61" lean-forward="true" selection-start-line="130" selection-start-column="61" selection-end-line="130" selection-end-column="61" />
+        <state relative-caret-position="18425">
+          <caret line="737" column="33" selection-start-line="737" selection-start-column="29" selection-end-line="737" selection-end-column="33" />
         </state>
       </provider>
     </entry>
@@ -975,27 +952,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/public/wxpay/WxPay.Config.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1125" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webapp/wxpay/Lib/Action/JsapiAction.class_live.php">
       <provider selected="true" editor-type-id="text-editor">
         <state>
           <caret line="79" column="4" selection-start-line="79" selection-start-column="4" selection-end-line="79" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Common/vod/vodBase.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-719" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Common/vod/vodSite5.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7825">
-          <caret line="321" column="20" selection-start-line="321" selection-start-column="20" selection-end-line="321" selection-end-column="20" />
         </state>
       </provider>
     </entry>
@@ -1062,31 +1022,65 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/HomeAction.class.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state>
+        <state relative-caret-position="2200">
           <caret line="88" column="20" selection-start-line="88" selection-start-column="20" selection-end-line="88" selection-end-column="20" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Home/index.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/My/showMyInfo2.html">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/StatchannelviewsModel.php">
-      <provider selected="true" editor-type-id="text-editor" />
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/StatAction.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="5025">
+          <caret line="201" column="20" selection-start-line="201" selection-start-column="20" selection-end-line="201" selection-end-column="20" />
+        </state>
+      </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/My/chnRegiste.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
+        <state relative-caret-position="925">
           <caret line="37" column="25" selection-start-line="37" selection-start-column="25" selection-end-line="37" selection-end-column="25" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/BE_aliyunAction.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="318">
+          <caret line="65" column="24" selection-start-line="65" selection-start-column="24" selection-end-line="65" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Common/vod/vodSite5.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7825">
+          <caret line="321" column="20" selection-start-line="321" selection-start-column="20" selection-end-line="321" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/public/Request.Class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="525">
+          <caret line="21" column="48" selection-start-line="21" selection-start-column="48" selection-end-line="21" selection-end-column="48" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/public/wxpay/WxPay.Config.php">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/wxpay/Lib/Action/JsapiAction.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="609">
+          <caret line="737" column="33" selection-start-line="737" selection-start-column="29" selection-end-line="737" selection-end-column="33" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/MyAction.class.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="643">
-          <caret line="204" column="82" selection-start-line="204" selection-start-column="82" selection-end-line="204" selection-end-column="82" />
+        <state relative-caret-position="443">
+          <caret line="226" column="110" selection-start-line="226" selection-start-column="110" selection-end-line="226" selection-end-column="110" />
+          <folding>
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#span#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

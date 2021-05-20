@@ -224,7 +224,7 @@ class MyAction extends SafeAction
                     foreach ($chnAttr['signQuest'] as $k=>$v){
                         if(0<strlen($chnAttr['signQuestAns'][$k]) && 0<>strcmp($chnAttr['signQuestAns'][$k],$qna[$v]['answer']) ){
                             $needle = ','.$qna[$v]['answer'].',';
-                            if(strpos($chnAttr['signQuestAns'][$k],$needle) !== false ) break;  //与任意子答案匹配也算正确
+                            if(strpos($chnAttr['signQuestAns'][$k],$needle) >0 ) break;  //与任意子答案匹配也算正确
                             $status='禁用';
                             $webVar['msg']=sprintf("<span style='color:#F00;font-weight: bold'> [%s] 回答错误，请核对！</span><p>",$v);
                             break;

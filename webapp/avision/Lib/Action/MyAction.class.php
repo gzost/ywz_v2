@@ -165,6 +165,26 @@ class MyAction extends SafeAction
         $this->userInfo($uid);
         if($chnid>0)  $this->chnRegiste($chnid,$msg,$continerid,$mode);
     }
+
+    /**
+     * 自动审核检查
+     * @param $que  问题数组：{ array('que'=>'ans'),...}
+     * @param $ans  回答数组：{ array('que'=>'ans'),...}
+     * @return string 审核失败原因字串，''--审核通过，
+     */
+    private function checkAnswer($que,$ans){
+        $msg='';
+        foreach ($que as $k=>$v){
+            if(0<strlen($v) && 0<>strcmp($v,$ans[$k]) ){
+                $needle = ','.$ans[$k].',';
+                if( (substr($v,0,2)=='#,') && (strpos($v,$needle) >0) ) continue;  //与任意子答案匹配也算正确
+                $msg=sprintf("<span style='color:#F00;font-weight: bold'> [%s] 回答错误，请核对！</span><p>",$k);
+                break;
+            }
+        }
+        return $msg;
+    }
+
     /**
      * 显示及修改会员信息
      * 通过$_REQUEST传递如下网页变量：
@@ -224,7 +244,7 @@ class MyAction extends SafeAction
                     foreach ($chnAttr['signQuest'] as $k=>$v){
                         if(0<strlen($chnAttr['signQuestAns'][$k]) && 0<>strcmp($chnAttr['signQuestAns'][$k],$qna[$v]['answer']) ){
                             $needle = ','.$qna[$v]['answer'].',';
-                            if(strpos($chnAttr['signQuestAns'][$k],$needle) >0 ) break;  //与任意子答案匹配也算正确
+                            if( (substr($chnAttr['signQuestAns'][$k],0,2)=='#,') && (strpos($chnAttr['signQuestAns'][$k],$needle) >0) ) continue;  //与任意子答案匹配也算正确
                             $status='禁用';
                             $webVar['msg']=sprintf("<span style='color:#F00;font-weight: bold'> [%s] 回答错误，请核对！</span><p>",$v);
                             break;
@@ -247,9 +267,21 @@ class MyAction extends SafeAction
             if(null != $record){
                 //已经注册过会员
                 $rt=json_decode($record['note'],true);
+                //整理答案数组
+                $ans=array();
+                foreach ($rt as $rec) $ans[$rec['quest']]=$rec['answer'];
                 $webVar['signNote']='您已经成功提交了本频道的会员注册申请。';
                 if('禁用'==$record['status']){
                     $webVar['signNote'] .='正等待播主审核或会员资格被播主暂停。';
+                    if('true'==$chnAttr['signpass'] && 'save'!=$work){
+                        //整理问题数组
+                        $que=array();
+                        foreach ($chnAttr['signQuest'] as $k=>$queStr){
+                            $que[$queStr]=$chnAttr['signQuestAns'][$k];
+                        }
+
+                        $webVar['msg']='*'.$this->checkAnswer($que,$ans);
+                    }
                 } else{
                     $webVar['signNote'] .='已经是频道会员。';
                 }

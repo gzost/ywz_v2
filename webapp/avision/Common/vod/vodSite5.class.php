@@ -253,7 +253,10 @@ class vodSite5 extends vodBase{
             $this->initVodClient();
             $playInfo=Vod::v20170321()->getPlayInfo()->client(self::VOD_CLIENT_NAME)
                 ->withVideoId($vodId)    // 指定接口参数
-                //->withAuthTimeout(3600*24)
+                //   当OutputType取值为CDN时, 播放地址过期时间。单位：秒：
+                //最小值：1。 最大值：无限制。
+                //默认值：未设置时，取值为URL鉴权中设置的默认有效时长。
+                ->withAuthTimeout(3600)
                 ->format('JSON')  // 指定返回格式
                 ->request();      // 执行请求
             $this->m_videoInfo=$playInfo->toArray();

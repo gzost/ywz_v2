@@ -100,8 +100,11 @@ class MG_AgentSettingAction extends AdminBaseAction{
             array("key"=>"idcard", "name"=>"证件号显示为", "gkey"=>"userfields", "group"=>"显示属性", "value"=>"身份证号", "editor"=>array("type"=>"textbox")),
             array("key"=>"company", "name"=>"工作单位显示为", "gkey"=>"userfields", "group"=>"显示属性", "value"=>"工作单位", "editor"=>array("type"=>"textbox")),
             array("key"=>"realname", "name"=>"真实姓名显示为", "gkey"=>"userfields", "group"=>"显示属性", "value"=>"真实姓名", "editor"=>array("type"=>"textbox")),
+            array("key"=>"groups", "name"=>"分组显示为", "gkey"=>"userfields", "group"=>"显示属性", "value"=>"分组", "editor"=>array("type"=>"textbox")),
             array("key"=>"udef1", "name"=>"自定义字段1显示为", "gkey"=>"userfields", "group"=>"显示属性", "value"=>"自定义字段1", "editor"=>array("type"=>"textbox")),
             array("key"=>"company", "name"=>"工作单位列表", "gkey"=>"listfield", "group"=>"可选择字段列表定义", "value"=>"",
+                "editor"=>array("type"=>"textbox","options"=>array("multiline"=>"true","height"=>"100"))),
+            array("key"=>"groups", "name"=>"分组列表", "gkey"=>"listfield", "group"=>"可选择字段列表定义", "value"=>"",
                 "editor"=>array("type"=>"textbox","options"=>array("multiline"=>"true","height"=>"100")))
         );
 

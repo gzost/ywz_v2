@@ -91,7 +91,7 @@
                 <input class="easyui-textbox" name="realname" value="{$realname}" label="真实姓名:" labelPosition="top" data-options="prompt:'请输入身份证上记载的姓名...',validType:'length[2,40]'" style="width:100%;">
             </div>
             <div class="input_item">
-                <input class="easyui-textbox" name="idcard" value="{$idcard}" label="身份证号:" labelPosition="top" data-options="prompt:'请输入身份证号码...',validType:'length[18,18]'" style="width:100%;">
+                <input class="easyui-textbox" name="phone" value="{$phone}" label="电话:" labelPosition="top" data-options="prompt:'请输入电话号码...',validType:'length[8,18]'" style="width:100%;">
             </div>
             <div class="input_item">
                 <input id="company" class="easyui-combobox" name="company" vlaue="{$company}" label="工作单位:" labelPosition="top" style="width:100%;"
@@ -101,9 +101,9 @@
                 <input class="easyui-textbox" name="udef1" value="{$udef1}" label="岗位:" labelPosition="top" data-options="prompt:'',validType:'length[2,40]'" style="width:100%;">
             </div>
             <div class="input_item">
-                <input id="groups" class="easyui-combobox" name="groups" vlaue="{$groups}" label="所属片区:" labelPosition="top" style="width:100%;"
+                <input id="groups" class="easyui-combobox" name="groups" vlaue="{$groups}" label="所在街道:" labelPosition="top" style="width:100%;"
                        data-options="prompt:'请输入所属片区...', editable:false, panelHeight:100,valueField:'id',textField:'txt',
-                            data: [{id:'禅城区', txt:'禅城区'},{id:'南海区', txt:'南海区'}, {id:'顺德区', txt:'顺德区'},{id:'高明区',txt:'高明区'},{id:'三水区',txt:'三水区'},{id:'其它',txt:'其它'}] " >
+                            data:{$groupsListJson} " >
             </div>
             <input type="hidden" name="work" value="save">
             <input type="hidden" name="magicId" value="{$magicId}">

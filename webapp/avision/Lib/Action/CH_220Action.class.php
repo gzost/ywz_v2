@@ -92,9 +92,9 @@ class CH_220Action extends ChomeBaseAction
     private function validateUserInfo(){
         $msg='';
         if(mb_strlen($this->user['realname'])<2) $msg .='请输入真实姓名。<br>';
-        if(strlen($this->user['idcard'])!=18) $msg .='需要输入正确的身份证号码。<br>';
+        if(strlen($this->user['phone'])<8) $msg .='需要输入电话号码。<br>';
         if(mb_strlen($this->user['company'])<2) $msg .='请输入工作单位全称。<br>';
-        if(mb_strlen($this->user['groups'])<2) $msg .='请输入所属片区。<br>';
+        if(mb_strlen($this->user['groups'])<2) $msg .='请输入所在街道。<br>';
         if(mb_strlen($this->user['udef1'])<2) $msg .='请输入工作岗位。<br>';
         return $msg;
     }
@@ -128,6 +128,18 @@ class CH_220Action extends ChomeBaseAction
         }else $companyListJson="[]";
         $companyListJson=str_replace('"',"'",$companyListJson);
         $webVar['companyListJson']=$companyListJson;
+
+        //取分组下拉列表
+        if(!empty($listfield) && !empty($listfield['listfield']['groups'])){
+            $listfield['listfield']['groups']=explode(",",$listfield['listfield']['groups']);
+            $groupsList=array();
+            foreach ($listfield['listfield']['groups'] as $key=>$val) $groupsList[]=array('id'=>$val,'txt'=>$val);
+            //foreach ($companyArr as $key=>$val) $companyList[]=array('id'=>$key,'txt'=>$val);
+            $groupsListJson=json_encode2($groupsList);
+        }else $groupsListJson="[]";
+        $groupsListJson=str_replace('"',"'",$groupsListJson);
+        $webVar['groupsListJson']=$groupsListJson;
+
 //var_dump($webVar); die();
 
         $dbUser=D('user');
@@ -137,7 +149,7 @@ class CH_220Action extends ChomeBaseAction
             $msg='';
             $userData=array();
             if(isset($_POST['realname'])) $webVar['realname']=$userData['realname']=$this->user['realname']=$_POST['realname'];
-            if(isset($_POST['idcard']))  $webVar['idcard']=$userData['idcard']=$this->user['idcard']=$_POST['idcard'];
+            if(isset($_POST['phone']))  $webVar['phone']=$userData['phone']=$this->user['phone']=$_POST['phone'];
             if(isset($_POST['company']) ) {
                 /*
                 if(isset($listfield['listfield']['company'][$_POST['company']])){
@@ -165,12 +177,13 @@ class CH_220Action extends ChomeBaseAction
             //echo 'init';
             $webVar['work'] = 'init';
             $webVar['magicId'] = (empty($magicId)) ? 'x' : $magicId;
+            if(empty($this->user))   $this->user=$dbUser->find($uid);
         }
 //dump($this->user);
-            //首次调用时，外部必须已经读入了相应的用户数据
-            $webVar['realname']=$this->user['realname'];
-            $webVar['idcard']=$this->user['idcard'];
-            $webVar['company']=$this->user['company'];
+        //首次调用时，外部必须已经读入了相应的用户数据
+        $webVar['realname']=$this->user['realname'];
+        $webVar['phone']=$this->user['phone'];
+        $webVar['company']=$this->user['company'];
         $webVar['udef1']=$this->user['udef1'];
         $webVar['groups']=$this->user['groups'];
         /*

@@ -181,6 +181,7 @@ class SubscriberAction extends AdminBaseAction{
 
 		    $header=array();
 		    $header[]=array('name'=>'chnname','text'=>'频道名称');
+            $header[]=array('name'=>'uid','text'=>'用户ID');
             $header[]=array('name'=>'account','text'=>'观众账号');
             $header[]=array('name'=>'username','text'=>'观众名称');
             $header[]=array('name'=>'realname','text'=>'真实姓名');

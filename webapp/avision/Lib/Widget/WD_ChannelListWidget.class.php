@@ -28,7 +28,7 @@ class WD_ChannelListWidget extends Action
 
             $db=D('ChannelRelUserView');
             //$cond=array('uid'=>$uid, 'status'=>'正常','type'=>array('in','关注,会员,订购'));
-            $cond=array('uid'=>$uid, 'status'=>'正常','type'=>array('in','会员,订购'));
+            $cond=array('uid'=>$uid, 'status'=>'正常','Channel.status'=>'normal','type'=>array('in','会员,订购'));
             if(!empty($agent)) $cond['agent']=$agent;
             $fields='id,chnid,chnname,attr,score';
             $chnList=$db->getList($cond,$fields);

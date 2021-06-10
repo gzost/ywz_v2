@@ -25,6 +25,9 @@ class ST_ChannelViewAction extends AdminBaseAction{
         $work=$_REQUEST["work"];
         //设置公共web变量
         $webVar=array();
+        $webVar['uid'] = $this->userId();
+
+
         $webVar['viewAll']=($this->isOpPermit('A'))?"true":"false"; //是否锁定owner
         switch ($work){
             case "chnSearch":   //查找频道列表，并输出观看统计列表datagrid
@@ -46,7 +49,15 @@ class ST_ChannelViewAction extends AdminBaseAction{
                 $this->baseAssign();
                 $this->assign('mainTitle','频道观看时长统计');
 
+                $webVar["agent"] = $this->getUserInfo("agent"); //当前用户所在机构
+                $webVar["right"]["A"] = $this->isOpPermit("A"); //可管理所有频道[true|false]
+                $webVar["right"]["G"] = $this->isOpPermit("G"); //可管理机构频道
+                $webVar["right"]["R"] = $this->isOpPermit("R"); //R是管理自己频道功能
+
                 $webVar["bozu"]=$this->getUserInfo("account");
+                $webVar["account"]=$this->getUserInfo('account');   //当前用户的账号
+                $webVar["contextToken"]=session_id();   //上下文标识
+
                 $this->assign($webVar);
                 $this->display('main');
         }
@@ -56,6 +67,7 @@ class ST_ChannelViewAction extends AdminBaseAction{
     private function showListSearch($webVar){
         //组织频道查询条件
         //GetNameJason($searchKey, $owner = 0, $fmt = 'array')
+        /*
         $dbUser=D("user");
         $dbChannel=D("channel");
         if("false"==$webVar["viewAll"]) $owner=$this->userId();
@@ -77,6 +89,8 @@ class ST_ChannelViewAction extends AdminBaseAction{
             $webVar["chnId"]='';
             $chnListJson="[]";
         }
+        */
+        $webVar["chnId"]=$_POST['chnId'];
         $webVar["editable"]="true";
         $webVar["chnListJson"]=$chnListJson;
         $webVar["beginTime"]=date("Y-01-01");
@@ -95,8 +109,13 @@ class ST_ChannelViewAction extends AdminBaseAction{
         $webVar["viewerAccount"]=$_POST["viewerAccount"];
         $webVar["beginTime"]=$_POST["beginTime"];
         $webVar["endTime"]=$_POST["endTime"];
+        $webVar['noView'] = (empty($_POST['noView']))?false:true;
         $dbAgent=D("agent");
-        $agent=0;   //TODO:取频道对应的机构
+        $dbchannel=D('channel');
+
+        //取频道对应的机构
+        $agent=$dbchannel->where("id=".$chnId)->getField('agent');
+        $agent=intval($agent);
         $fieldName=$dbAgent->getUserFieldName($agent);
 
         $header=array();
@@ -106,9 +125,11 @@ class ST_ChannelViewAction extends AdminBaseAction{
         $header[]=array('name'=>'phone','text'=>$fieldName['phone'],'data-options'=>"width:200,align:'left', halign:'center'");
         $header[]=array('name'=>'realname','text'=>$fieldName['realname'],'data-options'=>"width:200,align:'left', halign:'center'");
         $header[]=array('name'=>'company','text'=>$fieldName['company'],'data-options'=>"width:200,align:'left', halign:'center'");
+        $header[]=array('name'=>'udef1','text'=>$fieldName['udef1'],'data-options'=>"width:200,align:'left', halign:'center'");
+        $header[]=array('name'=>'groups','text'=>$fieldName['groups'],'data-options'=>"width:200,align:'left', halign:'center'");
         $header[]=array('name'=>'duration','text'=>'观看时长','data-options'=>"width:100,align:'right', halign:'center',sortable:'true' ");
         //叠加会员问题字段
-        $dbchannel=D('channel');
+
         $chnAttr=$dbchannel->getAttrArray($chnId);
         $quest=$chnAttr['signQuest'];
         foreach ($quest as $v){
@@ -137,11 +158,21 @@ class ST_ChannelViewAction extends AdminBaseAction{
         if(empty($webVar["beginTime"]) || !strtotime($webVar["beginTime"])) $webVar["beginTime"]="1000-01-01";
         if(empty($webVar["endTime"]) || !strtotime($webVar["endTime"])) $webVar["endTime"]="7000-12-31";
         $cond['rq']=array("between",array($webVar["beginTime"],$webVar["endTime"]));
+        $noView=$webVar['noView'];   //查找没观看记录的频道会员
 
         //总记录数
-        $subQuery=$dbStat->field("count(*)")->where($cond)->group("userid")->select(false);
+        if($noView){
+            $query=sprintf("select count(DISTINCT(uid)) as total from %schannelreluser C left join %sstatchannelviews S on uid=userid 
+                where C.chnid=%d and type in('会员','订购') and userid is NULL"
+                ,C('DB_PREFIX'),C('DB_PREFIX'),$webVar["chnId"]);
+            $rt=M()->query($query);
+            $totalRecs=intval($rt[0]['total']);
+
+        }else{
+            $subQuery=$dbStat->field("count(*)")->where($cond)->group("userid")->select(false);
 //echo $subQuery;
-        $totalRecs=$dbStat->table($subQuery.'a')->getField("count(*)");
+            $totalRecs=$dbStat->table($subQuery.'a')->getField("count(*)");
+        }
         //$totalRecs=$dbStat->where($cond)->getField("count(*)");
 //echo $dbStat->getLastSql();
 //dump($totalRecs);
@@ -149,20 +180,37 @@ class ST_ChannelViewAction extends AdminBaseAction{
             echo [];
         }else{
             //合计
-            $total=$dbStat->where($cond)->Sum("duration");
+            if($noView){
+                $total=0;
+            }else{
+                $total=$dbStat->where($cond)->Sum("duration");
+            }
+
             //TODO: 排序处理
             $sort=getPara("STC_listViewsSort");
             if(empty($sort)) $sort="duration desc";
 
             //分页处理
             $page=$_POST["page"];   //需要的页面值，首页是1
-            if($page>0){    //有分页
-                $rows=$_POST["rows"];
-                if($rows<1) $rows=10;   //无设置或无效设置，设为默认每页10行
-                $records=$dbStat->field("userid,sum(duration) as duration")->where($cond)->group("userid")->order($sort)->page($page,$rows)->select();
+            $rows=$_POST["rows"];   //每页行数，仅当$page>0是有效
+            if($noView){
+                $query=sprintf("select DISTINCT(uid) as userid, 0 as duration from %schannelreluser C left join %sstatchannelviews S on uid=userid 
+                where C.chnid=%d and type in('会员','订购') and userid is NULL"
+                    ,C('DB_PREFIX'),C('DB_PREFIX'),$webVar["chnId"]);
+                if($page>0){
+                    if($rows<1) $rows=10;   //无设置或无效设置，设为默认每页10行
+                    $query .= sprintf(" limit %d, %d ",$page-1,$rows);
+                }
+                $records=M()->query($query);
             }else{
-                $records=$dbStat->field("userid,sum(duration) as duration")->where($cond)->group("userid")->order($sort)->select();
+                if($page>0){    //有分页
+                    if($rows<1) $rows=10;   //无设置或无效设置，设为默认每页10行
+                    $records=$dbStat->field("userid,sum(duration) as duration")->where($cond)->group("userid")->order($sort)->page($page,$rows)->select();
+                }else{
+                    $records=$dbStat->field("userid,sum(duration) as duration")->where($cond)->group("userid")->order($sort)->select();
+                }
             }
+
 //echo $dbStat->getLastSql();
             //填充相关字段
             $chnid=$webVar["chnId"];

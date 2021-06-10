@@ -38,6 +38,7 @@ class CH_220Action extends ChomeBaseAction
 
         $msg=$this->validateUserInfo();
         if(''!=$msg || $_REQUEST['work']=='udInf'){
+            $msg="　";
             $magicId=uniqid('cui',true);
             $_SESSION['complementUserInfoMagicId']=$magicId;
             //$this->redirect("complementUserInfo",array('msg'=>$msg);
@@ -161,15 +162,18 @@ class CH_220Action extends ChomeBaseAction
             }
             if(isset($_POST['udef1']))  $webVar['udef1']=$userData['udef1']=$this->user['udef1']=$_POST['udef1'];
             if(isset($_POST['groups']))  $webVar['groups']=$userData['groups']=$this->user['groups']=$_POST['groups'];
-            $msg .=$this->validateUserInfo();
             $webVar['magicId']=$_POST['magicId'];
+
+            //把填写的资料写入数据库
+            if(!empty($userData))  {
+                $rt=$dbUser->where("id=".$uid)->save($userData);
+                if(false===$rt) $msg .= "无法更新数据库!<br>";
+            }
+            $msg .=$this->validateUserInfo();
+
 //var_dump($webVar,$msg);
             if(''===$msg){
                 //资料输入正确
-                if(!empty($userData))  {
-                    $rt=$dbUser->where("id=".$uid)->save($userData);
-                    if(false===$rt) echo("无法更新数据库。");
-                }
                 $webVar['work']='saved';    //数据更新成功
                 unset($_SESSION['complementUserInfoMagicId']);
             } else $webVar['work']='init';

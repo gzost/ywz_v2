@@ -1,18 +1,22 @@
 <!-- ST_ChannelView/showListSearch 显示观看统计，通过ajax装入 -->
 <div style="box-sizing:border-box; padding:2px 5px; margin-bottom: 5px; border: 1px solid #DDD; border-radius: 5px;">
     <form id='cond' method='post' style="display:inline">
+        <!--
         <span class="cond-item" >选择频道：<input class='easyui-combobox' name='chnId' value='{$chnId}'  style='width:200px'
                                              data-options="valueField:'id',textField:'name', data:{$chnListJson}, height:26,
                   editable:{$editable|default='false'}  " >
         </span>
+        -->
+        <input type="hidden" name="chnId" value="{$chnId}">
 
-        <span class="cond-item" >观众账号：<input class='easyui-textbox' name='viewerAccount' value='{$viewerAccount}'  style='width:120px; height: 26px;'></span>
         <span class="cond-item" >时间范围：
         从<input class="easyui-datebox" name="beginTime" value="{$beginTime}" style="width:120px; height: 26px;"
-                data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+                data-options="required:true" >
         至<input class="easyui-datebox" name="endTime" value="{$endTime}" style="width:120px; height: 26px;"
-                data-options="required:true,formatter:cn_formatter,parser:cn_parser" >
+                data-options="required:true" >
         </span>
+        <span class="cond-item" >观众账号：<input class='easyui-textbox' name='viewerAccount' value='{$viewerAccount}'  style='width:100px; height: 26px;'></span>
+        <span class="cond-item"><input type="checkbox" name="noView" value="1" >查找没观看记录的频道会员</span>
         <input name='work' value='listSearch' style="display:none" />
         <div id="btn_searchList" class="easyui-linkbutton" iconCls="icon-search" >查询</div>
         <div id="btn_saveExcel" class="easyui-linkbutton" iconCls="icon-down" data-options="plain:true">另存为Excel</div>
@@ -20,7 +24,14 @@
 
     </form>
 </div>
-<div id="box_datagrid">请选择频道及查询条件</div>
+<div id="box_datagrid">
+    <ul>
+        <li>请选择要统计的时间范围，按【查询】按钮输出观看统计</li>
+        <li>输出了统计表后才可【另存为Excel】</li>
+        <li>填写【观众账号】可查询指定观众的统计数据，账号必须<span style="font-weight: bold;">完整输入</span>。</li>
+        <li>若要查找注册了频道会员但完全没观看过频道节目的观众，请勾选【查找没观看记录的频道会员】</li>
+    </ul>
+</div>
 <script>
     $(window).off("loaded_listSearch"); //先清除上一次的绑定，否则多次绑定会执行多次
     $(window).on("loaded_listSearch",function(){

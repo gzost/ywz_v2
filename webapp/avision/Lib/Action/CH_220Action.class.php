@@ -9,6 +9,7 @@
 
 require_once COMMON_PATH.'ChomeBaseAction.class.php';
 require_once LIB_PATH.'Model/AnnounceModel.php';
+require_once LIB_PATH.'Model/ChannelreluserModel.php';
 
 class CH_220Action extends ChomeBaseAction
 {
@@ -51,6 +52,15 @@ class CH_220Action extends ChomeBaseAction
         $dbAnnounce=D("Announce");
         $showItems=$dbAnnounce->getShowItem(self::$agentid,$userid);
 
+        //临时补丁，所有观看过本首页的用户自动成为指定频道的会员
+        try{
+            $dbChnUser=D("channelreluser");
+            $date=date("Y-m-d");
+            $channelreluserRec=array('chnid'=>1652, 'uid'=>$userid, 'type'=>'会员', 'status'=>'正常', 'begindate'=>$date, 'enddate'=>'3000-12-31');
+            $rt=$dbChnUser->insertRec($channelreluserRec);
+        }catch (Exception $e){
+            echo "内部错误";
+        }
 
         $webVar=array();
         $webVar['showItems']=(empty($showItems))?"[]":json_encode2($showItems);

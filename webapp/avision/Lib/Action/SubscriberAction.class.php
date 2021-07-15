@@ -64,26 +64,13 @@ class SubscriberAction extends AdminBaseAction{
 
 
  		if('init'==$webVar['work']){
-/*
- 			if(count($chnList)<1){
- 				//没有任何频道的管理权限
- 				$this->assign('msg','您还没有开设[会员]类型的频道，您可以在 【频道管理】-【高级设置】中设定。');
- 				$this->display('common:noRight');
- 				return;
- 			}
-*/
- 			//$webVar['chnId']=1330;//$chnList[0]['id'];
- 			//dump($chnList);
- 			//$chnListJson=(null==$chnList)?'[]':json_encode($chnList);
- 			//setPara('chnListJson', $chnListJson);
- 			//$condTpl['chnId']=$webVar['chnId'];
  			condition::save($webVar,ACTION_NAME);	//更新并存储最新的查询条件
  		} else {
  			condition::update($webVar,ACTION_NAME);
  		}
 
  		//取频道信息
-        $dbChannel=D(channel);
+        $dbChannel=D('channel');
         $chnId=$webVar['chnId'];
         $header=array();
  		if(!empty($chnId)){
@@ -185,8 +172,11 @@ class SubscriberAction extends AdminBaseAction{
             $header[]=array('name'=>'account','text'=>'观众账号');
             $header[]=array('name'=>'username','text'=>'观众名称');
             $header[]=array('name'=>'realname','text'=>'真实姓名');
+            $header[]=array('name'=>'phone','text'=>'电话号码');
             $header[]=array('name'=>'idcard','text'=>'证件号');
             $header[]=array('name'=>'company','text'=>'工作单位');
+            $header[]=array('name'=>'udef1','text'=>'自定义1');
+            $header[]=array('name'=>'groups','text'=>'用户组');
             $header[]=array('name'=>'type','text'=>'类型');
             $header[]=array('name'=>'status','text'=>'状态');
             $header[]=array('name'=>'classify','text'=>'分组');

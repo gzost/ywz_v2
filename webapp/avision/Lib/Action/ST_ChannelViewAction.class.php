@@ -214,7 +214,7 @@ class ST_ChannelViewAction extends AdminBaseAction{
 //echo $dbStat->getLastSql();
             //填充相关字段
             $chnid=$webVar["chnId"];
-            $fields="u.account,u.username,u.phone,u.idcard,u.company,u.realname,C.note";
+            $fields="u.account,u.username,u.phone,u.idcard,u.company,u.realname,u.udef1,u.groups,C.note";
             foreach ($records as $key=>$row){
                 $userid=$row["userid"];
                 $rec=$dbUser->alias('u')->field($fields)->where(array("u.id"=>$userid))->join(C("DB_PREFIX")."channelreluser C on C.chnid=$chnid and C.uid=u.id and type='会员'")->find();

@@ -88,13 +88,16 @@
     <div style="margin: 20px 10px;">
         <form action="__URL__/complementUserInfo" method="post">
             <div class="input_item">
+                <input class="easyui-textbox" name="idcard" value="{$idcard}" label="学号:" labelPosition="top" data-options="prompt:'输入4位数字的学号...',validType:'length[4,4]'" style="width:100%;">
+            </div>
+            <div class="input_item">
                 <input class="easyui-textbox" name="realname" value="{$realname}" label="真实姓名:" labelPosition="top" data-options="prompt:'请输入身份证上记载的姓名...',validType:'length[2,40]'" style="width:100%;">
             </div>
             <div class="input_item">
                 <input class="easyui-textbox" name="phone" value="{$phone}" label="电话:" labelPosition="top" data-options="prompt:'请输入电话号码...',validType:'length[8,18]'" style="width:100%;">
             </div>
             <div class="input_item">
-                <input id="company" class="easyui-combobox" name="company" vlaue="{$company}" label="工作单位:" labelPosition="top" style="width:100%;"
+                <input id="company" class="easyui-combobox" name="company" vlaue="{$company}" label="工作单位(请输入全称):" labelPosition="top" style="width:100%;"
                        data-options="prompt:'请输入工作单位...', panelHeight:100,valueField:'id',textField:'txt', data: {$companyListJson} " >
             </div>
             <div class="input_item">

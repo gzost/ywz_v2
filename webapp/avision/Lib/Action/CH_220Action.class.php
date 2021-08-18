@@ -39,7 +39,7 @@ class CH_220Action extends ChomeBaseAction
 
         $msg=$this->validateUserInfo();
         if(''!=$msg || $_REQUEST['work']=='udInf'){
-            $msg="　";
+            $msg=explode("。",$msg)[0];//"　";
             $magicId=uniqid('cui',true);
             $_SESSION['complementUserInfoMagicId']=$magicId;
             //$this->redirect("complementUserInfo",array('msg'=>$msg);
@@ -58,6 +58,7 @@ class CH_220Action extends ChomeBaseAction
             $date=date("Y-m-d");
             $channelreluserRec=array('chnid'=>1652, 'uid'=>$userid, 'type'=>'会员', 'status'=>'正常', 'begindate'=>$date, 'enddate'=>'3000-12-31');
             $rt=$dbChnUser->insertRec($channelreluserRec);
+//echo            $dbChnUser->getLastSql();
         }catch (Exception $e){
             echo "内部错误";
         }
@@ -102,6 +103,8 @@ class CH_220Action extends ChomeBaseAction
      */
     private function validateUserInfo(){
         $msg='';
+        $xuehao=intval($this->user['idcard']);
+        if($xuehao<1000 || $xuehao>3021 ) $msg .='请输入正确的学号。<br>';
         if(mb_strlen($this->user['realname'])<2) $msg .='请输入真实姓名。<br>';
         if(strlen($this->user['phone'])<8) $msg .='需要输入电话号码。<br>';
         if(mb_strlen($this->user['company'])<2) $msg .='请输入工作单位全称。<br>';
@@ -159,6 +162,7 @@ class CH_220Action extends ChomeBaseAction
             //echo "save";
             $msg='';
             $userData=array();
+            if(isset($_POST['idcard'])) $webVar['idcard']=$userData['idcard']=$this->user['idcard']=$_POST['idcard'];
             if(isset($_POST['realname'])) $webVar['realname']=$userData['realname']=$this->user['realname']=$_POST['realname'];
             if(isset($_POST['phone']))  $webVar['phone']=$userData['phone']=$this->user['phone']=$_POST['phone'];
             if(isset($_POST['company']) ) {
@@ -194,7 +198,9 @@ class CH_220Action extends ChomeBaseAction
             if(empty($this->user))   $this->user=$dbUser->find($uid);
         }
 //dump($this->user);
+//echo $dbUser->getLastSql();
         //首次调用时，外部必须已经读入了相应的用户数据
+        $webVar['idcard']=$this->user['idcard'];
         $webVar['realname']=$this->user['realname'];
         $webVar['phone']=$this->user['phone'];
         $webVar['company']=$this->user['company'];

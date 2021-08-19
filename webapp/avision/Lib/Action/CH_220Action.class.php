@@ -104,7 +104,7 @@ class CH_220Action extends ChomeBaseAction
     private function validateUserInfo(){
         $msg='';
         $xuehao=intval($this->user['idcard']);
-        if($xuehao<1000 || $xuehao>3021 ) $msg .='请输入正确的学号。<br>';
+        if($xuehao<1000 || $xuehao>9999 ) $msg .='请输入正确的学号。<br>';
         if(mb_strlen($this->user['realname'])<2) $msg .='请输入真实姓名。<br>';
         if(strlen($this->user['phone'])<8) $msg .='需要输入电话号码。<br>';
         if(mb_strlen($this->user['company'])<2) $msg .='请输入工作单位全称。<br>';
@@ -154,7 +154,7 @@ class CH_220Action extends ChomeBaseAction
         $groupsListJson=str_replace('"',"'",$groupsListJson);
         $webVar['groupsListJson']=$groupsListJson;
 
-//var_dump($webVar); die();
+//var_dump($webVar); //die();
 
         $dbUser=D('user');
         if($_POST['work']=='save' && !empty($magicId) && $magicId===$_POST['magicId']){

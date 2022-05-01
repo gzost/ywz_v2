@@ -97,7 +97,7 @@
                     <div class="layerVideoTop1" style="position: absolute; top:0;width: 100%; height: 100%;">
                         <div class="blk_heat" style="position: absolute; bottom:6px; left:20px; line-height: 16px; font-size: 16px;">
                             <img src="__PUBLIC__/images/fire32.png" style="height: 18px; vertical-align: middle;">
-                            <span style="display: inline-block; padding: 2px 5px; background-color: rgba(255,255,255, .4); border-radius: 8px;">{$entrytimes}</span>
+                            <span id="UE_entrytimes" style="display: inline-block; padding: 2px 5px; background-color: rgba(255,255,255, .4); border-radius: 8px;">{$entrytimes}</span>
                         </div>
                     </div>
                     <!-- 叠加层 2-->
@@ -138,6 +138,7 @@
 <!--<load href="__ROOT__/player/js/playpage3.7.min.js" />-->
 <script src="__ROOT__/player/js/playpage.js?t=3.7.3" ></script>
 <script src="__PUBLIC__/js/OU_margquee.js"></script>
+<script src="__ROOT__/player/js/elementUpdate.js"></script>
 <script>
     var playPage;
     $(document).ready(function () {
@@ -189,5 +190,6 @@
         }();
 
     });
+
 
 </script>

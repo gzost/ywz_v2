@@ -58,12 +58,23 @@ class BE_communicateAction extends SafeAction{
             $rt=$app->communicate(session_id(),$_POST["playload"]["appPara"],$_POST["playload"]["exercise"]);
             if(is_array($rt)) $retArr["exercise"]=$rt;
 
+            //更新页面元素
+            $retArr['element']=$this->getElement($_POST["playload"]["appPara"]['chnid']);
 //$retArr["userid"]=$this->userId();
 //dump($retArr);
             Oajax::successReturn($retArr);
         }catch (Exception $ex){
             Oajax::errorReturn($ex->getMessage());
         }
+    }
+
+    //取指定频道的点击次数，当需要更新的元素多后，这部分独立成一个后天Action去做
+    public function getElement($chnid=-1){
+        $rtArray=array();
+        $chndb=D("channel");
+        $entrytimes=$chndb->where("id=".$chnid)->getField("entrytimes");
+        $rtArray["UE_entrytimes"]=($entrytimes>0)?$entrytimes:0;
+        return $rtArray;
     }
 }
 ?>

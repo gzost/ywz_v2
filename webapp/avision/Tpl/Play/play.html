@@ -165,7 +165,7 @@
         <!--<div class="layerVideoTop1" style="position: absolute; top:0;width: 100%; height: 100%;">-->
             <div class="layerVideoTop1 blk_heat" style="position: absolute; bottom: 40px; left:10px; line-height: 14px; font-size: 14px;">
                 <img src="__PUBLIC__/images/fire32.png" style="height: 16px; vertical-align: middle;">
-                <span style="display: inline-block; padding: 2px 5px; background-color: rgba(255,255,255, .4); border-radius: 8px;">{$entrytimes}</span>
+                <span id="UE_entrytimes" style="display: inline-block; padding: 2px 5px; background-color: rgba(255,255,255, .4); border-radius: 8px;">{$entrytimes}</span>
             </div>
             <div class="layerVideoTop1 blk_my" style="position: absolute; top:10px; right: 15px;">
                 <img src="__PUBLIC__/images/my_white.png" style="height: 20px;">
@@ -226,6 +226,7 @@
 <!--<load href="__ROOT__/player/js/playpage3.7.min.js" />-->
 <script src="__ROOT__/player/js/playpage.js?t=3.7.6" ></script>
 <script src="__PUBLIC__/js/OU_margquee.js"></script>
+<script src="__ROOT__/player/js/elementUpdate.js"></script>
 <script>
     //本页面的全局JS对象，除页面的主功能还提供个plugin的公共服务
     var playPage=null;

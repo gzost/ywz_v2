@@ -122,6 +122,7 @@ class ST_ChannelViewAction extends AdminBaseAction{
         $header[]=array('name'=>'userid','text'=>$fieldName['id'],'data-options'=>"width:100,align:'right', halign:'center',sortable:'true'");
         $header[]=array('name'=>'account','text'=>$fieldName['account'],'data-options'=>"width:100,align:'left', halign:'center'");
         $header[]=array('name'=>'username','text'=>$fieldName['username'],'data-options'=>"width:200,align:'left', halign:'center'");
+        $header[]=array('name'=>'idcard','text'=>$fieldName['idcard'],'data-options'=>"width:100,align:'left', halign:'center'");
         $header[]=array('name'=>'phone','text'=>$fieldName['phone'],'data-options'=>"width:200,align:'left', halign:'center'");
         $header[]=array('name'=>'realname','text'=>$fieldName['realname'],'data-options'=>"width:200,align:'left', halign:'center'");
         $header[]=array('name'=>'company','text'=>$fieldName['company'],'data-options'=>"width:200,align:'left', halign:'center'");
@@ -136,6 +137,7 @@ class ST_ChannelViewAction extends AdminBaseAction{
             $header[]=array('name'=>$v,'text'=>htmlspecialchars($v));
         }
         $webVar["header"]=$header;
+
         setPara("STC_listViews",$webVar);   //传递到datagrid数据提供模块或Excel下载模块
         setPara("STC_listViewsSort","duration desc");
         $this->assign($webVar);

@@ -160,12 +160,17 @@ class HomeAction extends SafeAction {
     	try{
     		$chnList=$this->channelList($type,$searchStr,$scrType);
 //dump($_SERVER);
+            //全部使用新播放器分支2022.05.06
+            /*
             $host=$_SERVER["HTTP_HOST"];
             if(0===stripos($host,"cdn") || 0===stripos($host,"ou")){
                 $playerURI="/play.html?ch=";
             }else{
                 $playerURI="/player.php/HDPlayer/play/chnId/";
             }
+            */
+            $playerURI="/play.html?ch=";
+
             $this->assign("playerURI",$playerURI);
     		$this->assign('chnList',$chnList);
 			$this->assign('i', 0);

@@ -17,7 +17,11 @@
 			<td>account: </td><td><input type='text' name='account' value='{$account}' style="width:400px" ></td>
 		</tr>
 		<tr>
-			<td>tm: </td><td><input type='text' name='tm' value='{$tm}' style="width:400px" ><br>Now is : {$now}</td>
+            <td>now: </td>
+            <td>
+                {$now} + expire(秒）: <input type='text' name='expire' value='{$expire}' style="width:40px" >
+			    = tm: <input type='text' name='tm' value='{$tm}' style="width:100px" >({$tm10})
+            </td>
 		</tr>
 	</table>
 	<input type="submit" value="更新">

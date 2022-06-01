@@ -31,8 +31,8 @@ class PlayAction extends SafeAction{
 
     public function test(){
 
-
-        dump($_SERVER["HTTP_USER_AGENT"]);
+        echo $uri=$_SERVER['REQUEST_URI'];
+        dump($_SERVER);
         exit;
         for($i=0; $i<10; $i++){
             echo $i.',';
@@ -115,7 +115,8 @@ class PlayAction extends SafeAction{
      *  - ch: 频道ID
      *  - vf: VOD记录ID
      *  - nc: 有此参数且非零、空值，则不显示频道封面，不显示系统公告，一般用于程序控制重新刷新播放器的情形
-     *  - tab: 默认的活跃tabid
+     *  - tab: 默认的活跃tabid。101=>'视频直播', 102=>'互动聊天', 103=>'排行榜', 104=>'点播资源', 105=>'图片直播',
+     *      106=>'会员' ,107=>'分享', 108=>'首页', 109=>'图文直播', 110=>'频道介绍', 111=>'课后练习'
      *  - ag: agentID 有此参数传入时，用此覆盖用户的agentID
      *  - du: 介绍人（推荐人）ID
      * 当不提供ch或找不到ch指出的频道时，显示首页。
@@ -285,6 +286,7 @@ class PlayAction extends SafeAction{
         if(empty($this->vodid)){
             $this->getLivePara($webVar,$webVar['chnid']);
         }else{
+            $webVar["activetab"]=104;   //修改默认tab为点播。2022-05-20
             $this->getVodPara($webVar,$this->vodid);    //填写vod相关的参数
         }
         $webVar['uid']=empty($uid)?"":$uid;

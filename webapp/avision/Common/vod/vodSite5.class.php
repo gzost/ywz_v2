@@ -475,4 +475,26 @@ class vodSite5 extends vodBase{
             throw new Exception($e->getMessage());
         }
     }
+
+    //测试中，取阿里云上的媒体列表
+    public function searchMedia(){
+        $this->initVodClient();
+        try{
+            $request = Vod::v20170321()->searchMedia()->client(self::VOD_CLIENT_NAME)
+                ->withSearchType("video")
+                ->withFields("Title,CoverURL,Size,Duration")
+                ->withPageNo(20)
+                ->withPageSize(50)
+                ->withScrollToken('')
+                //->debug(true) // Enable the debug will output detailed information
+                ->connectTimeout(1) // Throw an exception when Connection timeout
+                //->timeout(1) // Throw an exception when timeout
+                ;
+            $result=$request->request();
+            dump($result->toArray());
+        } catch (Exception $e){
+            throw new Exception($e->getMessage());
+        }
+    }
+
 }

@@ -24,6 +24,9 @@ class UserModel extends Model {
 		//'themeAdmin'=>array('name'=>'themeAdmin','txt'=>'管理界面主题','val'=>'default'),
 		//'themePlayer'=>array('name'=>'themePlayer','txt'=>'播放界面主题','val'=>'default'),
 		'commKey'=>array('name'=>'commKey','txt'=>'SI通信密钥'),
+        'maxVodRec'=>array('name'=>'maxVodRec','txt'=>'最大点播文件记录数'), //2022-06-01
+        'maxUploadTimes'=>array('name'=>'maxUploadTimes','txt'=>'最大上传次数'),
+		'maxFileSize'=>array('name'=>'maxFileSize','txt'=>'上传视频文件最大体积MB'),
 		//'SIdomain'=>array('name'=>'SIdomain','txt'=>'SI请求域名'),
 		'refCode'=>array('name'=>'refCode','txt'=>'推荐码'),
 		'refCodeId'=>array('name'=>'refCodeId','txt'=>'推荐人ID'),

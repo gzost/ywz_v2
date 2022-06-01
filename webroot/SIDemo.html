@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<!-- SI接口演示 -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="pragma" content="no-cache">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+
+    <link href="Public/jeasyui/themes/default/easyui.css" rel="stylesheet" style="text/css" />
+    <link href="Public/jeasyui/themes/icon.css" rel="stylesheet" style="text/css" />
+    <link href="Public/jeasyui/themes/color.css" rel="stylesheet" style="text/css" />
+    <link href="/admin/default/css/base.css" rel="stylesheet" style="text/css" />
+
+    <script type="text/javascript" src="Public/jeasyui/jquery.min.js" ></script>
+    <script type="text/javascript" src="Public/jeasyui/jquery.easyui.min.js" ></script>
+    <script type="text/javascript" src="Public/jeasyui/locale/easyui-lang-zh_CN.js" ></script>
+    <script type="text/javascript" src="Public/js/jquery.md5.js" ></script>
+    <title>第三方接入接口Demo</title>
+    <style>
+        .demo-item { display: block; margin: 0 auto; clear: both; border: 1px solid grey; width: 90%; padding: 5px;}
+        .item-title { font-size: 1.2em; font-weight: bold; margin: 10px;}
+    </style>
+</head>
+<body style="position: relative;">
+    <div style="font-weight: bold; font-size: 1.5em; text-align: center">第三方接入接口Demo</div>
+    <div class="demo-item">
+        <div class="item-title">视频上传</div>
+        <div>
+            <button id="btNewVideo">上传新视频</button>
+            <button id="btUpdateVideo">更新原有视频</button>
+        </div>
+        <div id="detail">视频上传控件</div>
+
+
+    </div>
+
+<script>
+    $(document).ready(function () {
+        var server="http://www.ou.cn:8003";
+        var baseUrl="/index.php/SI";
+        var action='uploadVideo';   //要调用的接口功能
+        var siuser=778899;     //si端用户ID用于区分视频属于不同的SI用户
+        var fileid=0;      //视频ID，=0是上传新的视频，提供旧视频ID是更新旧的视频。新旧视频的$siuser必须相同，同一$siuser可以有多个视频。
+        var account='test2';   //SI在易网真平台上的代理账号。
+        var tm='728ceb0d';     //通讯链接有效时间的时间戳。
+
+        $("#btNewVideo").on("click",function (env) {
+            console.log("click New");
+            baseUrl =baseUrl+'/'+action+'/siuser/'+siuser+'/fileid/'+fileid;
+            var sec=$.md5('ywzkey'+baseUrl+account+tm);    //由通讯校验算法得到的通讯加密窜
+            //此字串应该由服务端用规定的算法生成!!!重要!!!：sec=md5(commkey+baseUrl+account+tm)
+            //commKey为SI与易网真平台约定的通讯密钥，不能被第三方获知
+
+            var uri=server+baseUrl+'\?account='+account+'&tm='+tm+'&sec='+sec;
+
+            $.post(uri,function (data) {
+                $("#detail").html(data);
+                $.parser.parse($('#detail'));
+            },'html');
+        });
+
+        $("#btUpdateVideo").on("click",function (env) {
+            console.log("click Update");
+            fileid=20564;
+            baseUrl =baseUrl+'/'+action+'/siuser/'+siuser+'/fileid/'+fileid;
+            var sec=$.md5('ywzkey'+baseUrl+account+tm);    //由通讯校验算法得到的通讯加密窜
+            //此字串应该由服务端用规定的算法生成!!!重要!!!：sec=md5(commkey+baseUrl+account+tm)
+            //commKey为SI与易网真平台约定的通讯密钥，不能被第三方获知
+
+            var uri=server+baseUrl+'\?account='+account+'&tm='+tm+'&sec='+sec;
+            $.post(uri,function (data) {
+                $("#detail").html(data);
+                $.parser.parse($('#detail'));
+            },'html');
+        });
+
+        /**
+         * 当文件上传成功或失败，控件都会发出postUpload消息，data带有以下参数：
+         * - recordfileId 录像文件ID是文件的唯一标识，播放、更改都要提供此标识
+         * - filename 在上传端的文件名
+         * - size 文件体积（MB）
+         * - success ='true'上传成功
+         * - msg 上传失败时的错误信息
+         */
+        $(window).on('postUpload',function (event,data) {
+            console.log("window.postUpload======");
+            console.log(event,data);
+        });
+    });
+</script>
+</body>
+</html>

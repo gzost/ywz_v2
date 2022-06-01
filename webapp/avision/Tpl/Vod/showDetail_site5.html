@@ -61,22 +61,28 @@
 </style>
 
 <div id="record_detail">
-    <div class="title">{$title}</div>
+    <neq name="callFromSI" value="1">
+        <div class="title">{$title}</div>
+    </neq>
+
     <div style="display:inline-block; width:500px;vertical-align:top;">
-        <form id="fm-detail" >
-            {$detailFormData}
-            <input type="hidden" name="new" value="{$new}" />
-            <input type="hidden" name="owner" value="{$owner}" />
-            <input type="hidden" name="id" value="{$id}" />
-            <input id="filePath" type="hidden" name="path" value="{$path}" />
-        </form>
-        <div style="width:100%; text-align:center;margin-top:20px;">
-            <eq name="permitModify" value="true">
-                <a id="btnSaveDetail" href="#" class="OUI-btn" style="padding:4px 40px" onclick="detail_submit();" >保存基本资料</a>
-                <else/>
-                您没有修改权限
-            </eq>
-        </div>
+        <neq name="callFromSI" value="1">
+            <form id="fm-detail" >
+                {$detailFormData}
+                <input type="hidden" name="new" value="{$new}" />
+                <input type="hidden" name="owner" value="{$owner}" />
+                <input type="hidden" name="id" value="{$id}" />
+                <input id="filePath" type="hidden" name="path" value="{$path}" />
+            </form>
+            <div style="width:100%; text-align:center;margin-top:20px;">
+                <eq name="permitModify" value="true">
+                    <a id="btnSaveDetail" href="#" class="OUI-btn" style="padding:4px 40px" onclick="detail_submit();" >保存基本资料</a>
+                    <else/>
+                    您没有修改权限
+                </eq>
+            </div>
+        </neq>
+
 
         <div style="height: 1em"></div>
         <div id="video-uploader" style="white-space:nowrap;margin:5px;">
@@ -84,7 +90,7 @@
         </div>
     </div>
 
-    <div style="display:inline-block;width:500px;position:relative;vertical-align:top;margin-left:20px;padding: 10px; background-color: #f3f3f3;">
+    <div id=blkCover style="display:inline-block;width:500px;position:relative;vertical-align:top;margin-left:20px;padding: 10px; background-color: #f3f3f3;">
         <div id="blkCoverImage" style="position: relative; top:0; left:0;">
             <div style="font-size:1.2em;">封面图片<!-- {$imageUrl}  --> </div>
             <div>
@@ -380,10 +386,10 @@
         webVar["AliVodRegion"]="{$AliVodRegion}";
         //webVar["videoId"]="{$playkey}";
         webVar["vodFileListToken"]="{$vodFileListToken}";
-        webVar["createUrl"]="__URL__/aliCreateUploadJson";
-        webVar["updateVideoInfoUrl"]="__URL__/aliUpdateVideoInfoJson";
-        webVar.updateVODrecordUrl="__URL__/updateAjax"; //更新recordfile记录
-        webVar.getVideoUrl="__URL__/getVideoUrlJson";   //获取视频的播放地址
+        webVar["createUrl"]="__APP__/Vod/aliCreateUploadJson";
+        webVar["updateVideoInfoUrl"]="__APP__/Vod/aliUpdateVideoInfoJson";
+        webVar.updateVODrecordUrl="__APP__/Vod/updateAjax"; //更新recordfile记录
+        webVar.getVideoUrl="__APP__/Vod/getVideoUrlJson";   //获取视频的播放地址
 
         webVar.permitModify="{$permitModify}";  //修改权限
         webVar.permitCreate="{$permitCreate}";  //新建或新上传录像
@@ -396,12 +402,19 @@
         webVar.size=parseInt("{$size}");
         webVar.path="{$path}";
         webVar.site="{$site}";
+        webVar.siuser="{$siuser}";
+        webVar.sichannel="{$sichannel}";
+        webVar.callFromSI="{$callFromSI}";   //从SI调用标识2022-05-30
+        webVar.maxFileSize=parseInt("{$maxFileSize}");    //最大上传视频文件体积
         console.log("detail webVar=",webVar);
 
         var videoAcceptType="video/mp4,";   //上传视频文件允许的类型，用逗号","分隔
         var videoMaxSize=800*1014*1024;    //视频文件最大byte
         var coverAcceptType="image/jpeg,image/jpg,image/png,image/gif,";     //上传封面图片允许的类型，用逗号","分隔
         var coverMaxSize=500*1024;      //视频封面最大byte
+        if(webVar.maxFileSize>0) videoMaxSize=webVar.maxFileSize*1024*1024;
+
+        if('1'==webVar.callFromSI) $("#blkCover").css({display:'none'});
         try{
 
             if(webVar.permitCreate == 'true'){
@@ -424,6 +437,7 @@
                             //更新recordfile表
                             var para={"id":webVar.recordfileId, "owner":webVar.owner,
                                 "name":uploadInfo.file.name,
+                                "siuser":webVar.siuser,
                                 "size":Math.ceil(uploadInfo.file.size/1024/1024),
                                 "playkey":uploadInfo.videoId,"vodFileListToken":webVar.vodFileListToken}
                             $.post(webVar.updateVODrecordUrl,para,function (data) {
@@ -434,6 +448,11 @@
                                 }else{
                                     alert(data.msg+'保存失败！');
                                 }
+                                //通过消息机制把上传结果通知其它模块
+                                data.recordfileId=webVar.recordfileId;
+                                data.filename=para.name;
+                                data.size=para.size;
+                                $(window).trigger('postUpload',data);
                             },'json')
                         },
                         postAddFile:function (uploadInfo) {

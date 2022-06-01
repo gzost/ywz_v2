@@ -17,17 +17,8 @@ class VodAction extends AdminBaseAction {
 
     const VODACTION_TOKEN="vodFileListToken";    //传递页面上下文，的访问令牌，用于校验请求来自fileList方法生成的页面
 	public function  t(){
-        $consumedBytes=56789123;
-        $totalBytes=66789123;
-        $s=sprintf("已上传 %.02f/%.02fMB， %s%s",round(($consumedBytes)/1024/1024,2),round(($totalBytes)/1024/1024,2),round(36, 0), '%');
-	    var_dump($s); die();
-	    echo "uploadstart";
-	    ob_flush();
-	    flush();
-        $filePath="D:/3cf78696-1736b8af8bd.mp4";
-        //$filePath="/home/www/ou.mp4";
-        $rt=$this->uploadLocalVideoJson($filePath);
-        dump($rt);
+        $vodclass=vodBase::instance(5);
+        $vodclass->searchMedia();
 	}
 	/**
 	 * 
@@ -173,8 +164,18 @@ class VodAction extends AdminBaseAction {
 //echo $str;
 		return $str;
 	}
-	//显示新增录像文件界面
-	public function addAjax($owner,$account,$site=5){
+
+	/**
+     * 显示新增录像文件界面
+     * @param $owner int    录像属主用户ID
+     * @param $account string   录像属主用户账号，用于显示为了避免查找用户表
+     * @param $site int
+     * 2022-05-27 增加扩展参数$extArg
+     * @param $extArg array
+     *  - siuser
+     *  - sichannel
+     */
+	public function addAjax($owner,$account,$site=5,$extArg=array()){
 		//要建立了记录后才好上传录像及封面图片
 		$rec=array('owner'=>$owner,'createtime'=>date('Y-m-d H:i:s'));
 		$dbRecord=D('recordfile');
@@ -184,6 +185,13 @@ class VodAction extends AdminBaseAction {
 		$rec['size']=0; //size=0作为没有录像文件标志
         $rec['sourceid']=0;
         $rec['site']=$site;
+
+        //2022-05-31增加
+        $siuser=intval($extArg['siuser']);
+        $sichannel=intval($extArg['sichannel']);
+        $rec['siuser']=($siuser>0)?$siuser:0;
+        $rec['sichannel']=($sichannel>0)?$sichannel:0;
+
 		$id=$dbRecord->add($rec);
 		$rec['id']=$id;
 		$rec['account']=$account;
@@ -240,6 +248,13 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 		$webVar['permitModify']=($_REQUEST['permitModify']=='true')?'true':'false';
         $webVar['permitOverride']=($_REQUEST['permitOverride']=='true')?'true':'false';
 
+        $webVar['callFromSI']=(null==$_REQUEST['callFromSI'])?'0':$_REQUEST['callFromSI'];  //由SI调用标识
+
+        //取用户有用的属性
+        $userExt=$this->getUserInfo('userExtAttr');
+        $maxFileSize=intval($userExt['maxFileSize']);
+        if($maxFileSize>0) $webVar['maxFileSize']=$maxFileSize;
+
 		if($new){
 			$webVar['title']='新上传录像';
 			$webVar['new']='true';
@@ -252,11 +267,11 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 			$webVar['size']=$rec['size'];
 		}
 		if(5==$rec['site']){
-            $tplName= "showDetail_site5";
+            $tplName= "Vod:showDetail_site5";
             $webVar["AliVodUserId"]=OuSecret::$cfg["VOD_UserId"];
             $webVar["AliVodRegion"]=OuSecret::$cfg["VOD_Region"];
         }else {
-            $tplName="showDetail";
+            $tplName="Vod:showDetail";
         }
         $webVar[self::VODACTION_TOKEN]=contextToken::newToken(self::VODACTION_TOKEN);
 		$this->assign($webVar);
@@ -265,7 +280,8 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 	
 	//更新录像记录
 	public function updateAjax(){
-		$rec=array('owner'=>0,'channelid'=>0,'length'=>'','createtime'=>'','name'=>'','descript'=>'','seq'=>0,'size'=>0,'playkey'=>'');
+		$rec=array('owner'=>0,'channelid'=>0,'length'=>'','createtime'=>'','name'=>'','descript'=>'','seq'=>0,'size'=>0,
+            'playkey'=>'','siuser'=>0,'sichannel'=>0);
 		$rec=getRec($rec,TRUE);
 //dump($_REQUEST);
 		$dbUser=D('user');
@@ -288,7 +304,18 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 				$rt=$dbRf->where('id='.$_POST['id'])->save($rec);
 				if(false===$rt) throw new Exception('更新失败，请通知管理员。'.$dbRf->getLastSql());
 			}
-			
+
+			//写入上传LOG
+            $dbUploadlog=D('uploadlog');
+			$logrec=array(
+			    'uploader'=>$rec['owner'], 'recordfileid'=>$_POST['id'],
+                'filename'=>$_POST['name'],
+                'size'=>$_POST['size'],
+                'siuserid'=>$_POST['siuser'],
+                'playkey'=>$_POST['playkey']
+            );
+			$rt=$dbUploadlog->add($logrec);
+			if(false==$rt) logfile('无法新增uploadlog:'.$dbUploadlog->getLastSql(),LogLevel::ERR);
 		}catch (Exception $ex){
 			Oajax::errorReturn($ex->getMessage());
 			return;
@@ -480,7 +507,7 @@ logfile('recordId='.$_REQUEST['recordId'].' size='.$fileSize,LogLevel::DEBUG);
 	/**
 	 * 
 	 * 维护录像记录与录像文件的一致性
-	 * 
+	 * 此方法弃用！2022-05-11
 	 */
 	const MIN_FILESIZE=200000;
 	public function maintenance($work='init'){

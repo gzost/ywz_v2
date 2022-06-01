@@ -67,13 +67,14 @@ class SIAction  extends Action {
 			if(false===$rt) throw new Exception('账号登录失败');
 			$this->operStr=$this->author->getOperStr(MODULE_NAME,ACTION_NAME);
 //echo 	$this->operStr,'=',	MODULE_NAME,'=',	ACTION_NAME,'<br>';
+//dump($_SESSION['protectFunction']);
 			if(''==$this->operStr) throw new Exception('没有操作权限。');
 
 			$this->author->setJustViewer();
-			$_SESSION[self::CallFromSI]=true;   //设置从SI接口调用标志
+			$_SESSION[self::CallFromSI]=true;   //设置从SI接口调用标志，2022.05.30将取消
 		}catch (Exception $e){
 			logfile($e->getMessage(),LogLevel::ERR);
-//echo $e->getMessage();			
+//echo $e->getMessage();
 			exit;
 		}
 		return;
@@ -288,18 +289,88 @@ class SIAction  extends Action {
         }
         Oajax::successReturn(array('list'=>$recs));
     }
-	
+
+    //生成SI调用URL工具
 	public function tools(){
 		$httpHost=$_SERVER['HTTP_HOST'];
-		echo $httpHost;
-		$tpl=array('commKey'=>'ywzkey','uri'=>'/player.php/SI/play/chnId/100','account'=>'test','tm'=>sprintf("%x",time()+600));
+		echo "Server: ".$httpHost;
+		$now=time();
+		$expire=3600;
+		$tpl=array('commKey'=>'ywzkey','uri'=>'/index.php/SI/uploadVideo/siuser/778899/fileid/0','account'=>'test2',
+            'now'=>$now, 'expire'=>$expire, 'tm'=>sprintf("%x",$now+$expire));
 		$webVar=getRec($tpl,false);
-		$webVar['now']=sprintf("%x",time());
+
+		$webVar['tm10']=$webVar['now']+$webVar['expire'];
+        //dump($webVar);
 		$md5=MD5($webVar['commKey'].$webVar['uri'].$webVar['account'].$webVar['tm']);
 		$webVar['callStr']=sprintf("http://%s%s?account=%s&sec=%s&tm=%s",$httpHost,$webVar['uri'],$webVar['account'],$md5,$webVar['tm']);
 //dump($webVar);
 		$this->assign($webVar);
 		$this->display(tools);
 	}
+
+	/* ================================2022-05-20======================================================= */
+
+   	/**
+     * SI上传/更新视频文件
+	 * @param $siuser int    必须SI前端用户的唯一标识,用于识别此视频归属不同的第三方用户
+     * @param $sichannel int   可选，视频所属前端的频道号
+     * @param $fileid int   录像文件ID，若提供新文件覆盖旧文件，不提供则存储为新的文件。
+     *
+     * 输出：上传控件界面。该界面嵌入在第三方页面中，上传完成后，向window发出uploadComplete消息
+	 */
+    public function uploadVideo($siuser=0,$fileid=0,$sichannel=0){
+
+        echo "uploadvideo";
+        try{
+            $siuser=intval($siuser);
+            $fileid=intval($fileid);
+            $sichannel=intval($sichannel);
+            if($siuser<=0) throw new Exception('必须提供正整数的用户ID');
+            $owner=$this->author->getUserInfo('userId');
+            $account=$this->author->getUserInfo('account');
+
+            //检查使用量
+            $userExtAttr=$this->author->getUserInfo('userExtAttr');
+            if(!is_array($userExtAttr)) throw new Exception('无法获取用户参数');
+            $maxVodRec=intval($userExtAttr['maxVodRec']);
+            $maxUploadTimes=intval($userExtAttr['maxUploadTimes']);
+            //vod记录数
+            $db=D('recordfile');
+            $vodRecs=$db->where('owner='.$owner)->count();
+            if($vodRecs>0 && $vodRecs>=$maxVodRec) throw new Exception('已达到最大VOD记录数:'.$vodRecs.'>'.$maxVodRec);
+            //上传次数
+            $db=D('uploadlog');
+            $uploadTimes=$db->where('uploader='.$owner)->count();
+            if($uploadTimes>0 && $uploadTimes>=$maxUploadTimes) throw new Exception('已达到最大上传次数');
+
+            //授予SI操作权限，不受管理授权控制
+            $_REQUEST['permitCreate']='true';
+            //修改、删除录像记录权限
+            $_REQUEST['permitModify']='true';
+            $_REQUEST['permitDownload']='true';
+            $_REQUEST['permitOverride']='true';  //覆盖录像，需要有C才有用
+
+            $_REQUEST['callFromSI']='1';    //由SI调用标识
+
+            $extArg=array('siuser'=>$siuser,'sichannel'=>$sichannel); //SI扩展参数
+            $vod=A(Vod);
+            if(0==$fileid){
+                //上传新文件
+                $vod->addAjax($owner,$account,5,$extArg);
+            }else{
+                //覆盖已有文件
+                $db=D('Recordfile');
+                $rec=$db->where(array('id'=>$fileid,'owner'=>$owner,'siuser'=>$siuser))->find();
+                if(null==$rec) throw new Exception('找不到录像记录或记录属主不一致。');
+                $vod->showDetail($rec,false);
+            }
+
+
+
+        }catch (Exception $e){
+            echo $e->getMessage();
+        }
+    }
 }
 ?>

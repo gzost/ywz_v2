@@ -30,7 +30,7 @@ class SIAction  extends Action {
 		parent::__construct();
 		session_start();
 		C('LOG_FILE','SIService%m%.log');
-		C('LOGFILE_LEVEL','4');
+		C('LOGFILE_LEVEL','9');
 		$httpHost=$_SERVER['HTTP_HOST'];	//
 		$account=$_REQUEST['account'];	//SI账号
 		$sec=$_REQUEST['sec'];	//客户端按算法得到的MD5字串
@@ -311,8 +311,57 @@ class SIAction  extends Action {
 
 	/* ================================2022-05-20======================================================= */
 
+    //输出上传控件，页面头部
+    private function pageHead(){
+        echo <<<Eof
+<!DOCTYPE html>
+<!-- SI接口演示 -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="pragma" content="no-cache">
+
+
+    <link href="Public/jeasyui/themes/default/easyui.css" rel="stylesheet" style="text/css" />
+    <link href="Public/jeasyui/themes/icon.css" rel="stylesheet" style="text/css" />
+    <link href="Public/jeasyui/themes/color.css" rel="stylesheet" style="text/css" />
+    <link href="/admin/default/css/base.css" rel="stylesheet" style="text/css" />
+
+    <script type="text/javascript" src="/Public/jeasyui/jquery.min.js" ></script>
+    <script type="text/javascript" src="/Public/jeasyui/jquery.easyui.min.js" ></script>
+    <script type="text/javascript" src="/Public/jeasyui/locale/easyui-lang-zh_CN.js" ></script>
+    <script type="text/javascript" src="/Public/js/jquery.md5.js" ></script>
+    <title>第三方接入接口Demo</title>
+    <style>
+        .demo-item { display: block; margin: 0 auto; clear: both; border: 1px solid grey; width: 90%; padding: 5px;}
+        .item-title { font-size: 1.2em; font-weight: bold; margin: 10px;}
+    </style>
+</head>
+<body style="position: relative;">
+Eof;
+
+    }
+
+    //输出上传控件，页面尾部
+    private function pageTail(){
+        echo <<<Eof
+<script>
+    $(window).on('postUpload',function (event,data) {
+            console.log("window.postUpload===SI===");
+            console.log(event,data);
+            window.parent.postMessage(data,'*');    //将控件内上传完成的消息转发到iframe外
+        });        
+</script>
+</body>
+</html>
+Eof;
+
+    }
    	/**
-     * SI上传/更新视频文件
+     * SI上传/更新视频文件，本action因涉及过多与服务器路径相关内容，为避免过多修改
+     * 输出内容需作为需作为SI页面的iframe
 	 * @param $siuser int    必须SI前端用户的唯一标识,用于识别此视频归属不同的第三方用户
      * @param $sichannel int   可选，视频所属前端的频道号
      * @param $fileid int   录像文件ID，若提供新文件覆盖旧文件，不提供则存储为新的文件。
@@ -321,7 +370,6 @@ class SIAction  extends Action {
 	 */
     public function uploadVideo($siuser=0,$fileid=0,$sichannel=0){
 
-        echo "uploadvideo";
         try{
             $siuser=intval($siuser);
             $fileid=intval($fileid);
@@ -357,13 +405,17 @@ class SIAction  extends Action {
             $vod=A(Vod);
             if(0==$fileid){
                 //上传新文件
+                $this->pageHead();
                 $vod->addAjax($owner,$account,5,$extArg);
+                $this->pageTail();
             }else{
                 //覆盖已有文件
                 $db=D('Recordfile');
                 $rec=$db->where(array('id'=>$fileid,'owner'=>$owner,'siuser'=>$siuser))->find();
                 if(null==$rec) throw new Exception('找不到录像记录或记录属主不一致。');
+                $this->pageHead();
                 $vod->showDetail($rec,false);
+                $this->pageTail();
             }
 
 

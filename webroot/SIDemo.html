@@ -3,19 +3,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width">
-    <meta name="renderer" content="webkit">
-    <meta http-equiv="pragma" content="no-cache">
-    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-
-    <link href="Public/jeasyui/themes/default/easyui.css" rel="stylesheet" style="text/css" />
-    <link href="Public/jeasyui/themes/icon.css" rel="stylesheet" style="text/css" />
-    <link href="Public/jeasyui/themes/color.css" rel="stylesheet" style="text/css" />
-    <link href="/admin/default/css/base.css" rel="stylesheet" style="text/css" />
 
     <script type="text/javascript" src="Public/jeasyui/jquery.min.js" ></script>
-    <script type="text/javascript" src="Public/jeasyui/jquery.easyui.min.js" ></script>
-    <script type="text/javascript" src="Public/jeasyui/locale/easyui-lang-zh_CN.js" ></script>
     <script type="text/javascript" src="Public/js/jquery.md5.js" ></script>
     <title>第三方接入接口Demo</title>
     <style>
@@ -31,15 +20,18 @@
             <button id="btNewVideo">上传新视频</button>
             <button id="btUpdateVideo">更新原有视频</button>
         </div>
-        <div id="detail">视频上传控件</div>
+        <div id="detail">
+            <iframe src="" id="uploadControl" height="400px" width="600px"></iframe>
+        </div>
 
 
     </div>
 
 <script>
     $(document).ready(function () {
-        var server="http://www.ou.cn:8003";
-        var baseUrl="/index.php/SI";
+        //http://www.av365.cn/home.php/SI/uploadVideo/siuser/778899/fileid/0?account=test2&tm=728ceb0d&sec=6f446385c2c2109b24d70d2dc253d976
+        var server="http://www.av365.cn";
+        var baseUrl="/home.php/SI";
         var action='uploadVideo';   //要调用的接口功能
         var siuser=778899;     //si端用户ID用于区分视频属于不同的SI用户
         var fileid=0;      //视频ID，=0是上传新的视频，提供旧视频ID是更新旧的视频。新旧视频的$siuser必须相同，同一$siuser可以有多个视频。
@@ -54,26 +46,20 @@
             //commKey为SI与易网真平台约定的通讯密钥，不能被第三方获知
 
             var uri=server+baseUrl+'\?account='+account+'&tm='+tm+'&sec='+sec;
+            $("#uploadControl").attr("src",uri);
 
-            $.post(uri,function (data) {
-                $("#detail").html(data);
-                $.parser.parse($('#detail'));
-            },'html');
         });
 
         $("#btUpdateVideo").on("click",function (env) {
             console.log("click Update");
-            fileid=20564;
+            fileid=22862;
             baseUrl =baseUrl+'/'+action+'/siuser/'+siuser+'/fileid/'+fileid;
             var sec=$.md5('ywzkey'+baseUrl+account+tm);    //由通讯校验算法得到的通讯加密窜
             //此字串应该由服务端用规定的算法生成!!!重要!!!：sec=md5(commkey+baseUrl+account+tm)
             //commKey为SI与易网真平台约定的通讯密钥，不能被第三方获知
 
             var uri=server+baseUrl+'\?account='+account+'&tm='+tm+'&sec='+sec;
-            $.post(uri,function (data) {
-                $("#detail").html(data);
-                $.parser.parse($('#detail'));
-            },'html');
+            $("#uploadControl").attr("src",uri);
         });
 
         /**
@@ -84,10 +70,11 @@
          * - success ='true'上传成功
          * - msg 上传失败时的错误信息
          */
-        $(window).on('postUpload',function (event,data) {
-            console.log("window.postUpload======");
-            console.log(event,data);
-        });
+
+        window.onmessage=function (event) {
+            console.log('onmessage');
+            console.log(event);
+        }
     });
 </script>
 </body>

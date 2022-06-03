@@ -70,7 +70,7 @@ class SIAction  extends Action {
 //dump($_SESSION['protectFunction']);
 			if(''==$this->operStr) throw new Exception('没有操作权限。');
 
-			$this->author->setJustViewer();
+			//$this->author->setJustViewer();
 			$_SESSION[self::CallFromSI]=true;   //设置从SI接口调用标志，2022.05.30将取消
 		}catch (Exception $e){
 			logfile($e->getMessage(),LogLevel::ERR);
@@ -97,25 +97,30 @@ class SIAction  extends Action {
 	 * 第三方用户登录播放
 	 * 输入web变量：
 	 * chnId	频道Id
+     * vodId    点播文件ID，若提供则播放点播文件，否则进入频道默认状态
 	 * account	映射的观众账号
 	 * nickname	可选变量，si观众的昵称，如果有会覆盖account在online表中的account字段，以便SI识别当前观看的观众
 	 */
 	public function play(){
 
-//dump($_REQUEST);
-//echo "play<br>";
+        $chnid=intval($_REQUEST['chnId']);
+        $vodid=intval($_REQUEST['vodId']);
+        try{
+            if($chnid==0) throw new Exception("缺乏频道参数");
+        }catch (Exception $e){
+            echo $e->getMessage();
+            return;
+        }
 		if(isset($_REQUEST['nickname'])) $_SESSION[authorize::USERINFO]['userName']=$_REQUEST['nickname'];
-		if(!isset($_REQUEST['chnId'])){
-			echo "缺乏频道参数";
-		}
 
-//echo "call HDPlayerAction/play<br>";
-		$this->redirect('HDPlayer/play',array('chnId'=>$_REQUEST['chnId'],'xu'=>$_REQUEST['xu'],'xtl'=>$_REQUEST['xtl']));
+        $url=sprintf("http://%s/play.html?ch=%s",$_SERVER['HTTP_HOST'],$chnid);
+        if($vodid>0) $url .= "&vf=".$vodid;
+		redirect($url);
 		return;
 	}
 
 	/**
-	 * 
+	 * 2022-06-03 此方法停用，扩展play取代。
 	 * 第三方用户登录播放
 	 * 输入web变量：
 	 * vodid	点播文件Id

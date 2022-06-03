@@ -19,6 +19,7 @@
         <div>
             <button id="btNewVideo">上传新视频</button>
             <button id="btUpdateVideo">更新原有视频</button>
+            <button id="btVOD">播放录像</button>
         </div>
         <div id="detail">
             <iframe src="" id="uploadControl" height="400px" width="600px"></iframe>
@@ -61,6 +62,18 @@
             var uri=server+baseUrl+'\?account='+account+'&tm='+tm+'&sec='+sec;
             $("#uploadControl").attr("src",uri);
         });
+
+        $("#btVOD").on("click",function (env) {
+            console.log("click VOD");
+            baseUrl =baseUrl+'/play/chnId/1057/vodId/22862';
+            var sec=$.md5('ywzkey'+baseUrl+account+tm);
+
+            var uri=server+baseUrl+'\?account='+account+'&tm='+tm+'&sec='+sec;
+            console.log(uri);
+            //uri='http://www.av365.cn/play.html?ch=1057&vf=22862';
+            window.location.href=uri;
+        });
+
 
         /**
          * 当文件上传成功或失败，控件都会发出postUpload消息，data带有以下参数：

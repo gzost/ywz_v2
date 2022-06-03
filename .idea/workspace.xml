@@ -3,6 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="c373e6b3-2af5-4bab-bede-a2195dffe403" name="默认更改列表" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/PlayAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/PlayAction.class.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webapp/avision/Lib/Action/SIAction.class.php" beforeDir="false" afterPath="$PROJECT_DIR$/webapp/avision/Lib/Action/SIAction.class.php" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/webroot/SIDemo.html" beforeDir="false" afterPath="$PROJECT_DIR$/webroot/SIDemo.html" afterDir="false" />
     </list>
@@ -38,7 +39,7 @@
       <file leaf-file-name="vodSite5.class.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webapp/avision/Common/vod/vodSite5.class.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="73">
+            <state relative-caret-position="87">
               <caret line="478" column="20" selection-start-line="478" selection-start-column="20" selection-end-line="478" selection-end-column="20" />
               <folding>
                 <element signature="e#6#85#0#PHP" expanded="true" />
@@ -51,7 +52,7 @@
       <file leaf-file-name="showDetail_site5.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Vod/showDetail_site5.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="100">
+            <state relative-caret-position="25">
               <caret line="442" column="60" selection-start-line="442" selection-start-column="42" selection-end-line="442" selection-end-column="60" />
               <folding>
                 <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
@@ -60,65 +61,52 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="UserAction.class.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/UserAction.class.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="725">
-              <caret line="29" column="20" selection-start-line="29" selection-start-column="20" selection-end-line="29" selection-end-column="20" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="UserModel.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/UserModel.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="700">
-              <caret line="28" column="63" selection-start-line="28" selection-start-column="63" selection-end-line="28" selection-end-column="63" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="SIAction.class.php" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/SIAction.class.php">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-802">
-              <caret line="353" column="75" selection-start-line="353" selection-start-column="75" selection-end-line="353" selection-end-column="75" />
-              <folding>
-                <element signature="e#6#280#0#PHP" expanded="true" />
-                <element signature="n#play#0;n#SIAction#0;n#!!top" />
-                <element signature="n#vod#0;n#SIAction#0;n#!!top" />
-                <element signature="n#recordSize#0;n#SIAction#0;n#!!top" />
-                <element signature="n#getPlayUri#0;n#SIAction#0;n#!!top" />
-                <element signature="n#getVodUri#0;n#SIAction#0;n#!!top" />
-                <element signature="n#getStreamList#0;n#SIAction#0;n#!!top" />
-                <element signature="n#getVodList#0;n#SIAction#0;n#!!top" />
-                <element signature="n#style#0;n#link#0;n#head#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#link#1;n#head#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#link#2;n#head#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#link#3;n#head#0;n#html#0;n#!!top" expanded="true" />
-                <element signature="n#style#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="VodAction.class.php" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2596">
+            <state relative-caret-position="25">
               <caret line="281" column="20" selection-start-line="281" selection-start-column="20" selection-end-line="281" selection-end-column="20" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SIDemo.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="SIDemo.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/webroot/SIDemo.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="223">
-              <caret line="53" column="40" lean-forward="true" selection-start-line="53" selection-start-column="40" selection-end-line="53" selection-end-column="40" />
+            <state relative-caret-position="437">
+              <caret line="67" column="56" selection-start-line="67" selection-start-column="56" selection-end-line="67" selection-end-column="56" />
               <folding>
                 <element signature="n#style#0;n#body#0;n#html#0;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SIAction.class.php" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/SIAction.class.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="148">
+              <caret line="104" lean-forward="true" selection-start-line="104" selection-end-line="104" />
+              <folding>
+                <element signature="e#6#280#0#PHP" expanded="true" />
+                <element signature="n#recordSize#0;n#SIAction#0;n#!!top" />
+                <element signature="n#getPlayUri#0;n#SIAction#0;n#!!top" />
+                <element signature="n#getVodUri#0;n#SIAction#0;n#!!top" />
+                <element signature="n#getStreamList#0;n#SIAction#0;n#!!top" />
+                <element signature="n#getVodList#0;n#SIAction#0;n#!!top" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="PlayAction.class.php" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/PlayAction.class.php">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="429">
+              <caret line="243" selection-start-line="243" selection-end-line="243" />
+              <folding>
+                <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -137,8 +125,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>on(&quot;re</find>
-      <find>on</find>
       <find>communicate</find>
       <find>vodb</find>
       <find>getFileType</find>
@@ -167,6 +153,8 @@
       <find>isOpPermit</find>
       <find>updateA</find>
       <find>updateVODrecordUrl</find>
+      <find>playerMain</find>
+      <find>服务器繁忙</find>
     </findStrings>
     <replaceStrings>
       <replace />
@@ -189,7 +177,6 @@
       <dir>D:\MyProject\ywz\webapp\public\alivoduploadsdk</dir>
       <dir>D:\MyProject\ywz\webapp\avision\Tpl\TPlay</dir>
       <dir>D:\MyProject\ywz\webapp\public\aliyun</dir>
-      <dir>D:\MyProject\ywz\webapp\avision\Lib</dir>
       <dir>D:\MyProject\reform\approot\mdcflow\Common</dir>
       <dir>D:\MyProject\ywz\webapp</dir>
       <dir>D:\MyProject\reform\approot</dir>
@@ -197,11 +184,12 @@
       <dir>D:\MyProject\ywz\webapp\avision\Lib\Action</dir>
       <dir>D:\MyProject\ywz\webapp\wxpay</dir>
       <dir>D:\MyProject\ywz\webapp\avision</dir>
-      <dir>D:\MyProject\ywz\webroot</dir>
       <dir>D:\MyProject\ywz\secret</dir>
       <dir>D:\MyProject\ywz</dir>
-      <dir>D:\MyProject\ywz\webapp\avision\Tpl</dir>
       <dir>D:\MyProject\ywz\webroot\player\js</dir>
+      <dir>D:\MyProject\ywz\webapp\avision\Lib</dir>
+      <dir>D:\MyProject\ywz\webapp\avision\Tpl</dir>
+      <dir>D:\MyProject\ywz\webroot</dir>
     </dirStrings>
   </component>
   <component name="Git.Settings">
@@ -249,18 +237,18 @@
         <option value="$PROJECT_DIR$/webroot/player/js/elementUpdate.js" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/HomeAction.class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/T1Action.class.php" />
-        <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/PlayAction.class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/SI3/tools.html" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/SI3Action.class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/SI/tools.html" />
         <option value="$PROJECT_DIR$/webroot/SI3Demo.html" />
         <option value="$PROJECT_DIR$/webapp/public/Authorize.Class.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php" />
-        <option value="$PROJECT_DIR$/webapp/avision/Lib/Model/UserModel.php" />
         <option value="$PROJECT_DIR$/webapp/avision/Tpl/Vod/showDetail_site5.html" />
         <option value="$PROJECT_DIR$/webapp/avision/Common/vod/vodSite5.class.php" />
-        <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/SIAction.class.php" />
+        <option value="$PROJECT_DIR$/webapp/avision/Lib/Model/UserModel.php" />
         <option value="$PROJECT_DIR$/webroot/SIDemo.html" />
+        <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/PlayAction.class.php" />
+        <option value="$PROJECT_DIR$/webapp/avision/Lib/Action/SIAction.class.php" />
       </list>
     </option>
   </component>
@@ -276,8 +264,8 @@
     </include_path>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="13" />
-    <option name="y" value="17" />
+    <option name="x" value="12" />
+    <option name="y" value="16" />
     <option name="width" value="1940" />
     <option name="height" value="1070" />
   </component>
@@ -286,6 +274,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -316,23 +305,6 @@
               <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
               <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Common" type="2a2b976b:PhpTreeStructureProvider$1" />
-            </path>
-            <path>
-              <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
-              <item name="ywz" type="47feb1d3:ProjectViewModuleNode" />
-              <item name="ywz" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="webapp" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="avision" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="Common" type="2a2b976b:PhpTreeStructureProvider$1" />
-              <item name="vod" type="2a2b976b:PhpTreeStructureProvider$1" />
             </path>
             <path>
               <item name="ywz" type="b2602c69:ProjectViewProjectNode" />
@@ -390,7 +362,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -728,12 +699,13 @@
       <workItem from="1652840278090" duration="42564000" />
       <workItem from="1653398156898" duration="24530000" />
       <workItem from="1653879249221" duration="22190000" />
-      <workItem from="1654079981093" duration="12296000" />
+      <workItem from="1654079981093" duration="12683000" />
+      <workItem from="1654222696215" duration="8976000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="4870600000" />
+    <option name="totallyTimeSpent" value="4879963000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -748,26 +720,26 @@
     <frame x="-7" y="-7" width="1550" height="848" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" sideWeight="0.57614213" visible="true" weight="0.21268164" />
       <window_info id="TODO" order="2" sideWeight="0.54083663" side_tool="true" weight="0.16280295" />
-      <window_info anchor="bottom" id="Docker" order="6" show_stripe_button="false" />
+      <window_info anchor="bottom" id="调试" order="9" />
       <window_info anchor="bottom" id="Event Log" order="8" show_stripe_button="false" side_tool="true" weight="0.32925585" />
-      <window_info anchor="right" id="Database" order="3" show_stripe_button="false" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info id="Version Control" order="5" weight="0.32898173" />
-      <window_info active="true" id="Structure" order="3" sideWeight="0.42385787" side_tool="true" visible="true" weight="0.21268164" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.3268839" />
       <window_info id="Terminal" internal_type="SLIDING" order="1" show_stripe_button="false" type="SLIDING" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" sideWeight="0.5748731" visible="true" weight="0.21268164" />
+      <window_info anchor="bottom" id="Docker" order="6" show_stripe_button="false" />
+      <window_info anchor="right" id="Database" order="3" show_stripe_button="false" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.395112" />
+      <window_info id="Structure" order="3" sideWeight="0.4251269" side_tool="true" visible="true" weight="0.21268164" />
       <window_info id="Favorites" order="4" sideWeight="0.5641548" side_tool="true" weight="0.21654373" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.3268839" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="调试" order="9" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.395112" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -831,7 +803,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="php">
           <url>file://$PROJECT_DIR$/webapp/avision/Lib/Action/SIAction.class.php</url>
-          <line>189</line>
+          <line>194</line>
           <option name="timeStamp" value="20" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="javascript">
@@ -863,13 +835,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6400">
-          <caret line="256" selection-start-line="256" selection-end-line="256" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webroot/SIDemo.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1950">
@@ -975,13 +940,6 @@
     <entry file="file://$PROJECT_DIR$/webroot/Public/js/OU_margquee.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-375" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webroot/play.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1300">
-          <caret line="136" column="39" selection-start-line="136" selection-start-column="39" selection-end-line="138" selection-end-column="64" />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/webroot/player/js/webChat3.js">
@@ -1158,24 +1116,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/UserModel.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="700">
-          <caret line="28" column="63" selection-start-line="28" selection-start-column="63" selection-end-line="28" selection-end-column="63" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/T1Action.class.php" />
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/PlayAction.class.php">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-6000">
-          <caret line="33" column="39" selection-start-line="33" selection-start-column="28" selection-end-line="33" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Common/vod/vodSite5.class.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="73">
+        <state relative-caret-position="87">
           <caret line="478" column="20" selection-start-line="478" selection-start-column="20" selection-end-line="478" selection-end-column="20" />
           <folding>
             <element signature="e#6#85#0#PHP" expanded="true" />
@@ -1184,9 +1128,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/webroot/Tplay.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="254">
+          <caret line="129" column="82" selection-start-line="129" selection-start-column="82" selection-end-line="129" selection-end-column="82" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#div#3;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webroot/play.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="94">
+          <caret line="150" column="26" selection-start-line="150" selection-start-column="16" selection-end-line="150" selection-end-column="26" />
+          <folding>
+            <element signature="n#style#0;n#div#3;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#div#3;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="25">
+          <caret line="281" column="20" selection-start-line="281" selection-start-column="20" selection-end-line="281" selection-end-column="20" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Model/UserModel.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="529">
+          <caret line="471" selection-start-line="471" selection-end-line="471" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Tpl/Vod/showDetail_site5.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="100">
+        <state relative-caret-position="25">
           <caret line="442" column="60" selection-start-line="442" selection-start-column="42" selection-end-line="442" selection-end-column="60" />
           <folding>
             <element signature="n#style#0;n#div#1;n#div#0;n#!!top" expanded="true" />
@@ -1194,42 +1173,38 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/VodAction.class.php">
+    <entry file="file://$PROJECT_DIR$/webroot/SIDemo.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2596">
-          <caret line="281" column="20" selection-start-line="281" selection-start-column="20" selection-end-line="281" selection-end-column="20" />
+        <state relative-caret-position="437">
+          <caret line="67" column="56" selection-start-line="67" selection-start-column="56" selection-end-line="67" selection-end-column="56" />
+          <folding>
+            <element signature="n#style#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/PlayAction.class.php">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="429">
+          <caret line="243" selection-start-line="243" selection-end-line="243" />
+          <folding>
+            <element signature="n#style#0;n#div#0;n#!!top" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/webapp/avision/Lib/Action/SIAction.class.php">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-802">
-          <caret line="353" column="75" selection-start-line="353" selection-start-column="75" selection-end-line="353" selection-end-column="75" />
+        <state relative-caret-position="148">
+          <caret line="104" lean-forward="true" selection-start-line="104" selection-end-line="104" />
           <folding>
             <element signature="e#6#280#0#PHP" expanded="true" />
-            <element signature="n#play#0;n#SIAction#0;n#!!top" />
-            <element signature="n#vod#0;n#SIAction#0;n#!!top" />
             <element signature="n#recordSize#0;n#SIAction#0;n#!!top" />
             <element signature="n#getPlayUri#0;n#SIAction#0;n#!!top" />
             <element signature="n#getVodUri#0;n#SIAction#0;n#!!top" />
             <element signature="n#getStreamList#0;n#SIAction#0;n#!!top" />
             <element signature="n#getVodList#0;n#SIAction#0;n#!!top" />
-            <element signature="n#style#0;n#link#0;n#head#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#link#1;n#head#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#link#2;n#head#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#link#3;n#head#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/webroot/SIDemo.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="223">
-          <caret line="53" column="40" lean-forward="true" selection-start-line="53" selection-start-column="40" selection-end-line="53" selection-end-column="40" />
-          <folding>
-            <element signature="n#style#0;n#body#0;n#html#0;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#div#0;n#body#0;n#html#0;n#!!top" expanded="true" />
           </folding>
         </state>
       </provider>

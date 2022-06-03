@@ -242,12 +242,11 @@ class PlayAction extends SafeAction{
         }
         //取用户头像
         $webVar["UserHeadImg"]=$this->dbUser->getHeadImg($uid);
-//var_dump($webVar["UserHeadImg"]);
+
         //5 记录传播，检查是否满足传播要求。传播要求与与会员是与的关系，与付费是或的关系
         $du=intval($this->para["du"]);
         $dbSpread=D("spread");
         //系统账号不考虑传播,排除自身传播
-//var_dump($du,$uid);
         if($uid>=100 && $du>=100 && $uid!=$du ) {
             //尝试新建传播记录，若记录已存在，访问次数+1
             $dbSpread->execute("insert into __TABLE__(chnid,tuid,suid,activity) values ($this->chnid,$uid,$du,1) on duplicate key update activity=activity+1");
@@ -280,14 +279,16 @@ class PlayAction extends SafeAction{
         $activetab=$_REQUEST['tab'];	//从前端传入的默认tab编号，这将覆盖频道配置的默认tab
         if(empty($activetab)) $activetab=(empty($tabArr['activetab']))?'':$tabArr['activetab'];
         $webVar["activetab"]=$activetab;
-
+//var_dump($webVar); die;
         //6、播放类型 vod/live
         $webVar['chnid']=empty($this->chnid)?"":$this->chnid;
         if(empty($this->vodid)){
             $this->getLivePara($webVar,$webVar['chnid']);
         }else{
             $webVar["activetab"]=104;   //修改默认tab为点播。2022-05-20
+ //var_dump($webVar); //die;
             $this->getVodPara($webVar,$this->vodid);    //填写vod相关的参数
+  //var_dump($webVar); die;
         }
         $webVar['uid']=empty($uid)?"":$uid;
         $webVar['account']=$this->getUserInfo("account");

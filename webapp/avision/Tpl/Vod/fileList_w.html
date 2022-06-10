@@ -50,11 +50,16 @@ function batFunc(work) {
         alert("请先勾选需要批量删除的记录。");
         return;
     }
-    for(var i=0; i<length;i++){
-        vodfunction(work,checked[i]);
-    }
+    $.messager.confirm("最后警告","确定删除"+length+"条记录？",function (r) {
+        if(r){
+            for(var i=0; i<length;i++){
+                vodfunction(work,checked[i],mode="bat");
+            }
+        }
+    });
+
 }
-function vodfunction(work,row=null){
+function vodfunction(work,row=null,mode=""){
 	var para;
 	console.log(row);
 	if(null==row)
@@ -90,7 +95,9 @@ function vodfunction(work,row=null){
 		    return false;
         }
         var str=(para.sourceid>0)?"将删除共享的点播记录：":"将永久删除录像文件，无法恢复!  真的删除：";
-		if(true!=confirm("!!!警告!!!"+str+para.name)) return false;
+		if(mode!="bat"){
+            if(true!=confirm("!!!警告!!!"+str+para.name)) return false;
+        }
 		break;
     case "share":
 	    var target=prompt("请输入目标频道ID：");    //由于$.messager是非阻塞执行，用原生的阻塞简单点
@@ -309,7 +316,10 @@ function vodfunction(work,row=null){
 		<input id="ownerId" type="hidden" name="ownerId" value="{$ownerId}" />
 		 录像名称：<input class='easyui-textbox' name="name" value="{$name}" style="width:120px" />
 		频道：<input class='easyui-textbox' name="channelname" value="{$channelname}" style="width:120px" />
-		时间范围：
+        未关联<input type="checkbox" name="noChnLink"
+        <eq name="noChnLink" value="on"> checked  </eq>
+                  style="margin-right: 10px">
+		建立时间：
 		从<input class="easyui-datebox" name="beginTime" value="{$beginTime}" style="width:120px"
 			data-options="formatter:cn_formatter,parser:cn_parser" >
 		至<input class="easyui-datebox" name="endTime" value="{$endTime}" style="width:120px"

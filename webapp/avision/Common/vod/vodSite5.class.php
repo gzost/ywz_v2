@@ -476,22 +476,44 @@ class vodSite5 extends vodBase{
         }
     }
 
-    //测试中，取阿里云上的媒体列表
-    public function searchMedia(){
+
+    private $ScrollToken="";    //翻页标识
+    /**
+     * 取阿里云上媒体列表，第一次调用可不提供PageNo
+     * @param int $PageNo 请求第几页数据，首页是1
+     * @param array $para 可选的扩展参数
+     *  -SearchType 搜索媒资数据类型。取值范围：video(默认),audio,image,attached
+     *  -Fields 搜索结果中返回的媒资字段
+     *  -Match 过滤条件
+     *  -SortBy 排序字段。例：CreationTime:Desc（默认值）： CreationTime:Asc：
+     *  -PageSize 每页记录数，默认20
+     * @return array
+     * @throws Exception
+     */
+    public function searchMedia($PageNo=1,$para=array()){
         $this->initVodClient();
+        if(null==$para["SearchType"]) $para["SearchType"]="video";
+        if(null==$para["Fields"]) $para["Fields"]="Title,Size,Duration,Description,CreationTime";
+        if(null==$para["Match"]) $para["Match"]=""; //CreationTime=('2022-06-01T00:00:00Z',)";
+        if(null==$para["SortBy"]) $para["SortBy"]="CreationTime:Desc";
+        if(null==$para["PageSize"]) $para["PageSize"]=20;
         try{
             $request = Vod::v20170321()->searchMedia()->client(self::VOD_CLIENT_NAME)
-                ->withSearchType("video")
-                ->withFields("Title,CoverURL,Size,Duration")
-                ->withPageNo(20)
-                ->withPageSize(50)
+                ->withSearchType($para["SearchType"])
+                ->withFields($para["Fields"])
+                ->withMatch($para["Match"])
+                ->withSortBy($para["SortBy"])
+                ->withPageNo($PageNo)
+                ->withPageSize($para["PageSize"])
                 ->withScrollToken('')
                 //->debug(true) // Enable the debug will output detailed information
                 ->connectTimeout(1) // Throw an exception when Connection timeout
                 //->timeout(1) // Throw an exception when timeout
                 ;
-            $result=$request->request();
-            dump($result->toArray());
+            $result=$request->request()->toArray();
+            if(is_string($result["ScrollToken"])) $this->ScrollToken=$result["ScrollToken"];
+            return $result;
+
         } catch (Exception $e){
             throw new Exception($e->getMessage());
         }

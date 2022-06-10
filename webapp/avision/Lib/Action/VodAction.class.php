@@ -28,7 +28,8 @@ class VodAction extends AdminBaseAction {
 	const VODFILEINDEX='VodFileListIndex';
 	public function fileList(){
 		$this->baseAssign();
-		$webVarTpl=array('name'=>'','channelname'=>'','beginTime'=>'','endTime'=>'','ownerAccount'=>'','ownerId'=>0);
+		$webVarTpl=array('name'=>'','channelname'=>'','beginTime'=>'','endTime'=>'','ownerAccount'=>'','ownerId'=>0,
+            'noChnLink'=>'');
 		$webVar=getRec($webVarTpl,false);
 //dump($webVar);			
 		$webVar['mainTitle']='录像文件管理';
@@ -60,9 +61,12 @@ class VodAction extends AdminBaseAction {
 		else{
 			if(''!=$webVar['ownerAccount']) $cond['account']=$webVar['ownerAccount'];
 		}
-		if(''!=$webVar['name']) $cond['name']=array('LIKE','%'.$webVar['name'].'%');
-		if(isset($webVar['channelname']) && ''!=$webVar['channelname']) $cond['channelname']=array('LIKE','%'.$webVar['channelname'].'%');
-		$rt=$this->betweenDate($webVar['beginTime'], $webVar['endTime']);
+		if('on'==$webVar['noChnLink']) $cond['channelid']=0;
+		else{
+            if(''!=$webVar['name']) $cond['name']=array('LIKE','%'.$webVar['name'].'%');
+            if(isset($webVar['channelname']) && ''!=$webVar['channelname']) $cond['channelname']=array('LIKE','%'.$webVar['channelname'].'%');
+        }
+				$rt=$this->betweenDate($webVar['beginTime'], $webVar['endTime']);
 		if(null!=$rt) $cond['createtime']=$rt;
 //dump($cond);
         condition::save($cond,'VODfilelist');

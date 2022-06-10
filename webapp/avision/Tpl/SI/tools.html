@@ -2,6 +2,8 @@
 <html>
 <head>
 <meta charset="UTF-8">
+	<script type="text/javascript" src="/Public/jeasyui/jquery.min.js" ></script>
+	<script type="text/javascript" src="/Public/js/jquery.md5.js" ></script>
 <title>tools</title>
 </head>
 <body>
@@ -29,5 +31,42 @@
 </form>
 Call string: <input type='text' readonly value="{$callStr}" style="width:800px" ><br>
 
+<div style="margin: 10px 0">
+	日期字串：<input type="text" name="dateStr" id="dateStr"> <button id="btn_tostamp">转时间戳</button>
+	时间戳：<input type="text" name="timestamp" id="timestamp"> <button id="btn_tostring">转字串</button>
+</div>
+<script>
+	$(document).ready(function () {
+		var timestamp=parseInt(new Date().getTime()/1000);    // 当前时间戳
+		var date=stampToString(timestamp);	//时间串
+
+		$("#timestamp").val(timestamp);
+		$("#dateStr").val(date);
+
+		$("#btn_tostamp").on('click',function () {
+			date=$("#dateStr").val();
+            $("#timestamp").val(toStamp(date));
+        });
+
+		$("#btn_tostring").on('click',function () {
+            timestamp=$("#timestamp").val();
+            $("#dateStr").val(stampToString(timestamp));
+        });
+		function toStamp(date) {
+            date = date.replace("/-/g,\'/\'"); //必须把日期
+            return (new Date(date).getTime())/1000;
+        }
+		function stampToString(stamp) {
+            var d = new Date(stamp * 1000);    //根据时间戳生成的时间对象
+            var date = (d.getFullYear()) + "-" +
+                (d.getMonth() + 1) + "-" +
+                (d.getDate()) + " " +
+                (d.getHours()) + ":" +
+                (d.getMinutes()) + ":" +
+                (d.getSeconds());
+            return date;
+        }
+    });
+</script>
 </body>
 </html>

@@ -1,0 +1,59 @@
+<extend name="common:AdminBase" />
+<block name="bl_north">
+    <include file="Home:header_w" />
+    <include file="Console:north_w" />
+</block>
+
+<block name="bl_main">
+    <style>
+        .submenu {padding:10px; text-align: center; background-color: #002b36;}
+        .submenu button { font-size: 16px;}
+        #if_Output { width: 99.8%; height: 800px; border: 1px solid gray;}
+    </style>
+    <div class="submenu">
+        <button id="bt_fill">检查云资源并填充VOD记录</button>
+        <button id="bt_clean">删除丢失资源的VOD记录</button>
+        <button id="bt_reset">重置维护历史</button>
+    </div>
+    <div>
+        <iframe id="if_Output"></iframe>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            function btnDisable(){
+                //$("#bt_fill").attr("disabled",true);
+                //$("#bt_clean").attr("disabled",true);
+                //$("#bt_reset").attr("disabled",true);
+                $(".submenu>button").attr("disabled",true);
+            }
+            function btnEnable(){
+                //$("#bt_fill").attr("disabled",false);
+                //$("#bt_clean").attr("disabled",false);
+                //$("#bt_reset").attr("disabled",false);
+                $(".submenu>button").attr("disabled",false);
+            }
+
+            //iframe装入完成消息，说明功能已经运行完
+            $("#if_Output").on("load",function () {
+                console.log("frame loaded.");
+                btnEnable();
+            });
+
+            $("#bt_fill").on("click",function () {
+                btnDisable();
+                var url="__ACTION__/work/fill";
+                $("#if_Output").attr('src',url);
+            });
+            $("#bt_clean").on("click",function () {
+                btnDisable();
+                var url="__ACTION__/work/clean";
+                $("#if_Output").attr('src',url);
+            });
+            $("#bt_reset").on("click",function () {
+                btnDisable();
+                var url="__ACTION__/work/reset";
+                $("#if_Output").attr('src',url);
+            });
+        });
+    </script>
+</block>

@@ -23,7 +23,8 @@ class VodAction extends AdminBaseAction {
 	/**
 	 * 
 	 * 录像管理列表主界面
-	 * {"operation":[{"text":"允许","val":"R"},{"text":"所有","val":"A"},{"text":"上传","val":"C"},{"text":"修改","val":"M"},{"text":"下载","val":"S"}]}
+	 * {"operation":[{"text":"允许","val":"R"},{"text":"所有","val":"A"},{"text":"上传","val":"C"},
+     * {"text":"修改","val":"M"},{"text":"下载","val":"S"},{"text":"修改属主","val":"B"}]}
 	 */
 	const VODFILEINDEX='VodFileListIndex';
 	public function fileList(){
@@ -221,8 +222,11 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 				$rec['account']=$this->getUserInfo('account');
 			}
 		}
-		$mf['account']['valattr']=" READONLY ";
-		$mf['account']['valclass']="noboder";
+		if(!$this->isOpPermit('B')){
+            $mf['account']['valattr']=" READONLY ";
+            $mf['account']['valclass']="noboder";
+        }
+
 		foreach ($mf as $key=>$field){
 			$mf[$key]['val']=$rec[$key];
 		}
@@ -285,12 +289,12 @@ logfile(json_encode2($rec),LogLevel::DEBUG);
 	//更新录像记录
 	public function updateAjax(){
 		$rec=array('owner'=>0,'channelid'=>0,'length'=>'','createtime'=>'','name'=>'','descript'=>'','seq'=>0,'size'=>0,
-            'playkey'=>'','siuser'=>0,'sichannel'=>0);
+            'playkey'=>'','siuser'=>0,'sichannel'=>0,'account'=>'');
 		$rec=getRec($rec,TRUE);
-//dump($_REQUEST);
+
 		$dbUser=D('user');
 		try{
-			if(0==$_POST['owner']){
+			if(0==$_POST['owner']||$this->isOpPermit('B')){
 				if(''==$_POST['account']) throw new Exception('必须指定录像所属的播主。');
 				$rec['owner']=$dbUser->getUserId($_POST['account']);
 			}

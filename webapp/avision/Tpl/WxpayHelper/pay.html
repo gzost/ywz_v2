@@ -1,0 +1,87 @@
+<!-- 确认订单并支付 -->
+<div style="position: relative; width: 100%; height: 100%; padding-top: 50px;">
+    <div class="title">订单摘要</div>
+    <div class="summary">{$summary}</div>
+    <div class="amt">订单支付总金额：<span style="font-size: 1.2em;color:#F00;">{$amt}</span> 元</div>
+    <button id="btnPay" onclick="" >立即支付</button>
+    <div class="closeWin" id="btnCloseWin"> × </div>
+</div>
+<script type="text/javascript">
+    (   function(){
+            //调用微信JS api 支付
+            function jsApiCall()
+            {
+                WeixinJSBridge.invoke(
+                    'getBrandWCPayRequest',
+                    {$jsApiParameters},
+                    function(res){
+                        WeixinJSBridge.log(res.err_msg);
+                        var payResult='cancel';
+                        if(res.err_msg == "get_brand_wcpay_request:ok") payResult='ok';
+                        $(window).trigger("postpay",payResult);
+                        //alert(res.err_code+res.err_desc+res.err_msg);
+                    }
+                );
+            }
+
+            function callpay()
+            {
+                if (typeof WeixinJSBridge == "undefined"){
+                    if( document.addEventListener ){
+                        document.addEventListener('WeixinJSBridgeReady', jsApiCall, false);
+                    }else if (document.attachEvent){
+                        document.attachEvent('WeixinJSBridgeReady', jsApiCall);
+                        document.attachEvent('onWeixinJSBridgeReady', jsApiCall);
+                    }
+                }else{
+                    jsApiCall();
+                }
+            }
+
+            $("#btnPay").on("click",function () {
+                callpay();  //会被异步执行
+            });
+            $("#btnCloseWin").on("click",function () {
+                $(window).trigger("postpay","cancel");
+            });
+        }
+    )();
+</script>
+    <script type="text/javascript">
+
+    </script>
+    <script type="text/javascript">
+        //获取共享地址
+        function editAddress()
+        {
+            WeixinJSBridge.invoke(
+                'editAddress',
+                {$editAddress},
+            function(res){
+                var value1 = res.proviceFirstStageName;
+                var value2 = res.addressCitySecondStageName;
+                var value3 = res.addressCountiesThirdStageName;
+                var value4 = res.addressDetailInfo;
+                var tel = res.telNumber;
+
+                alert(value1 + value2 + value3 + value4 + ":" + tel);
+            }
+        );
+        }
+
+        window.onload = function(){
+            if (typeof WeixinJSBridge == "undefined"){
+                if( document.addEventListener ){
+                    document.addEventListener('WeixinJSBridgeReady', editAddress, false);
+                }else if (document.attachEvent){
+                    document.attachEvent('WeixinJSBridgeReady', editAddress);
+                    document.attachEvent('onWeixinJSBridgeReady', editAddress);
+                }
+            }else{
+                editAddress();
+            }
+        };
+
+    </script>
+
+

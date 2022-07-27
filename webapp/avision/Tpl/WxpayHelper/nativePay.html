@@ -1,0 +1,61 @@
+<!-- 确认订单并提供二维码扫码支付 -->
+<div id="blkNativePay" style="position: relative; width: 100%; height: 100%; padding-top: 50px;">
+    <div class="title">订单摘要</div>
+    <div class="summary">{$summary}</div>
+    <div class="amt">订单支付总金额：<span style="font-size: 1.2em;color:#F00;">{$amt}</span> 元</div>
+    <div class="message" style="margin: 20px 5px;">请使用微信扫描二维码支付（<span id="conter" style="font-size: 1.2em">  </span> 秒）</div>
+    <div class="closeWin" id="btnCloseWin"> × </div>
+    <div>
+        <img class="qrcode" alt="扫码支付" src="__APP__/WxpayHelper/qrcode?data={$code_url}" />
+    </div>
+    <button id="btnOK" style="display: none" >知道了</button>
+</div>
+<script type="text/javascript">
+    ( function(){
+        const CHECKPAY_URL="__APP__/WxpayHelper/checkPayJson";
+        var msg='';
+        var payResult='cancel';
+        var timerid=0;
+        var second=60;  //计数，秒
+        var prepayid="{$prepayid}";
+        var conter=$("#blkNativePay #conter");
+        console.log("prepayid="+prepayid);
+        function countdown(){
+            if(--second >=0){
+                //倒计时
+                timerid=setTimeout(countdown,1000);
+                conter.html(second);
+            }else{
+                //倒计时结束隐藏二维码
+                showPayResult("支付超时，若还没扫描二维码请重新支付。若已扫描请稍候。");
+            }
+        }
+        //显示支付结果
+        function showPayResult(msg){
+            $("#blkNativePay .qrcode").css({"display":"none"});
+            $("#blkNativePay .message").html(msg);
+            $("#blkNativePay #btnOK").css({"display":"block"});
+        }
+        $("#blkNativePay #btnCloseWin, #blkNativePay #btnOK").on("click",function () {
+            $(window).trigger("postpay",payResult);
+        });
+        timerid=setTimeout(countdown,1000);
+        setTimeout(function () {
+            $.post(CHECKPAY_URL,{'prepayid':prepayid},function (Result) {
+                console.log("pay result:",Result,typeof Result);
+
+                if(typeof Result=='object' && Result.success=='true'){
+                    //成功支付
+                    msg='订单已成功支付。';
+                    payResult='ok';
+                }else{
+                    msg='未能获取订单支付信息，请稍后查询。';
+                }
+                clearTimeout(timerid);
+                showPayResult(msg);
+            },'JSON');
+        },1000);    //3秒后检查支付结果
+    })();
+</script>
+
+

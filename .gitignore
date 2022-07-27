@@ -17,6 +17,7 @@ secret/
 ssl证书/
 document/
 不上传的文档/
+webroot/wxpaysdk3.0.9/
 *.bak
 *.log
 *.mp4

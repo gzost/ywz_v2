@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <title>购买付款测试</title>
+    <link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/default/easyui.css">
+    <link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/icon.css">
+    <link rel="stylesheet" type="text/css" href="/Public/jeasyui/themes/color.css">
+    <link rel="stylesheet" type="text/css" href="/Public/css/OU_unifiedorder.css">
+    <style type="text/css">
+
+    </style>
+</head>
+<body>
+    <div>
+        <form id="fmData">
+            <div>商品简述：<input type="text" name="summary" value="{$summary}"></div>
+            <div>商品：<input type="text" name="productid" value="{$productid}"></div>
+            <div>金额：<input type="text" name="amt" value="{$amt}"></div>
+            <div>用户ID：<input type="text" name="userid" value="{$userid}"></div>
+            <input type="hidden" name="contextid" value="{$contextid}">
+        </form>
+        <div><button id="btnBuy">购买</button></div>
+    </div>
+
+
+
+    <script src="/Public/jeasyui/jquery.min.js" ></script>
+    <script src="/Public/jeasyui/jquery.easyui.min.js" ></script>
+    <script src="/Public/jeasyui/locale/easyui-lang-zh_CN.js" ></script>
+    <script src="/Public/js/jquery.query.js" ></script>
+    <script src="/Public/js/OU_unifiedorder.js" ></script>
+    <script>
+        //测试jquery.query
+
+        console.log("location=",window.location.search);
+        console.log("userid=",$.query.get("userid"));
+        console.log("openid=",$.query.get("openid"));
+
+        var u=""+$.query.set("testy","teststring...");
+        console.log("u="+u);
+        console.log("New location=",$.query.set("context","abvf99").toString());
+
+
+
+        //以下是调用示列
+        var order=new OU_unifiedorder();
+        $("#btnBuy").on("click",function () {
+
+            var data=$("#fmData").serializeArray(); //serialize()
+            data.push({name:"app",value:"__APP__"});    //应用引导文件路径
+            console.log(data);
+            order.setData(data);
+            order.pay(function (payResult) {
+                console.log("payResult=",payResult);
+            });
+
+        });
+
+
+    </script>
+</body>
+</html>

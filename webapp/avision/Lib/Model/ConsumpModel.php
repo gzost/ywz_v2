@@ -227,6 +227,7 @@ logfile("ConsumpModel:".$this->getLastSql(),LogLevel::SQL);
 	 * 
 	 * 取指定用户的余额
 	 * @param int $uid	用户ID
+     * @return array
 	 */
 	public function getBalance($uid){
 		$rt=$this->where('userid='.$uid)->order('id desc')->getField(balance);
@@ -240,6 +241,7 @@ logfile("ConsumpModel:".$this->getLastSql(),LogLevel::SQL);
 	 * 取含有用户余额的消费记录ID数组
 	 * outao 2017-03-02
 	 * @param int $userid
+     * @return array
 	 */
 	public function getBalanceRecIdArr($userid=0){
 		$idArr=array();
@@ -262,7 +264,7 @@ logfile("ConsumpModel:".$this->getLastSql(),LogLevel::SQL);
 	 * @param string $operator 操作员account
 	 * @param int $prepayid 预付单ID
 	 * 
-	 * @throws	有错抛出
+	 * @throws	Exception 有错抛出
 	 */
 	public function recharge($userid,$receipt,$qty,$note='',$operator=null, $prepayid){
 		$record=array('userid'=>$userid, 'receipt'=>$receipt, 'qty'=>$qty, 'note'=>$note, 'prepayid'=>$prepayid);

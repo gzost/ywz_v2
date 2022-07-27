@@ -14,6 +14,8 @@ define('COMMON_PATH', WEB_ROOT.'../webapp/avision/Common/');
 define('APP_PUBLIC_WXPAY', WEB_ROOT.'../webapp/public/wxpay/');
 define('ALI_SMS_PATH', APP_PUBLIC.'aliyun/');
 
+//临时保存的变量
+define('APP_VAR', '/var/www/ywz/webapp/var/');
 
 //开启调试模式
 define('APP_DEBUG', true);

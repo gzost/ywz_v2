@@ -1,0 +1,14 @@
+<div style="position: relative; width: 100%; height: 100%; padding-top: 50px;">
+    <div class="title">订单错误</div>
+    <div class="summary">{$msg}</div>
+    <div class="closeWin" id="btnCloseWin"> × </div>
+</div>
+
+<script type="text/javascript">
+    (function () {
+        $("#btnCloseWin").on("click",function (){
+            console.log("click close");
+            $(window).trigger("postpay","cancel");
+        });
+    })();
+</script>

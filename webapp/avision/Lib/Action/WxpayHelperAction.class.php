@@ -54,7 +54,7 @@ class WxpayHelperAction extends Action
 
 
     /**
-     * 返回用户属性中的openid
+     * 输出用户属性中的openid，没设置输出''
      */
     public function getOpenidAttrAjax(){
         $authorize=new  authorize();

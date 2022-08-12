@@ -27,8 +27,6 @@
         <div><button id="btnBuy">购买</button></div>
     </div>
 
-
-
     <script src="/Public/jeasyui/jquery.min.js" ></script>
     <script src="/Public/jeasyui/jquery.easyui.min.js" ></script>
     <script src="/Public/jeasyui/locale/easyui-lang-zh_CN.js" ></script>
@@ -36,7 +34,6 @@
     <script src="/Public/js/OU_unifiedorder.js" ></script>
     <script>
         //测试jquery.query
-
         console.log("location=",window.location.search);
         console.log("userid=",$.query.get("userid"));
         console.log("openid=",$.query.get("openid"));
@@ -45,15 +42,22 @@
         console.log("u="+u);
         console.log("New location=",$.query.set("context","abvf99").toString());
 
-
-
         //以下是调用示列
         var order=new OU_unifiedorder();
         $("#btnBuy").on("click",function () {
+            var inputFields=$("#fmData input");
+            var data={app:"__APP__"};
+            console.log(inputFields);
+            data.summary=inputFields.filter("[name='summary']").val();
+            data.productid=inputFields.filter("[name='productid']").val();
+            data.amt=inputFields.filter("[name='amt']").val();
+            data.userid=inputFields.filter("[name='userid']").val();
+            data.contextid=inputFields.filter("[name='contextid']").val();
+            console.log(data); //return;
 
-            var data=$("#fmData").serializeArray(); //serialize()
-            data.push({name:"app",value:"__APP__"});    //应用引导文件路径
-            console.log(data);
+            //var data=$("#fmData").serializeArray(); //serialize()
+            //data.push({name:"app",value:"__APP__"});    //应用引导文件路径
+            //console.log(data);
             order.setData(data);
             order.pay(function (payResult) {
                 console.log("payResult=",payResult);

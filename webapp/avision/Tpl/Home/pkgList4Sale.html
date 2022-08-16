@@ -1,0 +1,119 @@
+<!-- 显示优惠流量套餐模块，PC/手机共用 -->
+<link rel="stylesheet" type="text/css" href="/Public/css/OU_unifiedorder.css">
+<style>
+    .pkgList{
+        display: flex;
+        flex-flow: row wrap;
+        justify-content: center;
+        padding: 20px;
+    }
+    .pkgItem{
+        max-width: 160px; height: 220px;
+        width: calc( 100% / 2 - 10px );
+        background-color: #fff;
+        border: 1px solid #aaa;
+        margin: 0 5px 5px 0;
+        text-align: center;
+        vertical-align: top;
+        position: relative;
+    }
+    .pkgImg{
+        height:120px; width: 100%;
+        background-size:contain;
+        background-color: #fff;
+        background-repeat:no-repeat;
+    }
+    .pkgName{
+        padding: 10px 5px;
+        text-align: center;
+        font-size: 16px;
+        font-weight: bold;
+        word-break: break-all;
+        color: #112;
+        font-family: 微软雅黑;
+
+    }
+    .pkgSubmitContainer{
+        position: absolute;
+        bottom: 10px;
+        width: 100%;
+        text-align: center;
+    }
+    .pkgSubmit{
+        margin: 0 auto;
+        width: 5em;
+        font-size: 1.2em;
+        padding: 3px 10px;
+        background-color: #ffc033;
+        border-radius: 7px;
+        cursor: pointer;
+    }
+    .title{
+        font-weight: bold;
+        font-size: 1.2rem;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+</style>
+<div class="pkgList">
+    <foreach name="sellingPkg" item="pkg">
+        <div class="pkgItem">
+            <div class="pkgImg" style="background-image: url({$pkg.picture})"></div>
+            <div class="pkgName">{$pkg.name}</div>
+            <div class="pkgSubmitContainer">
+                <div class="pkgSubmit" data-options='{$pkg.json}'>购 买</div>
+            </div>
+        </div>
+
+    </foreach>
+</div>
+
+<script src="/Public/js/jquery.query.js" ></script>
+<script src="/Public/js/OU_unifiedorder.js" ></script>
+<script>
+    $(document).ready(function () {
+        /**
+         * 页面初始时，需提供以下参数
+         */
+        var payArg={
+            userid: "{$userid}",    //必须
+            contextid: "{$contextid}",  //必须
+            app:"{$app}",   //应用引导入口，默认：/index.php
+            openid:"{$openid}"  //jsapi支付最好提供，否则控件自动查找
+        }
+        var postPayUrl="{$postPay}";   //支付成功后调用
+
+        var order=new OU_unifiedorder();
+        $(".pkgSubmit").on("click",function () {
+            var pkg=$(this);
+            var rec=eval("("+pkg.attr("data-options")+")"); //将参数串转成Json对象
+            rec.summary=rec.name;
+            rec.amt = rec.price;
+            rec.productid=rec.id;
+            let arg={};
+            $.extend(arg,payArg,rec);
+            console.log(arg);
+            order.setData(arg);
+            order.pay(function (payResult) {
+                console.log("payResult=",payResult);
+                if(payResult.result=="ok"){
+                    $.extend(arg,payResult);
+                    $.post(postPayUrl,arg,function (postPayReturn) {
+                        console.log(postPayReturn, typeof postPayReturn);
+                        let msg='您已支付成功。';
+                        if('object'== typeof postPayReturn &&  'true'==postPayReturn.success){
+                            msg +="产品购买成功。";
+                        }else {
+                            msg +="未能记录购买信息，请稍后查询或连续客服："+postPayReturn.msg;
+                        }
+                        $.messager.alert("信息",msg,"info");
+                    },"json");
+                }else{
+                    $.messager.alert("支付失败","系统未能收到支付成功通知，若您已经支付请稍后再查询或连续客服。","warning");
+                }
+            });
+        });
+    });
+
+</script>

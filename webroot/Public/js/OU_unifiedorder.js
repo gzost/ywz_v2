@@ -18,14 +18,15 @@
  *          opendid:"微信支付时支付用户的微信关联标识"  //JSAPI支付时使用，若不提供会发起用户有感知的查询
  *                                      //也可以通过URL变量提供，此参数覆盖URL变量
  *          app:"/home.php"  //thinkphp项目入口
- *  [{name:"summary",value:"订单摘要"},{name:"amt",value:"订单总金额(分)"},
- *          {name:"productid",value:"产品id(H5支付必须)"},
- *          {name:"userid",value:"当前登录用户ID"},{name:"contextid",value:"sessionid"}]
+ *
  *  order.setData(data);
  *  order.pay(function (payResult) {
-         *      //支付结果回调，支付成功：payResult="ok"，支付失败="cancel"
-         *       console.log("payResult=",payResult);
-         *   });
+ *      //支付结果回调，支付成功：payResult=
+ *      //{ result:"cancel|ok", //cancel-失败，ok-成功
+ *      //  tradeno:"商户订单号"
+ *      // }"ok"，支付失败="cancel"
+ *       console.log("payResult=",payResult);
+ *   });
  *
  */
 function OU_unifiedorder(){
@@ -61,13 +62,6 @@ function OU_unifiedorder(){
 
     var getArg=function (name) {
         return payArg[name];
-
-        for(var key in payArg){
-            if('string'==typeof(payArg[key].name) && payArg[key].name==name && payArg[key].value!=""){
-                return payArg[key].value;
-            }
-        }
-        return null;
     }
 
     var urlencode=function(str){
@@ -85,15 +79,13 @@ function OU_unifiedorder(){
     this.setData=function(d){
         $.extend(payArg,d);
         if('string' == typeof payArg['app']) app=payArg['app'];
-        return;
-        payArg=Object.assign([],d);
-        let tmp=getArg("app");
-console.log("tmp=",tmp);
-        if('string'==typeof tmp) app=tmp;
     }
     /**
      *  确认订单并支付
-     *  payCallback是回调函数，支付完成后返回支付结果：cancel-失败，ok-成功
+     *  payCallback是回调函数，支付完成后返回支付结果：
+     *  { result:"cancel|ok", //cancel-失败，ok-成功
+     *    tradeno:"商户订单号"
+     *    }
      */
     this.pay=function (payCallback) {
         if('function' == typeof payCallback) callback=payCallback;
@@ -145,7 +137,8 @@ console.log("tmp=",tmp);
     }
 
     /**
-     * 支付控件在完成支付后会向window发出postpay消息，同时带有结果参数：成功-ok，失败-cancel
+     * 支付控件在完成支付后会向window发出postpay消息，同时带有结果参数：{result:"ok|cancel",tradeno:"商户订单id"}
+     * result: 成功-ok，失败-cancel
      * 支付失败不一定是没支付，可能是支付信息反馈不及时。可稍后查询订单
      */
     $(window).off("postpay");   //避免多次绑定消息响应

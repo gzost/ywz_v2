@@ -37,69 +37,18 @@
 </head>
 <body style="background-color: #0cb781">
     <div style="margin: 0 auto; width:400px; border: 1px solid red;position: relative;">
-<div>PPPPWWW src="m.mp4 ts/dfhc.m3u8"</div>
-        <video  id="Media" src="m.mp4" controls="controls" width="100%" height="50%" style="position: relative; z-index: 1;"
+    <div>PPPPWWW src="m.mp4 ts/dfhc.m3u8"</div>
 
-
-               x5-playsinline="true"
-               x-webkit-airplay="true"
-               webkit-playsinline="false"
-               playsinline="true"
-                x5-video-player-type="h5"
-                x5-video-orientation="h5"
-                x5-video-player-fullscreen="true"
-        >
-            您的浏览器不支持 video 标签。
-        </video>
- <!--
-                x5-video-player-type="h5"	//要安卓不自动全屏不能加入此参数，而此参数是实现同层显示必须
-                playsinline ="true"
-               -webkit-playsinline
-               webkit-playsinline="true"
-               x5-video-player-fullscreen="false"
-            x5-video-orientation="portraint"
- -->
-        <div id='ccc' style="position: relative; top:-150px; left:200px;z-index: 20; border:2px solid #1c94c4; color: #1c94c4;">
-            49999999999222345
-        </div>
-    </div>
-    <script src='https://cdn.bootcss.com/jquery/3.2.1/jquery.min.js'></script>
     <script>
 
         Media = document.getElementById("Media");
-        Media.addEventListener('play',function () {
-            //alert('ppp');
-            //Media.webkitExitFullScreen();
-            //Media.exitFullscreen();
-        });
-        window.onresize=function () {
-            console.log('ff');
-            Media.style.width = window.innerWidth + "px";
-            Media.style.height = window.innerHeight + "px";
-            //Media.style.height =  "1300px";
-            //Media.style.top="-610px";
-            //Media.style.left="10px";
+        let pageNav = document.getElementsByTagName("uni-page-head");
+        console.log(pageNav);
+        alert(pageNav);
+        if (pageNav && pageNav[0]) {
+            pageNav[0].style.display = "none";
         }
-        /*
-        var eventTester = function(e){
-            Media.addEventListener(e,function(){
-                console.log((new Date()).getTime(),e)
-            },false);
-        };
-        eventTester("play"){ alert('ppp'); };
-        */
-        /*
-        var $video = $('video');
-        var $desc = $('.desc');
-        $video[0].addEventListener('x5videoenterfullscreen', function() {
-            $video.addClass('android-full');
-            $desc.addClass('android-full');
-        });
-        $video[0].addEventListener('x5videoexitfullscreen', function() {
-            $video.removeClass('android-full');
-            $desc.removeClass('android-full');
-        });
-        */
+
     </script>
 
 </body>

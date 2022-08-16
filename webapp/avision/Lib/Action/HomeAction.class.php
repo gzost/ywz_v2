@@ -32,7 +32,9 @@ class HomeAction extends SafeAction {
 	}
 
 	public function t(){
-		$this->display('t');
+        $this->baseAssign();
+        dump($this->author->isLogin());
+		dump($this->getUserInfo());
 	}
 
 	//设置当前用户的身份标识变量
@@ -1179,11 +1181,51 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 			echo '无效信息';
 		}
 	}
-    
+
+    /**
+     * 显示可购买的套餐，仅支持现金购买
+     * @date 2022-08-09 outao
+     */
+	public function packageShow(){
+        $this->baseAssign();
+        $webVar=array('userid'=>$this->userId(),'contextid'=>session_id(), 'app'=>"__APP__",
+            'openid'=>$this->setUserInfo("openid"),
+            'postPay'=>"__APP__"."/Home/packageBuyJson" //支付成功后处理
+            );
+        include_once(LIB_PATH.'Model/GoodsModel.php');
+        $dbGoods=D('Goods');
+        //仅选择状态为正常，可用现金支付的记录
+        $pkgList=$dbGoods->getList(array('category'=>array('in','stream,pushpkg,pullpkg'),'status'=>'正常','accept_c'=>'true'),'');
+        $imgUrlPrefix=__ROOT__;
+        foreach ($pkgList as $key=>$item){
+            $pkgList[$key]["picture"]=$imgUrlPrefix.$pkgList[$key]["picture"];
+            //准备套餐记录的数据，这些数据在前端转换成传递给支付控件的参数
+            $payArg=array("name"=>$item["name"], "accept"=>"c", "price"=>$item["price_c"], "id"=>$item['id'],
+                "value"=>$item["value"],"expire"=>$item["expire"], "category"=>$item["category"] );
+            $pkgList[$key]["json"]=json_encode2($payArg); //将记录转成json格式
+        }
+        $webVar['sellingPkg']=$pkgList;
+        $this->assign($webVar);
+        $this->show();
+    }
+
+    /**
+     * 用户已支付费用，记录已购买的套餐。并返回处理结果
+     * @date 2022-08-09 outao
+     */
+    public function packageBuyJson(){
+        include_once(APP_PATH.'Common/package.class.php');
+        $pkg=$_POST;
+
+        $ret=package::buyPackage($pkg,$this->userId());
+        if(''==$ret)  Oajax::successReturn();
+        else Oajax::errorReturn($ret);
+    }
+
     /**
      * 
      * 优惠套餐
-     * @param unknown_type $isSubmit
+     * @param string $isSubmit
      */
     public function package($isSubmit='false'){
     	$scrType=$this->getScreenType();

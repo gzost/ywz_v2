@@ -139,6 +139,7 @@ class WxpayHelperAction extends Action
 
         $config = new WxPayConfig();
         $order = WxPayApi::unifiedOrder($config, $input);
+        $order['out_trade_no']=$trade_no;   //传至调用者以便跟踪
 
         if('SUCCESS'==$order['return_code'] && 'SUCCESS'==$order['result_code']){
             //下单成功
@@ -199,6 +200,8 @@ class WxpayHelperAction extends Action
             //②、统一下单
             $orderRec['tradetype']='JSAPI';  //支付模式必须填写JSAPI/NATIVE
             $order=$this->unifiedOrder($orderRec);
+            $webvar['tradeno']=$order['out_trade_no'];  //用商户订单跟踪支付结果
+
 //dump($order);
             $tools = new JsApiPay();
             $jsApiParameters = $tools->GetJsApiParameters($order);
@@ -247,6 +250,7 @@ logfile("支付参数：".$jsApiParameters,LogLevel::DEBUG);
 
             $orderRec['tradetype']='NATIVE';  //支付模式必须填写JSAPI/NATIVE
             $result=$this->unifiedOrder($orderRec);
+            $webvar['tradeno']=$result['out_trade_no'];  //用商户订单跟踪支付结果
 //dump($result);
             $webvar['code_url']=urlencode($result['code_url']);    //收款二维码
             $webvar['prepayid']=$result['prepay_id'];
@@ -281,15 +285,15 @@ logfile("支付参数：".$jsApiParameters,LogLevel::DEBUG);
     }
 
     /**
-     * 处理前端长查询请求。根据prepayid，查询并返回支付结果，没有结果时，在60秒内循环查询。
+     * 处理前端长查询请求。根据tradeno，查询并返回支付结果，没有结果时，在60秒内循环查询。
      * @param $prepayid
      */
-    public function checkPayJson($prepayid){
-        if(null==$prepayid) Oajax::errorReturn('缺少参数。');
-        $expireTime=time()+60;    //程序最长查询时间60s
+    public function checkPayJson($tradeno){
+        if(null==$tradeno) Oajax::errorReturn('缺少参数。');
+        $expireTime=time()+5;    //程序最长查询时间5s
 //OUwrite($expireTime.'<br>');
         $db=D('salesorder');
-        $cond=array('prepayid'=>$prepayid);
+        $cond=array('tradeno'=>$tradeno);
         do{
             $payresult=$db->where($cond)->getField('payresult');
 //var_dump($payresult,$db->getLastSql());

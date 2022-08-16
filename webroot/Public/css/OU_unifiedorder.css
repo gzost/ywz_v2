@@ -18,10 +18,16 @@
 
 #jqWindow>#innerBlk .amt {
     margin-top: 20px;
-
     font-weight: bold;
 }
+#jqWindow>#innerBlk .amt span{
+    font-size: 1.2em;color:#F00;
+}
 
+#jqWindow>#innerBlk .message{
+    margin: 20px 5px;
+    color:#FE6714;
+}
 #jqWindow>#innerBlk button {
     margin: 30px auto;
     width: 8em;
@@ -38,4 +44,5 @@
     padding:2px 10px;
     top: 1px; right: 1px;
     font-size: 40px;
+    cursor: pointer;
 }

@@ -2,8 +2,8 @@
 <div id="blkNativePay" style="position: relative; width: 100%; height: 100%; padding-top: 50px;">
     <div class="title">订单摘要</div>
     <div class="summary">{$summary}</div>
-    <div class="amt">订单支付总金额：<span style="font-size: 1.2em;color:#F00;">{$amt}</span> 元</div>
-    <div class="message" style="margin: 20px 5px;">请使用微信扫描二维码支付（<span id="conter" style="font-size: 1.2em">  </span> 秒）</div>
+    <div class="amt">订单支付总金额：<span">{$amt}</span> 元</div>
+    <div class="message" >请使用微信扫描二维码支付（<span id="conter" style="font-size: 1.2em">  </span> 秒）</div>
     <div class="closeWin" id="btnCloseWin"> × </div>
     <div>
         <img class="qrcode" alt="扫码支付" src="__APP__/WxpayHelper/qrcode?data={$code_url}" />
@@ -15,46 +15,71 @@
         const CHECKPAY_URL="__APP__/WxpayHelper/checkPayJson";
         var msg='';
         var payResult='cancel';
-        var timerid=0;
+        var waitingPay=true;    //等待支付，若false说明支付已经成功或失败
         var second=60;  //计数，秒
         var prepayid="{$prepayid}";
         var conter=$("#blkNativePay #conter");
-        console.log("prepayid="+prepayid);
-        function countdown(){
-            if(--second >=0){
-                //倒计时
-                timerid=setTimeout(countdown,1000);
-                conter.html(second);
-            }else{
-                //倒计时结束隐藏二维码
-                showPayResult("支付超时，若还没扫描二维码请重新支付。若已扫描请稍候。");
-            }
-        }
+        var tradeno="{$tradeno}";
+
+        console.log("prepayid="+prepayid+" tradeno="+tradeno);
         //显示支付结果
         function showPayResult(msg){
             $("#blkNativePay .qrcode").css({"display":"none"});
             $("#blkNativePay .message").html(msg);
             $("#blkNativePay #btnOK").css({"display":"block"});
         }
-        $("#blkNativePay #btnCloseWin, #blkNativePay #btnOK").on("click",function () {
-            $(window).trigger("postpay",payResult);
-        });
-        timerid=setTimeout(countdown,1000);
-        setTimeout(function () {
-            $.post(CHECKPAY_URL,{'prepayid':prepayid},function (Result) {
+
+        //倒计时，必须在倒计时之内扫码支付
+        function countdown(){
+            if(waitingPay && (--second >=0) ){
+                if(waitingPay){
+                    //倒计时
+                    setTimeout(countdown,1000);
+                    conter.html(second);
+                }else{
+                    //已经支付成功，停止倒计时
+                }
+            }else{
+                //倒计时结束隐藏二维码
+                showPayResult("支付超时，若还没扫描二维码请重新支付。若已支付请稍后查询。");
+            }
+        }
+
+        //检测是否已完成支付，nativePay前端无法返回支付结果，只能后端查询
+        function checkpay(){
+            $.post(CHECKPAY_URL,{'tradeno':tradeno},function (Result) {
                 console.log("pay result:",Result,typeof Result);
 
                 if(typeof Result=='object' && Result.success=='true'){
                     //成功支付
                     msg='订单已成功支付。';
                     payResult='ok';
+                    waitingPay=false;
+                    showPayResult(msg);
+                }else if( waitingPay && (second > 0) ){
+                    setTimeout(checkpay, 3000); //若倒计时没结束，3秒后重新测试
                 }else{
+                    //倒计时结束
+                    waitingPay=false;
                     msg='未能获取订单支付信息，请稍后查询。';
+                    showPayResult(msg);
                 }
-                clearTimeout(timerid);
-                showPayResult(msg);
+                if(!waitingPay) $(window).trigger("postpay",{result:payResult,tradeno:tradeno} );
             },'JSON');
-        },1000);    //3秒后检查支付结果
+        }
+        $("#blkNativePay #btnCloseWin, #blkNativePay #btnOK").on("click",function () {
+            console.log($(this).attr("id"));
+            let btnId=$(this).attr("id");
+            if("btnCloseWin" == btnId){
+                msg="取消支付。";
+            }
+            waitingPay=false;
+            showPayResult(msg);
+            $(window).trigger("postpay",{result:payResult,tradeno:tradeno} );
+        });
+
+        setTimeout(countdown,1000); //开始1分钟倒计时
+        setTimeout(checkpay,10000);    //10秒后开始检查支付结果
     })();
 </script>
 

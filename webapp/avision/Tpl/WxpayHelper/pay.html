@@ -8,6 +8,7 @@
 </div>
 <script type="text/javascript">
     (   function(){
+            var tradeno="{$tradeno}";
             //调用微信JS api 支付
             function jsApiCall()
             {
@@ -18,7 +19,7 @@
                         WeixinJSBridge.log(res.err_msg);
                         var payResult='cancel';
                         if(res.err_msg == "get_brand_wcpay_request:ok") payResult='ok';
-                        $(window).trigger("postpay",payResult);
+                        $(window).trigger("postpay",{result:payResult,tradeno:tradeno} );
                         //alert(res.err_code+res.err_desc+res.err_msg);
                     }
                 );
@@ -42,7 +43,7 @@
                 callpay();  //会被异步执行
             });
             $("#btnCloseWin").on("click",function () {
-                $(window).trigger("postpay","cancel");
+                $(window).trigger("postpay",{result:"cancel",tradeno:tradeno});
             });
         }
     )();

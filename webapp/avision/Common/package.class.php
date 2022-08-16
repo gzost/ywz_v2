@@ -22,7 +22,7 @@ class package{
 		$newPkg=array('userid'=>$userId,'type'=>$pkg['category'], 
 					'purchase'=>date('Y-m-d H:i:s',$now),
 					'expiry'=>date('Y-m-d H:i:s',$now+$pkg['expire']*24*3600),'name'=>$pkg['name'],
-					'total'=>$pkg['value'], 'used'=>0, 'refid'=>$pkg['id'] );
+					'total'=>$pkg['value'], 'used'=>0, 'refid'=>$pkg['id'],'tradeno'=>$pkg['tradeno'] );
 		$operator=authorize::getUserInfo('account');	//操作员记录为当前登录账号
 		
 		//若用点数购买，直接扣除点数，点数不足则购买失败；

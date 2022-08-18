@@ -1,0 +1,95 @@
+<!-- 网真点自助充值宽窄屏公共显示模块 -->
+<link rel="stylesheet" type="text/css" href="/Public/css/OU_unifiedorder.css">
+<style>
+    .rechargeBox{
+        margin: 0 auto;
+        padding: 15px;
+        border: 1px solid #aaf;
+        border-radius: 15px;
+        width:80%; max-width: 560px;
+        text-align: center;
+        font-size: 16px;
+    }
+    .rechargeBox .note{
+        color:#339;
+    }
+    .rechargeBox .divFee{
+        margin: 15px 0;
+    }
+
+    .btnSubmit{
+        margin: 10px auto;
+        width: 5em;
+        padding: 3px 10px;
+        background-color: #ffc033;
+        border-radius: 7px;
+        cursor: pointer;
+    }
+</style>
+
+<div style="height: 10px"> </div>
+<div class="rechargeBox">
+    <div class="note">充值到账号钱包：1元=100网真点。网真点可用于平台内的各种消费。充值金额最低10元。</div>
+    <div class="divFee">
+        充值金额：
+        <input type="text" name="amount" value="10" class="easyui-numberbox"
+               data-options="precision:2,min:0.01,width:80" >元
+    </div>
+
+    <div class="btnSubmit">充 值</div>
+</div>
+
+<div style="margin:0 auto;color: #666; width: 80%; text-align: center;">*建议播主购买优惠套餐，零散流量及其它消费费率请参考相关公告或咨询客服。</div>
+
+<script src="/Public/js/jquery.query.js" ></script>
+<script src="/Public/js/OU_unifiedorder.js" ></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        document.title="账号充值";
+
+        const minRechargeValue=0.01;  //最低充值元
+        var postPayUrl="{$postPayUrl}"; //支付完成后处理URL，必须返回Json
+        var payArg={
+            userid: "{$userid}",    //必须
+            contextid: "{$contextid}",  //必须
+            app:"{$app}",   //应用引导入口，默认：/index.php
+            openid:"{$openid}",  //jsapi支付最好提供，否则控件自动查找
+            summary:"{$summary}",
+            productid:"{$productid}"
+        }
+        var order=new OU_unifiedorder();
+        $(".btnSubmit").on('click',function () {
+            let amt=$("input[name='amount']").val();
+            amt = parseFloat(amt);
+            if( isNaN(amt) || amt<minRechargeValue ){
+                alert("最低充值"+minRechargeValue+"元");
+                return;
+            }
+            payArg.amt=amt*100;
+            console.log("btnSubmit Click:",payArg);
+            order.setData(payArg);
+            order.pay(function (payResult) {
+                console.log("payResult=",payResult);
+                if(payResult.result=="ok"){
+                    let tmpArg={};
+                    $.extend(tmpArg,payArg,payResult);
+                    console.log("postPayArg=",tmpArg);
+                    $.post(postPayUrl,tmpArg,function (postPayReturn) {
+                        console.log(postPayReturn, typeof postPayReturn);
+                        let msg='您已支付成功。';
+                        if('object'== typeof postPayReturn &&  'true'==postPayReturn.success){
+                            msg +="产品购买成功。";
+                        }else {
+                            msg +="未能记录购买信息，请稍后查询或联系客服："+postPayReturn.msg;
+                        }
+                        $.messager.alert("信息",msg,"info");
+                    },"json");
+                }else{
+                    $.messager.alert("支付失败","系统未能收到支付成功通知，若您已经支付请稍后再查询或连续客服。","warning");
+                }
+            });
+        });
+
+    });
+</script>

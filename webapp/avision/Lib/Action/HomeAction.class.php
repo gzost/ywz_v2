@@ -975,12 +975,43 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
     	//dump($webvar);
     	//$webvar['step']=2;
     }
-    
+
+    /**
+     * 账号充值 2022-08版
+     */
+    public function recharge(){
+        $this->baseAssign();
+
+        $webVar=array('userid'=>$this->userId(),'contextid'=>session_id(), 'app'=>"__APP__",
+            'openid'=>$this->setUserInfo("openid"),'step'=>'recharge',
+            'summary'=>'网真点自助充值', 'productid'=>900, //商品id及名称
+            'postPayUrl'=>U('rechargeBuyJson'));   //支付成功后处理URL
+        $this->assign($webVar);
+        $this->show();
+    }
+
+    /**
+     * 账号充值完成支付后的处理，把充值内容写入consump表
+     */
+    public function rechargeBuyJson(){
+        try{
+            if($_POST['contextid'] != session_id()) throw new Exception('非法调用');
+            $db=D('consump');
+            $rt=$db->recharge($_POST['userid'],$_POST['amt'],$_POST['amt'],'用户自助充值',
+                $this->getUserInfo('account'),0,$_POST['tradeno']);
+            if(false==$rt) throw new Exception('充值失败');
+            Oajax::successReturn(array('sql'=>$db->getLastSql()));
+        }catch (Exception $e){
+            $msg=$e->getMessage();
+            logfile($msg,LogLevel::ERR);
+            Oajax::errorReturn($msg);
+        }
+    }
     /**
      * 
      * 账号充值
      */
-    public function recharge($isSubmit='false'){
+    public function recharge_del($isSubmit='false'){
     	$scrType=$this->getScreenType();
     	$this->baseAssign();
     	
@@ -1012,7 +1043,7 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 	/**
 	 * 微信直接充值
 	 */
-	public function recharegeWxPay($amount)
+	public function recharegeWxPay_del($amount)
 	{
 		$t = $this->rechargePayCode($amount, 'bool');
 
@@ -1030,7 +1061,7 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 	/**
 	 * 生成充值二维码
 	 */
-	public function rechargePayCode($amount, $return='qrcode')
+	public function rechargePayCode_del($amount, $return='qrcode')
 	{
 		$userId = $this->userId();
 		if(0 < $userId && 0 < $amount)
@@ -1065,7 +1096,7 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 	/**
 	 * 检查是否支付成功
 	 */
-	public function rechargePayCheck($t)
+	public function rechargePayCheck_del($t)
 	{
 		//$msgDal = new MessageModel();
         $msgDal = D('Message');
@@ -1085,7 +1116,7 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 	 * $c 是code支付的message表的keystr,用于check是否完成支付
 	 * $t message表的keystr，对于的是支付完成消息
 	 */
-	function rechargePaySucess($t = '', $c = '')
+	function rechargePaySucess_del($t = '', $c = '')
 	{
 		logfile('rechargePaySucess: t='.$t.' c='.$c,LogLevel::DEBUG);
 	    try
@@ -1166,7 +1197,7 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 	/*
 	 * 调用微信接口进行支付
 	 */
-	function rechargepay($t)
+	function rechargepay_del($t)
 	{
 		$msgDal = new MessageModel();
 		$r = $msgDal->where(array('keystr'=>$t))->find();
@@ -1189,7 +1220,7 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
 	public function packageShow(){
         $this->baseAssign();
         $webVar=array('userid'=>$this->userId(),'contextid'=>session_id(), 'app'=>"__APP__",
-            'openid'=>$this->setUserInfo("openid"),
+            'openid'=>$this->setUserInfo("openid"),'step'=>'packageShow',
             'postPay'=>"__APP__"."/Home/packageBuyJson" //支付成功后处理
             );
         include_once(LIB_PATH.'Model/GoodsModel.php');
@@ -1223,11 +1254,10 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
     }
 
     /**
-     * 
-     * 优惠套餐
+     * 优惠套餐--弃用2022-08-16
      * @param string $isSubmit
      */
-    public function package($isSubmit='false'){
+    public function package_del($isSubmit='false'){
     	$scrType=$this->getScreenType();
     	$this->baseAssign();
     	

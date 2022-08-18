@@ -122,7 +122,7 @@ class ConsumpModel extends Model {
 	 * 
 	 * 插入消费记录
 	 * 
-	 * 方法内自动计算余额。使用此方法需保证消费表中包含一条基本记录，当某用户没有消费前用这条记录产生0的上期余额：
+	 * 方法内自动计算余额。使用此方法需保证消费表中包含一条id=0的基本记录，当某用户没有消费前用这条记录产生0的上期余额：
 	 * 万能匹配0余额记录：id=0, userid=0, balance=0
 	 * 
 	 * @param array $record	记录数据
@@ -131,7 +131,7 @@ class ConsumpModel extends Model {
 	 */
 	public function addRec($record){
 		$nfields=array('userid','receipt','payment','objtype','objid','qty','users','newusers','prepayid');	//数值型字段
-		$sfields=array('happen','operator','attr','name','note');	//字串型字段
+		$sfields=array('happen','operator','attr','name','note','tradeno');	//字串型字段
 		$tableName=C('DB_PREFIX').'consump';
 //dump($record);
 		//所有字段的字串
@@ -263,11 +263,12 @@ logfile("ConsumpModel:".$this->getLastSql(),LogLevel::SQL);
 	 * @param string $note	说明
 	 * @param string $operator 操作员account
 	 * @param int $prepayid 预付单ID
-	 * 
+     * @param string $tradeno 商户订单号
+	 * @return 新记录id 或 失败时false
 	 * @throws	Exception 有错抛出
 	 */
-	public function recharge($userid,$receipt,$qty,$note='',$operator=null, $prepayid){
-		$record=array('userid'=>$userid, 'receipt'=>$receipt, 'qty'=>$qty, 'note'=>$note, 'prepayid'=>$prepayid);
+	public function recharge($userid,$receipt,$qty,$note='',$operator=null, $prepayid, $tradeno=''){
+		$record=array('userid'=>$userid, 'receipt'=>$receipt, 'qty'=>$qty, 'note'=>$note, 'prepayid'=>$prepayid,'tradeno'=>$tradeno);
 		if(null == $operator)
 		{
 			$operator = authorize::getUserInfo('account');
@@ -279,6 +280,6 @@ logfile("ConsumpModel:".$this->getLastSql(),LogLevel::SQL);
 		}
 		$record['objtype']=self::$TYPE['recharge'];
 		$record['happen']=date('Y-m-d H:i:s');
-		$this->addRec($record);
+		return $this->addRec($record);
 	}
 }

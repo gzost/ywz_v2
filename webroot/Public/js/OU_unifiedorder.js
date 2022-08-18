@@ -24,7 +24,7 @@
  *      //支付结果回调，支付成功：payResult=
  *      //{ result:"cancel|ok", //cancel-失败，ok-成功
  *      //  tradeno:"商户订单号"
- *      // }"ok"，支付失败="cancel"
+ *      // }
  *       console.log("payResult=",payResult);
  *   });
  *

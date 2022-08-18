@@ -34,7 +34,8 @@ class package{
 			if('c'==$pkg['accept']){
 				$consumpRec=array('happen'=>date('Y-m-d H:i:s',$now),'userid'=>$userId,
 					'receipt'=>$pkg['price'], 'objtype'=>ConsumpModel::$TYPE['cash'],
-					'qty'=>$pkg['price'], 'operator'=>$operator, 'name'=>$pkg['name'], 'note'=>'购买套餐的现金充值', 'prepayid'=>$prepayid );
+					'qty'=>$pkg['price'], 'operator'=>$operator, 'name'=>$pkg['name'], 'note'=>'购买套餐的现金充值',
+                    'prepayid'=>$prepayid, 'tradeno'=>$pkg['tradeno'] );
 				$dbConsump->addRec($consumpRec);
 			}else{
 				//用网真点购买要检查网真点是否足够

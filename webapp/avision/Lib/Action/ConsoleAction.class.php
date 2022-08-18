@@ -1360,5 +1360,11 @@ if(null==$list) logfile("list==null");
 		$this->assign($webvar);
 		$this->display();
 	}
+
+	public function showQrcode($data){
+	    include_once APP_PUBLIC."phpqrcode.php";
+	    //$outfile = false, $level = QR_ECLEVEL_L, $size = 3, $margin = 4,
+	    return QRcode::png($data,false,QR_ECLEVEL_L,4);
+    }
 }
 ?>

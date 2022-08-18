@@ -14,7 +14,8 @@
 			typeNumber	: -1,
 			correctLevel	: QRErrorCorrectLevel.H,
                         background      : "#ffffff",
-                        foreground      : "#000000"
+                        foreground      : "#000000",
+			border:10	//边框点数
 		}, options);
 
 		var createCanvas	= function(){
@@ -25,23 +26,26 @@
 
 			// create canvas element
 			var canvas	= document.createElement('canvas');
-			canvas.width	= options.width;
-			canvas.height	= options.height;
+			canvas.width	= options.width +options.border*2;
+			canvas.height	= options.height +options.border*2;
 			var ctx		= canvas.getContext('2d');
 
 			// compute tileW/tileH based on options.width/options.height
 			var tileW	= options.width  / qrcode.getModuleCount();
 			var tileH	= options.height / qrcode.getModuleCount();
-
+console.log(tileW,qrcode.getModuleCount());
 			// draw in the canvas
+            ctx.fillStyle=options.background;
+            ctx.fillRect(0,0,canvas.width,canvas.height);
 			for( var row = 0; row < qrcode.getModuleCount(); row++ ){
 				for( var col = 0; col < qrcode.getModuleCount(); col++ ){
 					ctx.fillStyle = qrcode.isDark(row, col) ? options.foreground : options.background;
 					var w = (Math.ceil((col+1)*tileW) - Math.floor(col*tileW));
 					var h = (Math.ceil((row+1)*tileW) - Math.floor(row*tileW));
-					ctx.fillRect(Math.round(col*tileW),Math.round(row*tileH), w, h);  
+					ctx.fillRect(Math.round(col*tileW)+options.border,Math.round(row*tileH)+options.border,	w, h);
 				}	
 			}
+
 			// return just built canvas
 			return canvas;
 		}

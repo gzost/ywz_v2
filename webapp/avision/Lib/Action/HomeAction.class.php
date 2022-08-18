@@ -5,7 +5,6 @@
 require_once APP_PATH.'../public/SafeAction.Class.php';
 require_once APP_PATH.'Common/AdminBaseAction.class.php';
 require_once APP_PUBLIC.'CommonFun.php';
-//require_once APP_PUBLIC.'Authorize.Class.php';
 require_once APP_PUBLIC.'WxOauth2.Class.php';
 require_once APP_PATH.'Common/functions.php';
 require_once APP_PUBLIC.'WxBase.php';
@@ -32,6 +31,9 @@ class HomeAction extends SafeAction {
 	}
 
 	public function t(){
+	    include_once APP_PUBLIC."/phpqrcode.php";
+	    $url = $_REQUEST['data'];
+        return QRcode::png($url);
         $this->baseAssign();
         dump($this->author->isLogin());
 		dump($this->getUserInfo());

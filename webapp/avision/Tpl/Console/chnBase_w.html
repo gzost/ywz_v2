@@ -88,20 +88,22 @@ function isClearDis(chnId)
 
 
 //生成二维码
+
 $(document).ready(function(){
 	try	{
 	    var opt={
-            width:200,
-            height:200,
+            width:150,
+            height:150,
+			border:10,
             logoid:'logoimg',
             logoW:48,
             logoH:48
 	    }
 		setTimeout(function () {
 		    opt.text=$('#Fcode').attr('value');
-            $('#qrcode').qrcode(opt);
+            //$('#qrcode').qrcode(opt); //2022-08-18
             opt.text=$("#V3Url").attr("value");
-            $('#qrcodeV3').qrcode(opt);
+            $('#qrcodeV3').qrcode(opt); //2022-08-18
         }, 100);
 		if(0 < chnId)		{
 			$('#divCont').show();
@@ -239,6 +241,7 @@ function jumpChn(chnId)
 		-->
 		<div style="margin: 30px 30px 10px 30px; font-size:1.2em; text-align: center">易网真V3播放器播放地址</div>
 		<div id="qrcodeV3"></div>
+		<!-- <div><img src="__URL__/showQrcode?data={$viewurlV3}"></div> -->
 		<a href="javascript:copyToClipBoard('V3Url','');" class="easyui-linkbutton" iconcls="icon-menu" plain="true">复制观看地址</a>
 		<br>
 		<input id="V3Url" type="text" value="{$viewurlV3}"  readonly style="width: 20em" >

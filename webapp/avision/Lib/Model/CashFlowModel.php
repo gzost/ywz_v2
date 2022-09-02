@@ -39,6 +39,7 @@ class CashflowModel extends Model {
 	 * @param int $num	订购天数
 	 * @param int $refId	频道ID
 	 * @param int $memo	频道名称
+	 * @return mixed
 	 */
 	public function bookChn($userId, $userName, $fee, $num, $refId, $memo='')
 	{
@@ -56,6 +57,7 @@ class CashflowModel extends Model {
 		$rec['refid'] = $refId;
 		$rec['note'] = $memo;
 		$ret = $this->add($rec);
+		return $ret;
 	}
 	
 	/**

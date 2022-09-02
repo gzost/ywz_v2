@@ -1175,5 +1175,13 @@ class ChannelModel extends Model {
 
 	}
 
+    /**
+	 * 取指定频道的拥有者用户ID
+     * @param $chnid
+     * @return mixed
+     */
+	public function getOwner($chnid){
+    	return $this->where("id=".$chnid)->getField("owner");
+	}
 }
 ?>

@@ -1,3 +1,4 @@
+//本插件依赖qrcode.js
 (function( $ ){
 	$.fn.qrcode = function(options) {
 		// if options is string, 

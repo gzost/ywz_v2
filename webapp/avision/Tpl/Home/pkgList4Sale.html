@@ -105,7 +105,7 @@
                         if('object'== typeof postPayReturn &&  'true'==postPayReturn.success){
                             msg +="产品购买成功。";
                         }else {
-                            msg +="未能记录购买信息，请稍后查询或连续客服："+postPayReturn.msg;
+                            msg +="未能记录购买信息，请稍后查询或连系客服："+postPayReturn.msg;
                         }
                         $.messager.alert("信息",msg,"info");
                     },"json");

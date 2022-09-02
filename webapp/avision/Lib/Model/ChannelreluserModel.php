@@ -48,29 +48,24 @@ class ChannelreluserModel extends Model {
 	}
 
 	/**
-	 * 是否拥有票据观看
+	 * 是否拥有票据观看,支持多票据
+     * @param int $chnId    频道ID
+     * @param int $userId   观众的用户ID
+     * @return boolean true-有，false-无
 	 */
 	public function isHaveTicket($chnId, $userId)
 	{
-		$isHaveTicket = false;
 		$n = date('Y-m-d H:i:s', time());
 		$w = array();
 		$w['chnid'] = $chnId;
 		$w['uid'] = $userId;
 		$w['type'] = '订购';
 		$w['status'] = '正常';
-		$tickets = $this->where($w)->select();
-		foreach($tickets as $tik)
-		{
-			//票据是否有效
-			if($tik['begindate'] < $n && $tik['enddate'] > $n)
-			{
-				//票据有效
-				$isHaveTicket = true;
-				break;
-			}
-		}
-		return $isHaveTicket;
+		$w['begindate']=array('ELT',$n);
+        $w['enddate']=array('EGT',$n);
+
+		$tickets = $this->where($w)->count();
+		return ($tickets >0);
 	}
 
 	/**
@@ -80,7 +75,7 @@ class ChannelreluserModel extends Model {
 	 * $start 有效时间开始时间戳
 	 * $end 有效时间结束时间戳
 	 */
-	public function appendTicket($chnId, $userId, $start, $end)
+	public function appendTicket($chnId, $userId, $start, $end,$note2='')
 	{
 		//查询是否已有有效票据
 		$n = time();
@@ -88,7 +83,7 @@ class ChannelreluserModel extends Model {
 		$w['chnid'] = $chnId;
 		$w['uid'] = $userId;
 		$w['type'] = '订购';
-		$w['status'] = '正常';
+
 		$tickets = $this->where($w)->order('id desc')->select();
 		$vaildId = 0;
 		$rt=false;
@@ -96,37 +91,33 @@ logfile('appendTicket'.print_r($w,true));
 		if(null == $tickets)
 		{
 			//直接添加
+            $w['status'] = '正常';
 			$w['begindate'] = date('Y-m-d H:i:s', $start);
 			$w['enddate'] = date('Y-m-d H:i:s', $end);
+			$w['note2']=$note2;
 			$rt=$this->add($w);
 		}
 		else
 		{
-			//目前有且只有一条有效记录
+			//按表设计应该最多有一条记录，原来做了多记录处理，全部记录用新数据覆盖
+            //TODO:做多条订购记录处理，但数据表涉及会员、关注等的多记录处理，需要整体排查
 			foreach($tickets as $tik)
 			{
-				//票据是否有效
-				$st = strtotime($tik['begindate']);
-				$et = strtotime($tik['enddate']);
-				if($st < $n && $et > $n)
-				{
-					//票据有效
-					$vaildId = $tik['id'];
-					if(0 < $vaildId)
-					{
-						//延长票据时间
-						$tik['enddate'] = $end - $start + strtotime($tik['enddate']);
-						$tik['enddate'] = date('Y-m-d H:i:s', $tik['enddate']);
-                        $rt=$this->where(array('id'=>$tik['id']))->save($tik);
-					}
-				}
-				else
-				{
-					//票据无效，修改票据
-					$tik['begindate'] = date('Y-m-d H:i:s', $start);;
-					$tik['enddate'] = date('Y-m-d H:i:s', $end);
-                    $rt=$this->where(array('id'=>$tik['id']))->save($tik);
-				}
+				if('' != $note2) $tik['note2'] .=','.$note2;
+                $tik['note2']=trim($tik['note2'],',');
+                if($tik['status'] != '正常'){
+                    $tik['status']='正常';
+                    $tik['begindate'] = date('Y-m-d H:i:s', $start);
+                    $tik['enddate'] = date('Y-m-d H:i:s', $end);
+                }else{
+                    //原来就正常的记录(这种情况本应不再买票)按用户有利原则扩展有效时间
+                    $bd=strtotime($tik['begindate']);
+                    $ed=strtotime($tik['enddate']);
+                    $tik['begindate']=date('Y-m-d H:i:s',min($bd,$start));
+                    $tik['enddate']=date('Y-m-d H:i:s',max($ed,$end));
+                }
+
+                $rt=$this->where(array('id'=>$tik['id']))->save($tik);
 			}
 		}
         return $rt;
@@ -143,7 +134,7 @@ logfile('appendTicket'.print_r($w,true));
 	public function getAllStatus($chnid,$uid){
 	    $cond=array('chnid'=>$chnid, 'uid'=>$uid);
 	    $records=$this->where($cond)->field("type, note, status, max(enddate) as enddate")->group("type")->select();
-	    //echo $this->getLastSql();
+	//echo $this->getLastSql(); die();
 	    $ret=array();
         $ret['订购']=$ret['会员']=$ret['关注']=array('enddate'=>null);
 	    foreach ($records as $row){

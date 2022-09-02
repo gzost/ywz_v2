@@ -318,13 +318,9 @@ class PlayAction extends SafeAction{
                 case 'subscribe':   //付费频道订阅(subscribe)
                     $subscribePara=array('chnId'=>$this->chnid,);   //传递频道id，付费后跳转地址
                     if(!empty($this->para['du'])) $subscribePara['userpass']=$this->para['du']; //传递播放着id
-                    $billUrl =U('HDPlayer/chnbill',$subscribePara);
+                    $billUrl =U('ChannelPay/showTickect',$subscribePara); //U('HDPlayer/chnbill',$subscribePara);
                     $billUrl .= '?pUrl='.urlencode($url);
 
-
-
-
-               // echo $billUrl; exit();
                     redirect($billUrl);
                     break;
                 case 'spread':

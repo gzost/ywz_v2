@@ -1218,15 +1218,15 @@ if(null==$list) logfile("list==null");
 		$this->display('fullMsg');
 	}
 
-	public function getPushUrlAjax($idstring,$pushkey,$platform,$app){
+	public function getPushUrlAjax($idstring,$pushkey,$platform,$app,$extHours=0){
 		$isShowPullUrl=$this->author->isOperStr('Console','stream','A');
-//var_dump($isShowPullUrl);	
+//var_dump($_POST);
 		if(true==$isShowPullUrl){
 			$dbStream=D('stream');
 			//dump($_REQUEST);
-			$hls=$dbStream->getHls($_REQUEST['id']);
+			$hls=$dbStream->getHls($_REQUEST['id'],$extHours);
 			$hls ='HTTP收流地址：'.$hls.'<br>';
-			$hls .='RTMP收流地址：'.$dbStream->getRtmp($_REQUEST['id']);
+			$hls .='RTMP收流地址：'.$dbStream->getRtmp($_REQUEST['id'],$extHours);
 		} else
 			$hls='';
 			

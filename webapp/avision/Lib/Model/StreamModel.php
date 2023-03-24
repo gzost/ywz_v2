@@ -111,7 +111,7 @@ class StreamModel extends Model {
 	/**
 	 * 根据streamid获取hls播放地址
 	 */
-	public function getHls($streamId)
+	public function getHls($streamId,$extHours=0)
 	{
 		$rs = $this->where('id='.$streamId)->field('platform, idstring,app')->find();
 
@@ -123,7 +123,7 @@ class StreamModel extends Model {
 	/**
 	 * 根据streamid获取推流地址
 	 */
-	public function getPush($streamId)
+	public function getPush($streamId,$extHours=0)
 	{
 		$rs = $this->where('id='.$streamId)->field('platform, idstring,pushkey,app')->find();
 

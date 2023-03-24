@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../www.advanced.com.cn/.idea/www.advanced.com.cn.iml" filepath="$PROJECT_DIR$/../www.advanced.com.cn/.idea/www.advanced.com.cn.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/ywz.iml" filepath="$PROJECT_DIR$/.idea/ywz.iml" />
       <module fileurl="file://$PROJECT_DIR$/../ywz-live/.idea/ywz-live.iml" filepath="$PROJECT_DIR$/../ywz-live/.idea/ywz-live.iml" />
     </modules>

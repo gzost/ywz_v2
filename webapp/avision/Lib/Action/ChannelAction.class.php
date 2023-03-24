@@ -873,7 +873,7 @@ class ChannelAction extends AdminBaseAction
 	public function SetMod()
 	{
 		echo 'set begin';
-		$dir = '/var/www/ywz/webroot/room/000/00';
+		$dir = '/app/varwww/ywz/webroot/room/000/00';
 		$ret = unlink($dir);
 		//$ret = chmod($dir, 0777);
 		//var_dump($ret);

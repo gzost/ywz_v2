@@ -77,10 +77,10 @@ class TestAction extends Action
 		echo "HTTP_X_FORWARDED_FOR=".$_SERVER["HTTP_X_FORWARDED_FOR"].getenv("HTTP_X_FORWARDED_FOR");
 	}
 
-	function Ip()
+	function Ip($ip='61.242.134.113')
 	{
 		$baidu = new Lbsyun();
-		$ret = $baidu->Ip2Address('101.226.125.117');
+		$ret = $baidu->Ip2Address($ip);
 		var_dump($ret);
 		//$ret = $baidu->Ip2Address();
 		//var_dump($ret);

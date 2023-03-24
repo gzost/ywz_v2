@@ -98,12 +98,13 @@ class platform {
      * @param string $app
      * @return string
 	 */
-	public function getRtmp($stream,$app='live'){
+	public function getRtmp($stream,$app='live',$extHours=0){
 		$str=str_replace('%%stream%%', $stream, $this->m_record['rtmp']);
         $str=str_replace('%%app%%', $app, $str);
         switch ($this->m_record['ditem']) {
             case '5':
-                $authkey = $this->aliUrlAuthA(1000, $this->m_record['cdnkey'], $stream,$app);
+                $validtime=1000+intval($extHours)*3600;
+                $authkey = $this->aliUrlAuthA($validtime, $this->m_record['cdnkey'], $stream,$app);
                 $str = str_replace('%%key%%', $authkey, $str);
                 break;
             default:
@@ -122,12 +123,13 @@ class platform {
      * @param string $app
      * @return string
 	 */
-	public function getHls($stream,$app='live'){
+	public function getHls($stream,$app='live',$extHours=0){
 		$str=str_replace('%%stream%%', $stream, $this->m_record['hls']);
         $str=str_replace('%%app%%', $app, $str);
         switch ($this->m_record['ditem']){
             case '5':
-                $authkey=$this->aliUrlAuthA(1000,$this->m_record['cdnkey'],$stream.".m3u8",$app);
+                $validtime=1000+intval($extHours)*3600;
+                $authkey=$this->aliUrlAuthA($validtime,$this->m_record['cdnkey'],$stream.".m3u8",$app);
                 $str=str_replace('%%key%%', $authkey, $str);
                 break;
             default:

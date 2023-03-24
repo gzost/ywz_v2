@@ -397,6 +397,7 @@
 
         webVar.recordfileId="{$id}";
         webVar.owner="{$owner}";
+        webVar.account="{$account}";
         webVar.videoId="{$playkey}".trim();
         webVar.sourceid=parseInt("{$sourceid}");
         webVar.size=parseInt("{$size}");
@@ -435,7 +436,7 @@
                             console.log("postUpload",uploadInfo);
                             console.log(voucher);
                             //更新recordfile表
-                            var para={"id":webVar.recordfileId, "owner":webVar.owner,
+                            var para={"id":webVar.recordfileId, "owner":webVar.owner,"account":webVar.account,
                                 "name":uploadInfo.file.name,
                                 "siuser":webVar.siuser,
                                 "size":Math.ceil(uploadInfo.file.size/1024/1024),

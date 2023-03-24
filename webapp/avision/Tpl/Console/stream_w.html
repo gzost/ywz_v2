@@ -70,12 +70,15 @@ function makeIdStream(account){
 		updateUrl:'__APP__/Console/updateStreamAjax',
 		destroyUrl:'__APP__/Console/destroyStreamAjax',
 		onSelect:function(index,row){
-		console.log(row);
+			console.log(row);
 			if(row.isNewRecord){
 				$('#msg').html('');
 				return;
 			}
 			var data=row;
+			var extHours=$('#extHours').val();
+			$.extend(data,{'extHours':extHours});
+
 			$.post('__APP__/Console/getPushUrlAjax',data,function(data){
 				console.log(data);
 				$('#msg').html(data);
@@ -203,7 +206,8 @@ function makeIdStream(account){
 		<input name='work' value='search' style="display:none" />
 	</form>
 	<div class="easyui-linkbutton" iconCls="icon-search" onclick="submitForm('cond');">查询</div>
-	
+	收流地址附加有效时长(小时)：<input id="extHours" class="easyui-numberbox" name="extHours" value="{$extHours}" style="width:100px"
+		data-options="value:0,min:0,max:172800"/>
 	
 	<!-- 功能按钮 -->
 	<div id="dgbutton" style="float:right; margin-right: 1em; ">

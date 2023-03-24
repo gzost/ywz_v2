@@ -22,7 +22,7 @@ class WxOauth2
 	public $timeout = 600;  //十分钟
 	public $openId = '';
 	protected $wxDal = null;
-	protected $wxlogfile = '/var/www/ywz/webroot/room/wxmsg.log';
+	protected $wxlogfile = '/app/varwww/ywz/webroot/room/wxmsg.log';
 
 	//授权后，回调时获取的变量
 	public $state = null;

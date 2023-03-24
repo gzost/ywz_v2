@@ -10,7 +10,7 @@ require_once MODEL_PATH.'MessageModel.php';
 
 class AV_WxPayNotify extends WxPayNotify
 {
-	protected $wxlogfile = '/var/www/ywz/webroot/room/wxpay.log';
+	protected $wxlogfile = '/app/varwww/ywz/webroot/room/wxpay.log';
 	public $attr;
 	public $data;
 

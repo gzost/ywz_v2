@@ -7,5 +7,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="ywz-live" />
+    <orderEntry type="module" module-name="www.advanced.com.cn" />
   </component>
 </module>

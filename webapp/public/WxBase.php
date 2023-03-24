@@ -43,6 +43,7 @@ define('WX_Oauth2PCBack', U('WeixinCall/PcBack', NULL, NULL, NULL, true));
 define('WX_Oauth2MoBack', U('WeixinCall/MoBack', NULL, NULL, NULL, true));
 define('WX_Oauth2MoExBack', U('WeixinCall/MoExBack', NULL, NULL, NULL, true));
 
-define('APP_VAR', '/var/www/ywz/webapp/var/');
+//define('APP_VAR', '/var/www/ywz/webapp/var/');
+define('APP_VAR', '/app/varwww/ywz/webapp/var/');   //2022-12-14
 
 ?>

@@ -79,6 +79,7 @@ function makeIdStream(account){
 			var extHours=$('#extHours').val();
 			$.extend(data,{'extHours':extHours});
 
+			console.log(data)
 			$.post('__APP__/Console/getPushUrlAjax',data,function(data){
 				console.log(data);
 				$('#msg').html(data);

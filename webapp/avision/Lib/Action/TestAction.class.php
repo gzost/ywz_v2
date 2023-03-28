@@ -374,8 +374,9 @@ class TestAction extends Action
 
 	public function Test()
 	{
-		$endTime = 1474453133229;
-		$endTime = substr($endTime, 0, 10);
+		//$endTime = 1474453133229;
+		//$endTime = substr($endTime, 0, 10);
+        $endTime=time();
 		echo $endTime;
 		/*
 		$recDal = new ChannelRecordModel();

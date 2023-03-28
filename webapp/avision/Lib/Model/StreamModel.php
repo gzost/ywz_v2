@@ -117,13 +117,13 @@ class StreamModel extends Model {
 
 		$pf=new platform();
     	$pf->load($rs['platform']);
-		return $pf->getHls($rs['idstring'],$rs['app']);
+		return $pf->getHls($rs['idstring'],$rs['app'],$extHours);
 	}
 
 	/**
 	 * 根据streamid获取推流地址
 	 */
-	public function getPush($streamId,$extHours=0)
+	public function getPush($streamId)
 	{
 		$rs = $this->where('id='.$streamId)->field('platform, idstring,pushkey,app')->find();
 
@@ -135,13 +135,13 @@ class StreamModel extends Model {
 	/**
 	 * 根据streamid获取rtmp播放地址
 	 */
-	public function getRtmp($streamId)
+	public function getRtmp($streamId,$extHours=0)
 	{
 		$rs = $this->where('id='.$streamId)->field('platform, idstring,app')->find();
 
 		$pf = new platform();
     	$pf->load($rs['platform']);
-		return $pf->getRtmp($rs['idstring'],$rs['app']);
+		return $pf->getRtmp($rs['idstring'],$rs['app'],$extHours);
 	}
 
 	/**

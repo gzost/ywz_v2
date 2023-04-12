@@ -1322,7 +1322,7 @@ logfile("AUTHEN ret=".$ret." account=".$account." chniId=".$chnId, LogLevel::DEB
      * @param int $agent
      */
     public function goHome($agent=0){
-	    if($agent>0){
+        if($agent>0){
             $dbAgent=D('agent');
             $homeName=getExtAttr($dbAgent,array('id'=>$agent),'home','config');
         }else{

@@ -378,6 +378,7 @@ class TestAction extends Action
 		//$endTime = substr($endTime, 0, 10);
         $endTime=time();
 		echo $endTime;
+		dump($_SERVER);
 		/*
 		$recDal = new ChannelRecordModel();
 		$ret = $recDal->AddRecord('streamId',1474453133,'/jessebak/1474511967625all.mp4');

@@ -313,7 +313,7 @@ class ChannelAction extends AdminBaseAction
 		$chnDal = D('channel');
 		if(!empty($this->chnCond['name']))
 		{
-			$w['name'] = array('like', '%'.$this->chnCond['name'].'%');
+			$w['a.name'] = array('like', '%'.$this->chnCond['name'].'%');
 		}
 		if(!empty($this->chnCond['anchor']))
 		{

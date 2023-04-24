@@ -302,7 +302,8 @@ class ConsoleAction extends AdminBaseAction {
 	
 	//更新
 	public function updateStreamAjax(){
-		$recTpl=array('id'=>0,'account'=>'','owner'=>'','idstring'=>'','platform'=>'','name'=>'','pushkey'=>'','record'=>'','status'=>'');
+		$recTpl=array('id'=>0,'account'=>'','owner'=>'','idstring'=>'','platform'=>'','name'=>'','pushkey'=>'',
+            'app'=>'live','record'=>'','status'=>'');
 		$rec=getRec($recTpl,false);
 		$stream=new stream();
 		try{

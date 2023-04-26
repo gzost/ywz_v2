@@ -22,7 +22,7 @@ class ChannelextModel extends Model{
             if(1>$chnid) throw new Exception("参数错误");
             $cond=array("chnid"=>$chnid);
             if(""!==$showcover) $cond["showcover"]=$showcover;
-            $rec=$this->field("coverhtml,coverbackground,covercolor,showcover")->where($cond)->find();
+            $rec=$this->field("coverhtml,coverbackground,covercolor,showcover,noclose")->where($cond)->find();
             //var_dump($rec); echo $this->getLastSql();
             if(empty($rec)) throw new Exception("没有可显示的封面");
             return $rec;
@@ -42,10 +42,12 @@ class ChannelextModel extends Model{
         $coverbackground=(null==$record["coverbackground"])?"#046adb":$record["coverbackground"];
         $covercolor=(null==$record["covercolor"])?"#eeeef0":$record["covercolor"];
         $showcover=(1==$record["showcover"])?1:0;
-        $query="insert into ".C("DB_PREFIX")."channelext(chnid,coverhtml,coverbackground,covercolor,showcover) ".
-            " value($chnid,'$coverhtml','$coverbackground','$covercolor',$showcover) ".
-            " on duplicate key update coverhtml='$coverhtml', coverbackground='$coverbackground', covercolor='$covercolor',showcover=$showcover ";
-        $rt=$this->execute($query);
+        $noclose=(1==$record["noclose"])?1:0;
+        $query="insert into ".C("DB_PREFIX")."channelext(chnid,coverhtml,coverbackground,covercolor,showcover,noclose) ".
+            " value($chnid,'$coverhtml','$coverbackground','$covercolor',$showcover,noclose) ".
+            " on duplicate key update coverhtml='$coverhtml', coverbackground='$coverbackground', covercolor='$covercolor',
+            showcover=$showcover, noclose=$noclose ";
+        $rt=$this->execute($query); 
         if(false===$rt) throw new Exception($this->getLastSql());
 
         ////删除cover目录中不在html图片连接中的图片文件

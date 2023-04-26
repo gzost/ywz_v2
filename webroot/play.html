@@ -116,7 +116,7 @@
         <div id="blkCoverContent" class="article" style="position: relative; margin:0 auto; height: 100%; width:100%; max-width:640px; overflow-y:auto; overflow-x:hidden;background-color: #ffffcc;">
 
         </div>
-        <div style="position:absolute; top:30px;right: 30px; height:64px; width:64px; text-align: center; overflow: hidden; ">
+        <div id="btnCloseCover" style="position:absolute; top:30px;right: 30px; height:64px; width:64px; text-align: center; overflow: hidden; ">
             <div  blk="blkCover" class="layerCoverBtn btnCircle btnCloseBlk" style="height:64px; width:64px;background-color: rgba(30,30,30,.3); color: #fff;">
                 <img src="Public/images/enterchannel.png" alt="进入频道" style="height: 100%;width: 100%">
             </div>
@@ -163,6 +163,7 @@
         if(null !== nc ) loadPlayerPage(showing);
         else{
             $.post("home.php/Preplay/getNoticeJson",{chnid:chnid},function (data) {
+                console.log(data);
                 if(null != data.noticeHtml){
                     $("#blkNoticeContent").html(data.noticeHtml);
                     $("#blkNotice").css("display","block");
@@ -174,6 +175,7 @@
                     if(null != data.coverColor) $("#blkCoverContent").css("color",data.coverColor);
                     $("#blkCover").css("display","block");
                     showpages++;
+                    if('1'==data.noclose) $("#btnCloseCover").css({"display":"none"});
                 }
 
                 if(showpages>0){

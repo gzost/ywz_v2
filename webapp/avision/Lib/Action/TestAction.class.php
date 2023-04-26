@@ -387,5 +387,37 @@ class TestAction extends Action
 		*/
 	}
 
+    /** 提供时间戳与时间串互转显示功能
+     * post参数：
+     * button: 请求功能，tostring-转时间串，tostamp-转时间戳，空白或没定义-初始化
+     * stamp: 时间戳10位10进制
+     * tstring: 时间串YYYY-MM-DD hh:mm:ss
+     */
+	public function timeTools(){
+        $webVar=array("url"=>U(""), 'stamp'=>time(), 'tstring'=>date("Y-m-d H:i:s"));
+        $work=$_POST['button'];
+
+        switch ($work){
+            case 'tostring':   //转时间串
+                if(isset($_POST['stamp'])){
+                    $webVar['stamp']=$_POST['stamp'];
+                    $webVar['tstring']=date("Y-m-d H:i:s",$_POST['stamp']);
+                }
+                break;
+            case 'tostamp': //转时间戳
+                if(isset($_POST['tstring'])){
+                    $webVar['tstring']=$_POST['tstring'];
+                    $webVar['stamp']=strtotime($_POST['tstring']);
+                }
+                break;
+            default:    //初始化
+                $this->assign($webVar);
+                $this->display();
+                return;
+                break;
+        }
+        Oajax::successReturn($webVar);
+    }
+
 }
 ?>

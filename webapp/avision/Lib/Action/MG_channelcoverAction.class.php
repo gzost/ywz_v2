@@ -56,6 +56,7 @@ class MG_channelcoverAction extends AdminBaseAction{
         $rec=D("Channelext")->getCoverHtml($chnid);
         //var_dump($rec);
         $webVar["showcover"]=$rec["showcover"];
+        $webVar["noclose"]=$rec["noclose"];
         $webVar["coverhtml"]=(empty($rec["coverhtml"]))?"":$rec["coverhtml"];
         $webVar["coverbackground"]=(empty($rec["coverbackground"]))?"#046adb":$rec["coverbackground"];
         $webVar["covercolor"]=(empty($rec["covercolor"]))?"#eeeef0":$rec["covercolor"];
@@ -113,9 +114,11 @@ class MG_channelcoverAction extends AdminBaseAction{
 
     private function saveJson(){
         //保存封面信息部分
-        $paramsTpl=array("chnid"=>0, "coverbackground"=>"#046adb", "coverhtml"=>"","covercolor"=>"#eeeef0","showcover"=>0);
+        $paramsTpl=array("chnid"=>0, "coverbackground"=>"#046adb", "coverhtml"=>"","covercolor"=>"#eeeef0",
+            "showcover"=>0,"noclose"=>0);
         $params=ouArrayReplace($paramsTpl,$_POST);
         if(!empty($params["showcover"])) $params["showcover"]=1;
+        if(!empty($params["noclose"])) $params["noclose"]=1;
         try{
             $chnid=intval($params["chnid"]);
             if($chnid<1) throw new Exception("缺少参数chnid");

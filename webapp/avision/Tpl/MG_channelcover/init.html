@@ -23,7 +23,8 @@
         <div id="blkCoverContent" >
             <div style="padding: 10px; width: 640px;">
                 <form id="frmEditCover">
-                    显示封面：<input type="checkbox" name="showcover" ><br>
+                    显示封面：<input type="checkbox" name="showcover" >　　
+                    不显示进入频道按钮：<input type="checkbox" name="noclose" ><br>
                     封面背景颜色：<input id="coverbackground" type="color" name="coverbackground">
                     文字默认颜色：<input id="covercolor" type="color" name="covercolor">
                     <input type="hidden" name="chnid" >
@@ -63,6 +64,8 @@
                     console.log(data);
                     var check=(1==data.showcover)?true:false;
                     $("#frmEditCover input[name='showcover']").prop("checked",check);
+                    check=(1==data.noclose)?true:false;
+                    $("#frmEditCover input[name='noclose']").prop("checked",check);
                     KindEditor.lang({
                         hello : '答案输入框'
                     });

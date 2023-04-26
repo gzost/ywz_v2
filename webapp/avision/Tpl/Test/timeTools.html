@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <title>时间串与时间戳转换工具</title>
+
+    <style>
+        body input{
+            font-size: 16px;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>timeTools时间串与时间戳转换工具</h1>
+    <div>
+        时间戳(秒)：<input type="text" name="stamp" value="{$stamp}" style="width: 20em">
+        <input type="button" name="tostring" value="转时间串">
+    </div>
+    <div>
+        时间串(YYYY-MM-DD hh:mm:ss <input type="text" name="tstring" value="{$tstring}" style="width: 20em">
+        <input type="button" name="tostamp" value="转时间戳">
+    </div>
+    <script src="/Public/jeasyui/jquery.min.js" ></script>
+    <script>
+        $(document).ready(function(){
+            var arg={
+                "url":"{$url}",
+            }
+            $(":button").click(function (event) {
+                var postdata={"button":$(event.delegateTarget).attr("name"),
+                    "stamp":$("input[name='stamp']").val(),
+                    "tstring":$("input[name='tstring']").val()}
+                console.log(postdata);
+
+                $.post(arg.url,postdata,function (backdata) {
+                    console.log(backdata);
+                    $("input[name='stamp']").val(backdata.stamp);
+                    $("input[name='tstring']").val(backdata.tstring);
+                },"json");
+
+            });
+        });
+
+    </script>
+</body>
+</html>

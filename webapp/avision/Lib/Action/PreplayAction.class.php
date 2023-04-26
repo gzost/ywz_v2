@@ -34,6 +34,7 @@ class PreplayAction extends Action
                 $retArr["coverHtml"]=$rec['coverhtml'];
                 $retArr["coverBackground"]=$rec["coverbackground"];
                 $retArr["coverColor"]=$rec["covercolor"];
+                $retArr["noclose"]=$rec["noclose"];
             }
 
         }

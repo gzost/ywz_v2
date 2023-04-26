@@ -115,8 +115,10 @@ class vodSite5 extends vodBase{
             if(empty($streamRec)) throw new Exception("找不到推流的属主：".$idstring);
             //生成新的记录
             $length=$recordEndTime-$recordStartTime;
+            $hour=$length/3600; $length=$length%3600;
+            $min=$length/60; $sec=$length%60;
             $record=array("createtime"=>date("Y-m-d H:i:s",$recordStartTime),"owner"=>$streamRec["owner"],
-                "length"=>sprintf("%02d:%02d:%02d",$length/3600,$length/60,$length%60),
+                "length"=>sprintf("%02d:%02d:%02d",$hour,$min,$sec),
                 "playkey"=>$videoId,
                 "name"=>$streamRec["name"]."录像".date("m-d H:i:s",$recordStartTime),
                 "descript"=>"录像时间：".date("Y-m-d H:i:s",$recordStartTime)." 至 ".date("Y-m-d H:i:s",$recordEndTime),

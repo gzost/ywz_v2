@@ -60,8 +60,8 @@
         <div class="itemName">消息类型</div>
         <div class="itemValue">
             <input class="easyui-combobox" name="type" value="{$rec.type}"
-                   data-options="editable:false,width:100,valueField:'val',textField:'text',
-                        data:[{val:1,text:'文字'},{val:2,text:'图片'}]" >
+                   data-options="editable:false,width:120,valueField:'val',textField:'text',
+                        data:[{val:1,text:'文字'},{val:2,text:'图片'},{val:3,text:'导航图片'}]" >
             <span style="margin-left: 2em">显示模式</span>
             <input class="easyui-combobox" name="zone" value="{$rec.zone}"
                    data-options="editable:false,width:100,valueField:'val',textField:'text',
@@ -109,10 +109,19 @@
         <div class="itemValue">{$rec.createrName}</div>
     </div>
 
+    <div class="item">
+        <div class="itemName">显示顺序</div>
+        <div class="itemValue">
+            <input type="text" class="easyui-numberbox" name="sorder" value="{$rec.sorder|default='1'}" data-options="min:1,precision:0">
+            <div class="itemNote">数值大显示在前</div>
+        </div>
+    </div>
+
     <!--以下为扩展属性-->
     <div class="item">
         <div class="itemName">循环显示次数</div>
-        <div class="itemValue"><input type="text" class="easyui-numberbox" name="loop" value="{$rec.loop|default='3'}" data-options="min:0,precision:0">
+        <div class="itemValue">
+            <input type="text" class="easyui-numberbox" name="loop" value="{$rec.loop|default='3'}" data-options="min:0,precision:0">
             <div class="itemNote">0或不提供为无限次</div>
         </div>
     </div>
@@ -154,6 +163,10 @@
             更换图片请：<input type="file" name="imagefile" id="imagefile" accept="image/gif, image/jpeg, image/png" multiple="multiple" />
             <!-- <div class="OUI-btn" id="btn_upload" style="font-size: 14px; background-color: #669;">上传</div> -->
         </div>
+    </div>
+    <div class="item">
+        <div class="itemName"></div>
+        <div class="itemValue" ></div>
     </div>
     <input type="hidden" name="id" value="{$rec.id}" />
 </div>

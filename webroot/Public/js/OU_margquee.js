@@ -187,7 +187,7 @@ function OU_margquee(blk,options){
             contain.animate({left: (0-containWidth)+'px'},moveTime,"linear",function () {
                 showNext(nextItem); //一个项目显示完后回调
             });
-        }else{
+        }else if(nextItem.element.type==2){
             //组装滚动内容HTML
             var contain=$("<div style='position: relative;display: block;padding-top: 0;white-space: nowrap; text-align: center;'></div>");
             var img=$("<img  style='max-width: 100%;'/>");  //图片最大宽度为容器宽度
@@ -206,6 +206,25 @@ function OU_margquee(blk,options){
                     },5000);
                 });
             },100);
+        } else{
+            //type==3
+            //var contain=$("<div style='position: relative;display: block;padding-top: 0;white-space: nowrap; text-align: left;'></div>");
+            var img=$("<img  style='max-height: 100%;'/>");  //图片最大高度为容器高度
+            img.attr("src",nextItem.element.imgurl);
+            //contain.html(img);
+            contain=img;
+            container.append(contain);
+
+            //处理超链接
+            if("string"==typeof(nextItem.element.href) && (nextItem.element.href.length>1) ){
+                var link=$("<a  style='color:inherit;'></a>");
+                link.attr("href",nextItem.element.href);
+                console.log("href=",nextItem.element.href," len=",nextItem.element.href.length);
+                contain.wrap(link);
+            }
+
+
+            if(nextItem.next != null)  showNext(nextItem);
         }
 
         //已显示项定义了循环显示次数则减1，<=0时删除已显示节点

@@ -190,7 +190,7 @@ class MG_AnnounceAction extends AdminBaseAction
         $paras=ouArrayReplace($paras,$_POST);
 //var_dump($paras);
         $dbAnnounce=D("announce");
-        $fields="id,btime,etime,type,systempush,content";
+        $fields="id,btime,etime,type,sorder,systempush,content";
         $cond=array();
         switch ($_POST["range"]){
             case "A":   //全局消息
@@ -292,7 +292,7 @@ class MG_AnnounceAction extends AdminBaseAction
      */
     private function saveRec(){
         //记录模板，接收前端POST的值，缺少的删除
-        $recTpl=array('btime'=>'','etime'=>'','zone'=>'2','content'=>'','type'=>1,'systempush'=>0);
+        $recTpl=array('btime'=>'','etime'=>'','zone'=>'2','content'=>'','type'=>1,'systempush'=>0,'sorder'=>1);
         $attrTpl=array('loop'=>1,'speed'=>100,'color'=>'#FFFFFF','backgrand'=>'#003366','href'=>'','height'=>'28px','font_size'=>'16px');
         $id=intval($_POST['id']);
         $successPara=array();   //成功时的附加参数，如新记录的ID等
@@ -335,6 +335,8 @@ class MG_AnnounceAction extends AdminBaseAction
             }else{
                 //修改旧记录
                 $rt=$dbannounce->where('id='.$id)->save($rec);
+                //dump($rec);
+                //echo $dbannounce->getLastSql();
                 if(false===$rt) throw new Exception('修改记录失败。');
                 $successPara['id']=$id;
             }

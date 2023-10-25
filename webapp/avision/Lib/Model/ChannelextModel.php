@@ -47,7 +47,7 @@ class ChannelextModel extends Model{
             " value($chnid,'$coverhtml','$coverbackground','$covercolor',$showcover,noclose) ".
             " on duplicate key update coverhtml='$coverhtml', coverbackground='$coverbackground', covercolor='$covercolor',
             showcover=$showcover, noclose=$noclose ";
-        $rt=$this->execute($query); 
+        $rt=$this->execute($query);
         if(false===$rt) throw new Exception($this->getLastSql());
 
         ////删除cover目录中不在html图片连接中的图片文件
